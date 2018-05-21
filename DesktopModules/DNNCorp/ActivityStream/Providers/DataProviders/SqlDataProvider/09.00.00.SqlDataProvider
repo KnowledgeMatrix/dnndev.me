@@ -1,0 +1,1097 @@
+﻿
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = object_id('{objectQualifier}Journal') and name = 'IsPinned')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}Journal] ADD IsPinned BIT NOT NULL DEFAULT (0)
+END
+GO
+
+/********************************************************
+ * SPROC: ActivityStream_Toggle_Pin
+ ********************************************************/
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}ActivityStream_Toggle_Pin]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}ActivityStream_Toggle_Pin]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}ActivityStream_Toggle_Pin]
+	@JournalId INT,
+	@IsPinned BIT
+AS
+BEGIN
+	UPDATE {databaseOwner}[{objectQualifier}Journal]
+	SET [IsPinned] = @IsPinned
+	WHERE [JournalId] = @JournalId
+
+END
+GO
+
+/********************************************************
+ * SPROC: ActivityStream_Is_Pinned
+ ********************************************************/
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}ActivityStream_Is_Pinned]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}ActivityStream_Is_Pinned]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}ActivityStream_Is_Pinned]
+	@JournalId INT
+AS
+BEGIN
+	SELECT [IsPinned] FROM {databaseOwner}[{objectQualifier}Journal]
+	WHERE [JournalId] = @JournalId
+
+END
+GO
+
+
+
+/********************************************************
+ * SPROC: ActivityStream_Post_GetByJournalId
+ ********************************************************/
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}ActivityStream_Post_GetByJournalId]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}ActivityStream_Post_GetByJournalId]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}ActivityStream_Post_GetByJournalId]
+	@PortalId int,
+	@ModuleId int,
+	@JournalId int,
+	@CurrentUserId int,
+	@IncludeAllItems int = 0,
+	@IsDeleted int = 0
+AS
+BEGIN
+	DECLARE @RegisteredUsersRole int
+	SELECT @RegisteredUsersRole = roleID FROM {databaseOwner}{objectQualifier}Roles WITH (NOLOCK)
+	WHERE RoleName = 'Registered Users' AND PortalID = @PortalId
+
+	SELECT	DISTINCT
+			j.JournalId, j.JournalTypeId, j.Title, j.Summary, j.UserId, j.DateCreated, j.DateUpdated,
+			j.ProfileId, j.GroupId, j.ObjectKey, j.AccessKey, jt.Icon, jt.JournalType, j.PortalId, j.ContentItemId,
+			j.IsDeleted, j.CommentsDisabled, j.CommentsHidden, j.IsPinned, "JournalOwnerId" = ISNULL(j.ProfileId, j.UserId), j.ItemData,
+			0 SimilarCount,
+			"JournalXML" = CAST(jd.JournalXML AS NVARCHAR(MAX)),
+			"JournalOwner" = '<entity><id>' + CAST(p.UserId AS nvarchar(15)) + '</id><name><![CDATA[' + p.DisplayName + ']]></name></entity>',
+			"JournalAuthor" =
+					CASE WHEN ISNULL(u.UserId,-1) > 0 AND u.IsDeleted = 0 AND ISNULL(up.IsDeleted, 0) = 0 AND u.IsSuperUser = 0 THEN
+						'<entity><id>' + CAST(u.UserId AS nvarchar(15)) + '</id><name><![CDATA[' + u.DisplayName + ']]></name></entity>'
+					ELSE
+						'<entity><id>-1</id><name><![CDATA[Anonymous]]></name></entity>'
+					END,
+			"Profile" =
+				CASE WHEN j.ProfileId > 0 THEN
+					'<entity><id>' + CAST(p.UserId AS nvarchar(15)) + '</id><name><![CDATA[' + p.DisplayName + ']]></name><vanity></vanity></entity>'
+				ELSE
+					''
+				END
+	FROM	{databaseOwner}{objectQualifier}Journal AS j WITH (NOLOCK)
+				INNER JOIN {databaseOwner}{objectQualifier}Journal_Types AS jt WITH (NOLOCK) ON jt.JournalTypeId = j.JournalTypeId
+				INNER JOIN {databaseOwner}{objectQualifier}Journal_Security AS js WITH (NOLOCK) ON js.JournalId = j.JournalId
+				INNER JOIN {databaseOwner}[{objectQualifier}Journal_User_Permissions](@PortalId, @CurrentUserId, @RegisteredUsersRole) AS t
+					ON t.seckey = js.SecurityKey
+				LEFT OUTER JOIN	{databaseOwner}{objectQualifier}Journal_Data AS jd WITH (NOLOCK) ON jd.JournalId = j.JournalId
+				LEFT OUTER JOIN {databaseOwner}{objectQualifier}Users AS p WITH (NOLOCK) ON j.ProfileId = p.UserID
+				LEFT OUTER JOIN	{databaseOwner}{objectQualifier}Users AS u WITH (NOLOCK) ON j.UserId = u.UserID
+				LEFT OUTER JOIN {databaseOwner}{objectQualifier}UserPortals AS up WITH (NOLOCK) ON up.UserId = u.UserID
+	WHERE	j.JournalId = @JournalId
+	  AND ((@IncludeAllItems = 0 AND j.IsDeleted = @IsDeleted) OR (@IncludeAllItems = 1))
+END
+GO
+
+
+/********************************************************
+ * SPROC: ActivityStream_ListForProfile
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}ActivityStream_ListForProfile]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}ActivityStream_ListForProfile]
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}ActivityStream_ListForProfile
+	@PortalId int,
+	@ModuleId int,
+	@CurrentUserId int,
+	@ProfileId int,
+	@JournalTypeId int,
+	@ActivityFilterId int,
+	@RowIndex int,
+	@MaxRows int,
+	@IncludeAllItems int = 0,
+	@IsDeleted int = 0,
+	@OlderThanJournalId int = -1,
+	@NewerThanJournalId int = -1,
+	@CountSimilarEntries bit = 1
+AS
+BEGIN
+	IF @ProfileId <= 0
+		RAISERROR (N'Profile ID must be greater than 0', 16, 1);
+
+	IF @RowIndex = 0 BEGIN SET @RowIndex = 1 END
+	DECLARE @EndRow int SET @EndRow = @RowIndex + @MaxRows - 1;
+
+	-- SET FILTERS ********
+	DECLARE @filteredTypes TABLE(filterId int)
+	DECLARE @filteredTypes_ini TABLE(filterId int)
+	DECLARE @filteredUsers TABLE(userId int)
+	DECLARE @filteredTypesCount int
+	DECLARE @filteredUsersCount int
+
+	SET @filteredTypesCount = 0
+	SET @filteredUsersCount = 0
+
+	IF @ActivityFilterId IS NULL SET @ActivityFilterId = 0
+	IF @JournalTypeId IS NULL SET @JournalTypeId = 0
+
+	IF (@ActivityFilterId > 0)
+	BEGIN
+		-- FilterID's
+		INSERT INTO @filteredTypes_ini (filterId)
+			SELECT FilterValue FROM {databaseOwner}{objectQualifier}ActivityStream_FilterItems WITH (NOLOCK)
+			WHERE FilterId = @ActivityFilterId AND FilterKey = 'journalType'
+		OPTION (RECOMPILE);
+
+		SELECT @filteredTypesCount = COUNT(*) FROM @filteredTypes_ini
+
+		-- UserId's
+		INSERT INTO @filteredUsers (userId)
+			SELECT FilterValue FROM {databaseOwner}{objectQualifier}ActivityStream_FilterItems WITH (NOLOCK)
+			WHERE FilterId = @ActivityFilterId AND FilterKey = 'user'
+		OPTION (RECOMPILE);
+
+		-- UserId's FROM GroupId's
+		INSERT INTO @filteredUsers (userId)
+			SELECT UserId FROM {databaseOwner}{objectQualifier}UserRoles AS ur WITH (NOLOCK)
+				INNER JOIN {databaseOwner}{objectQualifier}ActivityStream_FilterItems AS f WITH (NOLOCK) ON f.FilterValue = ur.RoleID AND f.FilterKey = 'group'
+			WHERE f.FilterId = @ActivityFilterId
+		OPTION (RECOMPILE);
+
+		SELECT @filteredUsersCount = COUNT(*) FROM @filteredUsers
+	END
+
+	IF EXISTS(SELECT 1 FROM {databaseOwner}{objectQualifier}Journal_TypeFilters WITH (NOLOCK) WHERE ModuleId = @ModuleId)
+	BEGIN
+		IF @filteredTypesCount > 0
+		BEGIN
+			INSERT INTO @filteredTypes(filterId)
+				SELECT filterId from @filteredTypes_ini
+				INTERSECT
+				SELECT JournalTypeId FROM {databaseOwner}{objectQualifier}Journal_TypeFilters WITH (NOLOCK) WHERE ModuleId = @ModuleId
+			OPTION (RECOMPILE);
+
+			SELECT @filteredTypesCount = COUNT(*) FROM @filteredTypes
+		END
+		ELSE
+		BEGIN
+			INSERT INTO @filteredTypes(filterId)
+				SELECT JournalTypeId FROM {databaseOwner}{objectQualifier}Journal_TypeFilters WITH (NOLOCK) WHERE ModuleId = @ModuleId
+			OPTION (RECOMPILE);
+
+			SELECT @filteredTypesCount = COUNT(*) FROM @filteredTypes
+		END
+	END
+	ELSE
+	BEGIN
+		INSERT INTO @filteredTypes(filterId) SELECT * FROM @filteredTypes_ini
+		OPTION (RECOMPILE);
+	END
+
+	-- ********************
+	DECLARE @RegisteredUsersRole int
+
+	SELECT @RegisteredUsersRole = roleID FROM {databaseOwner}{objectQualifier}Roles WITH (NOLOCK)
+	WHERE RoleName = 'Registered Users' AND PortalID = @PortalId
+
+	--GET all User Permissions
+	DECLARE @tblPermissions TABLE(seckey nvarchar(200))
+	INSERT INTO @tblPermissions(seckey)
+		SELECT * FROM {databaseOwner}{objectQualifier}Journal_User_Permissions(@PortalId, @CurrentUserId, @RegisteredUsersRole)
+	OPTION (RECOMPILE);
+
+	DECLARE @j_t TABLE(RowNumber INT, journalid INT, ObjectKeyPrefix NVARCHAR(255))
+	DECLARE @j TABLE(journalid int)
+	DECLARE @j2 TABLE(journalid int)
+
+	--get all JournalIds that don't have 'E' permissions but meet all other criteria
+	--------------------------------------------------------------------------------
+	IF (SELECT COUNT(*) FROM @tblPermissions) > 1
+	BEGIN
+
+		INSERT INTO @j
+			SELECT DISTINCT j.Journalid FROM {databaseOwner}{objectQualifier}Journal_Security j WITH (NOLOCK)
+			WHERE NOT EXISTS (SELECT 1 FROM {databaseOwner}{objectQualifier}Journal_Security  WITH (NOLOCK) WHERE JournalId=j.journalId AND SecurityKey='E')
+		OPTION (RECOMPILE);
+
+		IF EXISTS (Select 1 FROM @j WHERE Journalid >0)
+		BEGIN
+			INSERT INTO @j2
+				SELECT DISTINCT jF.JournalId FROM @j AS jF
+					INNER JOIN {databaseOwner}{objectQualifier}Journal_Security AS s WITH (NOLOCK) ON s.JournalId = jF.journalId
+					INNER JOIN @tblPermissions p ON s.SecurityKey = p.seckey
+			OPTION (RECOMPILE);
+		END
+	END
+
+	IF @filteredUsersCount > 0 AND @filteredTypesCount > 0
+		WITH journalItems
+		AS (SELECT ROW_NUMBER() OVER (ORDER BY j.IsPinned DESC, j.JournalId DESC) As RowNumber, j.JournalId,
+			{databaseOwner}[{objectQualifier}CoreMessagingGetObjectKeyPrefix](j.ObjectKey) + '%' AS ObjectKeyPrefix
+			FROM {databaseOwner}{objectQualifier}Journal AS j WITH (NOLOCK)
+			WHERE j.PortalId = @PortalId
+			  AND j.ProfileId = @ProfileId
+			  AND j.JournalTypeId IN (Select filterId FROM @filteredTypes)
+			  AND j.UserId IN (SELECT userId from @filteredUsers)
+			  AND ((j.journalId IN (SELECT * from @j2)) OR
+					(EXISTS (SELECT TOP(1) 1 FROM {databaseOwner}{objectQualifier}Journal_Security WITH (NOLOCK) WHERE JournalId = j.JournalId AND SecurityKey='E')))
+			  AND (@JournalTypeId IS NULL OR @JournalTypeId = 0 OR j.JournalTypeId = @JournalTypeId )
+			  AND (j.JournalId > @NewerThanJournalId)
+			  AND ((@OlderThanJournalId > 0 AND j.JournalId < @OlderThanJournalId) OR (@OlderThanJournalId <= 0 AND j.JournalId > 0))
+			  AND ((@IncludeAllItems = 0 AND j.IsDeleted = @IsDeleted) OR (@IncludeAllItems = 1))
+		)
+		INSERT INTO @j_t(RowNumber, journalId, ObjectKeyPrefix)
+			SELECT RowNumber, JournalId, ObjectKeyPrefix FROM journalitems
+			WHERE RowNumber BETWEEN @RowIndex AND @EndRow
+		OPTION (RECOMPILE);
+
+	IF @filteredUsersCount = 0 AND @filteredTypesCount > 0
+		WITH journalItems
+		AS (SELECT ROW_NUMBER() OVER (ORDER BY j.IsPinned DESC, j.JournalId DESC) As RowNumber, j.JournalId,
+			{databaseOwner}[{objectQualifier}CoreMessagingGetObjectKeyPrefix](j.ObjectKey) + '%' AS ObjectKeyPrefix
+			FROM {databaseOwner}{objectQualifier}Journal AS j WITH (NOLOCK)
+			WHERE j.PortalId = @PortalId
+			  AND j.ProfileId = @ProfileId
+			  AND j.JournalTypeId IN (Select filterId FROM @filteredTypes)
+			  AND ((j.journalId IN (SELECT * from @j2)) OR
+					(EXISTS (SELECT TOP(1) 1 FROM {databaseOwner}{objectQualifier}Journal_Security WITH (NOLOCK) WHERE JournalId = j.JournalId AND SecurityKey='E')))
+			  AND (@JournalTypeId IS NULL OR @JournalTypeId = 0 OR j.JournalTypeId = @JournalTypeId )
+			  AND (j.JournalId > @NewerThanJournalId)
+			  AND ((@OlderThanJournalId > 0 AND j.JournalId < @OlderThanJournalId) OR (@OlderThanJournalId <= 0 AND j.JournalId > 0))
+			  AND ((@IncludeAllItems = 0 AND j.IsDeleted = @IsDeleted) OR (@IncludeAllItems = 1))
+		)
+		INSERT INTO @j_t(RowNumber, journalId, ObjectKeyPrefix)
+			SELECT RowNumber, JournalId, ObjectKeyPrefix FROM journalitems
+			WHERE RowNumber BETWEEN @RowIndex AND @EndRow
+		OPTION (RECOMPILE);
+
+	IF @filteredUsersCount > 0 AND @filteredTypesCount = 0
+		WITH journalItems
+		AS (SELECT ROW_NUMBER() OVER (ORDER BY j.IsPinned DESC, j.JournalId DESC) As RowNumber, j.JournalId,
+			{databaseOwner}[{objectQualifier}CoreMessagingGetObjectKeyPrefix](j.ObjectKey) + '%' AS ObjectKeyPrefix
+			FROM {databaseOwner}{objectQualifier}Journal AS j WITH (NOLOCK)
+			WHERE j.PortalId = @PortalId
+			  AND j.ProfileId = @ProfileId
+			  AND j.UserId IN (SELECT userId from @filteredUsers)
+			  AND ((j.journalId IN (SELECT * from @j2)) OR
+					(EXISTS (SELECT TOP(1) 1 FROM {databaseOwner}{objectQualifier}Journal_Security WITH (NOLOCK) WHERE JournalId = j.JournalId AND SecurityKey='E')))
+			  AND (@JournalTypeId IS NULL OR @JournalTypeId = 0 OR j.JournalTypeId = @JournalTypeId )
+			  AND (j.JournalId > @NewerThanJournalId)
+			  AND ((@OlderThanJournalId > 0 AND j.JournalId < @OlderThanJournalId) OR (@OlderThanJournalId <= 0 AND j.JournalId > 0))
+			  AND ((@IncludeAllItems = 0 AND j.IsDeleted = @IsDeleted) OR (@IncludeAllItems = 1))
+		)
+		INSERT INTO @j_t(RowNumber, journalId, ObjectKeyPrefix)
+			SELECT RowNumber, JournalId, ObjectKeyPrefix FROM journalitems
+			WHERE RowNumber BETWEEN @RowIndex AND @EndRow
+		OPTION (RECOMPILE);
+
+	IF @filteredUsersCount = 0 AND @filteredTypesCount = 0
+		WITH journalItems
+		AS (SELECT ROW_NUMBER() OVER (ORDER BY j.IsPinned DESC, j.JournalId DESC) As RowNumber, j.JournalId,
+			{databaseOwner}[{objectQualifier}CoreMessagingGetObjectKeyPrefix](j.ObjectKey) + '%' AS ObjectKeyPrefix
+			FROM {databaseOwner}{objectQualifier}Journal AS j WITH (NOLOCK)
+			WHERE j.PortalId = @PortalId
+			  AND j.ProfileId = @ProfileId
+			  AND ((j.journalId IN (SELECT * from @j2)) OR
+					(EXISTS (SELECT TOP(1) 1 FROM {databaseOwner}{objectQualifier}Journal_Security WITH (NOLOCK) WHERE JournalId = j.JournalId AND SecurityKey='E')))
+			  AND (@JournalTypeId IS NULL OR @JournalTypeId = 0 OR j.JournalTypeId = @JournalTypeId )
+			  AND (j.JournalId > @NewerThanJournalId)
+			  AND ((@OlderThanJournalId > 0 AND j.JournalId < @OlderThanJournalId) OR (@OlderThanJournalId <= 0 AND j.JournalId > 0))
+				AND ((@IncludeAllItems = 0 AND j.IsDeleted = @IsDeleted) OR (@IncludeAllItems = 1))
+		)
+		INSERT INTO @j_t(RowNumber, journalId, ObjectKeyPrefix)
+			SELECT RowNumber, JournalId, ObjectKeyPrefix FROM journalitems
+			WHERE RowNumber BETWEEN @RowIndex AND @EndRow
+		OPTION (RECOMPILE);
+
+	DECLARE @privilege_jtypeid int, @badge_jtypeid int; -- JournalTypeIDs
+	SELECT TOP(1) @privilege_jtypeid = JournalTypeId FROM {databaseOwner}{objectQualifier}Journal_Types WHERE JournalType = 'privilege';
+	SELECT TOP(1) @badge_jtypeid     = JournalTypeId FROM {databaseOwner}{objectQualifier}Journal_Types WHERE JournalType = 'badge';
+
+	SELECT	DISTINCT ji.RowNumber, ji.JournalId, j.JournalTypeId, j.Title, j.Summary, j.UserId, j.DateCreated, j.DateUpdated,
+			j.ProfileId, j.GroupId, j.ObjectKey, j.AccessKey, jt.Icon, jt.JournalType, j.PortalId, j.ContentItemId,
+			j.IsDeleted, j.CommentsDisabled, j.CommentsHidden, j.IsPinned, "JournalOwnerId" = ISNULL(j.ProfileId, j.UserId), j.ItemData,
+			"SimilarCount" = CASE @CountSimilarEntries WHEN 0 THEN 0 ELSE(
+					CASE j.JournalTypeId WHEN @privilege_jtypeid THEN
+					(
+						SELECT COUNT(JournalId)
+						FROM {databaseOwner}{objectQualifier}Journal j2
+						WHERE j2.JournalTypeId = j.JournalTypeId AND j2.ObjectKey LIKE ji.ObjectKeyPrefix AND j2.PortalId = @PortalId
+					)
+					WHEN @badge_jtypeid THEN
+					(
+						SELECT COUNT(JournalId)
+						FROM {databaseOwner}{objectQualifier}Journal j2
+						WHERE j2.JournalTypeId = j.JournalTypeId AND j2.ObjectKey LIKE ji.ObjectKeyPrefix AND j2.PortalId = @PortalId
+					)
+					ELSE
+					(
+						SELECT COUNT(JournalId)
+						FROM {databaseOwner}{objectQualifier}Journal j2
+						WHERE (j2.ContentItemId = j.ContentItemId AND j2.JournalTypeId = j.JournalTypeId)
+					) END
+				) END,
+			"JournalXML" = CAST(jd.JournalXML AS NVARCHAR(MAX)),
+			"JournalOwner" = '<entity><id>' + CAST(p.UserId AS nvarchar(15)) + '</id><name><![CDATA[' + p.DisplayName + ']]></name></entity>',
+			"JournalAuthor" =
+					CASE WHEN ISNULL(u.UserId,-1) > 0 AND u.IsDeleted = 0 AND ISNULL(up.IsDeleted, 0) = 0 AND u.IsSuperUser = 0 THEN
+						'<entity><id>' + CAST(u.UserId AS nvarchar(15)) + '</id><name><![CDATA[' + u.DisplayName + ']]></name></entity>'
+					ELSE
+						'<entity><id>-1</id><name><![CDATA[Anonymous]]></name></entity>'
+					END,
+			"Profile" =
+				CASE WHEN j.ProfileId > 0 THEN
+					'<entity><id>' + CAST(p.UserId AS nvarchar(15)) + '</id><name><![CDATA[' + p.DisplayName + ']]></name><vanity></vanity></entity>'
+				ELSE
+					''
+				END
+		FROM	@j_t AS ji
+				INNER JOIN {databaseOwner}{objectQualifier}Journal AS j WITH (NOLOCK) ON j.JournalId = ji.JournalId
+				INNER JOIN {databaseOwner}{objectQualifier}Journal_Types AS jt WITH (NOLOCK) ON jt.JournalTypeId = j.JournalTypeId
+				LEFT OUTER JOIN	{databaseOwner}{objectQualifier}Journal_Data AS jd WITH (NOLOCK) ON jd.JournalId = j.JournalId
+				LEFT OUTER JOIN {databaseOwner}{objectQualifier}Users AS p WITH (NOLOCK) ON j.ProfileId = p.UserID
+				LEFT OUTER JOIN	{databaseOwner}{objectQualifier}Users AS u WITH (NOLOCK) ON j.UserId = u.UserID
+				LEFT OUTER JOIN {databaseOwner}{objectQualifier}UserPortals AS up WITH (NOLOCK) ON up.UserId = u.UserID
+		ORDER BY ji.RowNumber ASC;
+END
+GO
+
+/********************************************************
+ * SPROC: ActivityStream_ListForGroup
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}ActivityStream_ListForGroup]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}ActivityStream_ListForGroup]
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}ActivityStream_ListForGroup
+	@PortalId int,
+	@ModuleId int,
+	@CurrentUserId int,
+	@GroupId int,
+	@JournalTypeId int,
+	@ActivityFilterId int,
+	@RowIndex int,
+	@MaxRows int,
+	@IncludeAllItems int = 0,
+	@IsDeleted int = 0,
+	@OlderThanJournalId int = -1,
+	@NewerThanJournalId int = -1,
+	@CountSimilarEntries bit = 1
+AS
+BEGIN
+	IF @GroupId <= 0
+		RAISERROR (N'Group ID must be greater than 0', 16, 1);
+
+	IF @RowIndex = 0 BEGIN SET @RowIndex = 1 END
+	DECLARE @EndRow int SET @EndRow = @RowIndex + @MaxRows - 1;
+
+	-- SET FILTERS ********
+	DECLARE @filteredTypes TABLE(filterId int)
+	DECLARE @filteredTypes_ini TABLE(filterId int)
+	DECLARE @filteredUsers TABLE(userId int)
+	DECLARE @filteredTypesCount int
+	DECLARE @filteredUsersCount int
+	DECLARE @alphaGroup NVARCHAR(10) = 'R' + CAST(@GroupId AS nvarchar(10))
+
+	SET @filteredTypesCount = 0
+	SET @filteredUsersCount = 0
+
+	IF @ActivityFilterId IS NULL SET @ActivityFilterId = 0
+	IF @JournalTypeId IS NULL SET @JournalTypeId = 0
+
+	IF (@ActivityFilterId > 0)
+	BEGIN
+		-- FilterID's
+		INSERT INTO @filteredTypes_ini (filterId)
+			SELECT FilterValue FROM {databaseOwner}{objectQualifier}ActivityStream_FilterItems WITH (NOLOCK)
+			WHERE FilterId = @ActivityFilterId AND FilterKey = 'journalType'
+		OPTION (RECOMPILE);
+
+		SELECT @filteredTypesCount = COUNT(*) FROM @filteredTypes_ini
+
+		-- UserId's
+		INSERT INTO @filteredUsers (userId)
+			SELECT FilterValue FROM {databaseOwner}{objectQualifier}ActivityStream_FilterItems WITH (NOLOCK)
+			WHERE FilterId = @ActivityFilterId AND FilterKey = 'user'
+		OPTION (RECOMPILE);
+
+		-- UserId's FROM GroupId's
+		INSERT INTO @filteredUsers (userId)
+			SELECT UserId FROM {databaseOwner}{objectQualifier}UserRoles AS ur WITH (NOLOCK)
+				INNER JOIN {databaseOwner}{objectQualifier}ActivityStream_FilterItems AS f WITH (NOLOCK) ON f.FilterValue = ur.RoleID AND f.FilterKey = 'group'
+			WHERE f.FilterId = @ActivityFilterId --AND ur.RoleID = @GroupId
+		OPTION (RECOMPILE);
+
+		SELECT @filteredUsersCount = COUNT(*) FROM @filteredUsers
+	END
+
+	IF EXISTS(SELECT 1 FROM {databaseOwner}{objectQualifier}Journal_TypeFilters WITH (NOLOCK) WHERE ModuleId = @ModuleId)
+	BEGIN
+		IF @filteredTypesCount > 0
+		BEGIN
+			INSERT INTO @filteredTypes(filterId)
+				SELECT filterId from @filteredTypes_ini
+				INTERSECT
+				SELECT JournalTypeId FROM {databaseOwner}{objectQualifier}Journal_TypeFilters WITH (NOLOCK) WHERE ModuleId = @ModuleId
+			OPTION (RECOMPILE);
+
+			SELECT @filteredTypesCount = COUNT(*) FROM @filteredTypes
+		END
+		ELSE
+		BEGIN
+			INSERT INTO @filteredTypes(filterId)
+				SELECT JournalTypeId FROM {databaseOwner}{objectQualifier}Journal_TypeFilters WITH (NOLOCK) WHERE ModuleId = @ModuleId
+			OPTION (RECOMPILE);
+
+			SELECT @filteredTypesCount = COUNT(*) FROM @filteredTypes
+		END
+	END
+	ELSE
+	BEGIN
+		INSERT INTO @filteredTypes(filterId)
+			SELECT * FROM @filteredTypes_ini
+		OPTION (RECOMPILE);
+	END
+
+	-- ********************
+	DECLARE @SuperusersRole int,
+			@AdminstratorsRole int,
+			@CMRole int,
+			@UserStatusInGroup int,
+			@UserStatusAsSuper int,
+			@UserStatusAsAdmin int,
+			@UserStatusAsCM int,
+			@GroupIsPublic bit
+	/*
+	SELECT	TOP(1) @SuperusersRole = roleID
+	FROM	{databaseOwner}{objectQualifier}Roles WITH (NOLOCK)
+	WHERE	RoleName = 'Superusers'
+	*/
+	SELECT	TOP(1) @AdminstratorsRole = roleID FROM {databaseOwner}{objectQualifier}Roles WITH (NOLOCK)
+	WHERE	RoleName = 'Administrators' AND PortalID = @PortalId
+
+	SELECT	TOP(1) @CMRole = roleID
+	FROM	{databaseOwner}{objectQualifier}Roles WITH (NOLOCK)
+	WHERE	RoleName = 'Community Manager' AND PortalID = @PortalId
+
+	--Check if current user is IN group
+	SELECT	TOP(1) @UserStatusInGroup = Status
+	FROM	{databaseOwner}{objectQualifier}UserRoles WITH (NOLOCK)
+	WHERE	RoleID = @GroupId AND UserID = @CurrentUserId
+	/*
+	--Check if current user is host
+	SELECT	TOP(1) @UserStatusAsSuper = Status
+	FROM	{databaseOwner}{objectQualifier}UserRoles WITH (NOLOCK)
+	WHERE	RoleID = @SuperusersRole AND UserID = @CurrentUserId
+	*/
+	--Check if current user is administrator
+	SELECT	TOP(1) @UserStatusAsAdmin = Status
+	FROM	{databaseOwner}{objectQualifier}UserRoles WITH (NOLOCK)
+	WHERE	RoleID = @AdminstratorsRole AND UserID = @CurrentUserId
+
+	--Check if current user is community manager
+	SELECT	TOP(1) @UserStatusAsCM = Status
+	FROM	{databaseOwner}{objectQualifier}UserRoles WITH (NOLOCK)
+	WHERE	RoleID = @CMRole AND UserID = @CurrentUserId
+
+	--Check if group is public
+	SELECT TOP(1) @GroupisPublic = IsPublic
+	FROM {databaseOwner}{objectQualifier}Roles WITH (NOLOCK)
+	WHERE RoleID = @GroupId
+
+	DECLARE @j_t TABLE(RowNumber INT, journalid int, ObjectKeyPrefix NVARCHAR(255))
+
+	IF @UserStatusInGroup = 1 OR @UserStatusAsAdmin = 1 OR @UserStatusAsCM = 1 OR @GroupIsPublic = 1 /*OR @UserStatusAsSuper = 1*/
+	BEGIN
+		DECLARE @securityFilter TABLE(SecKey nvarchar(15))
+
+		IF @GroupIsPublic = 1
+			INSERT INTO @securityFilter(SecKey)
+				SELECT 'E'
+			OPTION (RECOMPILE);
+
+		IF @CurrentUserId > 0
+			INSERT INTO @securityFilter(SecKey)
+				SELECT 'C'
+				UNION ALL
+				SELECT ('U' + CAST(@CurrentUserId AS nvarchar(10)))
+			OPTION (RECOMPILE);
+
+		IF @UserStatusInGroup = 1 OR @UserStatusAsAdmin = 1 OR @UserStatusAsCM = 1 /*OR @UserStatusAsSuper = 1*/
+			INSERT INTO @securityFilter(SecKey)
+				SELECT @alphaGroup
+			OPTION (RECOMPILE);
+
+		IF @filteredUsersCount > 0 AND @filteredTypesCount > 0
+			WITH journalItems
+			AS (SELECT ROW_NUMBER() OVER (ORDER BY j.IsPinned DESC, j.JournalId DESC) AS RowNumber, j.JournalId,
+					{databaseOwner}[{objectQualifier}CoreMessagingGetObjectKeyPrefix](j.ObjectKey) + '%' AS ObjectKeyPrefix
+				FROM {databaseOwner}{objectQualifier}Journal AS j WITH (NOLOCK)
+				WHERE j.PortalId = @PortalId
+					AND j.GroupId = @GroupId
+					AND j.JournalTypeId IN (Select filterId FROM @filteredTypes)
+					AND j.UserId IN (SELECT userId from @filteredUsers)
+					AND EXISTS (SELECT TOP(1) 1 FROM {databaseOwner}{objectQualifier}Journal_Security WITH (NOLOCK) WHERE JournalId = j.JournalId AND SecurityKey IN (SELECT SecKey FROM @securityFilter))
+					AND (@JournalTypeId IS NULL OR @JournalTypeId = 0 OR j.JournalTypeId = @JournalTypeId )
+					AND (j.JournalId > @NewerThanJournalId)
+					AND ((@OlderThanJournalId > 0 AND j.JournalId < @OlderThanJournalId) OR (@OlderThanJournalId <= 0 AND j.JournalId > 0))
+					AND ((@IncludeAllItems = 0 AND j.IsDeleted = @IsDeleted) OR (@IncludeAllItems = 1))
+			)
+		INSERT INTO @j_t(RowNumber, journalId, ObjectKeyPrefix)
+			SELECT RowNumber, JournalId, ObjectKeyPrefix FROM journalItems
+			WHERE RowNumber BETWEEN @RowIndex AND @EndRow
+		OPTION (RECOMPILE);
+
+		IF @filteredUsersCount = 0 AND @filteredTypesCount > 0
+			WITH journalItems
+			AS (SELECT ROW_NUMBER() OVER (ORDER BY j.IsPinned DESC, j.JournalId DESC) AS RowNumber, j.JournalId,
+					{databaseOwner}[{objectQualifier}CoreMessagingGetObjectKeyPrefix](j.ObjectKey) + '%' AS ObjectKeyPrefix
+				FROM {databaseOwner}{objectQualifier}Journal AS j WITH (NOLOCK)
+				WHERE j.PortalId = @PortalId
+				  AND j.GroupId = @GroupId
+				  AND j.JournalTypeId IN (Select filterId FROM @filteredTypes)
+				  AND EXISTS (SELECT TOP(1) 1 FROM {databaseOwner}{objectQualifier}Journal_Security WITH (NOLOCK) WHERE JournalId = j.JournalId AND SecurityKey IN (SELECT SecKey FROM @securityFilter))
+				  AND (@JournalTypeId IS NULL OR @JournalTypeId = 0 OR j.JournalTypeId = @JournalTypeId )
+				  AND (j.JournalId > @NewerThanJournalId)
+				  AND ((@OlderThanJournalId > 0 AND j.JournalId < @OlderThanJournalId) OR (@OlderThanJournalId <= 0 AND j.JournalId > 0))
+				  AND ((@IncludeAllItems = 0 AND j.IsDeleted = @IsDeleted) OR (@IncludeAllItems = 1))
+			)
+			INSERT INTO @j_t(RowNumber, journalId, ObjectKeyPrefix)
+				SELECT RowNumber, JournalId, ObjectKeyPrefix FROM journalItems
+				WHERE RowNumber BETWEEN @RowIndex AND @EndRow
+			OPTION (RECOMPILE);
+
+		IF @filteredUsersCount > 0 AND @filteredTypesCount = 0
+			WITH journalItems
+			AS (SELECT ROW_NUMBER() OVER (ORDER BY j.IsPinned DESC, j.JournalId DESC) AS RowNumber, j.JournalId,
+					{databaseOwner}[{objectQualifier}CoreMessagingGetObjectKeyPrefix](j.ObjectKey) + '%' AS ObjectKeyPrefix
+				FROM {databaseOwner}{objectQualifier}Journal AS j WITH (NOLOCK)
+				WHERE j.PortalId = @PortalId
+				  AND j.GroupId = @GroupId
+				  AND j.UserId IN (SELECT userId from @filteredUsers)
+				  AND EXISTS (SELECT TOP(1) 1 FROM {databaseOwner}{objectQualifier}Journal_Security WITH (NOLOCK) WHERE JournalId = j.JournalId AND SecurityKey IN (SELECT SecKey FROM @securityFilter))
+				  AND (@JournalTypeId IS NULL OR @JournalTypeId = 0 OR j.JournalTypeId = @JournalTypeId )
+				  AND (j.JournalId > @NewerThanJournalId)
+				  AND ((@OlderThanJournalId > 0 AND j.JournalId < @OlderThanJournalId) OR (@OlderThanJournalId <= 0 AND j.JournalId > 0))
+				  AND ((@IncludeAllItems = 0 AND j.IsDeleted = @IsDeleted) OR (@IncludeAllItems = 1))
+			)
+			INSERT INTO @j_t(RowNumber, journalId, ObjectKeyPrefix)
+				SELECT RowNumber, JournalId, ObjectKeyPrefix FROM journalItems
+				WHERE RowNumber BETWEEN @RowIndex AND @EndRow
+			OPTION (RECOMPILE);
+
+		IF @filteredUsersCount = 0 AND @filteredTypesCount = 0
+			WITH journalItems
+			AS (SELECT ROW_NUMBER() OVER (ORDER BY j.IsPinned DESC, j.JournalId DESC) AS RowNumber, j.JournalId ,
+					{databaseOwner}[{objectQualifier}CoreMessagingGetObjectKeyPrefix](j.ObjectKey) + '%' AS ObjectKeyPrefix
+				FROM {databaseOwner}{objectQualifier}Journal AS j WITH (NOLOCK)
+				WHERE j.PortalId = @PortalId
+				  AND j.GroupId = @GroupId
+				  AND EXISTS (SELECT TOP(1) 1 FROM {databaseOwner}{objectQualifier}Journal_Security WITH (NOLOCK) WHERE JournalId = j.JournalId AND SecurityKey IN (SELECT SecKey FROM @securityFilter))
+				  AND (@JournalTypeId IS NULL OR @JournalTypeId = 0 OR j.JournalTypeId = @JournalTypeId )
+				  AND (j.JournalId > @NewerThanJournalId)
+				  AND ((@OlderThanJournalId > 0 AND j.JournalId < @OlderThanJournalId) OR (@OlderThanJournalId <= 0 AND j.JournalId > 0))
+				  AND ((@IncludeAllItems = 0 AND j.IsDeleted = @IsDeleted) OR (@IncludeAllItems = 1))
+			)
+			INSERT INTO @j_t(RowNumber, journalId, ObjectKeyPrefix)
+				SELECT RowNumber, JournalId, ObjectKeyPrefix FROM journalItems
+				WHERE RowNumber BETWEEN @RowIndex AND @EndRow
+			OPTION (RECOMPILE);
+	END
+
+	DECLARE @privilege_jtypeid int, @badge_jtypeid int; -- JournalTypeIDs
+	SELECT TOP(1) @privilege_jtypeid = JournalTypeId FROM {databaseOwner}{objectQualifier}Journal_Types WHERE JournalType = 'privilege';
+	SELECT TOP(1) @badge_jtypeid     = JournalTypeId FROM {databaseOwner}{objectQualifier}Journal_Types WHERE JournalType = 'badge';
+
+	SELECT	DISTINCT ji.RowNumber, ji.JournalId, j.JournalTypeId, j.Title, j.Summary, j.UserId, j.DateCreated, j.DateUpdated,
+			j.ProfileId, j.GroupId, j.ObjectKey, j.AccessKey, jt.Icon, jt.JournalType, j.PortalId, j.ContentItemId,
+			j.IsDeleted, j.CommentsDisabled, j.CommentsHidden, j.IsPinned, "JournalOwnerId" = ISNULL(j.ProfileId, j.UserId), j.ItemData,
+			"SimilarCount" = CASE @CountSimilarEntries WHEN 0 THEN 0 ELSE(
+					CASE j.JournalTypeId WHEN @privilege_jtypeid THEN
+					(
+						SELECT COUNT(JournalId)
+						FROM {databaseOwner}{objectQualifier}Journal j2
+						WHERE j2.JournalTypeId = j.JournalTypeId AND j2.ObjectKey LIKE ji.ObjectKeyPrefix AND j2.PortalId = @PortalId
+					)
+					WHEN @badge_jtypeid THEN
+					(
+						SELECT COUNT(JournalId)
+						FROM {databaseOwner}{objectQualifier}Journal j2
+						WHERE j2.JournalTypeId = j.JournalTypeId AND j2.ObjectKey LIKE ji.ObjectKeyPrefix AND j2.PortalId = @PortalId
+					)
+					ELSE
+					(
+						SELECT COUNT(JournalId)
+						FROM {databaseOwner}{objectQualifier}Journal j2
+						WHERE (j2.ContentItemId = j.ContentItemId AND j2.JournalTypeId = j.JournalTypeId)
+					) END
+				) END,
+			"JournalXML" = CAST(jd.JournalXML AS NVARCHAR(MAX)),
+			"JournalOwner" = '<entity><id>' + CAST(r.RoleId AS nvarchar(15)) + '</id><name><![CDATA[' + r.RoleName + ']]></name></entity>',
+			"JournalAuthor" =
+					CASE WHEN ISNULL(u.UserId,-1) > 0 AND u.IsDeleted = 0 AND ISNULL(up.IsDeleted, 0) = 0 AND u.IsSuperUser = 0 THEN
+						'<entity><id>' + CAST(u.UserId AS nvarchar(15)) + '</id><name><![CDATA[' + u.DisplayName + ']]></name></entity>'
+					ELSE
+						'<entity><id>-1</id><name><![CDATA[Anonymous]]></name></entity>'
+					END,
+			"Profile" =
+					CASE WHEN j.ProfileId > 0 THEN
+						'<entity><id>' + CAST(p.UserId AS nvarchar(15)) + '</id><name><![CDATA[' + p.DisplayName + ']]></name><vanity></vanity></entity>'
+					ELSE
+						''
+					END
+	FROM	@j_t AS ji
+				INNER JOIN {databaseOwner}{objectQualifier}Journal AS j WITH (NOLOCK) ON j.JournalId = ji.JournalId
+				INNER JOIN {databaseOwner}{objectQualifier}Journal_Types AS jt WITH (NOLOCK) ON jt.JournalTypeId = j.JournalTypeId
+				INNER JOIN {databaseOwner}{objectQualifier}Roles AS r WITH (NOLOCK) ON j.GroupId = r.RoleId
+				LEFT OUTER JOIN {databaseOwner}{objectQualifier}Journal_Data AS jd WITH (NOLOCK) on jd.JournalId = j.JournalId
+				LEFT OUTER JOIN {databaseOwner}{objectQualifier}Users AS p WITH (NOLOCK) ON j.ProfileId = p.UserID
+				LEFT OUTER JOIN {databaseOwner}{objectQualifier}Users AS u WITH (NOLOCK) ON j.UserId = u.UserID
+				LEFT OUTER JOIN {databaseOwner}{objectQualifier}UserPortals AS up WITH (NOLOCK) ON up.UserId = u.UserID
+		ORDER BY ji.RowNumber ASC;
+END
+GO
+
+
+
+/********************************************************
+ * SPROC: ActivityStream_Post_GetByJournalTypeId_ContentItemId
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}ActivityStream_Post_GetByJournalTypeId_ContentItemId]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}ActivityStream_Post_GetByJournalTypeId_ContentItemId]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}ActivityStream_Post_GetByJournalTypeId_ContentItemId]
+	@PortalId int,
+	@ModuleId int,
+	@JournalTypeId int,
+	@ContentItemId int,
+	@CurrentUserId int,
+	@IncludeAllItems int = 0,
+	@IsDeleted int = 0,
+	@RowIndex int = 1,
+	@MaxRows int = 0,
+	@NewerThanJournalId int = -1,
+	@ObjectKey NVARCHAR(255) = ''
+AS
+BEGIN
+	IF @RowIndex = 0 BEGIN SET @RowIndex = 1 END
+	DECLARE @EndRow int SET @EndRow = @RowIndex + @MaxRows - 1;
+
+	DECLARE @privilege_jtypeid int, @badge_jtypeid int; -- JournalTypeIDs
+	SELECT TOP(1) @privilege_jtypeid = JournalTypeId FROM {databaseOwner}{objectQualifier}Journal_Types WHERE JournalType = 'privilege';
+	SELECT TOP(1) @badge_jtypeid     = JournalTypeId FROM {databaseOwner}{objectQualifier}Journal_Types WHERE JournalType = 'badge';
+
+	DECLARE @ObjectKeyPrefix NVARCHAR(255) = {databaseOwner}[{objectQualifier}CoreMessagingGetObjectKeyPrefix](@ObjectKey) + '%'
+
+	IF (@JournalTypeId = @privilege_jtypeid OR @JournalTypeId = @badge_jtypeid)
+	BEGIN
+		DECLARE @RegisteredUsersRole int
+		SELECT @RegisteredUsersRole = roleID FROM {databaseOwner}{objectQualifier}Roles WITH (NOLOCK)
+		WHERE RoleName = 'Registered Users' AND PortalID = @PortalId
+
+		--GET all User Permissions
+		DECLARE @tblPermissions TABLE(seckey nvarchar(200))
+		INSERT INTO @tblPermissions(seckey) SELECT * FROM {databaseOwner}[{objectQualifier}Journal_User_Permissions](@PortalId, @CurrentUserId, @RegisteredUsersRole)
+
+		DECLARE @j_t TABLE(RowNumber INT, journalid INT, ObjectKeyPrefix NVARCHAR(255))
+		DECLARE @j TABLE(journalid int)
+		DECLARE @j2 TABLE(journalid int)
+
+		--get all JournalIds that don't have 'E' permissions but meet all other criteria
+		--------------------------------------------------------------------------------
+		IF (SELECT COUNT(*) FROM @tblPermissions) > 1
+		BEGIN
+
+			INSERT INTO @j
+			SELECT DISTINCT j.Journalid FROM {databaseOwner}{objectQualifier}Journal_Security j WITH (NOLOCK)
+			WHERE NOT EXISTS (SELECT 1 FROM {databaseOwner}{objectQualifier}Journal_Security  WITH (NOLOCK) WHERE JournalId=j.journalId AND SecurityKey='E');
+
+			IF EXISTS (Select 1 FROM @j WHERE Journalid >0)
+			BEGIN
+				INSERT INTO @j2
+						SELECT DISTINCT jF.JournalId FROM @j AS jF
+							INNER JOIN {databaseOwner}{objectQualifier}Journal_Security AS s WITH (NOLOCK) ON s.JournalId = jF.journalId
+							INNER JOIN @tblPermissions p ON s.SecurityKey = p.seckey
+			END
+		END
+
+		;WITH journalItems
+		AS (SELECT ROW_NUMBER() OVER (ORDER BY j.IsPinned DESC, j.JournalId DESC) As RowNumber,
+			j.JournalId, {databaseOwner}[{objectQualifier}CoreMessagingGetObjectKeyPrefix](j.ObjectKey) + '%' AS ObjectKeyPrefix
+			FROM {databaseOwner}{objectQualifier}Journal AS j WITH (NOLOCK)
+			WHERE
+				(j.JournalTypeId = @JournalTypeId AND j.ObjectKey like @ObjectKeyPrefix AND j.PortalId = @PortalId)
+				AND ((j.journalId IN (SELECT * from @j2)) OR
+					(EXISTS (SELECT 1 FROM {databaseOwner}{objectQualifier}Journal_Security WITH (NOLOCK) WHERE JournalId = j.JournalId AND SecurityKey='E')))
+				AND (j.JournalId > @NewerThanJournalId)
+				AND ((@IncludeAllItems = 0 AND j.IsDeleted = @IsDeleted) OR (@IncludeAllItems = 1))
+			)
+		INSERT INTO @j_t(RowNumber, journalId, ObjectKeyPrefix)
+		SELECT RowNumber, JournalId, ObjectKeyPrefix FROM journalitems
+		WHERE RowNumber BETWEEN @RowIndex AND @EndRow
+
+		SELECT	DISTINCT
+				ji.RowNumber, j.JournalId, j.JournalTypeId, j.Title, j.Summary, j.UserId, j.DateCreated, j.DateUpdated,
+				j.ProfileId, j.GroupId, j.ObjectKey, j.AccessKey, jt.Icon, jt.JournalType, j.PortalId, j.ContentItemId,
+				j.IsDeleted, j.CommentsDisabled, j.CommentsHidden, j.IsPinned, "JournalOwnerId" = ISNULL(j.ProfileId, j.UserId), j.ItemData,
+				0 SimilarCount,
+				"JournalXML" = CAST(jd.JournalXML AS NVARCHAR(MAX)),
+				"JournalOwner" = '<entity><id>' + CAST(p.UserId AS nvarchar(15)) + '</id><name><![CDATA[' + p.DisplayName + ']]></name></entity>',
+				"JournalAuthor" =
+						CASE WHEN ISNULL(u.UserId,-1) > 0 AND u.IsDeleted = 0 AND ISNULL(up.IsDeleted, 0) = 0 AND u.IsSuperUser = 0 THEN
+							'<entity><id>' + CAST(u.UserId AS nvarchar(15)) + '</id><name><![CDATA[' + u.DisplayName + ']]></name></entity>'
+						ELSE
+							'<entity><id>-1</id><name><![CDATA[Anonymous]]></name></entity>'
+						END,
+				"Profile" =
+					CASE WHEN j.ProfileId > 0 THEN
+						'<entity><id>' + CAST(p.UserId AS nvarchar(15)) + '</id><name><![CDATA[' + p.DisplayName + ']]></name><vanity></vanity></entity>'
+					ELSE
+						''
+					END
+		FROM	@j_t AS ji
+					INNER JOIN {databaseOwner}{objectQualifier}Journal AS j WITH (NOLOCK) ON j.JournalId = ji.JournalId
+					INNER JOIN {databaseOwner}{objectQualifier}Journal_Types AS jt WITH (NOLOCK) ON jt.JournalTypeId = j.JournalTypeId
+					INNER JOIN {databaseOwner}{objectQualifier}Journal_Security AS js WITH (NOLOCK) ON js.JournalId = j.JournalId
+					INNER JOIN {databaseOwner}{objectQualifier}Journal_User_Permissions(@PortalId, @CurrentUserId, @RegisteredUsersRole) AS t
+						ON t.seckey = js.SecurityKey
+					LEFT OUTER JOIN	{databaseOwner}{objectQualifier}Journal_Data AS jd WITH (NOLOCK) ON jd.JournalId = j.JournalId
+					LEFT OUTER JOIN {databaseOwner}{objectQualifier}Users AS p WITH (NOLOCK) ON j.ProfileId = p.UserID
+					LEFT OUTER JOIN	{databaseOwner}{objectQualifier}Users AS u WITH (NOLOCK) ON j.UserId = u.UserID
+					LEFT OUTER JOIN {databaseOwner}{objectQualifier}UserPortals AS up WITH (NOLOCK) ON up.UserId = u.UserID
+		ORDER by ji.RowNumber ASC
+
+	END
+	ELSE
+	BEGIN
+		SELECT *
+		FROM (
+			SELECT *,  ROW_NUMBER() OVER (ORDER BY IsPinned DESC, JournalId DESC) as RowNumber
+			FROM (
+				SELECT	
+						MAX(j.JournalId) JournalId, j.JournalTypeId JournalTypeId, MAX(j.Title) Title, MAX(j.Summary) Summary, j.UserId UserId, MAX(j.DateCreated) DateCreated, 
+						MAX(j.DateUpdated) DateUpdated,
+						MAX(j.ProfileId) ProfileId, MAX(j.GroupId) GroupId, MAX(j.ObjectKey) ObjectKey, CAST(MAX(CAST(j.AccessKey AS BINARY(16))) AS UNIQUEIDENTIFIER) AccessKey, MAX(jt.Icon) Icon, 
+						MAX(jt.JournalType) JournalType, MAX(j.PortalId) PortalId, j.ContentItemId,
+						MIN(CASE WHEN j.IsDeleted = 0 THEN 0 ELSE 1 END) AS IsDeleted, 
+						MIN(CASE WHEN j.CommentsDisabled = 0 THEN 0 ELSE 1 END) AS CommentsDisabled, 
+						MIN(CASE WHEN j.CommentsHidden = 0 THEN 0 ELSE 1 END) AS CommentsHidden, 
+						MIN(CASE WHEN j.IsPinned = 0 THEN 0 ELSE 1 END) AS IsPinned, 
+						"JournalOwnerId" = ISNULL(MAX(j.ProfileId), j.UserId), MAX(j.ItemData) ItemData,
+						0 SimilarCount,
+						"JournalXML" = MAX(CAST(jd.JournalXML AS NVARCHAR(MAX))),
+						"JournalOwner" = '<entity><id>' + CAST(MAX(p.UserId) AS nvarchar(15)) + '</id><name><![CDATA[' + MAX(p.DisplayName) + ']]></name></entity>',
+						"JournalAuthor" = 
+								CASE WHEN ISNULL(MAX(u.UserId),-1) > 0 AND 
+									MAX(CASE WHEN u.IsDeleted = 0 THEN 0 ELSE 1 END) = 0 AND 
+									MAX(CASE WHEN ISNULL(up.IsDeleted, 0) = 0 THEN 0 ELSE 1 END) = 0 AND 
+									MAX(CASE WHEN u.IsSuperUser  = 0 THEN 0 ELSE 1 END) = 0 THEN
+									'<entity><id>' + CAST(MAX(u.UserId) AS nvarchar(15)) + '</id><name><![CDATA[' + MAX(u.DisplayName) + ']]></name></entity>'
+								ELSE
+									'<entity><id>-1</id><name><![CDATA[Anonymous]]></name></entity>'
+								END,
+						"Profile" =
+							CASE WHEN MAX(j.ProfileId) > 0 THEN
+								'<entity><id>' + CAST(MAX(p.UserId) AS nvarchar(15)) + '</id><name><![CDATA[' + MAX(p.DisplayName) + ']]></name><vanity></vanity></entity>'
+							ELSE
+								'' 
+							END
+				FROM	{databaseOwner}{objectQualifier}Journal AS j WITH (NOLOCK)
+							INNER JOIN {databaseOwner}{objectQualifier}Journal_Types AS jt WITH (NOLOCK) ON jt.JournalTypeId = j.JournalTypeId
+							INNER JOIN {databaseOwner}{objectQualifier}Journal_Security AS js WITH (NOLOCK) ON js.JournalId = j.JournalId
+							INNER JOIN {databaseOwner}{objectQualifier}Journal_User_Permissions(@PortalId, @CurrentUserId, @RegisteredUsersRole) AS t
+								ON t.seckey = js.SecurityKey
+							LEFT OUTER JOIN	{databaseOwner}{objectQualifier}Journal_Data AS jd WITH (NOLOCK) ON jd.JournalId = j.JournalId
+							LEFT OUTER JOIN {databaseOwner}{objectQualifier}Users AS p WITH (NOLOCK) ON j.ProfileId = p.UserID
+							LEFT OUTER JOIN	{databaseOwner}{objectQualifier}Users AS u WITH (NOLOCK) ON j.UserId = u.UserID
+							LEFT OUTER JOIN {databaseOwner}{objectQualifier}UserPortals AS up WITH (NOLOCK) ON up.UserId = u.UserID
+				WHERE (j.JournalTypeId = @JournalTypeId AND j.ContentItemId = @ContentItemId)
+				  AND (j.JournalId > @NewerThanJournalId)
+				  AND ((@IncludeAllItems = 0 AND j.IsDeleted = @IsDeleted) OR (@IncludeAllItems = 1))
+			    GROUP BY j.JournalTypeId, j.ContentItemId, j.UserId
+				) AS Results
+			) AS PagedResults
+		WHERE @MaxRows <= 0 OR (RowNumber BETWEEN @RowIndex AND @EndRow)
+	END
+END
+GO
+
+
+
+/********************************************************
+ * SPROC: ActivityStream_ListForSummary
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}ActivityStream_ListForSummary]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}ActivityStream_ListForSummary]
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}ActivityStream_ListForSummary
+	@PortalId int,
+	@ModuleId int,
+	@CurrentUserId int,
+	@JournalTypeId int,
+	@ActivityFilterId int,
+	@RowIndex int,
+	@MaxRows int,
+	@IncludeAllItems int = 0,
+	@IsDeleted int = 0,
+	@OlderThanJournalId int = -1,
+	@NewerThanJournalId int = -1,
+	@CountSimilarEntries bit = 1
+AS
+BEGIN
+	IF @RowIndex = 0 BEGIN SET @RowIndex = 1 END
+	DECLARE @EndRow int SET @EndRow = @RowIndex + @MaxRows - 1;
+
+	-- SET FILTERS ********
+	DECLARE @filteredTypes TABLE(filterId int)
+	DECLARE @filteredTypes_ini TABLE(filterId int)
+	DECLARE @filteredUsers TABLE(userId int)
+	DECLARE @filteredTypesCount int
+	DECLARE @filteredUsersCount int
+
+	SET @filteredTypesCount = 0
+	SET @filteredUsersCount = 0
+
+	IF @ActivityFilterId IS NULL SET @ActivityFilterId = 0
+	IF @JournalTypeId IS NULL SET @JournalTypeId = 0
+
+	IF (@ActivityFilterId > 0)
+	BEGIN
+		-- FilterID's
+		INSERT INTO @filteredTypes_ini (filterId)
+		SELECT FilterValue FROM {databaseOwner}{objectQualifier}ActivityStream_FilterItems WITH (NOLOCK)
+			WHERE FilterId = @ActivityFilterId AND FilterKey = 'journalType'
+		OPTION (RECOMPILE);
+
+		SELECT @filteredTypesCount = COUNT(*) FROM @filteredTypes_ini
+
+		-- UserId's
+		INSERT INTO @filteredUsers (userId)
+			SELECT FilterValue FROM {databaseOwner}{objectQualifier}ActivityStream_FilterItems WITH (NOLOCK)
+			WHERE FilterId = @ActivityFilterId AND FilterKey = 'user'
+		OPTION (RECOMPILE);
+
+		-- UserId's FROM GroupId's
+		INSERT INTO @filteredUsers (userId)
+			SELECT UserId FROM {databaseOwner}{objectQualifier}UserRoles AS ur WITH (NOLOCK)
+				INNER JOIN {databaseOwner}{objectQualifier}ActivityStream_FilterItems AS f WITH (NOLOCK) ON f.FilterValue = ur.RoleID AND f.FilterKey = 'group'
+			WHERE f.FilterId = @ActivityFilterId
+		OPTION (RECOMPILE);
+
+		SELECT @filteredUsersCount = COUNT(*) FROM @filteredUsers
+	END
+
+	IF EXISTS(SELECT 1 FROM {databaseOwner}{objectQualifier}Journal_TypeFilters WITH (NOLOCK) WHERE ModuleId = @ModuleId)
+	BEGIN
+		IF @filteredTypesCount > 0
+		BEGIN
+			INSERT INTO @filteredTypes(filterId)
+				SELECT filterId from @filteredTypes_ini
+				INTERSECT
+				SELECT JournalTypeId FROM {databaseOwner}{objectQualifier}Journal_TypeFilters WITH (NOLOCK) WHERE ModuleId = @ModuleId
+			OPTION (RECOMPILE);
+
+			SELECT @filteredTypesCount = COUNT(*) FROM @filteredTypes
+		END
+		ELSE
+		BEGIN
+			INSERT INTO @filteredTypes(filterId)
+				SELECT JournalTypeId FROM {databaseOwner}{objectQualifier}Journal_TypeFilters WITH (NOLOCK) WHERE ModuleId = @ModuleId
+			OPTION (RECOMPILE);
+
+			SELECT @filteredTypesCount = COUNT(*) FROM @filteredTypes
+		END
+	END
+	ELSE
+	BEGIN
+		INSERT INTO @filteredTypes(filterId)
+			SELECT * FROM @filteredTypes_ini
+		OPTION (RECOMPILE);
+	END
+
+	-- ********************
+	DECLARE @RegisteredUsersRole int
+
+	SELECT @RegisteredUsersRole = roleID FROM {databaseOwner}{objectQualifier}Roles WITH (NOLOCK)
+	WHERE RoleName = 'Registered Users' AND PortalID = @PortalId
+
+	--GET all User Permissions
+	DECLARE @tblPermissions TABLE(seckey nvarchar(200))
+	INSERT INTO @tblPermissions(seckey)
+		SELECT * FROM {databaseOwner}{objectQualifier}Journal_User_Permissions(@PortalId, @CurrentUserId, @RegisteredUsersRole)
+	OPTION (RECOMPILE);
+
+	DECLARE @j_t TABLE(RowNumber INT, journalid INT, ObjectKeyPrefix NVARCHAR(255))
+	DECLARE @j TABLE(journalid INT)
+	DECLARE @j2 TABLE(journalid INT)
+
+	--get all JournalIds that don't have 'E' permissions but meet all other criteria
+	--------------------------------------------------------------------------------
+	IF (SELECT COUNT(*) FROM @tblPermissions) > 1
+	BEGIN
+
+		INSERT INTO @j
+			SELECT DISTINCT j.Journalid FROM {databaseOwner}{objectQualifier}Journal_Security j WITH (NOLOCK)
+			WHERE NOT EXISTS (SELECT 1 FROM {databaseOwner}{objectQualifier}Journal_Security WITH (NOLOCK) WHERE JournalId=j.journalId AND SecurityKey='E')
+		OPTION (RECOMPILE);
+
+		IF EXISTS (Select 1 FROM @j WHERE Journalid >0)
+		BEGIN
+			INSERT INTO @j2
+				SELECT DISTINCT jF.JournalId FROM @j AS jF
+					INNER JOIN {databaseOwner}{objectQualifier}Journal_Security AS s WITH (NOLOCK) ON s.JournalId = jF.journalId
+					INNER JOIN @tblPermissions p ON s.SecurityKey = p.seckey
+			OPTION (RECOMPILE);
+		END
+	END
+
+	IF @filteredUsersCount > 0 AND @filteredTypesCount > 0
+		WITH journalItems
+		AS (SELECT ROW_NUMBER() OVER (ORDER BY j.IsPinned DESC, j.JournalId DESC) As RowNumber, j.JournalId,
+			{databaseOwner}[{objectQualifier}CoreMessagingGetObjectKeyPrefix](j.ObjectKey) + '%' AS ObjectKeyPrefix
+			FROM {databaseOwner}{objectQualifier}Journal AS j WITH (NOLOCK)
+			WHERE j.PortalId = @PortalId
+			  AND j.JournalTypeId IN (Select filterId FROM @filteredTypes)
+			  AND j.UserId IN (SELECT userId from @filteredUsers)
+			  AND ((j.journalId IN (SELECT * from @j2)) OR
+					(EXISTS (SELECT TOP(1) 1 FROM {databaseOwner}{objectQualifier}Journal_Security WITH (NOLOCK) WHERE JournalId = j.JournalId AND SecurityKey='E')))
+			  AND (@JournalTypeId IS NULL OR @JournalTypeId = 0 OR j.JournalTypeId = @JournalTypeId )
+			  AND (j.JournalId > @NewerThanJournalId)
+			  AND ((@OlderThanJournalId > 0 AND j.JournalId < @OlderThanJournalId) OR (@OlderThanJournalId <= 0 AND j.JournalId > 0))
+			  AND ((@IncludeAllItems = 0 AND j.IsDeleted = @IsDeleted) OR (@IncludeAllItems = 1))
+		)
+		INSERT INTO @j_t(RowNumber, journalId, ObjectKeyPrefix)
+			SELECT RowNumber, JournalId, ObjectKeyPrefix FROM journalitems
+			WHERE RowNumber BETWEEN @RowIndex AND @EndRow
+		OPTION (RECOMPILE);
+
+	IF @filteredUsersCount = 0 AND @filteredTypesCount > 0
+		WITH journalItems
+		AS (SELECT ROW_NUMBER() OVER (ORDER BY j.IsPinned DESC, j.JournalId DESC) As RowNumber, j.JournalId,
+			{databaseOwner}[{objectQualifier}CoreMessagingGetObjectKeyPrefix](j.ObjectKey) + '%' AS ObjectKeyPrefix
+			FROM {databaseOwner}{objectQualifier}Journal AS j WITH (NOLOCK)
+			WHERE j.PortalId = @PortalId
+			  AND j.JournalTypeId IN (Select filterId FROM @filteredTypes)
+			  AND ((j.journalId IN (SELECT * from @j2)) OR
+					(EXISTS (SELECT TOP(1) 1 FROM {databaseOwner}{objectQualifier}Journal_Security WITH (NOLOCK) WHERE JournalId = j.JournalId AND SecurityKey='E')))
+			  AND (@JournalTypeId IS NULL OR @JournalTypeId = 0 OR j.JournalTypeId = @JournalTypeId )
+			  AND (j.JournalId > @NewerThanJournalId)
+			  AND ((@OlderThanJournalId > 0 AND j.JournalId < @OlderThanJournalId) OR (@OlderThanJournalId <= 0 AND j.JournalId > 0))
+			  AND ((@IncludeAllItems = 0 AND j.IsDeleted = @IsDeleted) OR (@IncludeAllItems = 1))
+		)
+		INSERT INTO @j_t(RowNumber, journalId, ObjectKeyPrefix)
+			SELECT RowNumber, JournalId, ObjectKeyPrefix FROM journalitems
+			WHERE RowNumber BETWEEN @RowIndex AND @EndRow
+		OPTION (RECOMPILE);
+
+	IF @filteredUsersCount > 0 AND @filteredTypesCount = 0
+		WITH journalItems
+		AS (SELECT ROW_NUMBER() OVER (ORDER BY j.IsPinned DESC, j.JournalId DESC) As RowNumber, j.JournalId,
+			{databaseOwner}[{objectQualifier}CoreMessagingGetObjectKeyPrefix](j.ObjectKey) + '%' AS ObjectKeyPrefix
+			FROM {databaseOwner}{objectQualifier}Journal AS j WITH (NOLOCK)
+			WHERE j.PortalId = @PortalId
+			  AND j.UserId IN (SELECT userId from @filteredUsers)
+			  AND ((j.journalId IN (SELECT * from @j2)) OR
+					(EXISTS (SELECT TOP(1) 1 FROM {databaseOwner}{objectQualifier}Journal_Security WITH (NOLOCK) WHERE JournalId = j.JournalId AND SecurityKey='E')))
+			  AND (@JournalTypeId IS NULL OR @JournalTypeId = 0 OR j.JournalTypeId = @JournalTypeId )
+			  AND (j.JournalId > @NewerThanJournalId)
+			  AND ((@OlderThanJournalId > 0 AND j.JournalId < @OlderThanJournalId) OR (@OlderThanJournalId <= 0 AND j.JournalId > 0))
+			  AND ((@IncludeAllItems = 0 AND j.IsDeleted = @IsDeleted) OR (@IncludeAllItems = 1))
+		)
+		INSERT INTO @j_t(RowNumber, journalId, ObjectKeyPrefix)
+			SELECT RowNumber, JournalId, ObjectKeyPrefix FROM journalitems
+			WHERE RowNumber BETWEEN @RowIndex AND @EndRow
+		OPTION (RECOMPILE);
+
+	IF @filteredUsersCount = 0 AND @filteredTypesCount = 0
+		WITH journalItems
+		AS (SELECT ROW_NUMBER() OVER (ORDER BY j.IsPinned DESC, j.JournalId DESC) As RowNumber, j.JournalId,
+			{databaseOwner}[{objectQualifier}CoreMessagingGetObjectKeyPrefix](j.ObjectKey) + '%' AS ObjectKeyPrefix
+			FROM {databaseOwner}{objectQualifier}Journal AS j WITH (NOLOCK)
+			WHERE j.PortalId = @PortalId
+			  AND ((j.journalId IN (SELECT * from @j2)) OR
+					(EXISTS (SELECT TOP(1) 1 FROM {databaseOwner}{objectQualifier}Journal_Security WITH (NOLOCK) WHERE JournalId = j.JournalId AND SecurityKey='E')))
+			  AND (@JournalTypeId IS NULL OR @JournalTypeId = 0 OR j.JournalTypeId = @JournalTypeId )
+			  AND (j.JournalId > @NewerThanJournalId)
+			  AND ((@OlderThanJournalId > 0 AND j.JournalId < @OlderThanJournalId) OR (@OlderThanJournalId <= 0 AND j.JournalId > 0))
+			  AND ((@IncludeAllItems = 0 AND j.IsDeleted = @IsDeleted) OR (@IncludeAllItems = 1))
+		)
+		INSERT INTO @j_t(RowNumber, journalId, ObjectKeyPrefix)
+			SELECT RowNumber, JournalId, ObjectKeyPrefix FROM journalitems
+			WHERE RowNumber BETWEEN @RowIndex AND @EndRow
+		OPTION (RECOMPILE);
+
+	DECLARE @privilege_jtypeid int, @badge_jtypeid int; -- JournalTypeIDs
+	SELECT TOP(1) @privilege_jtypeid = JournalTypeId FROM {databaseOwner}{objectQualifier}Journal_Types WHERE JournalType = 'privilege';
+	SELECT TOP(1) @badge_jtypeid     = JournalTypeId FROM {databaseOwner}{objectQualifier}Journal_Types WHERE JournalType = 'badge';
+
+	SELECT	DISTINCT ji.RowNumber, ji.JournalId, j.JournalTypeId, j.Title, j.Summary, j.UserId, j.DateCreated, j.DateUpdated,
+			j.ProfileId, j.GroupId, j.ObjectKey, j.AccessKey, jt.Icon, jt.JournalType, j.PortalId, j.ContentItemId,
+			j.IsDeleted, j.CommentsDisabled, j.CommentsHidden, j.IsPinned, "JournalOwnerId" = ISNULL(j.ProfileId, j.UserId), j.ItemData,
+			"SimilarCount" = CASE @CountSimilarEntries WHEN 0 THEN 0 ELSE(
+					CASE j.JournalTypeId WHEN @privilege_jtypeid THEN
+					(
+						SELECT COUNT(JournalId)
+						FROM {databaseOwner}{objectQualifier}Journal j2
+						WHERE j2.JournalTypeId = j.JournalTypeId AND j2.ObjectKey LIKE ji.ObjectKeyPrefix AND j2.PortalId = @PortalId
+					)
+					WHEN @badge_jtypeid THEN
+					(
+						SELECT COUNT(JournalId)
+						FROM {databaseOwner}{objectQualifier}Journal j2
+						WHERE j2.JournalTypeId = j.JournalTypeId AND j2.ObjectKey LIKE ji.ObjectKeyPrefix AND j2.PortalId = @PortalId
+					)
+					ELSE
+					(
+						SELECT COUNT(JournalId)
+						FROM {databaseOwner}{objectQualifier}Journal j2
+						WHERE (j2.ContentItemId = j.ContentItemId AND j2.JournalTypeId = j.JournalTypeId)
+					) END
+				) END,
+			"JournalXML" = CAST(jd.JournalXML AS NVARCHAR(MAX)),
+			"JournalOwner" = '<entity><id>' + CAST(p.UserId AS nvarchar(15)) + '</id><name><![CDATA[' + p.DisplayName + ']]></name></entity>',
+			"JournalAuthor" =
+					CASE WHEN ISNULL(u.UserId,-1) > 0 AND u.IsDeleted = 0 AND ISNULL(up.IsDeleted, 0) = 0 AND u.IsSuperUser = 0 THEN
+						'<entity><id>' + CAST(u.UserId AS nvarchar(15)) + '</id><name><![CDATA[' + u.DisplayName + ']]></name></entity>'
+					ELSE
+						'<entity><id>-1</id><name><![CDATA[Anonymous]]></name></entity>'
+					END,
+			"Profile" =
+				CASE WHEN j.ProfileId > 0 THEN
+					'<entity><id>' + CAST(p.UserId AS nvarchar(15)) + '</id><name><![CDATA[' + p.DisplayName + ']]></name><vanity></vanity></entity>'
+				ELSE
+					''
+				END
+		FROM	@j_t AS ji
+				INNER JOIN {databaseOwner}{objectQualifier}Journal AS j WITH (NOLOCK) ON j.JournalId = ji.JournalId
+				INNER JOIN {databaseOwner}{objectQualifier}Journal_Types AS jt WITH (NOLOCK) ON jt.JournalTypeId = j.JournalTypeId
+				LEFT OUTER JOIN	{databaseOwner}{objectQualifier}Journal_Data AS jd WITH (NOLOCK) ON jd.JournalId = j.JournalId
+				LEFT OUTER JOIN {databaseOwner}{objectQualifier}Users AS p WITH (NOLOCK) ON j.ProfileId = p.UserID
+				LEFT OUTER JOIN	{databaseOwner}{objectQualifier}Users AS u WITH (NOLOCK) ON j.UserId = u.UserID
+				LEFT OUTER JOIN {databaseOwner}{objectQualifier}UserPortals AS up WITH (NOLOCK) ON up.UserId = u.UserID
+		ORDER BY ji.RowNumber ASC;
+END
+GO
+
+/********************************************************
+ * Index: IX_Journal_IsPinned_JournalId
+ ********************************************************/
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Journal]')
+				AND name = N'IX_{objectQualifier}Journal_IsPinned_JournalId')
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Journal_IsPinned_JournalId]
+		ON {databaseOwner}[{objectQualifier}Journal]
+		(
+			[IsPinned] DESC,
+			[JournalId] DESC
+		)
+GO

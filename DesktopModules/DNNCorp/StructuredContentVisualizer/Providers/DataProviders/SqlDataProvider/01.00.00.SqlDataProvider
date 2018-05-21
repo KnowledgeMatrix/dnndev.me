@@ -1,0 +1,81 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+/***** Create StructuredContent_HtmlPro_ContentItems Table *****/
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}StructuredContent_Visualizers]') AND type in (N'U'))
+BEGIN   
+	CREATE TABLE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers]
+	(
+		[Id] int IDENTITY(1,1) NOT NULL,
+		[ItemId] uniqueidentifier NOT NULL,
+		[ModuleId] int NOT NULL,
+		[Type] nvarchar(100) NOT NULL,
+		[CreationUtcDateTime] datetime NOT NULL,
+		[LastUpdateUtcDateTime] datetime NOT NULL,
+		CONSTRAINT [PK_{objectQualifier}StructuredContent_Visualizer_Usage] PRIMARY KEY CLUSTERED ([Id] ASC)
+	) ON [PRIMARY]
+	
+	CREATE UNIQUE INDEX IX_{objectQualifier}StructuredContent_Visualizers_ItemId_ModuleId
+		ON {databaseOwner}[{objectQualifier}StructuredContent_Visualizers] ([ItemId], [ModuleId])
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StructuredContent_Visualizers_GetModuleIdsByItemId]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_GetModuleIdsByItemId]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_GetModuleIdsByItemId]
+	@ItemId uniqueidentifier
+AS 
+	SELECT [ModuleId]
+	FROM    {databaseOwner}[{objectQualifier}StructuredContent_Visualizers]
+	WHERE   ItemId = @ItemId
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StructuredContent_Visualizers_GetItemsByModuleId]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_GetItemsByModuleId]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_GetItemsByModuleId]
+	@ModuleId int
+AS 
+	SELECT [ItemId], [Type]
+	FROM    {databaseOwner}[{objectQualifier}StructuredContent_Visualizers]
+	WHERE   ModuleId = @ModuleId
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StructuredContent_Visualizers_Add]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_Add]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_Add]
+	@ItemId uniqueidentifier,
+	@Type nvarchar(100),
+	@ModuleId int
+AS 
+	INSERT INTO {databaseOwner}[{objectQualifier}StructuredContent_Visualizers]
+			([ItemId], [ModuleId], [Type], [CreationUtcDateTime], [LastUpdateUtcDateTime])
+	VALUES  (@ItemId, @ModuleId, @Type, GetUtcDate(), GetUtcDate())
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StructuredContent_Visualizers_DeleteByModuleId]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_DeleteByModuleId]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_DeleteByModuleId]
+	@ModuleId int
+AS 
+	DELETE FROM {databaseOwner}[{objectQualifier}StructuredContent_Visualizers]
+	WHERE ModuleId = @ModuleId
+GO
+
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/

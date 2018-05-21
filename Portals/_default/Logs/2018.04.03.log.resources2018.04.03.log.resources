@@ -1,0 +1,9 @@
+2018-04-03 10:06:08.176+05:30 [KM-WS152][D:5][T:52][ERROR] DotNetNuke.Web.Api.Internal.ServicesRoutingManager - EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes threw an exception.  A route named 'EasyDNNsimpleForum-Topic-1' is already in the route collection. Route names must be unique.
+Parameter name: name
+   at System.Web.Routing.RouteCollection.Add(String name, RouteBase item)
+   at System.Web.Http.RouteCollectionExtensions.MapHttpRoute(RouteCollection routes, String name, String routeTemplate, Object defaults, Object constraints, HttpMessageHandler handler)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRouteWithNamespace(String name, String url, Object defaults, Object constraints, String[] namespaces)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, Object defaults, Object constraints, String[] namespaces)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, String[] namespaces)
+   at EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes(IMapRoute mapRouteManager)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.LocateServicesAndMapRoutes()

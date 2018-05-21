@@ -1,0 +1,26 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StructuredContent_Visualizers_GetModuleSettings_ModifiedDate]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_GetModuleSettings_ModifiedDate]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_GetModuleSettings_ModifiedDate]
+	@ModuleId      INT,          
+    @SettingName   NVARCHAR(50) 
+AS 
+	SELECT LastModifiedOnDate		   
+	FROM  {databaseOwner}[{objectQualifier}ModuleSettings] 
+	WHERE ModuleID = @ModuleId AND SettingName = @SettingName
+GO
+
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/

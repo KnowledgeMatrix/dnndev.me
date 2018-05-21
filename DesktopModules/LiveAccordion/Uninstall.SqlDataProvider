@@ -1,0 +1,97 @@
+﻿/************************************************************/
+/*****              SQLDataProvider                     *****/
+/*****              LiveAccordion               *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+/****** Object:  Table {databaseOwner}[LiveAccordion]    Script Date: 06/19/2012 16:28:16 ******/
+IF  EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[DF_LiveAccordion_AutoHeight]') AND type = 'D')
+BEGIN
+ALTER TABLE {databaseOwner}[LiveAccordion] DROP CONSTRAINT [DF_LiveAccordion_AutoHeight]
+END
+GO
+IF  EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[DF_LiveAccordion_Height]') AND type = 'D')
+BEGIN
+ALTER TABLE {databaseOwner}[LiveAccordion] DROP CONSTRAINT [DF_LiveAccordion_Height]
+END
+GO
+IF  EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[DF_LiveAccordion_Animations]') AND type = 'D')
+BEGIN
+ALTER TABLE {databaseOwner}[LiveAccordion] DROP CONSTRAINT [DF_LiveAccordion_Animations]
+END
+GO
+IF  EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[DF_LiveAccordion_Width]') AND type = 'D')
+BEGIN
+ALTER TABLE {databaseOwner}[LiveAccordion] DROP CONSTRAINT [DF_LiveAccordion_Width]
+END
+GO
+IF  EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[DF_LiveAccordion_SelectOnMouseover]') AND type = 'D')
+BEGIN
+ALTER TABLE {databaseOwner}[LiveAccordion] DROP CONSTRAINT [DF_LiveAccordion_SelectOnMouseover]
+END
+GO
+IF  EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[DF_LiveAccordion_FxCustom]') AND type = 'D')
+BEGIN
+ALTER TABLE {databaseOwner}[LiveAccordion] DROP CONSTRAINT [DF_LiveAccordion_FxCustom]
+END
+GO
+IF  EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[DF_LiveAccordion_Persistence]') AND type = 'D')
+BEGIN
+ALTER TABLE {databaseOwner}[LiveAccordion] DROP CONSTRAINT [DF_LiveAccordion_Persistence]
+END
+GO
+IF  EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[DF_LiveAccordion_IntelligentPaneLink]') AND type = 'D')
+BEGIN
+ALTER TABLE {databaseOwner}[LiveAccordion] DROP CONSTRAINT [DF_LiveAccordion_IntelligentPaneLink]
+END
+GO
+IF  EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[DF_LiveAccordion_TrackClicks]') AND type = 'D')
+BEGIN
+ALTER TABLE {databaseOwner}[LiveAccordion] DROP CONSTRAINT [DF_LiveAccordion_TrackClicks]
+END
+GO
+IF  EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[DF_LiveAccordion_Collapsible]') AND type = 'D')
+BEGIN
+ALTER TABLE {databaseOwner}[LiveAccordion] DROP CONSTRAINT [DF_LiveAccordion_Collapsible]
+END
+GO
+IF  EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[DF_LiveAccordion_TrackCategory]') AND type = 'D')
+BEGIN
+ALTER TABLE {databaseOwner}[LiveAccordion] DROP CONSTRAINT [DF_LiveAccordion_TrackCategory]
+END
+GO
+IF  EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[DF_LiveAccordion_TrackAction]') AND type = 'D')
+BEGIN
+ALTER TABLE {databaseOwner}[LiveAccordion] DROP CONSTRAINT [DF_LiveAccordion_TrackAction]
+END
+GO
+IF  EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[DF_LiveAccordion_TrackLabel]') AND type = 'D')
+BEGIN
+ALTER TABLE {databaseOwner}[LiveAccordion] DROP CONSTRAINT [DF_LiveAccordion_TrackLabel]
+END
+GO
+IF  EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[DF_LiveAccordion_Skin]') AND type = 'D')
+BEGIN
+ALTER TABLE {databaseOwner}[LiveAccordion] DROP CONSTRAINT [DF_LiveAccordion_Skin]
+END
+GO
+IF  EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[DF_LiveAccordion_Theme]') AND type = 'D')
+BEGIN
+ALTER TABLE {databaseOwner}[LiveAccordion] DROP CONSTRAINT [DF_LiveAccordion_Theme]
+END
+GO
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[LiveAccordion]') AND type in (N'U'))
+DROP TABLE {databaseOwner}[LiveAccordion]
+GO
+/****** Object:  Table {databaseOwner}[LiveAccordion_Pane]    Script Date: 06/19/2012 16:28:16 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[LiveAccordion_Pane]') AND type in (N'U'))
+DROP TABLE {databaseOwner}[LiveAccordion_Pane]
+GO
+/****** Object:  Table {databaseOwner}[LiveAccordion_WorkflowLog]    Script Date: 01/20/2014 17:47:16 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[LiveAccordion_WorkflowLog]') AND type in (N'U'))
+DROP TABLE {databaseOwner}[LiveAccordion_WorkflowLog]
+GO

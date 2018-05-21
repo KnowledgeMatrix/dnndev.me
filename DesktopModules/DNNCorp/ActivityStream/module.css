@@ -1,0 +1,1564 @@
+﻿.actStr_loadingContainer {
+    position: relative;
+    background-image: none;
+}
+
+    .actStr_loadingContainer.loading:after {
+        background-image: url('../../../Images/dnnanim.gif');
+        background-repeat: no-repeat;
+        background-position: center center;
+        position: absolute;
+        opacity: 0.35;
+        bottom: 0;
+        top: 0;
+        left: 0;
+        right: 0;
+        content: '';
+        background-color: #fff;
+    }
+
+.ui-helper-hidden-accessible {
+    display: none !important;
+}
+
+.actStr_clearAfter:after {
+    content: '';
+    display: block;
+    clear: both;
+}
+
+.journalContainer-modalContainer {
+    width: 100%;
+    background-color: #FFFFFF;
+    box-shadow: 0 0 7px #bbb;
+    padding: 20px 0 20px 0;
+    color: #666;
+}
+
+.journalTools {
+    width: 100%;
+    background-color: #FFFFFF;
+    padding: 20px 0 20px 0;
+    color: #666;
+}
+
+    .journalTools .avatar {
+        width: 40px;
+        height: 40px;
+        float: left;
+        margin: 0 0 0 20px;
+        border: 3px solid #ccc;
+        background-color: #ddd;
+    }
+
+        .journalTools .avatar span {
+            display: inline-block;
+            border: transparent;
+            text-decoration: none;
+            height: 40px;
+            width: 40px;
+            overflow: hidden;
+        }
+
+        .journalTools .avatar em {
+            display: table-cell; /* vertical centering hack */
+            width: 40px;
+            height: 40px; /* same as thumbnail dimensions */
+            vertical-align: middle; /* vertical centering hack */
+        }
+
+        .journalTools .avatar img {
+            display: inline-block;
+            border: none;
+            width: 100%;
+        }
+
+.journalEditor-Container {
+    position: relative;
+    margin: 0 20px 0 80px;
+    z-index: 1;
+}
+
+#journalEditor {
+    background: #fff;
+    border: 1px solid #e8e8e8;
+    overflow: visible;
+    padding: 5px 5px 0 5px;
+    position: relative;
+    zoom: 1;
+}
+
+    #journalEditor #journalClose {
+        display: none;
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        width: 35px !important;
+        height: 30px !important;
+        cursor: pointer;
+        background-image: url('images/mini_del.gif');
+        background-repeat: no-repeat;
+        padding: 0 !important;
+        background-position: center center;
+    }
+
+    #journalEditor .actStr_shareButton {
+        border-radius: 0px;
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        display: none;
+        padding: 6px;
+        margin: 0px;
+    }
+
+    #journalEditor a.dnnPrimaryAction.actStr_disable {
+        background: #ccc !important;
+        border: none !important;
+        -webkit-box-shadow: none !important;
+        box-shadow: none !important;
+        color: #aaa !important;
+        text-shadow: none;
+    }
+
+    #journalEditor.actStr_expanded #journalClose, #journalEditor.actStr_expanded .actStr_shareButton {
+        display: block;
+    }
+
+.jcmt .cmteditarea {
+    z-index: 0;
+}
+
+.jcmt a.dnnPrimaryAction.actStr_disable {
+    background: #75ABE7 !important;
+    border-color: #75ABE7 !important;
+    border-width: 2px;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    text-shadow: none;
+}
+
+.journalTools ul.jacmenu {
+    display: none;
+    position: absolute;
+    z-index: 4;
+    list-style-type: none;
+    border: solid 1px #dcdcdc;
+    background-color: #f5f5f5;
+}
+
+    .journalTools ul.jacmenu li {
+        padding: 2px;
+        list-style-type: none;
+        border-bottom: 1px solid #dcdcdc;
+        background-color: #f3f3f3;
+    }
+
+#journalEditor #journalContent {
+    overflow: auto;
+    outline: none;
+}
+
+    #journalEditor #journalContent span {
+        padding: 0 2px 0 2px;
+        border-radius: 3px;
+        -moz-border-radius: 3px;
+        -webkit-border-radius: 3px;
+    }
+
+    #journalEditor #journalContent .juser, .journalrow .juser {
+        color: #000;
+        border: 1px solid #ccd5e4;
+        background-color: #eff2f7;
+    }
+
+    #journalEditor #journalContent .jtag, .journalrow .jtag {
+        border: 1px solid #ccc;
+        background-color: #f5f5f5;
+    }
+
+#journalEditor #journalPlaceholder, .jcmt .cmteditarea .editorPlaceholder {
+    font-size: 14px;
+    color: #999;
+    height: 24px;
+    line-height: 24px;
+    padding-left: 7px;
+}
+
+#journalEditor #journalContent {
+    font-family: Arial, Helvetica;
+    float: left;
+    display: none;
+    height: 1px;
+    margin-bottom: 4px;
+    padding: 2px 4px 6px 4px;
+    font-size: 14px;
+    border: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    line-height: 1.3em;
+    width: 99%;
+    resize: none;
+}
+
+
+#journalEditor .journalPlaceholder {
+    width: 100%;
+}
+
+#journalEditor .dnnClear {
+    height: 0;
+}
+
+/* Toolbar Styles */
+
+#journalEditor #tbar.actStr_postAreaTools {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+
+.securityMenu > ul > li > span {
+    display: inline-block;
+    margin-right: 3px;
+}
+
+
+.journalTools #journalOptionArea {
+    background-color: #f5f5f5;
+    /*display: none;*/
+    border: 1px solid #e8e8e8;
+    border-top: none;
+    border-bottom: none;
+    position: relative;
+    padding: 0;
+}
+
+    .journalTools #journalOptionArea div span {
+        font-weight: bold;
+        padding-right: 12px;
+        padding-left: 12px;
+    }
+
+    .journalTools #journalOptionArea #itemUpload {
+        margin: 0;
+        padding: 0;
+    }
+
+/* Comment Area */
+.journalrow .journalitem ul.jcmt li.actStr_commentArea {
+    padding: 0px 15px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    max-height: 0px;
+    overflow: hidden;
+}
+
+#journalEditor .actStr_commentEditable {
+    border: none;
+    font-size: 14px;
+    height: 24px;
+    line-height: 18px;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    padding-left: 7px;
+    min-height: 0px;
+    outline: none;
+    overflow: auto;
+}
+
+.actStr_commentEditable p {
+    margin-bottom: 0px !important;
+}
+
+#journalEditor #emojiBody > div {
+    height: 150px;
+}
+
+#journalEditor .actStr_postAreaTools > span.selected > i.actStr_addEmoji:before {
+    display: none;
+}
+
+#journalEditor .actStr_commentEditable:focus {
+    border: none;
+}
+
+#journalEditor .showPlaceholder .actStr_commentEditable {
+    color: #999;
+    overflow: visible;
+}
+
+.showPlaceholder .actStr_commentEditable:empty:before {
+    content: attr(data-placeholder);
+    display: block; /* For Firefox */
+}
+
+.actStr_commentEditable {
+    background: #fff;
+    border: 1px solid #ccc;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-box-shadow: 0px 1px 0px 0px rgba(255, 255, 255, 0.8), inset 0px 1px 2px 0px rgba(0, 0, 0, 0.3);
+    box-shadow: 0px 1px 0px 0px rgba(255, 255, 255, 0.8), inset 0px 1px 2px 0px rgba(0, 0, 0, 0.3);
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-transition: min-height 0.2s, padding 0.2s;
+    -moz-transition: min-height 0.2s, padding 0.2s;
+    transition: min-height 0.2s, padding 0.2s;
+    min-height: 60px;
+    max-height: 120px;
+    padding: 10px;
+    cursor: text;
+}
+
+.actStr_commentArea .showPlaceholder .actStr_commentEditable {
+    height: 30px;
+    min-height: 30px;
+    padding: 6px 10px;
+    color: #999;
+    border: 1px solid #ccc;
+}
+
+.actStr_commentArea .expanded .actStr_commentEditable {
+    max-height: 120px;
+    overflow: auto;
+}
+
+.actStr_commentEditable [class^="emojione"], .actStr_commentContent [class^="emojione"], .journalsummary [class^="emojione"], .journalitem > p [class^="emojione"] {
+    height: 18px;
+    width: 18px;
+    margin: 0px 3px 5px 3px;
+}
+
+
+/* Post Area Tools */
+.actStr_postAreaTools {
+    float: right;
+    position: relative;
+}
+
+    .actStr_postAreaTools > span {
+        float: right;
+        padding: 9px 7px;
+        cursor: pointer;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        position: relative;
+    }
+
+        .actStr_postAreaTools > span:hover:before {
+            content: attr(data-tooltip);
+            border-radius: 3px;
+            bottom: 33px;
+            display: block;
+            position: absolute;
+            text-align: center;
+            width: 154px;
+            padding: 8px 10px;
+            background: #000;
+            color: #fff;
+            left: -63px;
+            z-index: 20;
+            box-sizing: border-box;
+        }
+
+        .actStr_postAreaTools > span:hover:after {
+            content: '';
+            display: block;
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid #101010;
+            position: absolute;
+            top: 0px;
+            left: 11px;
+            z-index: 5;
+        }
+
+.mobileView .actStr_postAreaTools > span:hover:after, .mobileView .actStr_postAreaTools > span:hover:before {
+    content: none;
+}
+
+.actStr_postAreaTools > span > i {
+    display: block;
+    height: 16px;
+    width: 24px;
+    background-image: url('images/journal-tools.png');
+    background-repeat: no-repeat;
+    border: 1px solid transparent;
+}
+
+    .actStr_postAreaTools > span > i.actStr_addPhoto {
+        background-position: 4px 0;
+    }
+
+.actStr_postAreaTools > span.selected > i.actStr_addPhoto, .actStr_postAreaTools > span:hover > i.actStr_addPhoto {
+    background-position: 4px -16px;
+}
+
+.actStr_postAreaTools > span > i.actStr_addFile {
+    background-position: -24px 0;
+}
+
+.actStr_postAreaTools > span.selected > i.actStr_addFile, .actStr_postAreaTools > span:hover > i.actStr_addFile {
+    background-position: -24px -16px;
+}
+
+.actStr_postAreaTools > span > i.actStr_permissions {
+    background-position: -85px 0;
+}
+
+.actStr_postAreaTools > span.selected > i.actStr_permissions, .actStr_postAreaTools > span:hover > i.actStr_permissions {
+    background-position: -85px -16px;
+}
+
+.actStr_postAreaTools > span.actStr_subscribeTool {
+    position: relative;
+    background: url('images/subscribe.png') no-repeat center center;
+    background-size: 16px;
+}
+
+.actStr_postAreaTools > span.actStr_emojiTool {
+    background: url('images/emoji.png') no-repeat center center;
+    background-size: 14px;
+}
+
+    .actStr_postAreaTools > span.actStr_emojiTool:hover, .actStr_postAreaTools > span.actStr_emojiTool.selected {
+        background-image: url('images/emojiSelected.png');
+    }
+
+.actStr_postAreaTools > span.actStr_subscribeTool.selected {
+    background-image: url('images/subscribeSelected.png');
+}
+
+.actStr_postAreaTools > span.actStr_subscribeTool, .actStr_postAreaTools > span.actStr_emojiTool {
+    padding: 9px 6px;
+}
+
+    .actStr_postAreaTools > span.actStr_emojiTool > i, .actStr_postAreaTools > span.actStr_subscribeTool > i {
+        background: none;
+    }
+
+.actStr_postAreaTools.isPreviewerOpen .actStr_addFileTool, .actStr_postAreaTools.isPreviewerOpen .actStr_attachPhoto {
+    display: none;
+}
+/* OGP Previewer*/
+
+.actStr_closePreviewBtn {
+    background: url('images/mini_del.gif') no-repeat center;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    position: absolute;
+    right: 0;
+    top: 5px;
+}
+
+.jpa.actStr_urlPreviewer {
+    padding: 20px;
+    position: relative;
+}
+
+    .jpa.actStr_urlPreviewer .actStr_imagePreviewer {
+        float: left;
+        width: 140px;
+        height: 115px;
+        text-align: center;
+        margin-right: 20px;
+    }
+
+    .jpa.actStr_urlPreviewer .actStr_imageWrapper {
+        line-height: 100px;
+    }
+
+    .jpa.actStr_urlPreviewer .actStr_imagePreviewer img {
+        max-width: 100%;
+        max-height: 100px;
+    }
+
+
+    .jpa.actStr_urlPreviewer .actStr_imagePreviewer .actStr_imgPager {
+        line-height: 28px;
+        text-align: center;
+    }
+
+        .jpa.actStr_urlPreviewer .actStr_imagePreviewer .actStr_imgPager span {
+            padding: 0px !important;
+        }
+
+        .jpa.actStr_urlPreviewer .actStr_imagePreviewer .actStr_imgPager .pagerBtn {
+            cursor: pointer;
+            width: 32px;
+        }
+
+    .jpa.actStr_urlPreviewer .actStr_urlPreviewerInfo > .actStr_urlTitle {
+        margin-bottom: 15px;
+        font-size: 13px;
+        font-weight: bold;
+    }
+
+.cmteditarea .jpa.actStr_urlPreviewer {
+    margin-top: 20px;
+    border: 1px solid #ccc;
+}
+
+
+/* Attach Images & files */
+
+.fileUploadArea.actStr_fileUploadArea {
+    padding: 20px;
+}
+
+    .fileUploadArea.actStr_fileUploadArea .actStr_attachArea > div {
+        box-sizing: border-box;
+        float: left;
+        width: 50%;
+    }
+
+        .fileUploadArea.actStr_fileUploadArea .actStr_attachArea > div + div {
+            border-left: 1px solid #cce8ff;
+            padding-left: 30px;
+        }
+
+
+    .fileUploadArea.actStr_fileUploadArea .actStr_attachArea b {
+        margin-bottom: 10px;
+        display: block;
+    }
+
+    .fileUploadArea.actStr_fileUploadArea .filePreviewArea > div {
+        position: relative;
+    }
+
+    .fileUploadArea.actStr_fileUploadArea .filePreviewArea .preview-photo-item {
+        display: block;
+        float: left;
+        width: 120px;
+        margin-right: 10px;
+        text-align: center;
+        height: 80px;
+        line-height: 80px;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+
+        .fileUploadArea.actStr_fileUploadArea .filePreviewArea .preview-photo-item img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+    .fileUploadArea.actStr_fileUploadArea .filePreviewArea div .actStr_closePreviewBtn {
+        padding: 0 !important;
+        background-color: #ddd;
+        border-radius: 50%;
+        height: 28px;
+        width: 28px;
+        top: 0;
+        right: -5px;
+    }
+
+    .fileUploadArea.actStr_fileUploadArea .progress_context .progress-bar > div {
+        padding: 2px 0px 2px 10px;
+        margin-bottom: 20px;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+
+.filePreviewArea .tbar-attach-doc img {
+    width: 20px;
+    height: 20px;
+    display: block;
+    float: left;
+}
+
+.filePreviewArea .tbar-attach-doc p {
+    margin-left: 25px;
+    line-height: 20px;
+    margin-bottom: 10px;
+}
+
+    .filePreviewArea .tbar-attach-doc p:last-child {
+        margin-bottom: 25px;
+    }
+
+.fileUploadArea .filePreviewArea .actStr_addMoreButtons {
+    width: 100px;
+    height: 80px;
+    border: 1px #818181 dashed;
+    color: #818181;
+    float: left;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+    .fileUploadArea .filePreviewArea .actStr_addMoreButtons > div {
+        cursor: pointer;
+        display: block;
+        padding: 10px;
+        text-align: center;
+        line-height: 20px;
+        position: relative;
+        vertical-align: middle;
+    }
+
+    .fileUploadArea .filePreviewArea .actStr_addMoreButtons img {
+        margin-right: 5px;
+        width: 14px;
+        margin-top: -3px;
+    }
+
+    .fileUploadArea .filePreviewArea .actStr_addMoreButtons > div.actStr_upload {
+        position: relative;
+        border-top: 1px #818181 dashed;
+    }
+
+        .fileUploadArea .filePreviewArea .actStr_addMoreButtons > div.actStr_upload .dnnForm {
+            opacity: 0;
+            position: absolute;
+            right: 0;
+            left: 0;
+            top: 0;
+            bottom: 0;
+        }
+
+.jcmt li.cmtbtn a {
+    float: left;
+    padding: 6px 6px;
+    display: none;
+    border-radius: 0 !important;
+}
+
+.journalTools ul.jacmenu li.liselected {
+    background-color: #ffffcc;
+}
+
+.journalGetNewUpdates-container {
+    padding: 0;
+    margin: 0;
+    background: #fff;
+}
+
+    .journalGetNewUpdates-container > a {
+        display: block;
+        padding: 15px 0 15px 0;
+        border-bottom: 1px solid #e8e8e8;
+        text-align: center;
+        font-weight: bold;
+    }
+
+.journalViewTools-container {
+    border-bottom: 1px solid #e8e8e8;
+    padding: 20px 20px 20px 20px;
+    background: #eee;
+    position: relative;
+}
+
+.actStr_loadingMore {
+    min-height: 40px;
+    background: #fff;
+    border-top: 1px solid #e4e1e1;
+}
+
+.actStr_noMoreItems {
+    background: #fff;
+    border-top: 1px solid #e4e1e1;
+    padding: 20px;
+}
+
+.journalrow + .journalrow, script + .journalrow {
+    border-top: 1px solid #e4e1e1;
+    margin-top: 15px;
+    padding-top: 15px;
+}
+
+.journalrow div.author {
+    float: left;
+    border: 3px solid #ddd;
+    background-color: #ddd;
+    width: 40px;
+    height: 40px;
+}
+
+    .journalrow div.author span {
+        display: inline-block;
+        border: transparent;
+        text-decoration: none;
+        height: 40px;
+        width: 40px;
+        overflow: hidden;
+    }
+
+
+    .journalrow div.author em {
+        display: table-cell; /* vertical centering hack */
+        width: 40px;
+        height: 40px; /* same as thumbnail dimensions */
+        vertical-align: middle; /* vertical centering hack */
+    }
+
+
+    .journalrow div.author img {
+        display: inline-block;
+        border: none;
+        width: 100%;
+    }
+
+.journalrow div.group-avatar {
+    float: right;
+    margin: 0 30px 10px 10px;
+    width: 40px;
+    height: 40px;
+    border: 3px solid #ddd;
+    background-color: #ddd;
+}
+
+    .journalrow div.group-avatar span {
+        display: inline-block;
+        border: transparent;
+        text-decoration: none;
+        height: 40px;
+        width: 40px;
+        overflow: hidden;
+    }
+
+    .journalrow div.group-avatar em {
+        display: table-cell; /* vertical centering hack */
+        width: 40px;
+        height: 40px; /* same as thumbnail dimensions */
+        vertical-align: middle; /* vertical centering hack */
+    }
+
+    .journalrow div.group-avatar img {
+        display: inline-block;
+        border: none;
+        width: 100%;
+    }
+
+.journalrow div.journalitem {
+    margin-left: 65px;
+    border-left: #E0EFF7 1px solid;
+    padding-left: 20px;
+    position: relative;
+}
+
+/* Pinned styles */
+
+.journal-row-pinned div.journalitem:after {
+    background: url('Images/ribbon.svg') center no-repeat;
+    content: '';
+    height: 20px;
+    display: block;
+    width: 20px;
+    position: absolute;
+    right: 25px;
+    top: 0px;
+}
+    .journalrow div.journalitem p.journalfooter span {
+        padding: 0 4px 0 4px;
+        font-weight: bold;
+    }
+
+    .journalrow div.journalitem p.journalfooter > a:before {
+        content: '\2022';
+        margin-right: 5px;
+        margin-left: 2px;
+        color: #636768;
+    }
+
+    .journalrow div.journalitem .authorname {
+        padding-right: 6px;
+    }
+
+    .journalrow div.journalitem ul.jcmt {
+        margin-left: 0;
+        margin-bottom: 0;
+    }
+
+
+        .journalrow div.journalitem ul.jcmt, .journalrow div.journalitem ul.jcmt li {
+            list-style-type: none;
+        }
+
+            .journalrow div.journalitem ul.jcmt > li {
+                padding: 5px 25px 5px 15px;
+                margin: 0;
+                background: #f1f1f1;
+                clear: both;
+                list-style: none;
+            }
+
+                .journalrow div.journalitem ul.jcmt > li.jcmt-loadmore {
+                    border-right: 5px solid #ff5f76;
+                    padding-right: 15px;
+                    padding-bottom: 7px;
+                    border-bottom: 1px solid #ccc;
+                    padding-top: 15px;
+                }
+
+            .journalrow div.journalitem ul.jcmt:before {
+                content: "";
+                display: block;
+                width: 0;
+                height: 0;
+                border-style: solid;
+                border-width: 15px 0 0 15px;
+                border-color: transparent transparent transparent #f1f1f1;
+                margin: -10px 0 0 0;
+            }
+
+            .journalrow div.journalitem ul.jcmt > li.jcmt-loadmore > a {
+                display: block;
+                float: right;
+                font-weight: bold;
+            }
+
+                .journalrow div.journalitem ul.jcmt > li.jcmt-loadmore > a.sort {
+                    float: left;
+                    margin: 0 5px;
+                    padding-bottom: 4px;
+                }
+
+                    .journalrow div.journalitem ul.jcmt > li.jcmt-loadmore > a.sort:not(.selected) {
+                        color: inherit;
+                    }
+
+                    .journalrow div.journalitem ul.jcmt > li.jcmt-loadmore > a.sort.selected {
+                        cursor: default;
+                        border-bottom: 2px solid;
+                    }
+
+
+            .journalrow div.journalitem ul.jcmt > li.jcmt-loadmore > span {
+                display: block;
+                float: right;
+                font-weight: bold;
+                margin-right: 10px;
+            }
+
+            .journalrow div.journalitem ul.jcmt li textarea {
+                width: 100%;
+                -webkit-box-sizing: border-box;
+                -moz-box-sizing: border-box;
+                box-sizing: border-box;
+                height: 120px;
+                font-size: 12px;
+            }
+
+            .journalrow div.journalitem ul.jcmt div.jcmtbuttons {
+                margin: 25px 0 5px 0;
+            }
+
+                .journalrow div.journalitem ul.jcmt div.jcmtbuttons > a {
+                    margin: 0 10px 0 0;
+                }
+
+            .journalrow div.journalitem ul.jcmt ul.cmt-actions {
+                list-style-type: none;
+                margin: 8px 0 0 47px;
+                padding: 0;
+            }
+
+                .journalrow div.journalitem ul.jcmt ul.cmt-actions li {
+                    border-left: 1px solid #dfdfdf;
+                    display: inline-block;
+                    line-height: 1em;
+                    padding: 0 10px 0 10px;
+                }
+
+                    .journalrow div.journalitem ul.jcmt ul.cmt-actions li:first-child {
+                        border-left: none;
+                        padding-left: 0;
+                    }
+
+                    .journalrow div.journalitem ul.jcmt ul.cmt-actions li a {
+                        display: block;
+                        height: 10px;
+                        cursor: pointer;
+                    }
+
+                        .journalrow div.journalitem ul.jcmt ul.cmt-actions li a.jcmt-remove {
+                            background: transparent url('Images/remove.png') no-repeat;
+                            background-position: 0 2px;
+                            padding-left: 18px !important;
+                        }
+
+            .journalrow div.journalitem ul.jcmt li .activityStream-comment-avatar {
+                float: left;
+                left: 0;
+                margin: 4px;
+                position: relative;
+                top: 0;
+                width: 32px;
+                height: 32px;
+                border: 2px solid #ddd;
+                display: block;
+                background-color: #ddd;
+            }
+
+                .journalrow div.journalitem ul.jcmt li .activityStream-comment-avatar span {
+                    display: inline-block;
+                    border: transparent;
+                    text-decoration: none;
+                    height: 32px;
+                    width: 32px; /* Set dimensions of thumbnails here */
+                    overflow: hidden;
+                }
+
+                .journalrow div.journalitem ul.jcmt li .activityStream-comment-avatar em {
+                    display: table-cell; /* vertical centering hack */
+                    width: 32px;
+                    height: 32px; /* same as thumbnail dimensions */
+                    vertical-align: middle; /* vertical centering hack */
+                }
+
+                .journalrow div.journalitem ul.jcmt li .activityStream-comment-avatar img {
+                    display: inline-block;
+                    border: none;
+                    width: 100%;
+                }
+
+            .journalrow div.journalitem ul.jcmt li .actStr_commentContent {
+                padding: 4px 0 4px 5px;
+                margin: 0 0 0 45px;
+            }
+
+                .journalrow div.journalitem ul.jcmt li .actStr_commentContent a {
+                    padding-right: 6px;
+                }
+
+                .journalrow div.journalitem ul.jcmt li .actStr_commentContent abbr {
+                    border-style: none;
+                    display: block;
+                    margin: 4px 0 0 0;
+                    color: #bbb;
+                }
+
+                .journalrow div.journalitem ul.jcmt li .actStr_commentContent .jlink {
+                    margin-top: 10px;
+                }
+
+                    .journalrow div.journalitem ul.jcmt li .actStr_commentContent .jlink > a {
+                        margin-bottom: 5px;
+                    }
+
+                    .journalrow div.journalitem ul.jcmt li .actStr_commentContent .jlink img {
+                        max-width: 120px;
+                    }
+
+    .journalrow div.journalitem .journalfooter {
+        clear: both;
+    }
+
+.isSubscribedToWall .journalrow div.journalitem .journalfooter .actStr_subscription {
+    display: none;
+}
+
+.journalrow div.journalitem .journalfooter .actStr_subscription:before {
+    content: '•';
+    display: inline-block;
+    color: rgb(102, 102, 102);
+    padding: 0 6px 0 8px;
+    font-weight: bold;
+}
+
+.journalrow div.journalitem .journalfooter abbr {
+    border-style: none;
+    color: #bbb;
+    display: inline-block;
+    margin-right: 15px;
+}
+
+.journalrow div.journalitem .jlink > a {
+    display: block;
+    float: left;
+    margin-right: 12px;
+    margin-bottom: 12px;
+    max-width: 150px;
+    position: relative;
+}
+
+    .journalrow div.journalitem .jlink > a > img {
+        max-width: 150px;
+    }
+
+    .journalrow div.journalitem .jlink > a > i {
+        display: block;
+        position: absolute;
+        background-image: url(images/videoPlayer.png);
+        background-repeat: no-repeat;
+        background-size: auto;
+        background-position: 0 0;
+        height: 54px;
+        width: 54px;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: auto;
+    }
+
+.journalrow div.journalitem .jlink a.journalVideoEmbed i:hover {
+    background-position: 0 -55px;
+}
+
+.journalrow div.journalitem div.journalgroup span.journal-grouped-section {
+    display: block;
+    margin: 15px 0 11px 0;
+    min-height: 30px;
+}
+
+.journalrow div.journalitem div.journalgroup a.journal-grouped-avatar {
+    display: inline-block;
+    float: left;
+    border: transparent;
+    text-decoration: none;
+    height: 30px;
+    width: 30px;
+    overflow: hidden;
+    margin: -4px 6px 0 0;
+}
+
+    .journalrow div.journalitem div.journalgroup a.journal-grouped-avatar em {
+        display: table-cell;
+        width: 30px;
+        height: 30px;
+        vertical-align: middle;
+    }
+
+.journalrow div.journalitem div.journalgroup em img {
+    display: inline-block;
+    width: 100%;
+}
+
+/* Visibility and Security */
+.securityMenu {
+    position: absolute;
+    right: 7px;
+    min-width: 200px;
+    height: 300px;
+    margin-top: 32px;
+    background-color: #fff;
+    z-index: 1000;
+}
+
+    .securityMenu .handle {
+        z-index: 1000;
+        position: absolute;
+        right: 2px;
+        top: -28px;
+        width: 26px;
+        height: 22px;
+        border: 1px solid #ccc;
+        border-bottom: 1px solid #fff;
+        border-radius: 3px 3px 0 0;
+    }
+
+.DnnModule .securityMenu ul {
+    position: absolute;
+    top: -5px;
+    right: 2px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    list-style: none;
+    background: #fff;
+    border-radius: 3px 0 3px 3px;
+    box-shadow: 0 2px 0 0 #000000;
+    box-shadow: 0 2px 0 0 rgba(0, 0, 0, .5);
+}
+
+.securityMenu ul li {
+    list-style: none;
+    margin-bottom: 4px;
+}
+
+.journalitem p {
+    margin-bottom: 5px;
+    word-wrap: break-word;
+}
+
+/* File Upload */
+.progress_bar_wrapper {
+    overflow: hidden;
+}
+
+.progress-bar div {
+    background-color: #2fa6eb;
+    position: relative;
+}
+
+.journalTools #journalOptionArea div span.browser-upload-btn {
+    position: relative;
+    font-weight: bold;
+    padding-left: 0;
+    cursor: pointer;
+}
+
+.browser-upload-btn:hover {
+    cursor: pointer;
+}
+
+
+.journalrow div.journalitem .jlink a.jlinkTitle {
+    font-weight: bold;
+    display: block;
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+div#journalItems {
+    background-color: #FFFFFF;
+    padding: 20px;
+    color: #666;
+}
+
+    div#journalItems div.journalrow div.journalitem ul.jcmt li.cmteditarea {
+        /*overflow: auto;*/
+        background: #f1f1f1;
+        /*padding: 15px;*/
+        clear: both;
+    }
+
+.journalrow .juser {
+    cursor: pointer;
+}
+
+p#noActivityStreamPlaceHolder {
+    padding-bottom: 10px;
+}
+
+.journalBottomContorls-container {
+    padding: 30px 20px 20px 20px;
+}
+
+/* Activity Stream: Activity Filter */
+.createNew > a {
+    font-weight: bold;
+}
+
+.linkDivider {
+    margin: 10px 0 10px 0;
+}
+
+.filters {
+    margin: 0 0 0 0;
+}
+
+.filter {
+    list-style-type: none;
+    cursor: pointer;
+}
+
+.editFilter {
+    float: right;
+    background: url('Images/edit_pen.gif');
+    width: 16px;
+    height: 16px;
+    display: none;
+}
+
+li.filter:hover > div > a.editFilter {
+    display: inline;
+}
+
+.activityFilterBuilder {
+    display: block;
+}
+
+.contentTypesContainer {
+    height: 200px;
+    width: 57%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border: 1px solid #c9c9c9;
+}
+
+.contentTypes {
+    height: auto;
+    max-width: 460px;
+}
+
+.filterTypes {
+    margin: 0;
+    list-style-type: none;
+    max-width: 460px;
+}
+
+.filterType {
+    cursor: pointer;
+    border-bottom: 1px solid #ccc;
+    padding: 7px 0 7px 0;
+    margin: 0;
+    background-image: linear-gradient(to bottom, rgb(240,240,240), rgb(252,252,252));
+}
+
+    .filterType input {
+        margin: 15px;
+    }
+
+        .filterType input span {
+            text-decoration: none;
+            color: #000;
+            display: block;
+            width: 200px;
+            font-size: 15px;
+        }
+
+    .filterType .unchecked {
+        margin: 13px;
+        background: url(../../../images/unchecked.gif) no-repeat;
+        display: inline;
+        padding: 0 15px 0 0;
+    }
+
+    .filterType .checked {
+        margin: 13px;
+        background: url(../../../images/checked.gif) no-repeat;
+        display: inline;
+        padding: 0 15px 0 0;
+    }
+
+.acResults {
+    z-index: 1100;
+}
+
+.journalViewTools {
+    display: block;
+}
+
+    .journalViewTools > a.dnnPrimaryAction {
+        margin: 0;
+        display: block;
+        float: left;
+    }
+
+.select-view {
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    box-shadow: none;
+    color: #888;
+    cursor: pointer;
+    display: block;
+    float: right;
+    margin: 0;
+    outline: none;
+    padding: 9px 8px 8px 8px;
+}
+
+ul.jcmt .likes {
+    margin-left: 45px;
+}
+
+#journalItems .likes-big,
+#journalItems .likes-small {
+    display: none;
+}
+
+span.journalsummary {
+    display: block;
+    overflow: hidden;
+    word-wrap: break-word;
+    padding: 5px 0;
+}
+
+/* like tag menu */
+.journal-grouped-section .tag-menu {
+    display: none;
+    z-index: 1000;
+    position: absolute;
+    white-space: nowrap;
+    padding: 10px 15px 10px 15px;
+    border-radius: 3px;
+    background: #000000;
+    background: rgba(0,0,0,0.75);
+    color: #ddd;
+    text-align: left;
+    bottom: 100%;
+    left: -5px;
+}
+
+    .journal-grouped-section .tag-menu:after {
+        position: absolute;
+        content: "";
+        width: 0;
+        height: 0;
+        opacity: 0.75;
+        border-left: 7px solid transparent;
+        border-right: 7px solid transparent;
+        border-top: 7px solid #000;
+        left: 20px;
+        bottom: -7px;
+    }
+
+    .journal-grouped-section .tag-menu ul {
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+    }
+
+        .journal-grouped-section .tag-menu ul li {
+            margin: 0;
+            padding: 0;
+            list-style-type: none;
+        }
+
+#journalItems .journal-grouped-section-big,
+#journalItems .journal-grouped-section-small {
+    display: none;
+}
+
+.journalTools #journalOptionArea #itemUpload .filePreviewArea .tbar-attach-doc {
+    margin: 0;
+    padding: 6px;
+}
+
+    .journalTools #journalOptionArea #itemUpload .filePreviewArea .tbar-attach-doc > img {
+        width: 16px;
+        height: 16px;
+        display: block;
+        float: left;
+    }
+
+    .journalTools #journalOptionArea #itemUpload .filePreviewArea .tbar-attach-doc > p {
+        margin: 0 0 0 22px;
+    }
+
+.journalTools #journalOptionArea #itemUpload .progress_bar_wrapper .progress_context {
+    margin: 0;
+    padding: 10px;
+}
+
+    .journalTools #journalOptionArea #itemUpload .progress_bar_wrapper .progress_context .progress-bar {
+        margin: 0;
+        padding: 0;
+    }
+
+.jfile .attached-files-control {
+    padding: 15px 15px 7px 15px;
+    background: #eee;
+}
+
+    .jfile .attached-files-control > div {
+        display: block;
+        margin: 0 0 8px 0;
+    }
+
+        .jfile .attached-files-control > div > img {
+            display: block;
+            width: 16px;
+            height: 16px;
+            float: left;
+        }
+
+        .jfile .attached-files-control > div > a {
+            display: block;
+            margin-left: 22px;
+        }
+
+
+
+/* Emoji */
+#emojiPanel * {
+    box-sizing: border-box;
+}
+
+#emojiPanel {
+    border: 1px solid #ccc;
+    background: #fff;
+    position: absolute;
+    width: 304px;
+    box-sizing: border-box;
+    right: 0px;
+    bottom: 40px;
+}
+
+
+#emojiHeader:after {
+    clear: both;
+    display: block;
+    content: '';
+}
+
+#emojiHeader a {
+    display: block;
+    height: 40px;
+    width: 40px;
+    float: left;
+    padding: 10px 7px 5px 8px;
+    position: relative;
+}
+
+    #emojiHeader a [class^="emojione"] {
+        width: 24px;
+        height: 24px;
+    }
+
+    #emojiHeader a + a {
+        border-left: 1px solid #ccc;
+    }
+
+    #emojiHeader a.selected:before {
+        background: #fff;
+        top: -1px;
+        content: '';
+        display: block;
+        height: 2px;
+        left: 0px;
+        position: absolute;
+        width: 100%;
+    }
+
+
+#emojiBody > div {
+    border-bottom: 1px solid #ccc;
+    height: 240px;
+    overflow: auto;
+    display: none;
+}
+
+    #emojiBody > div > span {
+        height: 40px;
+        width: 40px;
+        padding: 8px 5px 5px 8px;
+        cursor: pointer;
+        display: inline-block;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+    }
+
+        #emojiBody > div > span [class^="emojione"] {
+            height: 26px;
+            width: 26px;
+        }
+
+.actStr_postAreaTools > span.selected > i.actStr_addEmoji:before {
+    content: '';
+    display: block;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #fff;
+    position: absolute;
+    top: -5px;
+    left: 14px;
+    z-index: 5;
+}
+
+@media only screen and (max-width: 500px) {
+    .journalTools #journalEditor #share {
+        width: 100%;
+        padding: 15px;
+        position: static;
+        box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+    }
+
+    #journalEditor.actStr_expanded #tbar.actStr_postAreaTools {
+        position: relative;
+        bottom: 0;
+        display: block;
+        float: none;
+        margin-top: -20px;
+        width: 100%;
+        margin-bottom: 5px;
+    }
+
+    #journalEditor #tbar.actStr_postAreaTools:after {
+        display: block;
+        clear: both;
+        content: '';
+    }
+
+    .showPlaceholder .actStr_commentEditable:empty:before {
+        line-height: 4px;
+    }
+}
+
+.edit-challenge-msg-btn {
+    background: url('../Challenges/images/Icon_Edit_Message_Pencil_Active.png');
+    width: 20px;
+    height: 20px;
+    background-repeat: no-repeat;
+    position: absolute;
+    right: 17px;
+}
+
+    .edit-challenge-msg-btn:hover {
+        background: url('../Challenges/images/Icon_Edit_Message_Pencil_Hover.png');
+        cursor: pointer;
+    }
+
+.challenge-text-area {
+    display: block;
+    width: 88%;
+    height: 65px;
+    margin-bottom: 10px;
+    resize: vertical;
+    overflow: auto;
+}
+
+.challenge-text-area.disabled {
+    background: #F1F1F1;
+    margin-bottom: 0;
+    border: none;
+    box-shadow: none;
+    resize: none;
+    height: auto;
+}
+
+a.journal-social-rss {
+    float: right;
+    background-image: url(Images/rss.png);
+    background-repeat: no-repeat;
+    width: 20px;
+    height: 20px;
+}
+
+a.journal-social-rss:hover {
+    background-image: url(Images/rssSelect.png);
+}
+    
+.evoq-autocomplete-menu {
+    background: white;
+    border: 1px solid #eee;
+    -webkit-box-shadow: 2px 2px 6px -2px rgba(0,0,0,0.75);
+    -moz-box-shadow: 2px 2px 6px -2px rgba(0,0,0,0.75);
+    box-shadow: 2px 2px 6px -2px rgba(0,0,0,0.75);
+    max-width: 185px;
+    z-index: 9999;
+}
+
+li.evoq-autocomplete-menu-item {
+    list-style-type: none;
+    padding: 5px;
+    margin: 0;
+}
+
+    li.evoq-autocomplete-menu-item img {
+        margin-right: 5px;
+    }
+
+    li.evoq-autocomplete-menu-item + li {
+        border-top: 1px solid #eee;
+    }
+
+    li.evoq-autocomplete-menu-item.ui-state-focus {
+        background: #dddddd;
+    }
+
+[data-mention] {
+    background-color: #eee;
+    color: rgb(2, 139, 255);
+    font-weight: normal;
+}

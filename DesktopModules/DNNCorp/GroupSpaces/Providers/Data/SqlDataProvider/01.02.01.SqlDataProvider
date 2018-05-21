@@ -1,0 +1,248 @@
+﻿/* Group Get First Owner*/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}GroupSpaces_Group_GetFirstOwner]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}GroupSpaces_Group_GetFirstOwner
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GroupSpaces_Group_GetFirstOwner]
+	@RoleId int
+AS
+BEGIN
+	SELECT TOP 1 
+      UR.[UserID]
+      ,UR.[RoleID]
+	  ,U.[DisplayName]
+	FROM	{databaseOwner}{objectQualifier}UserRoles UR WITH (NOLOCK)
+		INNER JOIN {databaseOwner}{objectQualifier}Users U WITH (NOLOCK) ON U.[UserID] = UR.[UserId]
+	WHERE   UR.[RoleID] = @RoleID
+	  AND   UR.[IsOwner] = 1
+	ORDER BY UR.[UserRoleID]
+END
+GO
+
+/* Get Group  */
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}GroupSpaces_Group_GetGroup]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}GroupSpaces_Group_GetGroup
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GroupSpaces_Group_GetGroup]
+	@PortalId INT,
+	@GroupId INT,
+	@UserId INT	
+AS
+BEGIN
+	DECLARE @AdminRoleId INT
+
+	SELECT @AdminRoleId = roleId FROM {databaseOwner}{objectQualifier}Roles WHERE RoleName='Administrators' AND PortalId = @PortalId 
+	
+	SELECT	R.PortalID As PortalId,
+			R.RoleID AS GroupId,
+			R.RoleName AS GroupName,
+			R.Description,
+			R.IsPublic,
+			R.IconFile,
+			R.Status,
+			R.SecurityMode,
+			R.IsSystemRole,
+			R.CreatedByUserID,
+			R.CreatedOnDate,
+			R.LastModifiedOnDate,
+			(SELECT CAST ((SELECT RoleId FROM {databaseOwner}{objectQualifier}UserRoles WHERE RoleId = @GroupId AND UserId = @UserId ) AS BIT)) AS IsMember,
+			(SELECT CAST ((SELECT RoleId FROM {databaseOwner}{objectQualifier}UserRoles WHERE RoleId = @GroupId AND UserId = @UserId AND Status = -1) AS BIT)) AS MembershipPending,
+			(SELECT CAST ((SELECT SettingValue FROM {databaseOwner}{objectQualifier}RoleSettings WHERE RoleId = R.RoleId AND SettingName = 'ReviewMembers') AS BIT)) AS ReviewMembers,
+			(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}UserRoles U WHERE U.RoleID = R.RoleID AND U.Status = 1) AS MemberCount
+	FROM    
+			{databaseOwner}{objectQualifier}Roles AS R			
+	WHERE
+			R.RoleId = @GroupId
+			AND
+			R.SecurityMode IN (1, 2)
+			AND (	R.IsPublic = 1
+					OR
+					-- Super User
+					(EXISTS (SELECT UserID FROM {databaseOwner}{objectQualifier}Users WHERE @UserId = UserID AND IsSuperUser = 1))
+					OR
+					-- Admin
+					(EXISTS (SELECT UserID FROM {databaseOwner}{objectQualifier}UserRoles WHERE @AdminRoleId = RoleID AND @UserId = UserID))
+					OR
+					(IsPublic = 0 AND EXISTS (SELECT RoleID FROM {databaseOwner}{objectQualifier}UserRoles WHERE R.RoleID = RoleID AND @UserId = UserID))
+				)
+							
+END
+GO
+
+/* Get RelatedGroups  */
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}GroupSpaces_Group_GetRelatedGroups]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}GroupSpaces_Group_GetRelatedGroups
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GroupSpaces_Group_GetRelatedGroups]
+	@PortalId INT,
+	@GroupId INT,
+	@UserId INT,
+	@PageIndex INT,
+	@PageSize INT	
+AS
+BEGIN
+	DECLARE @AdminRoleId INT
+	DECLARE @GroupContentTypeId INT
+	DECLARE @ContentTypeKey VARCHAR(25)
+
+	SELECT @AdminRoleId = roleId FROM {databaseOwner}{objectQualifier}Roles WHERE RoleName='Administrators'
+	SELECT @GroupContentTypeId = ContentTypeID FROM {databaseOwner}{objectQualifier}ContentTypes WHERE ContentType = 'Group'
+	SET @ContentTypeKey = 'groupid=' +  CAST(@GroupId AS VARCHAR(10)) 
+
+	;WITH GroupSet
+	AS (
+		SELECT	COUNT(*) OVER () AS TotalRecords,
+				R.RoleID AS GroupId,
+				R.RoleName AS GroupName,
+				R.Description,
+				ROW_NUMBER() OVER ( ORDER BY R.RoleName) AS [RowNumber],
+				(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}UserRoles U WHERE U.RoleID = R.RoleID) AS MemberCount
+		FROM    {databaseOwner}{objectQualifier}Roles AS R
+				WHERE RoleID IN (
+						SELECT DISTINCT REPLACE(CI1.ContentKey,'groupid=','') from {databaseOwner}{objectQualifier}ContentItems CI1 
+						INNER JOIN {databaseOwner}{objectQualifier}ContentItems_Tags CIT1 ON CIT1.ContentItemID = CI1.ContentItemID
+						WHERE CI1.ContentTypeID = @GroupContentTypeId
+						AND CI1.ContentKey <> @ContentTypeKey
+						AND TermID IN (
+							SELECT CIT2.TermID from {databaseOwner}{objectQualifier}ContentItems_Tags CIT2
+							INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI2 ON CIT2.ContentItemID = CI2.ContentItemID
+							INNER JOIN {databaseOwner}{objectQualifier}Taxonomy_Terms TT ON CIT2.TermID = TT.TermID
+							WHERE CI2.ContentKey = @ContentTypeKey
+							AND CI2.ContentTypeID = @GroupContentTypeId
+						)
+					)
+				AND
+					R.SecurityMode IN (1,2)
+				AND (	IsPublic = 1
+						OR
+						-- Super User
+						(EXISTS (SELECT UserID FROM {databaseOwner}{objectQualifier}Users WHERE @UserId = UserID AND IsSuperUser = 1))
+						OR
+						-- Admin
+						(EXISTS (SELECT UserID FROM {databaseOwner}{objectQualifier}UserRoles WHERE @AdminRoleId = RoleID AND @UserId = UserID))
+						OR
+						(IsPublic = 0 AND EXISTS (SELECT RoleID FROM {databaseOwner}{objectQualifier}UserRoles WHERE R.RoleID = RoleID AND @UserId = UserID))
+					)
+		)
+		SELECT	TOP (@PageSize) *
+		FROM    GroupSet
+		WHERE   RowNumber >= (@PageIndex * @PageSize) + 1
+END
+GO
+
+
+/* Get Recommended Members*/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}GroupSpaces_Group_GetRecommendedMembers]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}GroupSpaces_Group_GetRecommendedMembers
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GroupSpaces_Group_GetRecommendedMembers]
+	@PortalId INT,
+	@GroupId INT,
+	@UserId INT,
+	@PageIndex INT,
+	@PageSize INT	
+AS
+BEGIN
+	DECLARE @AdminRoleId INT
+	DECLARE @GroupContentTypeId INT
+	DECLARE @ContentTypeKey VARCHAR(25)
+
+	SELECT @AdminRoleId = roleId FROM {databaseOwner}{objectQualifier}Roles WHERE RoleName='Administrators'
+	SELECT @GroupContentTypeId = ContentTypeID FROM {databaseOwner}{objectQualifier}ContentTypes WHERE ContentType = 'Group'
+	SET @ContentTypeKey = 'groupid=' +  CAST(@GroupId AS VARCHAR(10)) 
+
+	;WITH RelatedGroups	AS 
+	(
+		SELECT	R.RoleID,
+				R.RoleName,
+				R.Description	
+		FROM    {databaseOwner}{objectQualifier}Roles AS R
+				WHERE RoleID IN (
+						SELECT DISTINCT REPLACE(CI1.ContentKey,'groupid=','') from {databaseOwner}{objectQualifier}ContentItems CI1 
+						INNER JOIN {databaseOwner}{objectQualifier}ContentItems_Tags CIT1 ON CIT1.ContentItemID = CI1.ContentItemID
+						WHERE CI1.ContentTypeID = @GroupContentTypeId
+						AND CI1.ContentKey <> @ContentTypeKey
+						AND TermID IN (
+							SELECT CIT2.TermID from {databaseOwner}{objectQualifier}ContentItems_Tags CIT2
+							INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI2 ON CIT2.ContentItemID = CI2.ContentItemID
+							INNER JOIN {databaseOwner}{objectQualifier}Taxonomy_Terms TT ON CIT2.TermID = TT.TermID
+							WHERE CI2.ContentKey = @ContentTypeKey
+							AND CI2.ContentTypeID = @GroupContentTypeId
+						)
+					)
+				AND
+					R.SecurityMode IN (1,2)
+				AND (	IsPublic = 1
+						OR
+						-- Super User
+						(EXISTS (SELECT UserID FROM {databaseOwner}{objectQualifier}Users WHERE @UserId = UserID AND IsSuperUser = 1))
+						OR
+						-- Admin
+						(EXISTS (SELECT UserID FROM {databaseOwner}{objectQualifier}UserRoles WHERE @AdminRoleId = RoleID AND @UserId = UserID))
+						OR
+						(IsPublic = 0 AND EXISTS (SELECT RoleID FROM {databaseOwner}{objectQualifier}UserRoles WHERE R.RoleID = RoleID AND @UserId = UserID))
+					)
+		),
+		RecommendedMembers AS
+		(			
+			SELECT	R.UserId, DisplayName, 
+					ROW_NUMBER() OVER (ORDER BY DisplayName) AS RowNumber,
+					COUNT(R.UserID) OVER() AS TotalRecords
+			FROM	{databaseOwner}{objectQualifier}vw_UserRoles  R
+					INNER JOIN RelatedGroups RG ON R.RoleId = RG.RoleId
+			WHERE	RG.RoleId <> @GroupId
+					AND UserId NOT IN (SELECT UserId FROM {databaseOwner}{objectQualifier}UserRoles WHERE RoleId = @GroupId)
+					AND R.UserId <> @UserId
+			GROUP BY R.UserId, DisplayName						
+		)
+		
+		SELECT	TOP (@PageSize) *
+		FROM RecommendedMembers
+		WHERE RowNumber >= (@PageIndex * @PageSize) + 1			
+END
+GO
+
+
+/* Get Group Owners  */
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}GroupSpaces_Group_GetGroupOwners]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}GroupSpaces_Group_GetGroupOwners
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GroupSpaces_Group_GetGroupOwners]
+	@GroupId INT,
+	@PageIndex INT,
+	@PageSize INT	
+AS
+BEGIN
+	DECLARE @CreatorId INT
+	SELECT @CreatorId = CreatedByUserID FROM {databaseOwner}{objectQualifier}Roles WHERE RoleID = @GroupId
+
+	SELECT	TOP (@PageSize) *
+	FROM
+		(	
+			SELECT 
+				*,
+				ROW_NUMBER() OVER ( ORDER BY CASE WHEN UserId = @CreatorId THEN 1 ELSE 2 END, DisplayName) AS [RowNumber],
+				COUNT(UserID) OVER() AS TotalRecords			
+			FROM {databaseOwner}{objectQualifier}vw_UserRoles 
+			WHERE RoleID = @GroupId AND IsOwner = 1
+		)AS UserSet
+	WHERE   RowNumber >= (@PageIndex * @PageSize) + 1
+END
+GO
+
+
+/* Get ContentItem By ContentKey  */
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetContentItemByContentKey]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}GetContentItemByContentKey
+GO
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetContentItemByContentKey]
+	@ContentKey NVARCHAR(256)
+AS
+	SELECT *
+	FROM {databaseOwner}{objectQualifier}ContentItems
+	WHERE ContentKey = @ContentKey			
+GO

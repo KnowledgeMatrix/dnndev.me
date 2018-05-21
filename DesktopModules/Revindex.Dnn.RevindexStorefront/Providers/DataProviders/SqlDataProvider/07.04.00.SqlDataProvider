@@ -1,0 +1,117 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+SET XACT_ABORT ON
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+
+	-- Zooz payment gateway
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		PaymentGatewaysZoozTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysZoozTestMode DEFAULT 0,
+		PaymentGatewaysZoozUniqueID varchar(255) NULL,
+		PaymentGatewaysZoozAppKey varchar(255) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysZoozTestMode
+
+	-- Product showcase by category
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD ProductShowcaseCustomCategoryIDList varchar(MAX) NULL
+
+	-- Support channels
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD ChannelActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ChannelActive DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ChannelActive
+
+	-- Support eBay channel
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		ChannelProviderseBayDevID varchar(255) NULL,
+		ChannelProviderseBayAppID varchar(255) NULL,
+		ChannelProviderseBayCertID varchar(255) NULL,
+		ChannelProviderseBayAuthToken varchar(2000) NULL,
+		ChannelProviderseBayTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ChannelProviderseBayTestMode DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ChannelProviderseBayTestMode
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD ChannelSaleseBayActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ChannelSaleseBayActive DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ChannelSaleseBayActive
+
+	-- Add ProductChannel table
+	CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductChannel](
+		[ProductChannelID] [int] IDENTITY(1,1) NOT NULL,
+		[ProductChannelGUID] [uniqueidentifier] NOT NULL,
+		[PortalID] [int] NOT NULL,
+		[ProductID] [int] NOT NULL,
+		[ProductVariantID] [int] NULL,
+		[ChannelProvider] [varchar](50) NULL,
+		[ExternalID] [varchar](100) NULL,
+		[CreateDate] [datetime] NOT NULL,
+		[UpdateDate] [datetime] NOT NULL,
+		[RowVersion] [timestamp] NOT NULL,
+	 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_ProductChannel] PRIMARY KEY CLUSTERED 
+	(
+		[ProductChannelID] ASC
+	))
+
+	CREATE UNIQUE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_ProductChannel] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductChannel] 
+	(
+		[PortalID] ASC,
+		[ChannelProvider] ASC,
+		[ExternalID] ASC
+	)
+
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_ProductChannel_1] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductChannel] 
+	(
+		[ProductID] ASC
+	)
+
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_ProductChannel_2] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductChannel] 
+	(
+		[ProductVariantID] ASC
+	)
+
+	CREATE UNIQUE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_ProductChannel_3] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductChannel] 
+	(
+		[ProductChannelGUID] ASC
+	)
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductChannel]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductChannel_Portals] FOREIGN KEY([PortalID]) REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID]) ON DELETE CASCADE
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductChannel] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductChannel_Portals]
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductChannel]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductChannel_Revindex_Storefront_Product] FOREIGN KEY([ProductID]) REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_Product] ([ProductID])
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductChannel] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductChannel_Revindex_Storefront_Product]
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductChannel]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductChannel_Revindex_Storefront_ProductVariant] FOREIGN KEY([ProductVariantID]) REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant] ([ProductVariantID])
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductChannel] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductChannel_Revindex_Storefront_ProductVariant]
+
+	-- Support print receipt and invoice templates
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		CommunicationSalesOrderReceiptPrintTemplate xml NULL,
+		CommunicationSalesOrderInvoicePrintTemplate xml NULL
+
+COMMIT TRANSACTION
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+	
+		-- Fix missing SalesPayment.Origin in ViewRevindexStorefrontManagePayment
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesPayment SET Origin = 2 WHERE Origin = 0
+		
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

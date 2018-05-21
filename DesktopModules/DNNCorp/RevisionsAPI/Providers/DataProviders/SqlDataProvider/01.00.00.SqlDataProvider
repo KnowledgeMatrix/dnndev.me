@@ -1,0 +1,315 @@
+﻿IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revisions]') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Revisions
+	(
+		[RevisionId] [int] IDENTITY(1,1) NOT NULL,
+		[Sequence] [int] NOT NULL,
+		[PortalId] [int] NOT NULL,
+		[ContentItemId] [int] NOT NULL,
+		[RevisionType] [int] NOT NULL,
+		[State] [int] NOT NULL,
+		[Changeset] [nvarchar](MAX) NULL,
+		[ObjectKey] [nvarchar](64) NULL,
+		[CreatedUserId] [int] NOT NULL,
+		[CreatedDate] [datetime] NOT NULL,
+		[LastModifiedUserId] [int] NOT NULL,
+		[LastModifiedDate] [datetime] NOT NULL,
+		CONSTRAINT [PK_{objectQualifier}Revisions] PRIMARY KEY NONCLUSTERED (RevisionId DESC)
+	)
+
+	CREATE CLUSTERED INDEX [IX_{objectQualifier}Revisions_ContentItemId] ON {databaseOwner}{objectQualifier}Revisions (ContentItemId DESC, Sequence DESC)
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revisions_StateHistory]') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Revisions_StateHistory
+	(
+		[RevisionStateId] [int] IDENTITY(1,1) NOT NULL,
+		[RevisionId] [int] NOT NULL,
+		[OldState] [int] NULL, -- null in the event the item did not exist before
+		[NewState] [int] NOT NULL,
+		[UserId] [int] NOT NULL,
+		[TransitionDate] [datetime] NOT NULL,
+		CONSTRAINT [PK_{objectQualifier}Revisions_StateHistory] PRIMARY KEY NONCLUSTERED (RevisionStateId DESC)
+	)
+
+	CREATE CLUSTERED INDEX [IX_{objectQualifier}Revisions_ContentItemId] ON {databaseOwner}{objectQualifier}Revisions_StateHistory (RevisionId DESC)
+END
+GO
+
+-- The Revisions_Locks table is an /advisory lock/ system, where the locks do not actually impact or prevent you from modifying the
+-- content that is locked. The only impact the lock will have is on those subsystems who choose to look at whether the content is presently
+-- locked. Any code that ignores the lock state of the content is free to do so. This is analogous to the flock system call in POSIX.
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revisions_Locks]') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Revisions_Locks
+	(
+		[LockId] [int] IDENTITY(1, 1) NOT NULL,
+		[ContentItemId] [int] NOT NULL,
+		[UserId] [int] NOT NULL,
+		[LockedDate] [datetime] NOT NULL,
+		CONSTRAINT [PK_{objectQualifier}Revisions_Locks] PRIMARY KEY NONCLUSTERED ([LockId] DESC)
+	)
+
+	CREATE CLUSTERED INDEX [IX_{objectQualifier}Revisions_Locks_ContentItemId] ON {databaseOwner}{objectQualifier}Revisions_Locks (ContentItemId DESC)
+END
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Revisions_Lock') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Revisions_Lock
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Revisions_Lock
+	@ContentItemId int,
+	@UserId int
+AS
+BEGIN
+	IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}Revisions_Locks WHERE ContentItemId = @ContentItemId)
+	BEGIN
+		INSERT INTO {databaseOwner}{objectQualifier}Revisions_Locks (ContentItemId, UserId, LockedDate) VALUES (@ContentItemId, @UserId, getutcdate())
+
+		SELECT	*
+		FROM	{databaseOwner}{objectQualifier}Revisions_Locks
+		WHERE	LockId = SCOPE_IDENTITY()
+	END
+END
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Revisions_Unlock') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Revisions_Unlock
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Revisions_Unlock
+	@ContentItemId int
+AS
+BEGIN
+	SELECT	TOP 1 *
+	FROM	{databaseOwner}{objectQualifier}Revisions_Locks
+	WHERE	ContentItemId = @ContentItemId
+
+	DELETE FROM {databaseOwner}{objectQualifier}Revisions_Locks WHERE ContentItemId = @ContentItemId
+END
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Revisions_GetLock') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Revisions_GetLock
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Revisions_GetLock
+	@ContentItemId int
+AS
+BEGIN
+	SELECT	TOP 1 *
+	FROM	{databaseOwner}{objectQualifier}Revisions_Locks
+	WHERE	ContentItemId = @ContentItemId
+END
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Revisions_Insert') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Revisions_Insert
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Revisions_Insert
+	@ContentItemId int,
+	@PortalId int,
+	@RevisionType int,
+	@Sequence int,
+	@Changeset nvarchar(MAX),
+	@ObjectKey nvarchar(64),
+	@State int,
+	@UserId int
+AS
+BEGIN
+--	BEGIN TRY
+		BEGIN TRANSACTION
+
+		-- If this item is being inserted into the middle of the sequence, we need to push out the sequence numbers of the existing
+		-- set of items so that this one can be pushed into the middle of the stack. The use-case for this is rollback entries that
+		-- need to be pushed into the list right after the revision that they are rolling back.
+
+		UPDATE	{databaseOwner}{objectQualifier}Revisions SET Sequence = Sequence + 1
+		WHERE	ContentItemId = @ContentItemId AND Sequence >= @Sequence
+
+		INSERT INTO {databaseOwner}{objectQualifier}Revisions
+			([ContentItemId],
+			 [PortalId],
+			 [Sequence],
+			 [RevisionType],
+			 [Changeset],
+			 [ObjectKey],
+			 [State],
+			 [CreatedUserId],
+			 [CreatedDate],
+			 [LastModifiedUserId],
+			 [LastModifiedDate])
+			VALUES
+			(@ContentItemId,
+			 @PortalId,
+			 @Sequence,
+			 @RevisionType,
+			 @Changeset,
+			 @ObjectKey,
+			 @State,
+			 @UserId,
+			 getutcdate(),
+			 @UserId,
+			 getutcdate())
+
+		DECLARE	@RevisionId int
+		SELECT	@RevisionId = SCOPE_IDENTITY()
+
+		-- Insert a history item into the state transition history table (OldState is null because the revision did not previously exist)
+		INSERT INTO {databaseOwner}{objectQualifier}Revisions_StateHistory
+			(RevisionId, OldState, NewState, UserId, TransitionDate)
+			VALUES
+			(@RevisionId, null, @State, @UserId, getutcdate())
+
+		COMMIT TRANSACTION
+
+		SELECT @RevisionId
+--	END TRY
+--	BEGIN CATCH
+--		ROLLBACK TRANSACTION
+
+--		RAISERROR('Unable to create new Content Revision on Content Item ID %d', 12, 1, @ContentItemId)
+--	END CATCH
+END
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Revisions_GetSequence') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Revisions_GetSequence
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Revisions_GetSequence
+	@ContentItemId int
+AS
+BEGIN
+	SELECT	(COALESCE(MAX(Sequence), 0) + 1) AS [Sequence]
+	FROM	{databaseOwner}{objectQualifier}Revisions
+	WHERE	ContentItemId = @ContentItemId
+END
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Revisions_Transition') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Revisions_Transition
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Revisions_Transition
+	@RevisionId int,
+	@State int,
+	@UserId int
+AS
+BEGIN
+	-- Current state
+	DECLARE	@CurrentState int
+	SELECT	@CurrentState = [State]
+	FROM	{databaseOwner}{objectQualifier}Revisions
+	WHERE	RevisionId = @RevisionId
+
+	DECLARE @TransitionId int
+
+	BEGIN TRY
+		BEGIN TRANSACTION
+
+		INSERT INTO {databaseOwner}{objectQualifier}Revisions_StateHistory
+			(RevisionId, OldState, NewState, UserId, TransitionDate) VALUES (@RevisionId, @CurrentState, @State, @UserId, getutcdate())
+
+		SELECT @TransitionId = SCOPE_IDENTITY()
+
+		UPDATE	{databaseOwner}{objectQualifier}Revisions
+		SET		[State] = @State,
+				[LastModifiedUserId] = @UserId,
+				[LastModifiedDate] = getutcdate()
+		WHERE	RevisionId = @RevisionId
+
+		COMMIT TRANSACTION
+
+		SELECT @TransitionId
+	END TRY
+	BEGIN CATCH
+		ROLLBACK TRANSACTION
+
+		RAISERROR('Unable to perform state transition on Content Revision %d', 12, 1, @RevisionId)
+	END CATCH
+END
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Revisions_List_ContentItemId') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Revisions_List_ContentItemId
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Revisions_List_ContentItemId
+	@ContentItemId int
+AS
+BEGIN
+	SELECT		*
+	FROM		{databaseOwner}{objectQualifier}Revisions
+	WHERE		ContentItemId = @ContentItemId
+END
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Revisions_List_StateHistory') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Revisions_List_StateHistory
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Revisions_List_StateHistory
+	@RevisionId int
+AS
+BEGIN
+	SELECT		*
+	FROM		{databaseOwner}{objectQualifier}Revisions_StateHistory
+	WHERE		RevisionId = @RevisionId
+	ORDER BY	TransitionDate DESC
+END
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Revisions_GetRevision') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Revisions_GetRevision
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Revisions_GetRevision
+	@RevisionId int
+AS
+BEGIN
+	SELECT	TOP 1 *
+	FROM	{databaseOwner}{objectQualifier}Revisions
+	WHERE	RevisionId = @RevisionId
+END
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Revision_HardDelete') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Revision_HardDelete
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Revision_HardDelete
+	@RevisionId int
+AS
+BEGIN
+	DELETE FROM {databaseOwner}{objectQualifier}Revisions WHERE RevisionId = @RevisionId
+
+	IF @@ROWCOUNT <> 0
+		SELECT CAST(1 AS BIT) AS [DeleteResult]
+	ELSE
+		SELECT CAST(0 AS BIT) AS [DeleteResult]
+END
+GO
+
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Revision_DeleteRevisionsByContentItemId') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Revision_DeleteRevisionsByContentItemId
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Revision_DeleteRevisionsByContentItemId
+	@ContentItemId int
+AS
+BEGIN
+	DELETE FROM {databaseOwner}{objectQualifier}Revisions WHERE ContentItemId = @ContentItemId
+
+	IF @@ROWCOUNT <> 0
+		SELECT CAST(1 AS BIT) AS [DeleteResult]
+	ELSE
+		SELECT CAST(0 AS BIT) AS [DeleteResult]
+END
+GO

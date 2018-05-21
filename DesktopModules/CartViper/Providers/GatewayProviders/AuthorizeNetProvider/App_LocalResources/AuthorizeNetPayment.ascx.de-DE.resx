@@ -1,0 +1,836 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="lblCardNumber.Help" xml:space="preserve">
+    <value>Geben Sie Ihre Kreditkarte an.</value>
+  </data>
+  <data name="lblCardNumber.Text" xml:space="preserve">
+    <value>Karten-Nummer</value>
+  </data>
+  <data name="lblCSC.Help" xml:space="preserve">
+    <value>Geben Sie die drei-oder vierstellige Zahl auf der Rückseite Ihrer Karte.</value>
+  </data>
+  <data name="lblCSC.Text" xml:space="preserve">
+    <value>Kartenprüfnummer</value>
+  </data>
+  <data name="lblExpiryDate.Help" xml:space="preserve">
+    <value>Geben Sie Ihre Kreditkarte das Verfallsdatum in MM / JJ-Format.</value>
+  </data>
+  <data name="lblExpiryDate.Text" xml:space="preserve">
+    <value>Verfallsdatum</value>
+  </data>
+  <data name="lblPaymentTitle.Help" xml:space="preserve">
+    <value>Geben Sie Ihre Kreditkarte Details.</value>
+  </data>
+  <data name="lblPaymentTitle.Text" xml:space="preserve">
+    <value>Einzelheiten zur Bezahlung</value>
+  </data>
+  <data name="ErrorBillingAddress.Text" xml:space="preserve">
+    <value>Bitte wählen Sie eine Rechnungsadresse.</value>
+  </data>
+  <data name="ErrorCardInformation.Text" xml:space="preserve">
+    <value>Bitte geben Sie Ihre Kreditkartendaten.</value>
+  </data>
+  <data name="ErrorCardNotValid.Text" xml:space="preserve">
+    <value>Die Kreditkarten-Informationen ist nicht gültig!</value>
+  </data>
+  <data name="ErrorNotSecured.Text" xml:space="preserve">
+    <value>Seite ist nicht mit SSL gesichert haben, können Sie nicht verwenden Authorize.Net ohne SSL.</value>
+  </data>
+  <data name="ErrorPaymentOption.Text" xml:space="preserve">
+    <value>Gateway-Einstellungen wurden nicht festgelegt. Bitte kontaktieren Sie Ihren Systemadministrator.</value>
+  </data>
+  <data name="lblConfirmMessage.Text" xml:space="preserve">
+    <value>Beachten Sie, dass durch Anklicken des &amp;quot;Bestellung bestätigen&amp;quot; Button unten, du bist zu {0} &amp;#39;s Nutzungsbedingungen einverstanden.</value>
+  </data>
+  <data name="ErrorConnection.Text" xml:space="preserve">
+    <value>Keine Verbindung vorhanden.</value>
+  </data>
+  <data name="ErrorUnexpected.Text" xml:space="preserve">
+    <value>Ein unerwarteter Fehler auftritt.</value>
+  </data>
+  <data name="ResponseCode1.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde genehmigt.</value>
+  </data>
+  <data name="ReasonCode10.Text" xml:space="preserve">
+    <value>Die Kontonummer ist ungültig.</value>
+  </data>
+  <data name="ReasonCode11.Text" xml:space="preserve">
+    <value>Eine doppelte Transaktion wurde
+vorgelegt.</value>
+  </data>
+  <data name="ReasonCode12.Text" xml:space="preserve">
+    <value>Eine Zulassung wird benötigt,
+jedoch nicht mehr vorhanden.</value>
+  </data>
+  <data name="ReasonCode13.Text" xml:space="preserve">
+    <value>Der Kaufmann API Login-ID ist
+ungültig oder das Konto ist inaktiv.</value>
+  </data>
+  <data name="ReasonCode14.Text" xml:space="preserve">
+    <value>Der Referrer oder Relay Response
+URL ist ungültig.</value>
+  </data>
+  <data name="ReasonCode15.Text" xml:space="preserve">
+    <value>Die Transaktions-ID ist ungültig.</value>
+  </data>
+  <data name="ReasonCode16.Text" xml:space="preserve">
+    <value>Die Transaktion wurde nicht gefunden.</value>
+  </data>
+  <data name="ReasonCode17.Text" xml:space="preserve">
+    <value>Der Händler lehnt diese Art der Kreditkarte.</value>
+  </data>
+  <data name="ReasonCode18.Text" xml:space="preserve">
+    <value>ACH-Transaktionen sind von diesem Händler akzeptiert.</value>
+  </data>
+  <data name="ReasonCode19.Text" xml:space="preserve">
+    <value>Ein Fehler trat während der Verarbeitung. Bitte versuchen Sie es in 5 Minuten.</value>
+  </data>
+  <data name="ReasonCode20.Text" xml:space="preserve">
+    <value>Ein Fehler trat während der Verarbeitung. Bitte versuchen Sie es in 5 Minuten.</value>
+  </data>
+  <data name="ReasonCode21.Text" xml:space="preserve">
+    <value>Ein Fehler trat während der Verarbeitung. Bitte versuchen Sie es in 5 Minuten.</value>
+  </data>
+  <data name="ReasonCode22.Text" xml:space="preserve">
+    <value>Ein Fehler trat während der Verarbeitung. Bitte versuchen Sie es in 5 Minuten.</value>
+  </data>
+  <data name="ReasonCode23.Text" xml:space="preserve">
+    <value>Ein Fehler trat während der Verarbeitung. Bitte versuchen Sie es in 5 Minuten.</value>
+  </data>
+  <data name="ReasonCode24.Text" xml:space="preserve">
+    <value>Die Nova Bankleitzahl oder Terminal-ID ist falsch. Call Merchant Service Provider.</value>
+  </data>
+  <data name="ReasonCode25.Text" xml:space="preserve">
+    <value>Ein Fehler trat während der Verarbeitung. Bitte versuchen Sie es in 5 Minuten.</value>
+  </data>
+  <data name="ReasonCode26.Text" xml:space="preserve">
+    <value>Ein Fehler trat während der Verarbeitung. Bitte versuchen Sie es in 5 Minuten.</value>
+  </data>
+  <data name="ReasonCode27.Text" xml:space="preserve">
+    <value>Die Transaktion führte zu einem Missverhältnis AVS. Die Adresse stimmt nicht mit Rechnungsadresse des Karteninhabers.</value>
+  </data>
+  <data name="ReasonCode28.Text" xml:space="preserve">
+    <value>Der Händler lehnt diese Art der Kreditkarte.</value>
+  </data>
+  <data name="ReasonCode29.Text" xml:space="preserve">
+    <value>Die Paymentech Identifikationsnummern sind nicht korrekt. Call Merchant Service Provider.</value>
+  </data>
+  <data name="ReasonCode30.Text" xml:space="preserve">
+    <value>Die Konfiguration mit dem Prozessor ist ungültig. Call Merchant Service Provider.</value>
+  </data>
+  <data name="ReasonCode31.Text" xml:space="preserve">
+    <value>Die FDC Merchant-ID oder Terminal-ID ist falsch. Call Merchant Service Provider.</value>
+  </data>
+  <data name="ReasonCode32.Text" xml:space="preserve">
+    <value>Dieser Grund-Code ist reserviert oder nicht für diese API.</value>
+  </data>
+  <data name="ReasonCode34.Text" xml:space="preserve">
+    <value>Die VITAL-Identifikationsnummern sind nicht korrekt. Call Merchant Service Provider.</value>
+  </data>
+  <data name="ReasonCode35.Text" xml:space="preserve">
+    <value>Ein Fehler trat während der Verarbeitung. Call Merchant Service Provider.</value>
+  </data>
+  <data name="ReasonCode36.Text" xml:space="preserve">
+    <value>Die Genehmigung wurde genehmigt, aber Beilegung gescheitert.</value>
+  </data>
+  <data name="ReasonCode37.Text" xml:space="preserve">
+    <value>Die Genehmigung wurde genehmigt, aber Beilegung gescheitert.</value>
+  </data>
+  <data name="ReasonCode38.Text" xml:space="preserve">
+    <value>Die Genehmigung wurde genehmigt, aber Beilegung gescheitert.</value>
+  </data>
+  <data name="ReasonCode39.Text" xml:space="preserve">
+    <value>Die Paymentech Identifikationsnummern sind nicht korrekt. Call Merchant Service Provider.</value>
+  </data>
+  <data name="ReasonCode40.Text" xml:space="preserve">
+    <value>Diese Transaktion verschlüsselt werden müssen.</value>
+  </data>
+  <data name="ReasonCode41.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt.</value>
+  </data>
+  <data name="ReasonCode43.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt.</value>
+  </data>
+  <data name="ReasonCode44.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt.</value>
+  </data>
+  <data name="ReasonCode45.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt.</value>
+  </data>
+  <data name="ReasonCode46.Text" xml:space="preserve">
+    <value>Ihre Sitzung ist abgelaufen oder existiert nicht. Du musst angemeldet sein, um weiter zu arbeiten.</value>
+  </data>
+  <data name="ReasonCode47.Text" xml:space="preserve">
+    <value>Ihre Sitzung ist abgelaufen oder existiert nicht. Du musst angemeldet sein, um weiter zu arbeiten.</value>
+  </data>
+  <data name="ReasonCode48.Text" xml:space="preserve">
+    <value>Dieser Prozessor übernimmt keine teilweise Auflösung.</value>
+  </data>
+  <data name="ReasonCode50.Text" xml:space="preserve">
+    <value>Dieser Prozessor übernimmt keine teilweise Auflösung.</value>
+  </data>
+  <data name="ReasonCode51.Text" xml:space="preserve">
+    <value>Die Summe aller Kredite gegen diese Transaktion größer ist als die ursprüngliche Transaktion belaufen.</value>
+  </data>
+  <data name="ReasonCode52.Text" xml:space="preserve">
+    <value>Die Transaktion wurde genehmigt, aber die Client konnte nicht benachrichtigt werden, die Transaktion nicht beigelegt werden.</value>
+  </data>
+  <data name="ReasonCode53.Text" xml:space="preserve">
+    <value>Die Transaktion Typ war ungültig für ACH-Transaktionen.</value>
+  </data>
+  <data name="ReasonCode54.Text" xml:space="preserve">
+    <value>Die betroffene Transaktion erfüllt nicht die Kriterien für die Erteilung einer Gutschrift.</value>
+  </data>
+  <data name="ReasonCode55.Text" xml:space="preserve">
+    <value>Die Summe der Kredite gegen die referenzierten Transaktion würde den ursprünglichen Belastung betragen.</value>
+  </data>
+  <data name="ReasonCode56.Text" xml:space="preserve">
+    <value>Dieser Händler akzeptiert ACH-Transaktionen nur, keine Kreditkarten-Transaktionen akzeptiert werden.</value>
+  </data>
+  <data name="ReasonCode57.Text" xml:space="preserve">
+    <value>Ein Fehler trat bei der Verarbeitung. Bitte versuchen Sie es in 5 Minuten.</value>
+  </data>
+  <data name="ReasonCode58.Text" xml:space="preserve">
+    <value>Ein Fehler trat bei der Verarbeitung. Bitte versuchen Sie es in 5 Minuten.</value>
+  </data>
+  <data name="ReasonCode59.Text" xml:space="preserve">
+    <value>Ein Fehler trat bei der Verarbeitung. Bitte versuchen Sie es in 5 Minuten.</value>
+  </data>
+  <data name="ReasonCode60.Text" xml:space="preserve">
+    <value>Ein Fehler trat bei der Verarbeitung. Bitte versuchen Sie es in 5 Minuten.</value>
+  </data>
+  <data name="ReasonCode61.Text" xml:space="preserve">
+    <value>Ein Fehler trat bei der Verarbeitung. Bitte versuchen Sie es in 5 Minuten.</value>
+  </data>
+  <data name="ReasonCode62.Text" xml:space="preserve">
+    <value>Ein Fehler trat bei der Verarbeitung. Bitte versuchen Sie es in 5 Minuten.</value>
+  </data>
+  <data name="ReasonCode63.Text" xml:space="preserve">
+    <value>Ein Fehler trat bei der Verarbeitung. Bitte versuchen Sie es in 5 Minuten.</value>
+  </data>
+  <data name="ReasonCode65.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt.</value>
+  </data>
+  <data name="ReasonCode66.Text" xml:space="preserve">
+    <value>Diese Transaktion kann nicht zur Bearbeitung angenommen werden.</value>
+  </data>
+  <data name="ReasonCode68.Text" xml:space="preserve">
+    <value>Die Version ist ungültig.</value>
+  </data>
+  <data name="ReasonCode69.Text" xml:space="preserve">
+    <value>Die Transaktion ist ungültig.</value>
+  </data>
+  <data name="ReasonCode71.Text" xml:space="preserve">
+    <value>Die Bankverbindung ist ungültig.</value>
+  </data>
+  <data name="ReasonCode72.Text" xml:space="preserve">
+    <value>Die Ermächtigung ist ungültig.</value>
+  </data>
+  <data name="ReasonCode73.Text" xml:space="preserve">
+    <value>Der Führerschein Geburtsdatum ist ungültig.</value>
+  </data>
+  <data name="ReasonCode74.Text" xml:space="preserve">
+    <value>Die Pflicht Betrag ist ungültig.</value>
+  </data>
+  <data name="ReasonCode75.Text" xml:space="preserve">
+    <value>Die Fracht ist ungültig.</value>
+  </data>
+  <data name="ReasonCode76.Text" xml:space="preserve">
+    <value>Der Steuerbetrag ist ungültig.</value>
+  </data>
+  <data name="ReasonCode77.Text" xml:space="preserve">
+    <value>Die SSN oder Steuer-ID ist ungültig.</value>
+  </data>
+  <data name="ReasonCode78.Text" xml:space="preserve">
+    <value>Die Card Code (CVV2/CVC2/CID) ist ungültig.</value>
+  </data>
+  <data name="ReasonCode79.Text" xml:space="preserve">
+    <value>Der Führerschein ist ungültig /</value>
+  </data>
+  <data name="ReasonCode80.Text" xml:space="preserve">
+    <value>Der Führerschein ist ungültig.</value>
+  </data>
+  <data name="ReasonCode81.Text" xml:space="preserve">
+    <value>Das angeforderte Formular ist ungültig.</value>
+  </data>
+  <data name="ReasonCode82.Text" xml:space="preserve">
+    <value>Skripte sind nur in der Version 2.5 unterstützt.</value>
+  </data>
+  <data name="ReasonCode83.Text" xml:space="preserve">
+    <value>Die aufgerufene Skript ist entweder ungültig oder nicht mehr unterstützt.</value>
+  </data>
+  <data name="ReasonCode84.Text" xml:space="preserve">
+    <value>Dieser Grund-Code ist reserviert oder nicht für diese API.</value>
+  </data>
+  <data name="ReasonCode91.Text" xml:space="preserve">
+    <value>Version 2.5 wird nicht mehr unterstützt.</value>
+  </data>
+  <data name="ReasonCode92.Text" xml:space="preserve">
+    <value>Das Gateway unterstützt nicht mehr die gewünschte Methode der Integration.</value>
+  </data>
+  <data name="ReasonCode97.Text" xml:space="preserve">
+    <value>Diese Transaktion kann nicht akzeptiert werden.</value>
+  </data>
+  <data name="ReasonCode98.Text" xml:space="preserve">
+    <value>Diese Transaktion kann nicht akzeptiert werden.</value>
+  </data>
+  <data name="ReasonCode99.Text" xml:space="preserve">
+    <value>Diese Transaktion kann nicht akzeptiert werden.</value>
+  </data>
+  <data name="ReasonCode100.Text" xml:space="preserve">
+    <value>Die eCheck.Net Typ ist ungültig.</value>
+  </data>
+  <data name="ReasonCode101.Text" xml:space="preserve">
+    <value>Die angegebenen Namen auf dem Konto und / oder den Account-Typ entspricht nicht der tatsächlichen verändern.</value>
+  </data>
+  <data name="ReasonCode102.Text" xml:space="preserve">
+    <value>Dieser Antrag kann nicht gefolgt werden.</value>
+  </data>
+  <data name="ReasonCode103.Text" xml:space="preserve">
+    <value>Diese Transaktion kann nicht akzeptiert werden.</value>
+  </data>
+  <data name="ReasonCode104.Text" xml:space="preserve">
+    <value>Diese Transaktion wird derzeit überprüft.</value>
+  </data>
+  <data name="ReasonCode105.Text" xml:space="preserve">
+    <value>Diese Transaktion wird derzeit überprüft.</value>
+  </data>
+  <data name="ReasonCode106.Text" xml:space="preserve">
+    <value>Diese Transaktion wird derzeit überprüft.</value>
+  </data>
+  <data name="ReasonCode107.Text" xml:space="preserve">
+    <value>Diese Transaktion wird derzeit überprüft.</value>
+  </data>
+  <data name="ReasonCode108.Text" xml:space="preserve">
+    <value>Diese Transaktion wird derzeit überprüft.</value>
+  </data>
+  <data name="ReasonCode109.Text" xml:space="preserve">
+    <value>Diese Transaktion wird derzeit überprüft.</value>
+  </data>
+  <data name="ReasonCode110.Text" xml:space="preserve">
+    <value>Diese Transaktion wird derzeit überprüft.</value>
+  </data>
+  <data name="ReasonCode116.Text" xml:space="preserve">
+    <value>Die Authentifizierung Indikator ist ungültig.</value>
+  </data>
+  <data name="ReasonCode117.Text" xml:space="preserve">
+    <value>Der Karteninhaber Authentifizierung Wert ist ungültig.</value>
+  </data>
+  <data name="ReasonCode118.Text" xml:space="preserve">
+    <value>Die Kombination von Authentifizierungs-Indikator und Karteninhaber-Authentifizierung ist ungültig.</value>
+  </data>
+  <data name="ReasonCode119.Text" xml:space="preserve">
+    <value>Transaktionen mit Karteninhaber Authentifizierung Werte können nicht als wiederkehrende markiert werden.</value>
+  </data>
+  <data name="ReasonCode120.Text" xml:space="preserve">
+    <value>Ein Fehler trat während der Verarbeitung. Bitte versuchen Sie es erneut.</value>
+  </data>
+  <data name="ReasonCode121.Text" xml:space="preserve">
+    <value>Ein Fehler trat während der Verarbeitung. Bitte versuchen Sie es erneut.</value>
+  </data>
+  <data name="ReasonCode122.Text" xml:space="preserve">
+    <value>Ein Fehler trat während der Verarbeitung. Bitte versuchen Sie es erneut.</value>
+  </data>
+  <data name="ReasonCode123.Text" xml:space="preserve">
+    <value>Dieses Konto wurde noch nicht die Erlaubnis (e) für diesen Antrag erforderlich gegeben.</value>
+  </data>
+  <data name="ReasonCode127.Text" xml:space="preserve">
+    <value>Die Transaktion führte zu einem Missverhältnis AVS. Die Adresse stimmt nicht mit Rechnungsadresse des Karteninhabers.</value>
+  </data>
+  <data name="ReasonCode128.Text" xml:space="preserve">
+    <value>Diese Transaktion kann nicht verarbeitet werden.</value>
+  </data>
+  <data name="ReasonCode130.Text" xml:space="preserve">
+    <value>Diese Zahlung Gateway-Konto wurde geschlossen.</value>
+  </data>
+  <data name="ReasonCode131.Text" xml:space="preserve">
+    <value>Diese Transaktion kann zu diesem Zeitpunkt nicht akzeptiert werden.</value>
+  </data>
+  <data name="ReasonCode132.Text" xml:space="preserve">
+    <value>Diese Transaktion kann zu diesem Zeitpunkt nicht akzeptiert werden.</value>
+  </data>
+  <data name="ReasonCode141.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt.</value>
+  </data>
+  <data name="ReasonCode145.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt.</value>
+  </data>
+  <data name="ReasonCode152.Text" xml:space="preserve">
+    <value>Die Transaktion wurde genehmigt, aber die Client konnte nicht benachrichtigt werden, die Transaktion nicht beigelegt werden.</value>
+  </data>
+  <data name="ReasonCode165.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt.</value>
+  </data>
+  <data name="ReasonCode170.Text" xml:space="preserve">
+    <value>Ein Fehler trat während der Verarbeitung. Bitte kontaktieren Sie den Händler.</value>
+  </data>
+  <data name="ReasonCode171.Text" xml:space="preserve">
+    <value>Ein Fehler trat während der Verarbeitung. Bitte kontaktieren Sie den Händler.</value>
+  </data>
+  <data name="ReasonCode172.Text" xml:space="preserve">
+    <value>Ein Fehler trat während der Verarbeitung. Bitte kontaktieren Sie den Händler.</value>
+  </data>
+  <data name="ReasonCode173.Text" xml:space="preserve">
+    <value>Ein Fehler trat während der Verarbeitung. Bitte kontaktieren Sie den Händler.</value>
+  </data>
+  <data name="ReasonCode174.Text" xml:space="preserve">
+    <value>Die Transaktion ist ungültig. Bitte kontaktieren Sie den Händler.</value>
+  </data>
+  <data name="ReasonCode175.Text" xml:space="preserve">
+    <value>Der Prozessor erlaubt keine Entleerung von Krediten.</value>
+  </data>
+  <data name="ReasonCode180.Text" xml:space="preserve">
+    <value>Ein Fehler trat während der Verarbeitung. Bitte versuchen Sie es erneut.</value>
+  </data>
+  <data name="ReasonCode181.Text" xml:space="preserve">
+    <value>Ein Fehler trat während der Verarbeitung. Bitte versuchen Sie es erneut.</value>
+  </data>
+  <data name="ReasonCode193.Text" xml:space="preserve">
+    <value>Die Transaktion wird derzeit überprüft.</value>
+  </data>
+  <data name="ReasonCode200.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt.</value>
+  </data>
+  <data name="ReasonCode201.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt.</value>
+  </data>
+  <data name="ReasonCode202.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt.</value>
+  </data>
+  <data name="ReasonCode203.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt.</value>
+  </data>
+  <data name="ReasonCode204.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt.</value>
+  </data>
+  <data name="ReasonCode205.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt.</value>
+  </data>
+  <data name="ReasonCode206.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt.</value>
+  </data>
+  <data name="ReasonCode207.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt.</value>
+  </data>
+  <data name="ReasonCode208.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt.</value>
+  </data>
+  <data name="ReasonCode209.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt.</value>
+  </data>
+  <data name="ReasonCode210.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt.</value>
+  </data>
+  <data name="ReasonCode211.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt.</value>
+  </data>
+  <data name="ReasonCode212.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt.</value>
+  </data>
+  <data name="ReasonCode213.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt.</value>
+  </data>
+  <data name="ReasonCode214.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt.</value>
+  </data>
+  <data name="ReasonCode215.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt.</value>
+  </data>
+  <data name="ReasonCode216.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt.</value>
+  </data>
+  <data name="ReasonCode217.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt.</value>
+  </data>
+  <data name="ReasonCode218.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt.</value>
+  </data>
+  <data name="ReasonCode219.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt.</value>
+  </data>
+  <data name="ReasonCode220.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt.</value>
+  </data>
+  <data name="ReasonCode221.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt.</value>
+  </data>
+  <data name="ReasonCode222.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt.</value>
+  </data>
+  <data name="ReasonCode223.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt.</value>
+  </data>
+  <data name="ReasonCode224.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt.</value>
+  </data>
+  <data name="ReasonCode243.Text" xml:space="preserve">
+    <value>Wiederkehrende Rechnungen ist nicht für diese Art eCheck.Net erlaubt.</value>
+  </data>
+  <data name="ReasonCode244.Text" xml:space="preserve">
+    <value>Diese eCheck.Net Typ ist nicht für diese Bank Account Type erlaubt.</value>
+  </data>
+  <data name="ReasonCode245.Text" xml:space="preserve">
+    <value>TDies eCheck.Net Art ist nicht zulässig, wenn mit dem Payment Gateway gehostet Zahlschein.</value>
+  </data>
+  <data name="ReasonCode246.Text" xml:space="preserve">
+    <value>TDies eCheck.Net Art ist nicht erlaubt.</value>
+  </data>
+  <data name="ReasonCode247.Text" xml:space="preserve">
+    <value>Diese eCheck.Net Art ist nicht erlaubt.</value>
+  </data>
+  <data name="ReasonCode248.Text" xml:space="preserve">
+    <value>Die Prüfung ist ungültig.</value>
+  </data>
+  <data name="ReasonCode250.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt.</value>
+  </data>
+  <data name="ReasonCode251.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt.</value>
+  </data>
+  <data name="ReasonCode252.Text" xml:space="preserve">
+    <value>Ihre Bestellung eingegangen ist. Vielen Dank für Ihr Business!</value>
+  </data>
+  <data name="ReasonCode253.Text" xml:space="preserve">
+    <value>Ihre Bestellung eingegangen ist. Vielen Dank für Ihr Business!</value>
+  </data>
+  <data name="ReasonCode254.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt.</value>
+  </data>
+  <data name="ReasonCode261.Text" xml:space="preserve">
+    <value>Ein Fehler trat während der Verarbeitung. Bitte versuchen Sie es erneut.</value>
+  </data>
+  <data name="ReasonCode271.Text" xml:space="preserve">
+    <value>Die Anzahl der Posten vorgelegt ist nicht erlaubt. Es können maximal 30 Positionen gestellt werden kann.</value>
+  </data>
+  <data name="ReasonCode288.Text" xml:space="preserve">
+    <value>Merchant ist nicht als Karteninhaber Authentifizierung Teilnehmer registriert. Diese Transaktion kann nicht akzeptiert werden.</value>
+  </data>
+  <data name="ReasonCode289.Text" xml:space="preserve">
+    <value>Dieser Prozessor übernimmt keine Null-Dollar-Zulassung für diesen Kartentyp.</value>
+  </data>
+  <data name="ReasonCode290.Text" xml:space="preserve">
+    <value>Ein oder mehrere erforderliche AVS Werte für Null-Dollar-Zulassung wurden nicht vorgelegt.</value>
+  </data>
+  <data name="ReasonCode295.Text" xml:space="preserve">
+    <value>Die Höhe dieser Antrag wurde nur teilweise auf der Prepaid-Karte gegeben genehmigt. Zusätzliche Zahlungen sind erforderlich, um das Gleichgewicht der Abschluss dieser Transaktion.</value>
+  </data>
+  <data name="ReasonCode296.Text" xml:space="preserve">
+    <value>Der angegebene SplitTenderId ist nicht gültig</value>
+  </data>
+  <data name="ReasonCode297.Text" xml:space="preserve">
+    <value>Ein Transaktions-ID und eine Split Tender-ID kann nicht beides in einer einzigen Transaktion verwendet werden soll.</value>
+  </data>
+  <data name="ReasonCode300.Text" xml:space="preserve">
+    <value>Die Geräte-ID ist ungültig.</value>
+  </data>
+  <data name="ReasonCode301.Text" xml:space="preserve">
+    <value>Das Gerät Batch-ID ist ungültig.</value>
+  </data>
+  <data name="ReasonCode302.Text" xml:space="preserve">
+    <value>Die Umkehrung Flagge ist ungültig.</value>
+  </data>
+  <data name="ReasonCode303.Text" xml:space="preserve">
+    <value>Das Gerät Partie ist voll. Bitte schließen Sie die Partie.</value>
+  </data>
+  <data name="ReasonCode304.Text" xml:space="preserve">
+    <value>Die ursprüngliche Transaktion wird in einem geschlossenen Partie.</value>
+  </data>
+  <data name="ReasonCode305.Text" xml:space="preserve">
+    <value>Der Händler ist für Auto-close konfiguriert</value>
+  </data>
+  <data name="ReasonCode306.Text" xml:space="preserve">
+    <value>Der Ansatz wird bereits geschlossen.</value>
+  </data>
+  <data name="ReasonCode307.Text" xml:space="preserve">
+    <value>Die Umkehrung wurde erfolgreich verarbeitet.</value>
+  </data>
+  <data name="ReasonCode308.Text" xml:space="preserve">
+    <value>Ursprünglichen Transaktion zur Umkehr nicht gefunden ..</value>
+  </data>
+  <data name="ReasonCode309.Text" xml:space="preserve">
+    <value>Das Gerät wurde deaktiviert.</value>
+  </data>
+  <data name="ReasonCode310.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde bereits storniert.</value>
+  </data>
+  <data name="ReasonCode311.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde bereits erfasst</value>
+  </data>
+  <data name="ReasonCode315.Text" xml:space="preserve">
+    <value>Die Kreditkartennummer ist ungültig.</value>
+  </data>
+  <data name="ReasonCode316.Text" xml:space="preserve">
+    <value>Das Ablaufdatum der Kreditkarte ist ungültig.</value>
+  </data>
+  <data name="ReasonCode317.Text" xml:space="preserve">
+    <value>Die Kreditkarte ist abgelaufen.</value>
+  </data>
+  <data name="ReasonCode318.Text" xml:space="preserve">
+    <value>Eine doppelte Transaktion eingereicht wurde.</value>
+  </data>
+  <data name="ReasonCode319.Text" xml:space="preserve">
+    <value>Die Transaktion kann nicht gefunden werden.</value>
+  </data>
+  <data name="ResponseCode2.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt.</value>
+  </data>
+  <data name="ResponseCode3.Text" xml:space="preserve">
+    <value>Es ist ein Fehler die Verarbeitung dieser Transaktion.</value>
+  </data>
+  <data name="ResponseCode4.Text" xml:space="preserve">
+    <value>Diese Transaktion wird für die Überprüfung statt.</value>
+  </data>
+  <data name="ReasonCode1.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde genehmigt.</value>
+  </data>
+  <data name="ReasonCode2.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt.</value>
+  </data>
+  <data name="ReasonCode3.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt ..</value>
+  </data>
+  <data name="ReasonCode4.Text" xml:space="preserve">
+    <value>Diese Transaktion wurde abgelehnt.</value>
+  </data>
+  <data name="ReasonCode5.Text" xml:space="preserve">
+    <value>Ein gültiger Betrag ist erforderlich.</value>
+  </data>
+  <data name="ReasonCode6.Text" xml:space="preserve">
+    <value>Die Kreditkartennummer ist ungültig.</value>
+  </data>
+  <data name="ReasonCode7.Text" xml:space="preserve">
+    <value>Das Ablaufdatum der Kreditkarte ist
+ungültig.</value>
+  </data>
+  <data name="ReasonCode8.Text" xml:space="preserve">
+    <value>Die Kreditkarte ist abgelaufen.</value>
+  </data>
+  <data name="ReasonCode9.Text" xml:space="preserve">
+    <value>Die ABA-Code ist ungültig.</value>
+  </data>
+  <data name="OrderBillingAddress.Text" xml:space="preserve">
+    <value>Rechnungsadresse:</value>
+  </data>
+  <data name="OrderCannotBeProcessed.Text" xml:space="preserve">
+    <value>Sollten Sie aus irgendeinem Grund Ihre Bestellung nicht bearbeitet werden kann, dann wird einer unserer Kundendienstmitarbeiter Ihnen in Verbindung setzen.</value>
+  </data>
+  <data name="OrderContents.Text" xml:space="preserve">
+    <value>Inhalt der Bestellung</value>
+  </data>
+  <data name="OrderDate.Text" xml:space="preserve">
+    <value>Sortierung: Datum:</value>
+  </data>
+  <data name="OrderDateFormat.Text" xml:space="preserve">
+    <value>MM / TT / JJJJ hh: mm</value>
+  </data>
+  <data name="OrderEmailHeader.Text" xml:space="preserve">
+    <value>Vielen Dank für eine Bestellung bei {0}.
+
+Nachfolgend finden Sie eine Bestellnummer und eine Zusammenfassung Ihrer Bestellung. Sie können den Status Ihrer Bestellung jederzeit überprüfen, indem Sie in unserer Website und auf den &amp;quot;{1}&amp;quot;-Link. Wenn Sie Fragen zu Ihrer Bestellung haben, wenden Sie sich gerne an uns unter {2}, oder einfach auf diese Nachricht antworten zu kontaktieren.</value>
+  </data>
+  <data name="OrderItems.Text" xml:space="preserve">
+    <value>{0} x {1} {2} @</value>
+  </data>
+  <data name="OrderNumber.Text" xml:space="preserve">
+    <value>Bestellnummer:</value>
+  </data>
+  <data name="OrderShipping.Text" xml:space="preserve">
+    <value>Versandkosten: {0}</value>
+  </data>
+  <data name="OrderShippingAddress.Text" xml:space="preserve">
+    <value>Versand nach:</value>
+  </data>
+  <data name="OrderSubject.Text" xml:space="preserve">
+    <value>{0} Auftragsbestätigung</value>
+  </data>
+  <data name="OrderSubjectToAdmin.Text" xml:space="preserve">
+    <value>New Order: {0}</value>
+  </data>
+  <data name="OrderSubTotal.Text" xml:space="preserve">
+    <value>Zwischensumme: {0}</value>
+  </data>
+  <data name="OrderTax.Text" xml:space="preserve">
+    <value>Steuern: {0}</value>
+  </data>
+  <data name="OrderTermsOfUse.Text" xml:space="preserve">
+    <value>Diese Rechnung unterliegt unseren Nutzungsbedingungen.</value>
+  </data>
+  <data name="OrderThanks.Text" xml:space="preserve">
+    <value>Noch einmal vielen Dank für Ihre Bestellung.</value>
+  </data>
+  <data name="OrderTotal.Text" xml:space="preserve">
+    <value>Gesamt: {0}</value>
+  </data>
+  <data name="AboutChange.Text" xml:space="preserve">
+    <value>Wenn Sie Fragen zu dieser Änderung haben, zögern Sie nicht, uns auf {0} an, oder einfach Antwort auf diese Nachricht.</value>
+  </data>
+  <data name="ChangedStatus.Text" xml:space="preserve">
+    <value>Dieser Auftrag ({0}) hat den Status &amp;quot;{1}&amp;quot; geändert.</value>
+  </data>
+  <data name="CheckStatus.Text" xml:space="preserve">
+    <value>Sie können den Status Ihrer Bestellung jederzeit überprüfen, indem Sie sich auf unserer Website und auf den link {0}.</value>
+  </data>
+  <data name="PlacedOrder.Text" xml:space="preserve">
+    <value>Sie haben kürzlich eine Bestellung aufgegeben mit {0}</value>
+  </data>
+  <data name="StatusChanged.Text" xml:space="preserve">
+    <value>{0} Bestell-Status geändert</value>
+  </data>
+  <data name="ReasonMessage.Text" xml:space="preserve">
+    <value>{0} - Code: {1} {2}</value>
+  </data>
+  <data name="RequiresPayment.Text" xml:space="preserve">
+    <value>WICHTIG: Ihre Bestellung jetzt Zahlungen verlangt. Wenn Sie über eine bestimmte Methode zu bezahlen, oder möchten Sie Ihre Bestellung stornieren, kontaktieren Sie uns bitte an {0}, oder einfach Antwort auf diese Nachricht.</value>
+  </data>
+  <data name="rfvNumber.ErrorMessage" xml:space="preserve">
+    <value>* Pflichtfeld</value>
+  </data>
+  <data name="rfvVer.ErrorMessage" xml:space="preserve">
+    <value>* Pflichtfeld</value>
+  </data>
+  <data name="OrderVat.Text" xml:space="preserve">
+    <value>Mehrwertsteuer: {0}</value>
+  </data>
+  <data name="PaymentMethod.Text" xml:space="preserve">
+    <value>Kreditkarte</value>
+  </data>
+  <data name="creditCardLogoAlt.Text" xml:space="preserve">
+    <value>Kreditkarten</value>
+  </data>
+  <data name="creditCardLogoFileName.Text" xml:space="preserve">
+    <value>cc_logos.png</value>
+  </data>
+  <data name="cvvHelp.Text" xml:space="preserve">
+    <value>&lt;p&gt; &lt;b&gt;Visa, MasterCard und Discover:&lt;/b&gt; Auf der Rückseite der Karte in der rechten oberen Ecke der Signatur angezeigt. Geben Sie die dreistellige Zahl nach der Kreditkartennummer. &lt;br/&gt;
+&lt;img src="{0}" alt="CVV" style="margin:10px;"/&gt;&lt;/p&gt;
+
+&lt;p&gt; &lt;b&gt;American Express:&lt;/b&gt; Auf der Vorderseite der Karte. Geben Sie die vierstellige Zahl auf der rechten Seite, direkt über der Kreditkartennummer. &lt;br/&gt;
+&lt;img src="{1}" alt="CVV" style="margin:10px;"/&gt;&lt;/p&gt;</value>
+  </data>
+  <data name="cvvHelpFrontImage.Text" xml:space="preserve">
+    <value>frontcvv.png</value>
+  </data>
+  <data name="cvvHelpRearImage.Text" xml:space="preserve">
+    <value>rearcvv.png</value>
+  </data>
+  <data name="lblCvvHelpLink.Text" xml:space="preserve">
+    <value>Was ist das?</value>
+  </data>
+</root>

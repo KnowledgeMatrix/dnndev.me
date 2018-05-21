@@ -1,0 +1,57 @@
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+/***** Create Personalized Tabs table *****/
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}ContentPersonalization_PersonalizedTabs]') AND type in (N'U'))
+BEGIN
+    CREATE TABLE {databaseOwner}[{objectQualifier}ContentPersonalization_PersonalizedTabs](
+	    [TabId] [INT] NOT NULL,
+        [PortalId] [INT] NOT NULL,
+	    [OriginalTabId] [INT] NOT NULL,
+		[Name] NVARCHAR(256) NOT NULL,
+		[Priority] [INT] NOT NULL,
+		[Rules] XML NOT NULL,
+		CONSTRAINT [PK_{objectQualifier}ContentPersonalization_PersonalizedTabs] PRIMARY KEY CLUSTERED ([TabId] ASC)
+    ) ON [PRIMARY]
+
+    ALTER TABLE {databaseOwner}[{objectQualifier}ContentPersonalization_PersonalizedTabs] 
+        WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}PersonalizedTabs_{objectQualifier}TabId] FOREIGN KEY([TabId])
+        REFERENCES {databaseOwner}[{objectQualifier}Tabs] ([TabID])
+    ON DELETE CASCADE
+	
+	CREATE UNIQUE NONCLUSTERED INDEX IX_{objectQualifier}PersonalizedTabs_OriginalTabId_Name
+		ON {databaseOwner}[{objectQualifier}ContentPersonalization_PersonalizedTabs] ([OriginalTabId], [Name])
+END
+GO
+
+/***** Create Personalized Page View *****/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}vw_ContentPersonalization_PersonalizedTabs]', N'V') IS NOT NULL
+   DROP VIEW {databaseOwner}[{objectQualifier}vw_ContentPersonalization_PersonalizedTabs]
+GO
+
+CREATE VIEW {databaseOwner}[{objectQualifier}vw_ContentPersonalization_PersonalizedTabs]
+AS
+	SELECT pt.TabId, 
+			pt.PortalId, 
+			pt.OriginalTabId, 
+			pt.Name, 
+			pt.Priority,
+			pt.Rules, 
+			t.HasBeenPublished, 
+			t.IsDeleted, 
+			t.CreatedOnDate, 
+			t.CreatedByUserID
+	FROM   {databaseOwner}[{objectQualifier}ContentPersonalization_PersonalizedTabs] pt INNER JOIN
+			{databaseOwner}[{objectQualifier}Tabs] t ON pt.TabId = t.TabID
+GO
+
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/

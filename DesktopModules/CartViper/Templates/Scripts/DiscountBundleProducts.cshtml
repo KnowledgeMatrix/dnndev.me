@@ -1,0 +1,52 @@
+@using System.Dynamic; 
+@using CartViper.Modules.Store.Catalog; 
+@using CartViper.Modules.Store.StoreFrontUI;
+@using DotNetNuke.Common;
+@using System.Web.UI.HtmlControls;
+@using CartViper.Modules.Store.Extensions;
+@using R = System.Reflection;
+
+@inherits DotNetNuke.Web.Razor.DotNetNukeWebPage<dynamic>
+
+@{
+  var bundle = ProductDiscountBundle.GetDiscountBundleById(int.Parse(Model.BUNDLEID));
+
+    @:<ul style="padding:0px;">
+    foreach(var product in bundle.Products)
+    {
+          R.Assembly assm = R.Assembly.Load("CartViper.Modules.Store.WebControls");
+          Type productDetails = assm.GetType("CartViper.Modules.Store.WebControls.ProductDetail");
+          R.ConstructorInfo cstor = productDetails.GetConstructor(Type.EmptyTypes);
+          object prodDetailsObj = cstor.Invoke(new object[] { });
+
+          //set the local shared resource file
+          R.FieldInfo localShareResxField = productDetails.BaseType.GetField("localSharedResourceFile", R.BindingFlags.NonPublic | R.BindingFlags.Instance);
+          localShareResxField.SetValue(prodDetailsObj, "~/DesktopModules/CartViper/App_LocalResources/SharedResources.resx");
+
+          //set the resource file
+          R.PropertyInfo resxProp = productDetails.BaseType.BaseType.GetProperty("LocalResourceFile");
+          resxProp.SetValue(prodDetailsObj, "~/DesktopModules/CartViper/App_LocalResources/ProductDetail.ascx.resx", null);
+
+          R.FieldInfo productInfoField = productDetails.GetField("productInfo");
+          productInfoField.SetValue(prodDetailsObj, product);
+
+          R.MethodInfo processToken = productDetails.GetMethod("processToken", R.BindingFlags.Instance | R.BindingFlags.Public);
+          Control variants = processToken.Invoke(prodDetailsObj, new object[] { "BUNDLEPRODUCTVARIANTS" }) as Control;
+
+        @:<li style="float:left; margin-right:10px; list-style-type:none" class="cvVariantBoundary">
+            @:<p><a href="@ProductHelper.CreateProductDetailsLink(product,-1)">@product.ModelName</a></p>
+            @:<a href="@ProductHelper.CreateProductDetailsLink(product,-1)">
+            @:<img class="img-thumbnail" src="@Globals.ResolveUrl(product.MainImage(true).ScaledImageUrl(80, Dnn.Portal.PortalId))" alt="@product.ModelName" />
+            @:</a>
+            if(variants!=null)
+            {
+                @variants.RenderToHtmlString()
+            }
+            @:<a href="#" style="display:none" onclick="@product.CreateAddToCartUrl(false)" class="btnHiddenAddToCart">ADD TO BASKET</a>
+            
+        @:</li>
+    }
+    @:</ul>
+    @:<div style="clear:both"></div>
+
+}	

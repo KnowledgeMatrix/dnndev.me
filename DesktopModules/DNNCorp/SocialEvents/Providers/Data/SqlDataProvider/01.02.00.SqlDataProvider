@@ -1,0 +1,239 @@
+﻿IF NOT EXISTS (SELECT 1 FROM sys.indexes
+				WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SocialEvents_Guest]')
+				AND name = N'IX_{objectQualifier}SocialEvents_Guest_RSVP')
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}SocialEvents_Guest_RSVP]
+		ON {databaseOwner}[{objectQualifier}SocialEvents_Guest] ([RsvpStatus])
+		INCLUDE ([EventId])
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}SocialEvents_Event_Search]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Event_Search]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Event_Search]
+	@ModuleId INT ,
+	@GroupId INT ,
+	@StartDate DATETIME = null,
+	@EndDate DATETIME = null,
+	@PageSize INT ,
+	@PageIndex INT ,
+	@Filter INT ,
+	@SortColumn VARCHAR(32) ,
+	@SortAscending BIT ,
+	@Keyword NVARCHAR(128) ,
+	@UserId INT ,
+	@Tags NVARCHAR(256)
+AS
+BEGIN
+
+	-- Only run one to cacluate the length of the tags and insert the tags into
+	-- temp table so as to not have to call the table valued function for every row.
+	DECLARE @TagLength Int
+	DECLARE @MetID Int
+
+	Set @TagLength = ( SELECT LEN(@Tags) - LEN(REPLACE(@Tags, ',', '')) + 1)
+
+	SELECT	@MetID = MetaDataID
+	FROM	{databaseOwner}{objectQualifier}MetaData
+	WHERE	MetaDataName = 'Title'
+
+	Create Table #Tags(
+		RowNumber smallint,
+		RowValue nvarchar(50))
+
+	Create Table #Taxonomy(
+		TermID Int,
+		Name nVarchar(250) )
+
+	Insert Into #Tags
+		Select RowNumber,RowValue
+		From {databaseOwner}{objectQualifier}ConvertListToTable(',', @Tags);
+
+	Insert Into #Taxonomy
+		Select TermID, Name
+		From {databaseOwner}{objectQualifier}Taxonomy_Terms TT
+			Inner Join #Tags T on TT.Name = T.RowValue;
+
+	WITH TopicSet
+	AS (
+		SELECT	COUNT(*) OVER () AS TotalRecords,
+				EventId,
+				E.ContentItemId,
+				GroupId,
+				PortalId,
+				ViewCount,
+				Approved,
+				Deleted,
+				Content,
+				ContentTypeID,
+				TabID,
+				ModuleID,
+				ContentKey,
+				Indexed,
+				[MaxAttendees],
+				[InvitationOnly],
+				[ShowGuests],
+				[Attending],
+				[NotAttending],
+				[MayAttend],
+				[StartTime],
+				[EndTime],
+				[Street],
+				[City],
+				[Region],
+				[PostalCode],
+				[Country],
+				[InviteType],
+				CI.CreatedByUserID,
+				CI.CreatedOnDate,
+				CI.LastModifiedByUserID,
+				CI.LastModifiedOnDate,
+				CIMD.MetaDataValue AS ContentTitle,
+				U.DisplayName AS DisplayName,
+				ROW_NUMBER() OVER
+					( ORDER BY
+						CASE WHEN @SortColumn = 'EventStartTime' AND @SortAscending = 1 THEN [StartTime] END ASC,
+						CASE WHEN @SortColumn = 'EventStartTime' AND @SortAscending = 0 THEN [StartTime] END DESC,
+						CASE WHEN @SortColumn = 'CreatedDate' AND @SortAscending = 1 THEN CI.CreatedOnDate END ASC,
+						CASE WHEN @SortColumn = 'CreatedDate' AND @SortAscending = 0 THEN CI.CreatedOnDate END DESC,
+						CASE WHEN @SortColumn = 'LastActive' AND @SortAscending = 1 THEN CI.LastModifiedOnDate END ASC,
+						CASE WHEN @SortColumn = 'LastActive' AND @SortAscending = 0 THEN CI.LastModifiedOnDate END DESC,
+						CASE WHEN @SortColumn = 'Title' AND @SortAscending = 1 THEN MetaDataValue END ASC,
+						CASE WHEN @SortColumn = 'Title' AND @SortAscending = 0 THEN MetaDataValue END DESC,
+						CASE WHEN @SortColumn = 'Author' AND @SortAscending = 1 THEN DisplayName END ASC,
+						CASE WHEN @SortColumn = 'Author' AND @SortAscending = 0 THEN DisplayName END DESC,
+						CASE WHEN @SortColumn = 'Views' AND @SortAscending = 0 THEN [ViewCount] END DESC,
+						CASE WHEN @SortColumn = 'Views' AND @SortAscending = 1 THEN [ViewCount] END ASC
+					) AS [RowNumber]
+		FROM	{databaseOwner}{objectQualifier}SocialEvents_Event AS E
+				INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI ON CI.ContentItemID = E.ContentItemId
+				INNER JOIN {databaseOwner}{objectQualifier}Users U ON U.UserID = CI.CreatedByUserID
+				LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD
+					ON CIMD.ContentItemID = E.ContentItemId	AND CIMD.MetaDataID = @MetID
+		WHERE	CI.ModuleId = @ModuleId
+		  AND	Deleted = 0
+		  AND ( (@GroupId < 1 AND E.GroupId < 1) OR E.GroupId = @GroupId)
+		  AND ( @Filter < 0
+				OR (@Filter = 0
+					AND (@StartDate IS NULL
+					OR (E.StartTime BETWEEN @StartDate AND @EndDate))
+					AND (Approved = 1 OR E.UserId = @UserId))
+				OR (@Filter = 2
+					AND (	SELECT	COUNT(CommentId)
+							FROM	{databaseOwner}{objectQualifier}Journal_Comments JC
+									INNER JOIN {databaseOwner}{objectQualifier}Journal J ON JC.JournalId = J.JournalId
+							WHERE	ContentItemId = J.ContentItemId
+							  AND	ContentItemId = E.ContentItemId) < 1)
+				OR (@Filter = 3
+					AND CI.CreatedByUserID = @UserId)
+				OR (@Filter = 4
+					AND (	SELECT	COUNT(CommentId)
+							FROM	{databaseOwner}{objectQualifier}Journal AS J
+									INNER JOIN {databaseOwner}{objectQualifier}Journal_Comments JC ON JC.JournalId = J.JournalId
+							WHERE	ContentItemId = J.ContentItemId
+							  AND	ContentItemId = E.ContentItemId
+							  AND	JC.UserId = @UserId) > 0)
+			  )
+		  AND ( @Tags IS NULL OR LEN(@Tags) = 0
+				OR (	SELECT	COUNT(*)
+						FROM	{databaseOwner}{objectQualifier}ContentItems_Tags CIT
+								INNER JOIN #Taxonomy T On CIT.TermID = T.TermID
+						WHERE CIT.ContentItemID = E.ContentItemId
+						AND (	SELECT	[Approved]
+								FROM	{databaseOwner}{objectQualifier}SocialEvents_Event
+								WHERE EventId = E.EventId) = 1) = @TagLength
+			  )
+		)
+	SELECT	TOP (@PageSize) *
+	FROM	TopicSet
+	WHERE	RowNumber >= (@PageIndex * @PageSize) + 1;
+
+	Drop Table #Tags
+	Drop Table #Taxonomy
+END
+GO
+
+/* Migrate Subscriptions */
+IF exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Subscriptions_Type') and OBJECTPROPERTY(id, N'IsTable') = 1)
+BEGIN
+	DECLARE @DesktopModuleId INT
+	DECLARE @NewSubscriptionTypeId INT
+
+	SET @DesktopModuleId = (SELECT ISNULL(DesktopModuleId, -1) FROM {databaseOwner}{objectQualifier}DesktopModules WHERE ModuleName = 'Social Events' )
+	--SELECT  @DesktopModuleId
+
+	IF @DesktopModuleId > 0
+		BEGIN
+			-- Means the module is being upgraded, migrate subscriptions
+			SET @NewSubscriptionTypeId = (SELECT TOP 1 SubscriptionTypeId FROM {databaseOwner}{objectQualifier}CoreMessaging_SubscriptionTypes WHERE SubscriptionName = 'DNNCorp_SocialEvents_Event')
+			--SELECT @NewSubscriptionTypeId
+
+			IF @NewSubscriptionTypeId IS NULL
+				BEGIN
+					INSERT {databaseOwner}{objectQualifier}CoreMessaging_SubscriptionTypes
+					(SubscriptionName, FriendlyName, DesktopModuleId)
+					VALUES
+					('DNNCorp_SocialEvents_Event', 'Event Subscriptions', @DesktopModuleId)
+
+					SET @NewSubscriptionTypeId = (SELECT SCOPE_IDENTITY())
+
+					-- get all subscribers and copy over
+					DECLARE @OldSubscriptionTypeId INT
+					SET @OldSubscriptionTypeId = (SELECT TOP 1 SubscriptionTypeId FROM {databaseOwner}{objectQualifier}Subscriptions_Type WHERE SubscriptionName = 'DNNCorp_SocialEvents_Event')
+
+					IF @OldSubscriptionTypeId > 0
+						BEGIN
+							DECLARE @PortalId INT
+							DECLARE @UserId INT
+							DECLARE @CreatedOnDate DATETIME
+							DECLARE @ModuleId INT
+							DECLARE @ObjectKey NVARCHAR(255)
+							DECLARE @ContentItemId INT
+							DECLARE @GroupId INT
+							DECLARE @Description NVARCHAR(255)
+
+							DECLARE EventsMigrate_Cursor CURSOR
+							FOR
+								SELECT  DISTINCT ss.PortalId, ss.UserId, ss.CreatedOnDate, ss.ModuleId, ss.GroupId, ss.ContentItemId
+								FROM    {databaseOwner}{objectQualifier}Subscriptions_Subscriber ss
+										INNER JOIN {databaseOwner}{objectQualifier}Modules m ON ss.ModuleID = m.ModuleID
+								WHERE	SubscriptionTypeId = @OldSubscriptionTypeId
+
+								OPEN EventsMigrate_Cursor
+								FETCH NEXT FROM EventsMigrate_Cursor
+								INTO @PortalId, @UserId, @CreatedOnDate, @ModuleId, @GroupId, @ContentItemId
+
+								WHILE @@FETCH_STATUS = 0
+								BEGIN
+
+									BEGIN TRANSACTION
+										-- after selecting row of data in cursor
+										IF @ContentItemId > 0
+											BEGIN
+												SET @ObjectKey = 'gid=' + CONVERT(NVARCHAR(10), @GroupId) + ';cid=' + CONVERT(NVARCHAR(10), @ContentItemId)
+												SET @Description = 'Event Activity'
+											END
+										ELSE
+											BEGIN
+												SET @ObjectKey = 'gid=' + CONVERT(NVARCHAR(10), @GroupId)
+												SET @Description = 'New Events'
+											END
+
+										INSERT {databaseOwner}{objectQualifier}CoreMessaging_Subscriptions
+											(UserId, PortalId, SubscriptionTypeId, ObjectKey, CreatedOnDate, ModuleId, [Description], TabId)
+										VALUES
+											(@UserId, @PortalId, @NewSubscriptionTypeId, @ObjectKey, @CreatedOnDate, @ModuleId, @Description, 0)
+
+
+										COMMIT
+
+											FETCH NEXT FROM EventsMigrate_Cursor INTO @PortalId, @UserId, @CreatedOnDate, @ModuleId, @GroupId, @ContentItemId
+										END
+
+								CLOSE EventsMigrate_Cursor
+								DEALLOCATE EventsMigrate_Cursor
+						END
+				END
+		END
+END
+GO

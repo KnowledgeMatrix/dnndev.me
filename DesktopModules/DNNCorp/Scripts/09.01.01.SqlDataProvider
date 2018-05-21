@@ -1,0 +1,59 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+/***** CONTENT-8309: add web server monitor schedule task. *****/
+IF EXISTS (SELECT ScheduleID FROM {databaseOwner}{objectQualifier}Schedule WHERE TypeFullName = 'DotNetNuke.Professional.WebServerManager.Components.ServerMonitorSchedule, DotNetNuke.Professional.WebServerManager')
+BEGIN
+    UPDATE {databaseOwner}{objectQualifier}Schedule SET TypeFullName = 'DotNetNuke.Professional.Services.Scheduler.ServerMonitorSchedule, DotNetNuke.Professional'
+        WHERE TypeFullName = 'DotNetNuke.Professional.WebServerManager.Components.ServerMonitorSchedule, DotNetNuke.Professional.WebServerManager'
+END
+ELSE
+BEGIN
+    INSERT INTO {databaseOwner}{objectQualifier}Schedule (
+        TypeFullName ,
+        TimeLapse ,
+        TimeLapseMeasurement ,
+        RetryTimeLapse ,
+        RetryTimeLapseMeasurement ,
+        RetainHistoryNum ,
+        AttachToEvent ,
+        CatchUpEnabled ,
+        Enabled,
+        ObjectDependencies ,
+        Servers ,
+        CreatedByUserID ,
+        CreatedOnDate ,
+        LastModifiedByUserID ,
+        LastModifiedOnDate ,
+        FriendlyName)
+
+        VALUES (
+        'DotNetNuke.Professional.Services.Scheduler.ServerMonitorSchedule, DotNetNuke.Professional', 
+        1, 
+        'm', 
+        30, 
+        's', 
+        10, 
+        '', 
+        0, 
+        1,
+        '',
+        NULL,
+        -1,
+        GETDATE(),
+        -1,
+        GETDATE(),
+        'Web Server Monitor')
+END
+GO
+
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/

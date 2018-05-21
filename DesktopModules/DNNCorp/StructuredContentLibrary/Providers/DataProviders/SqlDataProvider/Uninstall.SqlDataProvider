@@ -1,0 +1,49 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}StructuredContent_Library_AddPendingHookSubscription') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}StructuredContent_Library_AddPendingHookSubscription
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}StructuredContent_Library_MarkPendingHookSubscriptionAsDone') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}StructuredContent_Library_MarkPendingHookSubscriptionAsDone
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}StructuredContent_Library_MarkPendingHookSubscriptionAsError') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}StructuredContent_Library_MarkPendingHookSubscriptionAsError
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}StructuredContent_Library_GetPendingHookSubscriptions') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}StructuredContent_Library_GetPendingHookSubscriptions
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}StructuredContent_Library_LockPendingHookSubscription') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}StructuredContent_Library_LockPendingHookSubscription
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}StructuredContent_Library_GetSecretFromHookSubscription') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}StructuredContent_Library_GetSecretFromHookSubscription
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}StructuredContent_Library_AddHookSubscription') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}StructuredContent_Library_AddHookSubscription
+GO
+
+IF EXISTS (SELECT * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}StructuredContent_Library_HookSubscriptions') and OBJECTPROPERTY(id, N'IsTable') = 1)
+	DROP TABLE {databaseOwner}{objectQualifier}StructuredContent_Library_HookSubscriptions
+GO
+
+IF EXISTS (SELECT * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}StructuredContent_Library_PendingHookSubscriptions') and OBJECTPROPERTY(id, N'IsTable') = 1)
+	DROP TABLE {databaseOwner}{objectQualifier}StructuredContent_Library_PendingHookSubscriptions
+GO
+
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/

@@ -1,0 +1,112 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+SET XACT_ABORT ON
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+	
+COMMIT TRANSACTION
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+
+		-- Update assembly versions. Version numbers were previously left out causing these assemblies to take the version number of the package
+		UPDATE {databaseOwner}{objectQualifier}Assemblies SET Version = '1.0.3065' WHERE AssemblyName = 'eSELECTplus_dotNet_API.dll'
+		UPDATE {databaseOwner}{objectQualifier}Assemblies SET Version = '0.40.0' WHERE AssemblyName = 'IKVM.OpenJDK.Charsets.dll'
+		UPDATE {databaseOwner}{objectQualifier}Assemblies SET Version = '0.40.0' WHERE AssemblyName = 'IKVM.OpenJDK.Core.dll'
+		UPDATE {databaseOwner}{objectQualifier}Assemblies SET Version = '0.40.0' WHERE AssemblyName = 'IKVM.OpenJDK.Text.dll'
+		UPDATE {databaseOwner}{objectQualifier}Assemblies SET Version = '0.40.0' WHERE AssemblyName = 'IKVM.OpenJDK.Util.dll'
+		UPDATE {databaseOwner}{objectQualifier}Assemblies SET Version = '0.40.0' WHERE AssemblyName = 'IKVM.OpenJDK.XML.API.dll'
+		UPDATE {databaseOwner}{objectQualifier}Assemblies SET Version = '0.40.0' WHERE AssemblyName = 'IKVM.Runtime.dll'
+		UPDATE {databaseOwner}{objectQualifier}Assemblies SET Version = '1.0.0' WHERE AssemblyName = 'Revindex.Business.Revindex.Revindex.Storefront.XmlSerializers.dll'
+		UPDATE {databaseOwner}{objectQualifier}Assemblies SET Version = '1.0.0' WHERE AssemblyName = 'Revindex.Gateway.FirstData.XmlSerializers.dll'
+		UPDATE {databaseOwner}{objectQualifier}Assemblies SET Version = '1.0.0' WHERE AssemblyName = 'Revindex.Shipping.FedEx.XmlSerializers.dll'
+		UPDATE {databaseOwner}{objectQualifier}Assemblies SET Version = '1.0.0' WHERE AssemblyName = 'Revindex.Shipping.UPS.XmlSerializers.dll'
+
+		-- Change Shipwire service name to use Carrier codes
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:CP EP' WHERE UniversalServiceName = 'SHIPWIRE:CANADA POST EXPEDITED PARCEL'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:CP EXUB' WHERE UniversalServiceName = 'SHIPWIRE:CANADA POST EXPEDITED US BUSINESS'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:CP PA' WHERE UniversalServiceName = 'SHIPWIRE:CANADA POST PARCEL AIR'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:CP PC' WHERE UniversalServiceName = 'SHIPWIRE:CANADA POST PRIORITY COURIER'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:CP PUR' WHERE UniversalServiceName = 'SHIPWIRE:CANADA POST PRIORITY WORLDWIDE'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:CP RP' WHERE UniversalServiceName = 'SHIPWIRE:CANADA POST REGULAR PARCEL'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:CP XP' WHERE UniversalServiceName = 'SHIPWIRE:CANADA POST XPRESSPOST'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:CP XPI' WHERE UniversalServiceName = 'SHIPWIRE:CANADA POST XPRESSPOST INTERNATIONAL'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:CP XPU' WHERE UniversalServiceName = 'SHIPWIRE:CANADA POST XPRESSPOST USA'
+		
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:FDX 2D' WHERE UniversalServiceName = 'SHIPWIRE:FEDEX 2DAY'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:FDX GD' WHERE UniversalServiceName = 'SHIPWIRE:FEDEX GROUND'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:FDX GDS' WHERE UniversalServiceName = 'SHIPWIRE:FEDEX GROUND SIGNATURE REQUIRED'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:FDX GDH' WHERE UniversalServiceName = 'SHIPWIRE:FEDEX HOME DELIVERY'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:FDX GHS' WHERE UniversalServiceName = 'SHIPWIRE:FEDEX HOME DELIVERY SIGNATURE REQUIRED'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:FDX 1DP' WHERE UniversalServiceName = 'SHIPWIRE:FEDEX PRIORITY OVERNIGHT'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:FDX 1D' WHERE UniversalServiceName = 'SHIPWIRE:FEDEX STANDARD OVERNIGHT'
+		
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:PF EU' WHERE UniversalServiceName = 'SHIPWIRE:PARCELFORCE EURO 48'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:PF 1D' WHERE UniversalServiceName = 'SHIPWIRE:PARCELFORCE 24'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:PF 2D' WHERE UniversalServiceName = 'SHIPWIRE:PARCELFORCE 48'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:PF 2DL' WHERE UniversalServiceName = 'SHIPWIRE:PARCELFORCE INTERNATIONAL DATAPOST'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:PF DP' WHERE UniversalServiceName = 'SHIPWIRE:PARCELFORCE GLOBAL VALUE'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:PF ISC' WHERE UniversalServiceName = 'SHIPWIRE:PARCELFORCE GLOBAL PRIORITY'
+		
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:PUR XP' WHERE UniversalServiceName = 'SHIPWIRE:PUROLATOR EXPRESS'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:PUR XPI' WHERE UniversalServiceName = 'SHIPWIRE:PUROLATOR EXPRESS INTERNATIONAL'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:PUR XPUS' WHERE UniversalServiceName = 'SHIPWIRE:PUROLATOR EXPRESS US'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:PUR GD' WHERE UniversalServiceName = 'SHIPWIRE:PUROLATOR GROUND'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:PUR GDUS' WHERE UniversalServiceName = 'SHIPWIRE:PUROLATOR GROUND US'
+		
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:RM AM' WHERE UniversalServiceName = 'SHIPWIRE:ROYAL MAIL AIRMAIL'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:RM AMS' WHERE UniversalServiceName = 'SHIPWIRE:ROYAL MAIL AIRSURE'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:RM FCL' WHERE UniversalServiceName = 'SHIPWIRE:ROYAL MAIL FIRST CLASS LARGE LETTER'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:RM FCLR' WHERE UniversalServiceName = 'SHIPWIRE:ROYAL MAIL FIRST CLASS LARGE LETTER /W SIGNATURE'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:RM FCP' WHERE UniversalServiceName = 'SHIPWIRE:ROYAL MAIL FIRST CLASS PACKET'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:RM FCPR' WHERE UniversalServiceName = 'SHIPWIRE:ROYAL MAIL FIRST CLASS PACKET /W SIGNATURE'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:RM ISF' WHERE UniversalServiceName = 'SHIPWIRE:ROYAL MAIL INTERNATIONAL SIGNED FOR'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:RM SCL' WHERE UniversalServiceName = 'SHIPWIRE:ROYAL MAIL SECOND CLASS LARGE LETTER'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:RM SCLR' WHERE UniversalServiceName = 'SHIPWIRE:ROYAL MAIL SECOND CLASS LARGE LETTER /W SIGNATURE'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:RM SCP' WHERE UniversalServiceName = 'SHIPWIRE:ROYAL MAIL SECOND CLASS PACKET'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:RM SCPR' WHERE UniversalServiceName = 'SHIPWIRE:ROYAL MAIL SECOND CLASS PACKET /W SIGNATURE'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:RM SDND' WHERE UniversalServiceName = 'SHIPWIRE:ROYAL MAIL SPECIAL DELIVERY NEXT DAY'
+		
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:UPS WXP' WHERE UniversalServiceName = 'SHIPWIRE:UPS WORLDWIDE EXPEDITED'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:UPS WPS' WHERE UniversalServiceName = 'SHIPWIRE:UPS WORLDWIDE EXPEDITED SIGNATURE REQUIRED'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:UPS WXS' WHERE UniversalServiceName = 'SHIPWIRE:UPS WORLDWIDE EXPRESS'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:UPS GD' WHERE UniversalServiceName = 'SHIPWIRE:UPS GROUND'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:UPS GDS' WHERE UniversalServiceName = 'SHIPWIRE:UPS GROUND SIGNATURE REQUIRED'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:UPS 1D' WHERE UniversalServiceName = 'SHIPWIRE:UPS NEXT DAY AIR SAVER'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:UPS WSV' WHERE UniversalServiceName = 'SHIPWIRE:UPS WORLDWIDE EXPRESS SAVER'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:UPS 2D' WHERE UniversalServiceName = 'SHIPWIRE:UPS SECOND DAY AIR'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:UPS ST' WHERE UniversalServiceName = 'SHIPWIRE:UPS STANDARD'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:UPS 3D' WHERE UniversalServiceName = 'SHIPWIRE:UPS THREE-DAY SELECT'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:UPS WSV' WHERE UniversalServiceName = 'SHIPWIRE:UPS WORLDWIDE SAVER'
+		
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:USPS XP' WHERE UniversalServiceName = 'SHIPWIRE:USPS EXPRESS MAIL'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:USPS EMI' WHERE UniversalServiceName = 'SHIPWIRE:USPS EXPRESS MAIL INTERNATIONAL'		
+		DELETE FROM {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod WHERE UniversalServiceName = 'SHIPWIRE:USPS FIRST-CLASS MAIL INTERNATIONAL'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:USPS FC' WHERE UniversalServiceName = 'SHIPWIRE:USPS FIRST-CLASS MAIL PARCEL + DELIVERY CONFIRMATION'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:USPS FCS' WHERE UniversalServiceName = 'SHIPWIRE:USPS FIRST-CLASS MAIL PARCEL + SIGNATURE REQUIRED'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:USPS MM' WHERE UniversalServiceName = 'SHIPWIRE:USPS MEDIA MAIL'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:USPS PM' WHERE UniversalServiceName = 'SHIPWIRE:USPS PRIORITY MAIL + DELIVERY CONFIRMATION'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:USPS PMS' WHERE UniversalServiceName = 'SHIPWIRE:USPS PRIORITY MAIL + SIGNATURE REQUIRED'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'SHIPWIRE:USPS PMI' WHERE UniversalServiceName = 'SHIPWIRE:USPS PRIORITY MAIL INTERNATIONAL'
+		
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

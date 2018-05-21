@@ -1,0 +1,51 @@
+﻿@inherits DotNetNuke.Web.Mvc.Framework.DnnWebViewPage<IEnumerable<Christoc.Modules.StdRegModule.Models.StudentReg>>
+@{
+    ViewBag.Title = "Index";
+}
+@using System.Text.RegularExpressions
+@using DotNetNuke.Web.Mvc.Helpers
+
+<h2>Student Index</h2>
+<style>
+    table, th, td {
+        border: 1px solid black;
+    }
+</style>
+
+<h2>TotalStudents:</h2>@*@ViewBag.TotalStudents*@
+
+<div id="Students-@Dnn.ModuleContext.ModuleId">
+    @if (Model == null)
+    {
+        <p>@Dnn.LocalizeString("NoItems")</p>
+        <h2>no items here</h2>
+    }
+    else
+    {
+        <table>
+            <thead>Students Details</thead>
+            <tr> <th> ID</th><th> NAME</th><th> CLASS</th><th> COLLEGE</th><th> Action</th></tr>
+
+
+            @foreach (var student in Model)
+            {
+                <tr>
+                    <td>@student.StdRegID</td>
+                    <td>@student.StdName</td>
+                    <td>@student.StdClass</td>
+                    <td>@student.StdClgName</td>
+                    <td>
+                        <a href="@Url.Action("EditStudent", "Student", new {StdRegID =student.StdRegID})">@Dnn.LocalizeString("EditStudent")</a>
+                        <a href="@Url.Action("DeleteStudent", "Student", new {StdRegID = student.StdRegID})">@Dnn.LocalizeString("DeleteStudent")</a>
+                    </td>
+                </tr>
+
+            }
+        </table>
+    }
+    <div style="text-align:center;color:red;font-size:medium">
+        <a style="color:red" href="@Url.Action("AddStudent", "Student", new {})">@Dnn.LocalizeString("AddStudent") </a>
+        <a href="@Url.Action("Index", "Item", new {})">@Dnn.LocalizeString("BackToItems")</a>
+    </div>
+</div>
+

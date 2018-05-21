@@ -1,0 +1,176 @@
+/***** Create Content Layout Versions Table *****/
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}ContentLayout_Versions]') AND type in (N'U'))
+BEGIN   
+    CREATE TABLE {databaseOwner}[{objectQualifier}ContentLayout_Versions]
+    (
+        [ModuleId] [int] NOT NULL,
+        [Version] [int] NOT NULL,
+        [ColumnSizes] nvarchar(50) NOT NULL,
+        [ColumnCssClasses] nvarchar(256) NOT NULL,
+		[AreCustomColumnSizes] bit NOT NULL,
+        [IsPublished] [bit] NOT NULL,
+        [CreatedOnDate] [datetime] NOT NULL,
+        [LastModifiedOnDate] [datetime] NULL,
+        CONSTRAINT [PK_{objectQualifier}ContentLayout_Versions] PRIMARY KEY CLUSTERED ([ModuleId] DESC, [Version] DESC)
+    ) ON [PRIMARY]
+
+    ALTER TABLE {databaseOwner}[{objectQualifier}ContentLayout_Versions] WITH NOCHECK ADD CONSTRAINT [FK_{objectQualifier}ContentLayout_Versions_{objectQualifier}Modules] FOREIGN KEY ([ModuleId]) REFERENCES {databaseOwner}[{objectQualifier}Modules] ([ModuleID]) ON DELETE CASCADE
+END
+GO
+
+/* CRUD VERSIONS OPERATIONS */
+
+/***** ADD *****/
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}ContentLayout_Versions_Add') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}ContentLayout_Versions_Add
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}ContentLayout_Versions_Add]
+    @ModuleId int,
+    @Version int,
+    @ColumnSizes nvarchar(50),
+    @ColumnCssClasses nvarchar(256),
+	@AreCustomColumnSizes bit,
+    @IsPublished bit
+AS 
+    INSERT INTO {databaseOwner}{objectQualifier}ContentLayout_Versions
+           ([ModuleId]
+           ,[Version]
+           ,[ColumnSizes]
+           ,[ColumnCssClasses]
+		   ,[AreCustomColumnSizes]
+           ,[IsPublished]
+           ,[CreatedOnDate]
+           ,[LastModifiedOnDate])
+     VALUES
+           (@ModuleId,
+            @Version,
+            @ColumnSizes,
+            @ColumnCssClasses,
+			@AreCustomColumnSizes,
+            @IsPublished,
+           GETUTCDATE(),
+           GETUTCDATE())
+GO
+
+/***** UPDATE *****/
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}ContentLayout_Versions_Update') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}ContentLayout_Versions_Update
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}ContentLayout_Versions_Update]
+    @ModuleId int,
+    @Version int,
+    @ColumnSizes nvarchar(50),
+    @ColumnCssClasses nvarchar(256),
+	@AreCustomColumnSizes bit,
+    @IsPublished bit
+AS 
+    UPDATE {databaseOwner}{objectQualifier}ContentLayout_Versions
+    SET [ColumnSizes] = @ColumnSizes,
+        [ColumnCssClasses] = @ColumnCssClasses,
+		[AreCustomColumnSizes] = @AreCustomColumnSizes,
+        [IsPublished] = @IsPublished,
+        [LastModifiedOnDate] = GETUTCDATE()
+    WHERE ModuleId = @ModuleId AND Version = @Version
+GO
+
+/***** DELETE *****/
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}ContentLayout_Versions_Delete') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}ContentLayout_Versions_Delete
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}ContentLayout_Versions_Delete]
+    @ModuleId INT,
+    @Version INT
+AS 
+    DELETE  FROM {databaseOwner}{objectQualifier}ContentLayout_Versions
+    WHERE ModuleId = @ModuleId AND Version = @Version
+GO
+
+/***** GET *****/
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}ContentLayout_Versions_Get') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}ContentLayout_Versions_Get
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}ContentLayout_Versions_Get]
+    @ModuleId INT,
+    @Version INT
+AS 
+    SELECT [ModuleId]
+           ,[Version]
+           ,[ColumnSizes]
+           ,[ColumnCssClasses]
+		   ,[AreCustomColumnSizes]
+           ,[IsPublished]
+           ,[CreatedOnDate]
+           ,[LastModifiedOnDate]
+    FROM    {databaseOwner}{objectQualifier}ContentLayout_Versions
+    WHERE   ModuleId = @ModuleId 
+        AND Version = @Version
+GO
+
+/***** GETALL *****/
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}ContentLayout_Versions_GetAll') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}ContentLayout_Versions_GetAll
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}ContentLayout_Versions_GetAll]
+    @ModuleId INT
+AS 
+    SELECT [ModuleId]
+           ,[Version]
+           ,[ColumnSizes]
+           ,[ColumnCssClasses]
+		   ,[AreCustomColumnSizes]
+           ,[IsPublished]
+           ,[CreatedOnDate]
+           ,[LastModifiedOnDate]
+    FROM    {databaseOwner}{objectQualifier}ContentLayout_Versions
+    WHERE   ModuleId = @ModuleId
+GO
+
+/********************************************************
+ * Generate SProc for Content Layout Migration
+ ********************************************************/
+
+ /*
+  * Add Migrated boolean column in the Content Layouts table to mark
+  * which Content Layout has been successfully converted to an instance of the Content Layout Module 
+  */
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}ContentLayouts]') AND type in (N'U'))
+BEGIN
+    IF NOT EXISTS ( SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+                    WHERE TABLE_NAME = N'{objectQualifier}ContentLayouts'
+                    AND  COLUMN_NAME = N'MigratedToContentLayoutModuleInstance' )
+    BEGIN
+        ALTER TABLE {databaseOwner}[{objectQualifier}ContentLayouts]
+            ADD MigratedToContentLayoutModuleInstance BIT NOT NULL DEFAULT(0)
+    END
+END
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}ContentLayout_Migration_UpdatePaneName]') AND type in (N'P', N'PC'))
+    DROP PROCEDURE {databaseOwner}[{objectQualifier}ContentLayout_Migration_UpdatePaneName]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}ContentLayout_Migration_UpdatePaneName]
+    @TabId						INT,
+    @NewPaneNamePattern			NVARCHAR(200),
+    @PaneNamePatternToReplace	NVARCHAR(200)
+AS
+BEGIN
+    -- Update Pane Name in TabModules table
+    UPDATE {databaseOwner}[{objectQualifier}TabModules] 
+    SET PaneName = REPLACE(PaneName, @PaneNamePatternToReplace, @NewPaneNamePattern)
+    WHERE TabId = @TabId AND PaneName like @PaneNamePatternToReplace + '%'
+
+    UPDATE {databaseOwner}[{objectQualifier}TabVersionDetails] 
+    SET PaneName = REPLACE(PaneName, @PaneNamePatternToReplace, @NewPaneNamePattern)
+    WHERE TabVersionId IN 
+        (SELECT TabVersionId 
+         FROM {databaseOwner}[{objectQualifier}TabVersions] 
+         WHERE TabId = @TabId) 
+    AND PaneName like @PaneNamePatternToReplace + '%'	
+END
+GO

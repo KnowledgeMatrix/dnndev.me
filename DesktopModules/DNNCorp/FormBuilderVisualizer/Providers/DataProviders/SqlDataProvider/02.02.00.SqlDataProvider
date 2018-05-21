@@ -1,0 +1,24 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+/***** Update Folder Unique Id *****/
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}FormBuilder_UpdateFolderUniqueId]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}FormBuilder_UpdateFolderUniqueId]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}FormBuilder_UpdateFolderUniqueId]
+	@FolderId int,
+	@UniqueId uniqueidentifier
+AS 
+	IF NOT EXISTS(SELECT FolderId FROM {databaseOwner}[{objectQualifier}Folders] WHERE UniqueId=@UniqueId)
+	BEGIN
+		UPDATE {databaseOwner}[{objectQualifier}Folders] SET UniqueId=@UniqueId WHERE FolderId=@FolderId;
+	END
+GO

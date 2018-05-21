@@ -1,0 +1,159 @@
+﻿@inherits DotNetNuke.Web.Razor.DotNetNukeWebPage<EasyDNNSolutions.WebApi.EasyDNNsimpleForum.Models.TopicViewMeta>
+
+<div class="edsf_headerActions">
+	@if (@Model.HasPreviousTopic || @Model.HasNextTopic)
+	{
+		<div class="edsf_topicsPager edsf_floatRight">
+			@if (@Model.HasPreviousTopic)
+			{
+				<a class="edsf_prev" title="@Html.GetLocalizedString("prev.Text")" href="@Model.PreviousTopic.ViewLinkInfo.Url" data-eds_linkinfo="@Model.PreviousTopic.ViewLinkInfo.ToJson()"><i class="fa fa-angle-left"></i>@Html.GetLocalizedString("prev.Text")<span>@Model.PreviousTopic.Topic.Title</span></a>
+			}
+			@if (@Model.HasNextTopic)
+			{
+				<a class="edsf_next" title="@Html.GetLocalizedString("next.Text")" href="@Model.NextTopic.ViewLinkInfo.Url" data-eds_linkinfo="@Model.NextTopic.ViewLinkInfo.ToJson()"><i class="fa fa-angle-right"></i>@Html.GetLocalizedString("next.Text")<span>@Model.NextTopic.Topic.Title</span></a>
+			}
+		</div>
+	}
+	<div class="edsf_headerButtonActions">
+		<a class="edsf_button edsf_icon edsf_smallWide edsf__backButton" data-eds_linkinfo="@Model.TopicsLinkInfo.ToJson()" href="@Model.TopicsLinkInfo.Url"><i class="fa fa-arrow-left"></i>@Html.GetLocalizedString("backToTopics.Text")</a>
+		@if (@Model.CanEdit)
+		{
+			<a class="edsf_button edsf_orange edsf_icon edsf_smallWide edsf_editAdminButton" data-eds_linkinfo="@Model.EditLinkInfo.ToJson()" href="@Model.EditLinkInfo.Url"><i class="fa fa-edit"></i>@Html.GetLocalizedString("edit.Text")</a>
+		}
+	</div>
+</div>
+
+<div class="edsf_headerMeta">
+	<div class="edsf_authorProfile">@Html.Raw(Model.AuthorProfileImage(30, 30, true))</div>
+	<span class="edsf_dateCreated"> / @Model.Topic.DateCreatedUtc.ToString("MMM yy")</span>
+</div>
+@if (@Model.CategoryViewMeta.Category.HasViewPermissions)
+{
+	<a class="edsf_itemCategoryLink edsf_color_@Model.CategoryLinkInfo.Color" data-eds_linkinfo="@Model.CategoryLinkInfo.ToJson()" href="@Model.CategoryLinkInfo.Url">@Model.CategoryLinkInfo.Name</a><br />
+}
+<h1 class="edsf_topicTitle">@Model.Topic.Title</h1>
+<div class="edsf_topicDescription">@Html.Raw(Model.Topic.Description)</div>
+<ul class="edsf_topicMeta">
+	<li class="edsf_created">
+		<strong>@Html.GetLocalizedString("created.Text"):</strong>
+		<div class="edsf_authorProfile">@Html.Raw(Model.AuthorProfileImage(30, 30, true))</div>
+	</li>
+	<li>
+		<strong>@Html.GetLocalizedString("lastComment.Text"): </strong>
+		@if (@Model.LastComment != null)
+		{
+			<span class="edsf__lastComment" data-activityTimestampInfo="@Model.ActivityTimestampInfo.ToJson()"><span>time</span></span>
+		}
+		else
+		{
+			<span class="edsf__lastComment" data-activityTimestampInfo="@Model.ActivityTimestampInfo.ToJson()">@Html.GetLocalizedString("noActivity.Text")</span>
+		}
+	</li>
+	<li>
+		<span class="edsf_simpleTooltipWrapper"><strong>@Html.GetLocalizedString("comments.Text"): </strong><span class="edsf__commentCount">@Model.CommentCount</span><span class="edsf_simpleTooltip">@Html.GetLocalizedString("totalNumberOfCommentsAndReplies.Text")</span></span>
+	</li>
+	<li>
+		<strong>@Html.GetLocalizedString("viewCount.Text"): </strong><span class="edsf__viewCount">@Model.Topic.ViewCount</span>
+	</li>
+	@if (Model.TopicFacebookUsers.Count != 0)
+	{
+		<li class="edsf_topUsers">
+			@Html.Raw(Model.TopicUsersAvatars(3, 30, 30, false, true))
+		</li>
+	}
+	<li class="edsf_like">
+		<strong>@Html.GetLocalizedString("likeCount.Text"): </strong><span class="edsf__likeCount">@Model.Topic.LikeCount</span>
+		<span data-eds_actioninfo="@Model.LikeTopicActionInfo.ToJson()" class="edsf_likeAction edsf__likeTopic">@Html.GetLocalizedString("likeTopic.Text")</span>
+	</li>
+	<li class="edsf_share">
+		<a class="edsf_addthisButton addthis_button" href="//www.addthis.com/bookmark.php?v=300"><span>@Html.GetLocalizedString("shareTopic.Text")</span></a>
+	</li>
+</ul>
+<div>
+	@Html.Raw(Model.FacebookComments)
+</div>
+@if (@Model.ForumModuleSettings.MainDisplaySettings.DisplayRelatedTopics && @Model.RelatedTopics.Count > 0)
+{
+	<table class="edsf_table edsf_green edsf_marginTop40 edsf_relatedTopics">
+		<thead>
+			<tr>
+				<th class="edsf_name edsf_textLeft">@Html.GetLocalizedString("relatedTopics.Text")</th>
+				<th class="edsf_commentsCount">@Html.GetLocalizedString("comments.Text")</th>
+				<th class="edsf_views">@Html.GetLocalizedString("views.Text")</th>
+				<th class="edsf_activity">@Html.GetLocalizedString("activity.Text")</th>
+			</tr>
+		</thead>
+		<tbody>
+
+			@for (int i = 0; i < (@Model.RelatedTopics.Count < 5 ? @Model.RelatedTopics.Count : 5); i++)
+			{
+				<tr @(@Model.RelatedTopics[i].Topic.ShowAsLockedTopic ? @Html.Raw("class=\"edsf_lockedTopic\"") : null)>
+					<td class="edsf_name edsf_textLeft">
+						<div class="edsf_icons">
+							@if (@Model.RelatedTopics[i].Topic.ShowAsLockedTopic)
+							{
+								if (@Model.RelatedTopics[i].Topic.HasViewPermissions)
+								{
+									<span class="edsf_locked">@Html.GetLocalizedString("unlockedTopic.Text")<i class="fa fa-unlock-alt"></i></span>
+								}
+								else
+								{
+									<span class="edsf_locked">@Html.GetLocalizedString("lockedTopic.Text")<i class="fa fa-lock"></i></span>
+								}
+							}
+						</div>
+						<div class="edsf_titleDescriptionWrapper">
+							<h3 class="edsf_itemTitle"><a data-eds_linkinfo="@Model.RelatedTopics[i].ViewLinkInfo.ToJson()" href="@Model.RelatedTopics[i].ViewLinkInfo.Url">@Model.RelatedTopics[i].Topic.Title</a></h3>
+						</div>
+						@if (@Model.RelatedTopics[i].CategoryViewMeta.Category.HasViewPermissions)
+						{
+							<div class="edsf_categoryInfoWrapper">
+								<a class="edsf_itemCategoryLink edsf_color_@Model.RelatedTopics[i].CategoryLinkInfo.Color" data-eds_linkinfo="@Model.RelatedTopics[i].CategoryLinkInfo.ToJson()" href="@Model.RelatedTopics[i].CategoryLinkInfo.Url">@Model.RelatedTopics[i].CategoryLinkInfo.Name</a>
+							</div>
+						}
+
+					</td>
+					<td class="edsf_commentsCount">
+						<strong class="edsf_visibleMdInline">@Html.GetLocalizedString("comments.Text"): </strong>@Model.RelatedTopics[i].CommentCount
+					</td>
+					<td class="edsf_views">
+						<strong class="edsf_visibleMdInline">@Html.GetLocalizedString("views.Text"): </strong>@Model.RelatedTopics[i].Topic.ViewCount
+					</td>
+					<td class="edsf_activity">
+						@if (@Model.RelatedTopics[i].LastComment != null)
+						{
+							<strong class="edsf_visibleMdInline">@Html.GetLocalizedString("activity.Text"): </strong><span data-activityTimestampInfo="@Model.RelatedTopics[i].ActivityTimestampInfo.ToJson()"><span>time</span></span>
+						}
+						else
+						{
+							<strong class="edsf_visibleMdInline">@Html.GetLocalizedString("activity.Text"): </strong><span>@Html.GetLocalizedString("noActivity.Text")</span>
+						}
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+
+else if (@Model.ForumModuleSettings.MainDisplaySettings.DisplayRelatedTopics && @Model.RelatedTopics.Count == 0)
+{
+	<div></div>
+}
+
+<div>
+	<script>
+		if (window.addthis) {
+			window.addthis = null;
+			window._adr = null;
+			window._atc = null;
+			window._atd = null;
+			window._ate = null;
+			window._atr = null;
+			window._atw = null;
+		}
+		$.getScript('//s7.addthis.com/js/300/addthis_widget.js#async=1&domready=1')
+			.done(function () {
+				addthis.init();
+			});
+	</script>
+</div>

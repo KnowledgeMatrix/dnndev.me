@@ -1,0 +1,143 @@
+﻿-- SOCIAL-4217 Remove Activity column from Analytics_Users Table
+IF COL_LENGTH('{databaseOwner}[{objectQualifier}Analytics_Users]', 'Activity') IS NOT NULL
+	ALTER TABLE {databaseOwner}[{objectQualifier}Analytics_Users]
+	DROP COLUMN Activity
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Get_User') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_User
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Get_User]
+	@PortalId int,
+	@UserId int
+AS
+BEGIN
+	SELECT	[UserSampleId],
+			[PortalId],
+			[UserId],
+			[ProcessDate],
+			[TotalSeconds],
+			[Engagement] AS [EngagementDocument]
+	FROM	{databaseOwner}[{objectQualifier}Analytics_Users] WITH (NOLOCK)
+	WHERE	[PortalId] = @PortalId AND [UserId] = @UserId
+
+	SELECT InfluenceDaily, InfluenceWeekly, InfluenceMonthly, InfluenceYearly
+	FROM  {databaseOwner}{objectQualifier}Analytics_UserInfluenceRollup
+	WHERE PortalId = @PortalId AND UserId = @UserId
+END
+GO
+
+IF OBJECT_ID(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_MigrateUserScoringLogEntry', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_MigrateUserScoringLogEntry
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_MigrateUserScoringLogEntry
+	@UserScoringLogId INT,    
+	@UserId INT,
+	@PortalId INT,
+	@ContentItemId INT,
+	@ScoringActionDefId INT,
+	@ExperiencePoints INT,
+	@ReputationPoints INT,
+	@CreatedOnDate DATETIME,
+	@GroupId INT			
+AS
+BEGIN					
+	DECLARE @ActionName NVARCHAR(50)
+	DECLARE @DesktopModuleId INT	
+	DECLARE @ActionType NVARCHAR(50)	
+	DECLARE @ActionTypeId INT
+	DECLARE @CommaSeparatedTags NVARCHAR(MAX) 
+	DECLARE @ContentType NVARCHAR(50)
+	DECLARE @TagGroupId INT
+	DECLARE @ContentTypeId INT
+	DECLARE @TagsTable TABLE
+	(
+		TagName NVARCHAR(50),
+		ContentType NVARCHAR(50)
+	);
+	SELECT @ActionName = ActionName, @DesktopModuleId = DesktopModuleId, @ActionTypeId = ActionType
+		FROM {databaseOwner}{objectQualifier}Mechanics_ScoringActionDefinition
+		WHERE ScoringActionDefId = @ScoringActionDefId
+
+	INSERT INTO @TagsTable (TagName,ContentType)
+	SELECT REPLACE(tt.Name,',',' '), ct.ContentType
+	FROM {databaseOwner}{objectQualifier}Taxonomy_Terms tt 
+		INNER JOIN {databaseOwner}{objectQualifier}ContentItems_Tags cit ON tt.TermID = cit.TermID 
+		INNER JOIN {databaseOwner}{objectQualifier}ContentItems ci ON cit.ContentItemID = ci.ContentItemID 
+		INNER JOIN {databaseOwner}{objectQualifier}ContentTypes ct ON ci.ContentTypeID = ct.ContentTypeID
+		WHERE ci.ContentItemID = @ContentItemId
+	SELECT @CommaSeparatedTags = STUFF((SELECT  ',' + TagName FROM @TagsTable FOR XML PATH('')), 1, 1, '')
+	SELECT TOP(1) @ContentType = ContentType FROM @TagsTable
+	SET @ContentType = COALESCE(@ContentType,'');
+	SET @CommaSeparatedTags = COALESCE(@CommaSeparatedTags,'');
+
+	--Ensure action definition dimension exists
+	EXECUTE {databaseOwner}{objectQualifier}Analytics_Warehouse_AddActionDefinition
+		@ScoringActionDefId,
+		@ActionName,
+		@DesktopModuleId;
+
+	--Ensure content type dimension exists
+	EXECUTE {databaseOwner}{objectQualifier}Analytics_Warehouse_AddContentType
+		@ContentType,
+		@ContentTypeId OUTPUT
+
+	--Ensure tag group dimension exists
+	EXECUTE {databaseOwner}{objectQualifier}Analytics_Warehouse_AddTagsAndTagGroup
+		@CommaSeparatedTags,
+		@TagGroupId OUTPUT;
+
+	INSERT INTO {databaseOwner}{objectQualifier}Analytics_Fact_UserScoringLog (
+		UserScoringLogId, 
+		UserId,
+		ActionDefinitionId,
+		TimeStamp,
+		ContentId,
+		DesktopModuleId,
+		TagGroupId,
+		PortalId,
+		ActionTypeId,
+		ContentTypeId,
+		GroupId,
+		ExperiencePoints,
+		ReputationPoints)
+	VALUES(
+		@UserScoringLogId, 
+		@UserId,
+		@ScoringActionDefId,
+		@CreatedOnDate,
+		@ContentItemId,
+		@DesktopModuleId,
+		@TagGroupId,
+		@PortalId,
+		@ActionTypeId,
+		@ContentTypeId,
+		@GroupId,
+		@ExperiencePoints,
+		@ReputationPoints);
+
+	--Clear Process Flag in Analytics_Users table
+	DECLARE @UserSampleId INT
+	DECLARE @ProcessDate DATETIME
+	SELECT @UserSampleId = UserSampleId, @ProcessDate = ProcessDate 
+	FROM {databaseOwner}[{objectQualifier}Analytics_Users]
+	WHERE PortalId = @PortalId AND UserId = @UserId
+
+	IF @UserSampleId IS NULL
+	BEGIN
+		INSERT INTO {databaseOwner}[{objectQualifier}Analytics_Users]([PortalId], [UserId], [ProcessDate], [TotalSeconds], [Engagement], [LastModified])
+		VALUES (@PortalId, @UserId, NULL, 0, NULL, GETUTCDATE())
+	END
+
+	IF @UserSampleId IS NOT NULL AND @ProcessDate IS NOT NULL
+	BEGIN
+		UPDATE {databaseOwner}[{objectQualifier}Analytics_Users]
+		SET ProcessDate = NULL
+		WHERE UserSampleId = @UserSampleId
+	END
+END
+GO
+
+-- END SOCIAL-4217 Remove Activity column from Analytics_Users Table

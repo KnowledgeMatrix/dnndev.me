@@ -1,0 +1,5 @@
+﻿IF EXISTS (select * from INFORMATION_SCHEMA.columns where table_name = '{objectQualifier}EasyDNNstyleWizardData' AND column_name = 'Value')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyDNNstyleWizardData] ALTER COLUMN Value NVARCHAR(MAX) NOT NULL
+END
+GO

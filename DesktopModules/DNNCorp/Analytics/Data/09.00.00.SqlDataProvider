@@ -1,0 +1,134 @@
+IF OBJECT_ID(N'{databaseOwner}{objectQualifier}Analytics_Get_Portal_Aggregate_PageTime', 'P') IS NOT NULL
+    DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_Portal_Aggregate_PageTime
+GO
+
+IF OBJECT_ID(N'{databaseOwner}{objectQualifier}Analytics_Get_Module_Aggregate_PageTime', 'P') IS NOT NULL
+    DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_Module_Aggregate_PageTime
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Calculate_User_Influence'))
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_Calculate_User_Influence
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Calculate_User_Influence'))
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_Calculate_User_Engagement
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Generate_Engagement_TimeSeries'))
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_Generate_Engagement_TimeSeries
+GO
+
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Get_User_Score]', N'FN') IS NOT NULL
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_Get_User_Score
+GO
+
+
+/********************************************************
+ * SPROC: Analytics_Calculate_User
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Calculate_User]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Calculate_User] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Calculate_User]
+	@PortalId int,
+	@UserId int,
+	@InfluenceGoal int
+AS
+BEGIN
+	DECLARE @TotalSeconds bigint
+	DECLARE @Engagement xml
+
+	DECLARE @ExistingEngagement xml
+
+	DECLARE @InfluenceDaily INT
+	DECLARE @InfluenceWeekly INT
+	DECLARE @InfluenceMonthly INT
+	DECLARE @InfluenceYearly INT
+
+	DECLARE @LowerDaily DATETIME
+	DECLARE @UpperDaily DATETIME
+	DECLARE @LowerWeekly DATETIME
+	DECLARE @LowerMonthly DATETIME
+	DECLARE @LowerYearly DATETIME	
+
+	SET @UpperDaily = getutcdate()
+	SET @LowerDaily = dateadd(day, -1, @UpperDaily)
+	SET @LowerWeekly = dateadd(day, -7, @UpperDaily)
+	SET @LowerMonthly = dateadd(month, -1, @UpperDaily)
+	SET @LowerYearly = dateadd(year, -1, @UpperDaily)
+
+
+	--Convert to Percentage
+	IF @InfluenceGoal = 0
+		SET @InfluenceGoal = 2000
+
+	SET @InfluenceDaily = 0
+	SET @InfluenceWeekly = 0
+	SET @InfluenceMonthly = 0
+	SET @InfluenceYearly = 0
+
+	SELECT	@TotalSeconds = 0
+
+	SELECT	@ExistingEngagement = N'<TimeSeries>' + CONVERT(NVARCHAR(MAX), @Engagement) + N'</TimeSeries>';
+	IF EXISTS(
+			SELECT	UserSampleId
+			FROM	{databaseOwner}[{objectQualifier}Analytics_Users] WITH(NOLOCK)
+			WHERE	[PortalId] = @PortalId AND [UserId] = @UserId)
+	BEGIN
+		UPDATE {databaseOwner}[{objectQualifier}Analytics_Users]
+			SET
+				[ProcessDate] = GETUTCDATE(),
+				[TotalSeconds] = @TotalSeconds,
+				[Engagement] = @ExistingEngagement,
+				[LastModified] = GETUTCDATE()
+		WHERE	[PortalId] = @PortalId AND [UserId] = @UserId
+	END
+	ELSE
+	BEGIN
+		INSERT INTO {databaseOwner}[{objectQualifier}Analytics_Users]
+			([PortalId],
+			 [UserId],
+			 [ProcessDate],
+			 [TotalSeconds],
+			 [Engagement],
+			 [LastModified])
+		VALUES
+			(@PortalId,
+			 @UserId,
+			 GETUTCDATE(),
+			 @TotalSeconds,
+			 @ExistingEngagement,
+			 GETUTCDATE())
+	END
+
+	IF EXISTS (SELECT * FROM {databaseOwner}{objectQualifier}Analytics_UserInfluenceRollup WITH(NOLOCK)
+				WHERE PortalId = @PortalId AND UserId = @UserId)
+		BEGIN
+			UPDATE {databaseOwner}{objectQualifier}Analytics_UserInfluenceRollup
+			SET InfluenceDaily = @InfluenceDaily,
+				InfluenceWeekly = @InfluenceWeekly,
+				InfluenceMonthly = @InfluenceMonthly,
+				InfluenceYearly = @InfluenceYearly
+			WHERE PortalId = @PortalId AND UserId = @UserId
+		END
+	ELSE
+		BEGIN
+			INSERT {databaseOwner}{objectQualifier}Analytics_UserInfluenceRollup(PortalId, UserId, InfluenceDaily, InfluenceWeekly, InfluenceMonthly, InfluenceYearly)
+			VALUES (@PortalId, @UserId, @InfluenceDaily, @InfluenceWeekly, @InfluenceMonthly, @InfluenceYearly)
+		END	
+END
+GO
+
+DECLARE @AnalyticsSchedulerType varchar(512)
+SET @AnalyticsSchedulerType =
+	N'DotNetNuke.Professional.Analytics.Components.Tasks.AnalyticsTask%'
+
+IF EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}Schedule] WHERE [TypeFullName] LIKE @AnalyticsSchedulerType)
+BEGIN
+	UPDATE {databaseOwner}[{objectQualifier}Schedule]
+		SET [FriendlyName] = N'Analytics Engage'
+        WHERE [TypeFullName] LIKE @AnalyticsSchedulerType
+END
+GO

@@ -1,0 +1,133 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+SET XACT_ABORT ON
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+	
+	-- Enable/disable grouping of recurring sales orders
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD RecurringSalesOrderGroupOrdersActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_RecurringSalesOrderGroupOrdersActive DEFAULT 1
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_RecurringSalesOrderGroupOrdersActive
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant ADD AllowRecurringGroupOrders bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ProductVariant_AllowRecurringGroupOrder DEFAULT 1
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ProductVariant_AllowRecurringGroupOrder
+	
+	-- Support Paystation payment gateway
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		PaymentGatewaysPaystation3PartyPaystationID varchar(255) NULL,
+		PaymentGatewaysPaystation3PartyGatewayID varchar(255) NULL,
+		PaymentGatewaysPaystation3PartyTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysPaystation3PartyTestMode DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysPaystation3PartyTestMode
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		PaymentMethodsPaystation3PartyActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsPaystation3PartyActive DEFAULT 0,
+		PaymentMethodsPaystation3PartyAvailabilityRule xml NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsPaystation3PartyActive
+	
+	-- Support Princeton CardConnect payment gateway
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		PaymentGatewaysPrincetonCardConnectUsername varchar(255) NULL,
+		PaymentGatewaysPrincetonCardConnectPassword varchar(255) NULL,
+		PaymentGatewaysPrincetonCardConnectTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysPrincetonCardConnectTestMode DEFAULT 0,
+		PaymentGatewaysPrincetonCardConnectGatewayUrl varchar(255) NULL,
+		PaymentGatewaysPrincetonCardConnectMerchantID varchar(255) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysPrincetonCardConnectTestMode
+	
+	-- Support show/hide Add to Cart and Buy Now buttons
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		ProductListAddToCartShow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductListAddToCartShow DEFAULT 1,
+		ProductListBuyNowShow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductListBuyNowShow DEFAULT 1,
+		ProductDetailAddToCartShow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductDetailAddToCartShow DEFAULT 1,
+		ProductDetailBuyNowShow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductDetailBuyNowShow DEFAULT 1,
+		ProductDetailAddToWishListShow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductDetailAddToWishListShow DEFAULT 1,
+		ProductListQuantityShow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductListQuantityShow DEFAULT 1,
+		ProductListSavingsShow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductListSavingsShow DEFAULT 1,
+		ProductListMSRPShow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductListMSRPShow DEFAULT 1,
+		ProductListSeeDetailsShow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductListSeeDetailsShow DEFAULT 1,
+		ProductDetailQuantityShow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductDetailQuantityShow DEFAULT 1,
+		ProductDetailSavingsShow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductDetailSavingsShow DEFAULT 1,
+		ProductDetailMSRPShow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductDetailMSRPShow DEFAULT 1
+		
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductListAddToCartShow
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductListBuyNowShow
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductDetailAddToCartShow
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductDetailBuyNowShow
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductDetailAddToWishListShow
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductListQuantityShow
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductListSavingsShow
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductListMSRPShow
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductListSeeDetailsShow
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductDetailQuantityShow
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductDetailSavingsShow
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductDetailMSRPShow
+	
+	-- Support PayU Enterprise payment gateway
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		PaymentGatewaysPayUEnterpriseTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysPayUEnterpriseTestMode DEFAULT 0,
+		PaymentGatewaysPayUEnterpriseUsername varchar(255) NULL,
+		PaymentGatewaysPayUEnterprisePassword varchar(255) NULL,
+		PaymentGatewaysPayUEnterpriseSafekey varchar(255) NULL
+		
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysPayUEnterpriseTestMode
+	
+	-- Support QuickOrder module control
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD QuickOrderDisplayTemplate varchar(255) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_QuickOrderDisplayTemplate DEFAULT 'Standard1'
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_QuickOrderDisplayTemplate
+	
+	-- Support enable/disable invoice
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD CommunicationSalesOrderInvoiceEmailActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CommunicationSalesOrderInvoiceEmailActive DEFAULT 1
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CommunicationSalesOrderInvoiceEmailActive
+	
+	-- Add PortalID to ProductCategory table
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductCategory ADD PortalID int NULL
+	
+COMMIT TRANSACTION
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+		
+		-- Upgrade default Checkout template to "Standard14"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CheckoutDisplayTemplate = 'Standard14' WHERE CheckoutDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default Cart template to "Standard8"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CartDisplayTemplate = 'Standard8' WHERE CartDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default Confirmation template to "Standard9"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ConfirmationDisplayTemplate = 'Standard9' WHERE ConfirmationDisplayTemplate LIKE 'Standard%'
+		
+		-- Add PortalID to ProductCategory table
+		UPDATE pc
+		SET pc.PortalID = c.PortalID
+		FROM {databaseOwner}{objectQualifier}Revindex_Storefront_ProductCategory pc
+		JOIN {databaseOwner}{objectQualifier}Revindex_Storefront_Category c
+		ON c.CategoryID = pc.CategoryID
+		
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO
+
+BEGIN TRANSACTION
+
+	-- Added PortalID to ProductCategory table
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductCategory ALTER COLUMN PortalID int NOT NULL	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductCategory ADD CONSTRAINT FK_{objectQualifier}Revindex_Storefront_ProductCategory_Portals FOREIGN KEY (PortalID) REFERENCES {databaseOwner}{objectQualifier}Portals (PortalID) ON UPDATE  NO ACTION ON DELETE CASCADE 
+
+COMMIT TRANSACTION
+GO

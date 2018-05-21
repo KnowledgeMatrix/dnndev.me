@@ -1,0 +1,53 @@
+﻿IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Dashboard_GetTopContent]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Dashboard_GetTopContent]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Dashboard_GetTopContent]
+	@ContentTypes varchar(256),
+	@PageIndex int,
+	@PageSize int
+AS
+BEGIN
+	SELECT COUNT(*) AS [TotalRecords] FROM {databaseOwner}{objectQualifier}ContentItems
+		WHERE [ContentTypeId] IN (SELECT RowValue FROM {databaseOwner}ConvertListToTable(',', @ContentTypes))
+		  AND [TabID] != -1
+		  AND [ModuleID] != -1
+
+	;WITH contentItems AS(
+		SELECT
+			*,
+			ROW_NUMBER() OVER (ORDER BY
+				CASE WHEN [LastModifiedOnDate] IS NOT NULL THEN [LastModifiedOnDate] ELSE [CreatedOnDate] END DESC)
+			AS [RowNumber]
+		FROM {databaseOwner}[{objectQualifier}ContentItems]
+		WHERE [ContentTypeId] IN (SELECT RowValue FROM {databaseOwner}ConvertListToTable(',', @ContentTypes)) AND [TabID] != -1 AND [ModuleID] != -1
+	)
+	SELECT TOP (@PageSize) * FROM contentItems WHERE RowNumber >= (@PageIndex * @PageSize) ORDER BY RowNumber ASC
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Dashboard_GetTopContributors]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Dashboard_GetTopContributors]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Dashboard_GetTopContributors]
+	@ContentTypes varchar(256),
+	@PageIndex int,
+	@PageSize int
+AS
+BEGIN
+	SELECT COUNT(*) AS [TotalRecords] FROM {databaseOwner}{objectQualifier}Users
+
+	;WITH users AS(
+		SELECT
+			u.UserID,
+			u.Username,
+			u.DisplayName,
+			(us.ExperiencePoints + us.ReputationPoints) as [TotalScore],
+			ROW_NUMBER() OVER (ORDER BY U.CreatedOnDate DESC) AS [RowNumber]
+		FROM {databaseOwner}[{objectQualifier}Users] u
+		LEFT OUTER JOIN {databaseOwner}[{objectQualifier}Mechanics_UserScoring] us ON us.UserId = u.UserID
+	)
+	SELECT TOP (@PageSize) * FROM users WHERE RowNumber >= (@PageIndex * @PageSize) ORDER BY RowNumber ASC
+END
+GO

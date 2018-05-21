@@ -1,0 +1,68 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+GO
+
+BEGIN TRY
+	BEGIN TRANSACTION
+
+		IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_RelatedProduct]') AND type in (N'U'))
+		BEGIN
+		CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RelatedProduct](
+			[RelatedProductID] [int] IDENTITY(1,1) NOT NULL,
+			[ProductID] [int] NOT NULL,
+			[RelationProductID] [int] NOT NULL,
+			[CreateDate] [datetime] NOT NULL,
+			[RowVersion] [timestamp] NOT NULL,
+		 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_RelatedProduct] PRIMARY KEY CLUSTERED 
+		(
+			[RelatedProductID] ASC
+		) 
+		) 
+		END
+
+
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_RelatedProduct]') AND name = N'IX_Revindex_Storefront_RelatedProduct')
+		CREATE UNIQUE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_RelatedProduct] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_RelatedProduct] 
+		(
+			[ProductID] ASC,
+			[RelationProductID] ASC
+		) 
+
+
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_RelatedProduct_Revindex_Storefront_Product]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_RelatedProduct]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RelatedProduct]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_RelatedProduct_Revindex_Storefront_Product] FOREIGN KEY([ProductID])
+		REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_Product] ([ProductID])
+		
+
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_RelatedProduct_Revindex_Storefront_Product]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_RelatedProduct]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RelatedProduct] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_RelatedProduct_Revindex_Storefront_Product]
+		
+
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_RelatedProduct_Revindex_Storefront_Product1]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_RelatedProduct]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RelatedProduct]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_RelatedProduct_Revindex_Storefront_Product1] FOREIGN KEY([RelationProductID])
+		REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_Product] ([ProductID])
+		
+
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_RelatedProduct_Revindex_Storefront_Product1]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_RelatedProduct]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RelatedProduct] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_RelatedProduct_Revindex_Storefront_Product1]
+
+		-- Upgrade default ProductDetail template to "Standard2"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductDetailDisplayTemplate = 'Standard2' WHERE ProductDetailDisplayTemplate LIKE 'Standard%'
+
+		-- Add Featured column
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Product ADD Featured bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Product_Featured DEFAULT 0
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Product DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Product_Featured
+		
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

@@ -1,0 +1,11 @@
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryPortfolioProSettings' AND column_name = 'PortalSharing')
+BEGIN
+	ALTER TABLE {databaseOwner} [{objectQualifier}EasyGalleryPortfolioProSettings] ADD PortalSharing INT NULL
+END
+GO
+IF NOT EXISTS (SELECT * FROM sys.check_constraints WHERE object_id = OBJECT_ID(N'{databaseOwner}[CK_{objectQualifier}EasyGalleryPicturesNumberOfLikes]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGalleryPictures]'))
+BEGIN
+	UPDATE {databaseOwner}[{objectQualifier}EasyGalleryPictures] SET NumberOfLikes = 0 WHERE NumberOfLikes < 0
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryPictures] ADD CONSTRAINT [CK_{objectQualifier}EasyGalleryPicturesNumberOfLikes] CHECK ((NumberOfLikes >= 0))
+END
+GO

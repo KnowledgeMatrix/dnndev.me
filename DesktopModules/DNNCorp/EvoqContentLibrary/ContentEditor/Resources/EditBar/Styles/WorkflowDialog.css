@@ -1,0 +1,88 @@
+.editBarDialog .workflowManagerDropZone {
+    border-style: dashed;
+    border-width: 2px;
+    border-color: #d4d4d4;
+    background-color: #f7f7f7;
+    width: 365px;
+    height: 140px;
+    position: relative;
+}
+
+.editBarDialog .workflowManagerDropZone .loadingDropZone{
+    font-size: 20px;
+    line-height: 140px;
+    margin-left: 20px;
+    vertical-align: middle;
+}
+
+.editBarDialog .workflowManagerDropZone .loadingDropZone .progressBar {
+    background-color: #0da4f4;
+    width: 0;
+    height: 5px;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.editBarDialog .workflowManagerDropZone.dragover {
+    border-color: #1688c4;
+}
+
+.editBarDialog .workflowManagerDropZone .paintImageZone {
+    background-image: url('../images/DropImageUpload.png');
+    background-repeat: no-repeat;
+    width: 130px;
+    height: 130px;
+    margin: 4px;
+    border: solid 1px transparent;
+}
+
+.editBarDialog .workflowManagerDropZone .paintImageZone.uploading,
+.editBarDialog .workflowManagerDropZone .paintImageZone.withImage.uploading {
+    background-image: url('../../../../SharedAssets/Images/loader.gif') !important;
+    background-position: center;
+    background-size: 32px 32px;
+}
+
+.editBarDialog .workflowManagerDropZone .fileUploadZone .uploadFileInput {
+    position: absolute;
+    top: -10000px;
+}
+
+.editBarDialog .workflowManagerDropZone .paintImageZone.withImage {
+    border: solid 1px #ddd;
+    background-size: contain;
+    background-position: center;
+}
+
+.editBarDialog .workflowManagerDropZone div {
+    float: left;
+}
+
+.editBarDialog .workflowManagerDropZone .fileUploadZone {
+    width: 365px;
+}
+
+.editBarDialog .workflowManagerDropZone .dropMessage {
+    margin-left: 20px;
+	margin-top: 58px;
+	font-weight: bold;
+    color: #a5a5a5;
+    max-width: 150px;
+}
+
+.editBarDialog .workflowManagerDropZone .dropMessage span {
+    font-weight: bold;
+    color: #282828;
+    border-bottom: 1px solid #c5c5c5;
+    cursor: pointer;
+}
+
+.editBarDialog .fileUploadZone.withImage {
+    background-size: contain;
+    background-position: 50% 50%;
+}
+
+.editBarDialog .message {
+	width: 350px;
+}

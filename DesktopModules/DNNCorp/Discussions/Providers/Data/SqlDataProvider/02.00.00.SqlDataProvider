@@ -1,0 +1,150 @@
+﻿
+/* Update mechanics action types (for upgrades) */
+DECLARE @DesktopModuleId INT
+SET @DesktopModuleId = ( SELECT DesktopModuleID FROM {databaseOwner}[{objectQualifier}DesktopModules] WHERE  ModuleName = 'Discussions' AND FolderName = 'DNNCorp/Discussions')
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 9
+	WHERE ActionName = 'ClosedTopic' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 9
+	WHERE ActionName = 'DeletedTopic' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 9
+	WHERE ActionName = 'PinnedTopic' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 9
+	WHERE ActionName = 'ProtectedTopic' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 9
+	WHERE ActionName = 'ApprovedDiscussion' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 7
+	WHERE ActionName = 'BookmarkedTopic' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 7
+	WHERE ActionName = 'SubscribedToTopic' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 7
+	WHERE ActionName = 'SubscribedToAllDiscussions' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 8
+	WHERE ActionName = 'UnsubscribedFromAllDiscussions' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 8
+	WHERE ActionName = 'UnsubscribedFromTopic' AND DesktopModuleId = @DesktopModuleId
+	
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 7
+	WHERE ActionName = 'LikedTopic' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 8
+	WHERE ActionName = 'UnLikedTopic' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 7
+	WHERE ActionName = 'LikedTopicComment' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 8
+	WHERE ActionName = 'UnLikedTopicComment' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 12
+	WHERE ActionName = 'ProvidedLikedTopic' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 13
+	WHERE ActionName = 'ProvidedUnLikedTopic' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 12
+	WHERE ActionName = 'ProvidedLikedTopicComment' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 13
+	WHERE ActionName = 'ProvidedUnLikedTopicComment' AND DesktopModuleId = @DesktopModuleId
+GO
+
+/********************************************************
+ * SPROC: Discussions_Topic_Delete
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Discussions_Topic_Delete]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Discussions_Topic_Delete] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Discussions_Topic_Delete]
+	@TopicId INT,
+	@PortalId INT
+AS
+BEGIN
+	DELETE	{databaseOwner}{objectQualifier}Discussions_Topic
+	WHERE	PortalId = @PortalId
+	  AND	TopicId = @TopicId
+END
+GO
+
+
+
+
+/********************************************************
+ * SPROC: Discussions_Topic_GetByUserId
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Discussions_Topic_GetByUserId]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Discussions_Topic_GetByUserId] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Discussions_Topic_GetByUserId]
+	@PortalId INT,
+	@UserId INT
+AS 
+	SELECT  TopicId ,
+			T.ContentItemId ,
+			GroupId ,
+			PortalId ,
+			ViewCount ,
+			Approved ,
+			ApprovedDate ,
+			Deleted ,
+			Closed ,
+			ClosedDate ,
+			Protected ,
+			ProtectedDate ,
+			Pinned ,
+			PinnedDate ,
+			Content ,
+			ContentTypeID ,
+			TabID ,
+			ModuleID ,
+			ContentKey ,
+			Indexed ,
+			CreatedByUserId ,
+			CreatedOnDate ,
+			LastModifiedByUserID ,
+			LastModifiedOnDate ,
+			CIMD.MetaDataValue AS ContentTitle ,
+			1 AS TotalRecords
+	FROM    {databaseOwner}{objectQualifier}Discussions_Topic T
+			INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI ON T.ContentItemId = CI.ContentItemID
+			LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD ON CIMD.ContentItemID = T.ContentItemID
+															  AND CIMD.MetaDataID = ( SELECT
+															  MetaDataID
+															  FROM
+															  {databaseOwner}[{objectQualifier}MetaData]
+															  WHERE
+															  MetaDataName = 'Title'
+															  )
+	WHERE   PortalId = @PortalId
+			AND CI.CreatedByUserId = @UserId
+			
+GO

@@ -1,0 +1,724 @@
+﻿IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Warehouse_QueryTopInfluencers]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}Analytics_Warehouse_QueryTopInfluencers
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Warehouse_QueryTopTopActiveUsers]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Warehouse_QueryTopTopActiveUsers]
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Warehouse_QueryTopRankers]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Warehouse_QueryTopRankers]
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Activities]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Analytics_Activities]
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Answers]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Analytics_Answers]
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_ContentDistribution]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Analytics_ContentDistribution]
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Creation]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Analytics_Creation]
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Discussions]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Analytics_Discussions]
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Ideas]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Analytics_Ideas]
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_PageTime]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Analytics_PageTime]
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_PageTime_Aggregate]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Analytics_PageTime_Aggregate]
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Participation]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Analytics_Participation]
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Users]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Analytics_Users]
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Referrals]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Analytics_Referrals]
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Shared]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Analytics_Shared]
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_ScoringGoals]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Analytics_ScoringGoals]
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Calculate_Aggregate_Activities') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Calculate_Aggregate_Activities
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Calculate_Aggregate_Answers') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Calculate_Aggregate_Answers
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Calculate_Aggregate_Blogs') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Calculate_Aggregate_Blogs
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Calculate_Aggregate_Creation') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Calculate_Aggregate_Creation
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Calculate_Aggregate_Discussions') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Calculate_Aggregate_Discussions
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Calculate_Aggregate_Ideas') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Calculate_Aggregate_Ideas
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Calculate_Aggregate_Participation') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Calculate_Aggregate_Participation
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Calculate_ContentDistribution') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Calculate_ContentDistribution
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Calculate_PageTime') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Calculate_PageTime
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Get_Aggregate_Activities') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_Aggregate_Activities
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Get_Aggregate_Answers') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_Aggregate_Answers
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Get_Aggregate_Blogs') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_Aggregate_Blogs
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Get_Aggregate_Creation') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_Aggregate_Creation
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Get_Aggregate_Discussions') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_Aggregate_Discussions
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Get_Aggregate_Ideas') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_Aggregate_Ideas
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Get_PageTime_Pages') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_PageTime_Pages
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Get_Aggregate_PageTime') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_Aggregate_PageTime
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Get_Aggregate_PageTime2]', N'P') IS NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Get_Aggregate_PageTime2]
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Get_Aggregate_ModulePageTime]', N'P') IS NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Get_Aggregate_ModulePageTime]
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Calculate_PageTime]', N'P') IS NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Calculate_PageTime
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Get_Aggregate_Participation') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_Aggregate_Participation
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Get_ContentDistribution') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_ContentDistribution
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Get_ContentRequiringApproval') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_ContentRequiringApproval
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Get_FlaggedContent') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_FlaggedContent
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Get_NewContent') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_NewContent
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Get_NewUsers') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_NewUsers
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Get_TopActiveUsers') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_TopActiveUsers
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Get_TopContent') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_TopContent
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Get_TopContentCreators') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_TopContentCreators
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Get_TopFlaggedUsers') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_TopFlaggedUsers
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_HaveDataSet') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_HaveDataSet
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_PageTime_Insert') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_PageTime_Insert
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Get_User') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_User
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Calculate_User') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Calculate_User
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Reschedule_User') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Reschedule_User
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Get_DueUserTasks') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_DueUserTasks
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_GetActiveTimeBoundaries'))
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_GetActiveTimeBoundaries
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Calculate_User_Influence'))
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_Calculate_User_Engagement
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Generate_Engagement_TimeSeries'))
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_Generate_Engagement_TimeSeries
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Calculate_User_Influence'))
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_Calculate_User_Influence
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Generate_Influence_TimeSeries'))
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_Generate_Influence_TimeSeries
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Calculate_User_Influence'))
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_Calculate_User_Contribution
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Generate_Contribution_TimeSeries'))
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_Generate_Contribution_TimeSeries
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Calculate_User_Influence'))
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_Calculate_User_Activity
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Generate_Activity_TimeSeries'))
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_Generate_Activity_TimeSeries
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Calculate_User_Influence'))
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_Calculate_User_Login
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Generate_Login_TimeSeries'))
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_Generate_Login_TimeSeries
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Get_Aggregate_PageTime'))
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_Get_Aggregate_PageTime
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Referral_Insert') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Referral_Insert
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Get_ScoringGoals') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_ScoringGoals
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Clear_ScoringGoals') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Clear_ScoringGoals
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Insert_ScoringGoals') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Insert_ScoringGoals
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Share_GetByReferralUrl') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Share_GetByReferralUrl
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Share_Insert') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Share_Insert
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Calculate_UserIfOlderThan') AND OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Calculate_UserIfOlderThan
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Share_GetById') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Share_GetById
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_GetContentTypeList'))
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_GetContentTypeList
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_GetContentTypes'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_GetContentTypes
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_ContentTypeIsInList'))
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_ContentTypeIsInList
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Fact_UserScoringLog]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Analytics_Fact_UserScoringLog]
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Dim_Bridge_TagGroup_Tag]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Analytics_Dim_Bridge_TagGroup_Tag]
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Dim_TagGroup]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Analytics_Dim_TagGroup]
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Dim_Tag]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Analytics_Dim_Tag]
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Dim_Date]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Analytics_Dim_Date]
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Dim_ActionDefinition]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Analytics_Dim_ActionDefinition]
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Dim_ActionType]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Analytics_Dim_ActionType]
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Dim_ContentType]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Analytics_Dim_ContentType]
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_CsvSplit'))
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_CsvSplit
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_AddActionType') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_AddActionType
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_AddContentType') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_AddContentType
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_AddDateDimension') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_AddDateDimension
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_AddTagsAndTagGroup') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_AddTagsAndTagGroup
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_AddActionDefinition') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_AddActionDefinition
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_AddUserScoringFact') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_AddUserScoringFact
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_QueryTrendingTags') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_QueryTrendingTags
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_QueryAdoption') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_QueryAdoption
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_QueryParticipation') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_QueryParticipation
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_QueryActivityByModule') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_QueryActivityByModule
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_EnsureDimensionsAndAddUserScoringFact') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_EnsureDimensionsAndAddUserScoringFact
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_AddDateDimensionFromDateTime') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_AddDateDimensionFromDateTime
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_MigrateUserScoringLogEntry') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_MigrateUserScoringLogEntry
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_MigrateUserScoringLogEntries') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_MigrateUserScoringLogEntries
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_QueryModulePopularContent') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_QueryModulePopularContent
+GO  
+
+DELETE FROM HostSettings WHERE SettingName = 'SocialAnalyticsMigrationLogEndId'
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_QueryModulePerformance') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_QueryModulePerformance
+GO  
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_GetModulePerformance') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_GetModulePerformance
+GO  
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_QueryMultipleModulePerformance') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_QueryMultipleModulePerformance
+GO  
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_GetMultipleModulePerformance') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_GetMultipleModulePerformance
+GO  
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_GetUniqueViewTimeSeriesByModule') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_GetUniqueViewTimeSeriesByModule
+GO  
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_GetProblemArea_SocialItemsWithNoAction') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_GetProblemArea_SocialItemsWithNoAction
+GO  
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_GetProblemArea_SocialItemsWithAction') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_GetProblemArea_SocialItemsWithAction
+GO  
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_GetProblemArea_SocialItemsWithActionAndNoAction') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_GetProblemArea_SocialItemsWithActionAndNoAction
+GO  
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_GetProblemArea_SocialItemsWithMinimumActions') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_GetProblemArea_SocialItemsWithMinimumActions
+GO  
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_GetProblemArea_SocialItemsWithViewsButNoInteraction') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_GetProblemArea_SocialItemsWithViewsButNoInteraction
+GO  
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_IncludedActionNameTimeSeries') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_IncludedActionNameTimeSeries
+GO  
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_IncludedActionTypeTimeSeries') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_IncludedActionTypeTimeSeries
+GO  
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ParticipationTimeSeries') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ParticipationTimeSeries
+GO  
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_IncludedActionTypeUniquesGroupedMonthlySummedDailyTimeSeries') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_IncludedActionTypeUniquesGroupedMonthlySummedDailyTimeSeries
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_GetProblemArea_EventsWithNoAttendees') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_GetProblemArea_EventsWithNoAttendees
+GO 
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Fact_Answers') and OBJECTPROPERTY(id, N'IsTable') = 1)
+	DROP TABLE {databaseOwner}{objectQualifier}Analytics_Fact_Answers
+GO  
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_AddAnswersEntry') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_AddAnswersEntry
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_UpdateAnswersEntry') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_UpdateAnswersEntry
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Answers_UnansweredQuestions') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Answers_UnansweredQuestions
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Answers_QuestionsWithoutViews') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Answers_QuestionsWithoutViews
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Answers_QuestionsWithViewsButNoInteraction') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Answers_QuestionsWithViewsButNoInteraction
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Answers_QuestionsWithLotsOfComments') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Answers_QuestionsWithLotsOfComments
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Answers_QuestionsWithoutVotes') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Answers_QuestionsWithoutVotes
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Answers_QuestionsWithUpVotedButNoAcceptedAnswers') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Answers_QuestionsWithUpVotedButNoAcceptedAnswers
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Answers_QuestionsAndAnswersWithDownVotes') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Answers_QuestionsAndAnswersWithDownVotes
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Fact_Blogs') and OBJECTPROPERTY(id, N'IsTable') = 1)
+	DROP TABLE {databaseOwner}{objectQualifier}Analytics_Fact_Blogs
+GO  
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_AddBlogsEntry') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_AddBlogsEntry
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_UpdateBlogsEntry') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_UpdateBlogsEntry
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Blogs_BlogsWithoutViews') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Blogs_BlogsWithoutViews
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Blogs_BlogsWithoutComments') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Blogs_BlogsWithoutComments
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Blogs_BlogsWithDeletedComments') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Blogs_BlogsWithDeletedComments
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Blogs_BlogsWithEditsPostPublish') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Blogs_BlogsWithEditsPostPublish
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Blogs_BlogsWithViewsButNoInteraction') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Blogs_BlogsWithViewsButNoInteraction
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Fact_Discussions') and OBJECTPROPERTY(id, N'IsTable') = 1)
+	DROP TABLE {databaseOwner}{objectQualifier}Analytics_Fact_Discussions
+GO  
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_AddDiscussionsEntry') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_AddDiscussionsEntry
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_UpdateDiscussionsEntry') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_UpdateDiscussionsEntry
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Discussions_DiscussionsWithoutReplies') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Discussions_DiscussionsWithoutReplies
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Discussions_DiscussionsWithViewsButNoInteraction') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Discussions_DiscussionsWithViewsButNoInteraction
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Discussions_DiscussionsDeletedWithReplies') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Discussions_DiscussionsDeletedWithReplies
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Fact_Events') and OBJECTPROPERTY(id, N'IsTable') = 1)
+	DROP TABLE {databaseOwner}{objectQualifier}Analytics_Fact_Events
+GO  
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_AddEventsEntry') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_AddEventsEntry
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_UpdateEventsEntry') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_UpdateEventsEntry
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Events_EventsWithoutViews') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Events_EventsWithoutViews
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Events_EventsWithViewsButNoInteraction') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Events_EventsWithViewsButNoInteraction
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Events_EventsWithNoAttendees') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Events_EventsWithNoAttendees
+GO  
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Fact_Ideas') and OBJECTPROPERTY(id, N'IsTable') = 1)
+	DROP TABLE {databaseOwner}{objectQualifier}Analytics_Fact_Ideas
+GO  
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_AddIdeasEntry') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_AddIdeasEntry
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_UpdateIdeasEntry') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_UpdateIdeasEntry
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Ideas_IdeasWithoutViews') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Ideas_IdeasWithoutViews
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Ideas_IdeasWithoutChangeInStatus') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Ideas_IdeasWithoutChangeInStatus
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Ideas_IdeasWithoutChangeInCompanyResponse') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Ideas_IdeasWithoutChangeInCompanyResponse
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Ideas_IdeasWithRemovedVotes') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Ideas_IdeasWithRemovedVotes
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Fact_Wiki') and OBJECTPROPERTY(id, N'IsTable') = 1)
+	DROP TABLE {databaseOwner}{objectQualifier}Analytics_Fact_Wiki
+GO  
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_AddWikiEntry') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_AddWikiEntry
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_UpdateWikiEntry') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_UpdateWikiEntry
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Wiki_WikiWithoutViews') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Wiki_WikiWithoutViews
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Wiki_WikiWithViewsButNoInteraction') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Wiki_WikiWithViewsButNoInteraction
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Wiki_DeletedArticles') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Wiki_DeletedArticles
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_AddChallenge') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_AddChallenge
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_UpdateChallenge') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_UpdateChallenge
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Challenges_ChallengesWithoutViews') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Challenges_ChallengesWithoutViews
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Challenges_ChallengesWithViewsButNoInteraction') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Challenges_ChallengesWithViewsButNoInteraction
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Challenges_ChallengesWithNoCompletions') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Challenges_ChallengesWithNoCompletions
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Fact_Challenges') and OBJECTPROPERTY(id, N'IsTable') = 1)
+	DROP TABLE {databaseOwner}{objectQualifier}Analytics_Fact_Challenges
+GO  
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_RollUp') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_RollUp
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_GetMaxMechanicsUserScoringLogId') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_GetMaxMechanicsUserScoringLogId
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}vw_Analytics_Warehouse_Fact_Content]', N'V') IS NOT NULL
+	DROP VIEW {databaseOwner}[{objectQualifier}vw_Analytics_Warehouse_Fact_Content]
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_GetActivityByModule') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_GetActivityByModule
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Warehouse_GetTrendingTags]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Warehouse_GetTrendingTags]
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Warehouse_GetTimeSeriesByActionType]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Warehouse_GetTimeSeriesByActionType]
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_GetTopRankers') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_GetTopRankers
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_GetTopActiveUsers') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_GetTopActiveUsers
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_GetModulePopularContent') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_GetModulePopularContent
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Recalculate_Period') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Recalculate_Period
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_GetMinimumPageTimeLogDate') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_GetMinimumPageTimeLogDate
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Get_Module_Aggregate_PageTime') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_Module_Aggregate_PageTime
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Get_Portal_Aggregate_PageTime') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_Portal_Aggregate_PageTime
+GO
+IF OBJECT_ID(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_Calculate_EngagementByModule', 'P') IS NOT NULL
+    DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Calculate_EngagementByModule
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Warehouse_GetMinimumLogDate]', 'P') IS NOT NULL
+    DROP PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Warehouse_GetMinimumLogDate]
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_DecrementDate]') IS NOT NULL
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_DecrementDate
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_IncrementDate]') IS NOT NULL
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_IncrementDate
+GO
+
+IF OBJECT_ID('{databaseOwner}{objectQualifier}Analytics_GetAllDates', 'TF') IS NOT NULL
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_GetAllDates
+GO

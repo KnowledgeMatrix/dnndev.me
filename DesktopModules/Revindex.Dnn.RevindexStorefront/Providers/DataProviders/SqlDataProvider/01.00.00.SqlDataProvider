@@ -1,0 +1,1309 @@
+SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+GO
+
+BEGIN TRY
+	BEGIN TRANSACTION
+		
+
+		-- Create table Revindex_Storefront_SalesOrder
+		IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder]') AND type in (N'U'))
+		BEGIN
+		CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder](
+			[SalesOrderID] [int] IDENTITY(1,1) NOT NULL,
+			[SalesOrderGUID] [uniqueidentifier] NOT NULL,
+			[UserID] [int] NOT NULL,
+			[CreateDate] [datetime] NOT NULL,
+			[BillingFirstName] [nvarchar](50) NOT NULL,
+			[BillingLastName] [nvarchar](50) NOT NULL,
+			[BillingCompany] [nvarchar](50) NULL,
+			[BillingStreet] [nvarchar](200) NOT NULL,
+			[BillingCity] [nvarchar](50) NOT NULL,
+			[BillingSubdivisionCode] [varchar](6) NULL,
+			[BillingPostalCode] [varchar](10) NULL,
+			[BillingCountryCode] [varchar](2) NOT NULL,
+			[BillingPhone] [varchar](50) NULL,
+			[BillingEmail] [nvarchar](256) NULL,
+			[ShippingFirstName] [nvarchar](50) NULL,
+			[ShippingLastName] [nvarchar](50) NULL,
+			[ShippingCompany] [nvarchar](50) NULL,
+			[ShippingStreet] [nvarchar](200) NULL,
+			[ShippingCity] [nvarchar](50) NULL,
+			[ShippingSubdivisionCode] [varchar](6) NULL,
+			[ShippingPostalCode] [varchar](10) NULL,
+			[ShippingCountryCode] [varchar](2) NULL,
+			[ShippingPhone] [varchar](50) NULL,
+			[ShippingEmail] [nvarchar](256) NULL,
+			[PortalID] [int] NOT NULL,
+			[ShippingAmount] [decimal](19, 4) NOT NULL,
+			[SubTotalAmount] [decimal](19, 4) NOT NULL,
+			[TotalAmount] [decimal](19, 4) NOT NULL,
+			[AdminNotes] [nvarchar](4000) NULL,
+			[UpdateDate] [datetime] NOT NULL,
+			[UserHostAddress] [varchar](39) NULL,
+			[Status] [int] NOT NULL,
+			[HandlingAmount] [decimal](19, 4) NOT NULL,
+			[OrderDate] [datetime] NOT NULL,
+			[RowVersion] [timestamp] NOT NULL,
+			[TaxAmount1] [decimal](19, 4) NOT NULL,
+			[TaxAmount2] [decimal](19, 4) NOT NULL,
+			[TaxAmount3] [decimal](19, 4) NOT NULL,
+			[TaxAmount4] [decimal](19, 4) NOT NULL,
+			[TaxAmount5] [decimal](19, 4) NOT NULL,
+			[ShippingMethodRateRule] [xml] NULL,
+			[ShippingTaxRateRule] [xml] NULL,
+			[ShippingDiscountAmount] [decimal](19, 4) NOT NULL,
+			[HandlingDiscountAmount] [decimal](19, 4) NOT NULL,
+			[TaxDiscountAmount] [decimal](19, 4) NOT NULL,
+			[SalesOrderDetailPromotionRuleSet] [xml] NULL,
+			[ShippingPromotionRuleSet] [xml] NULL,
+			[HandlingPromotionRuleSet] [xml] NULL,
+			[TaxPromotionRuleSet] [xml] NULL,
+			[CouponCodes] [nvarchar](max) NULL,
+			[ShippingStatus] [int] NOT NULL,
+			[DynamicFormResult] [xml] NULL,
+			[SalesPaymentStatus] [int] NOT NULL,
+			[HandlingMethodRateRule] [xml] NULL,
+			[HandlingTaxRateRule] [xml] NULL,
+			[HandlingMethodID] [int] NULL,
+			[ShippingMethodID] [int] NULL,
+			[CultureCode] [varchar](20) NOT NULL,
+			[ExchangeRate] [decimal](19, 4) NOT NULL,
+			[PreferredUserPaymentID] [int] NULL,
+		 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_SalesOrder] PRIMARY KEY CLUSTERED 
+		(
+			[SalesOrderID] ASC
+		)
+		)
+		END
+		
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder]') AND name = N'IX_Revindex_Storefront_SalesOrder')
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_SalesOrder] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder] 
+		(
+			[PortalID] ASC
+		)
+		
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder]') AND name = N'IX_Revindex_Storefront_SalesOrder_1')
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_SalesOrder_1] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder] 
+		(
+			[CreateDate] ASC
+		)
+		
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder]') AND name = N'IX_Revindex_Storefront_SalesOrder_2')
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_SalesOrder_2] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder] 
+		(
+			[UserID] ASC
+		)
+		
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder]') AND name = N'IX_Revindex_Storefront_SalesOrder_3')
+		CREATE UNIQUE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_SalesOrder_3] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder] 
+		(
+			[SalesOrderGUID] ASC
+		)
+		
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder]') AND name = N'IX_Revindex_Storefront_SalesOrder_4')
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_SalesOrder_4] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder] 
+		(
+			[PreferredUserPaymentID] ASC
+		)
+		
+		-- Create table Revindex_Storefront_Manufacturer
+		IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Manufacturer]') AND type in (N'U'))
+		BEGIN
+		CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Manufacturer](
+			[ManufacturerID] [int] IDENTITY(1,1) NOT NULL,
+			[PortalID] [int] NOT NULL,
+			[Name] [xml] NOT NULL,
+			[Description] [xml] NULL,
+			[PageTitle] [xml] NULL,
+			[MetaKeywords] [xml] NULL,
+			[MetaDescription] [xml] NULL,
+			[DisplayTemplate] [varchar](255) NULL,
+			[Published] [bit] NOT NULL,
+			[Extension] [xml] NULL,
+			[DisplayOrder] [int] NOT NULL,
+			[CreateDate] [datetime] NOT NULL,
+			[UpdateDate] [datetime] NOT NULL,
+			[RowVersion] [timestamp] NOT NULL,
+		 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_Manufacturer] PRIMARY KEY CLUSTERED 
+		(
+			[ManufacturerID] ASC
+		)
+		)
+		END
+		
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Manufacturer]') AND name = N'IX_Revindex_Storefront_Manufacturer')
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_Manufacturer] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_Manufacturer] 
+		(
+			[PortalID] ASC
+		)
+		
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Manufacturer]') AND name = N'IX_Revindex_Storefront_Manufacturer_1')
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_Manufacturer_1] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_Manufacturer] 
+		(
+			[DisplayOrder] ASC
+		)
+		
+		-- Create table Revindex_Storefront_Distributor
+		IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Distributor]') AND type in (N'U'))
+		BEGIN
+		CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Distributor](
+			[DistributorID] [int] IDENTITY(1,1) NOT NULL,
+			[PortalID] [int] NOT NULL,
+			[Name] [xml] NOT NULL,
+			[Description] [xml] NULL,
+			[PageTitle] [xml] NULL,
+			[MetaKeywords] [xml] NULL,
+			[MetaDescription] [xml] NULL,
+			[DisplayTemplate] [varchar](255) NULL,
+			[Published] [bit] NOT NULL,
+			[Extension] [xml] NULL,
+			[DisplayOrder] [int] NOT NULL,
+			[CreateDate] [datetime] NOT NULL,
+			[UpdateDate] [datetime] NOT NULL,
+			[RowVersion] [timestamp] NOT NULL,
+		 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_Distributor] PRIMARY KEY CLUSTERED 
+		(
+			[DistributorID] ASC
+		)
+		)
+		END
+		
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Distributor]') AND name = N'IX_Revindex_Storefront_Distributor')
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_Distributor] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_Distributor] 
+		(
+			[PortalID] ASC
+		)
+		
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Distributor]') AND name = N'IX_Revindex_Storefront_Distributor_1')
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_Distributor_1] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_Distributor] 
+		(
+			[DisplayOrder] ASC
+		)
+
+		-- Create table Revindex_Storefront_Configuration
+		IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration]') AND type in (N'U'))
+		BEGIN
+		CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration](
+			[ConfigurationID] [int] IDENTITY(1,1) NOT NULL,
+			[PortalID] [int] NOT NULL,
+			[CreateDate] [datetime] NOT NULL,
+			[UpdateDate] [datetime] NOT NULL,
+			[RowVersion] [timestamp] NOT NULL,
+			[CartDisplayTemplate] [varchar](255) NOT NULL,
+			[CategoryDisplayTemplate] [varchar](255) NOT NULL,
+			[CheckoutDisplayTemplate] [varchar](255) NOT NULL,
+			[CheckoutDynamicFormCode] [nvarchar](max) NOT NULL,
+			[ConfirmationDisplayTemplate] [varchar](255) NOT NULL,
+			[GalleryProductsDetailedWidth] [int] NOT NULL,
+			[GalleryProductsDisplayWidth] [int] NOT NULL,
+			[GalleryProductsThumbnailWidth] [int] NOT NULL,
+			[GeneralEmailRecipient] [nvarchar](256) NOT NULL,
+			[GeneralEmailSender] [nvarchar](256) NOT NULL,
+			[GeneralSalesOrderIDPrefix] [varchar](100) NOT NULL,
+			[GeneralStoreName] [xml] NULL,
+			[CommunicationSalesOrderAlertEmailActive] [bit] NOT NULL,
+			[CommunicationSalesOrderReceiptEmailActive] [bit] NOT NULL,
+			[CommunicationSalesOrderReceiptEmailTemplate] [xml] NULL,
+			[PaymentGatewaysAuthorizeNetAIMLogin] [varchar](256) NOT NULL,
+			[PaymentGatewaysAuthorizeNetAIMTranKey] [varchar](256) NOT NULL,
+			[PaymentGatewaysAuthorizeNetAIMTestMode] [bit] NOT NULL,
+			[PaymentGatewaysFirstDataGGWSUser] [varchar](256) NOT NULL,
+			[PaymentGatewaysFirstDataGGWSPassword] [varchar](256) NOT NULL,
+			[PaymentGatewaysFirstDataGGWSCertificate] [varchar](8000) NOT NULL,
+			[PaymentGatewaysFirstDataGGWSTestMode] [bit] NOT NULL,
+			[PaymentGatewaysInternetSecureMDGatewayID] [varchar](256) NOT NULL,
+			[PaymentGatewaysInternetSecureMDTestMode] [bit] NOT NULL,
+			[PaymentGatewaysMonerisESPCAStoreID] [varchar](256) NOT NULL,
+			[PaymentGatewaysMonerisESPCAAPIToken] [varchar](256) NOT NULL,
+			[PaymentGatewaysMonerisESPCATestMode] [bit] NOT NULL,
+			[PaymentGatewaysPayPalECUsername] [varchar](256) NOT NULL,
+			[PaymentGatewaysPayPalECPassword] [varchar](256) NOT NULL,
+			[PaymentGatewaysPayPalECSignature] [varchar](256) NOT NULL,
+			[PaymentGatewaysPayPalECTestMode] [bit] NOT NULL,
+			[PaymentGatewaysPayPalWPPUsername] [varchar](256) NOT NULL,
+			[PaymentGatewaysPayPalWPPPassword] [varchar](256) NOT NULL,
+			[PaymentGatewaysPayPalWPPSignature] [varchar](256) NOT NULL,
+			[PaymentGatewaysPayPalWPPTestMode] [bit] NOT NULL,
+			[PaymentGatewaysPSiGateXmlMessengerStoreID] [varchar](256) NOT NULL,
+			[PaymentGatewaysPSiGateXmlMessengerPassphrase] [varchar](256) NOT NULL,
+			[PaymentGatewaysPSiGateXmlMessengerTestMode] [bit] NOT NULL,
+			[PaymentMethodsCashActive] [bit] NOT NULL,
+			[PaymentMethodsCheckActive] [bit] NOT NULL,
+			[PaymentMethodsCreditCardActive] [bit] NOT NULL,
+			[PaymentMethodsCreditCardPaymentGateway] [varchar](256) NOT NULL,
+			[PaymentMethodsMoneyOrderActive] [bit] NOT NULL,
+			[PaymentMethodsPayPalActive] [bit] NOT NULL,
+			[PaymentMethodsPayPalPaymentGateway] [varchar](256) NOT NULL,
+			[PaymentMethodsWireTransferActive] [bit] NOT NULL,
+			[ProductDetailDisplayTemplate] [varchar](255) NOT NULL,
+			[ProductListDisplayTemplate] [varchar](255) NOT NULL,
+			[SecurityAllowedProductRoleGroup] [varchar](8000) NOT NULL,
+			[SecurityEncryptionKey] [varchar](256) NOT NULL,
+			[SecurityStoreCreditCard] [bit] NOT NULL,
+			[CheckoutPlaceOrderActionRule] [xml] NULL,
+			[CommunicationSalesOrderInvoiceEmailTemplate] [xml] NULL,
+		 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_Configuration] PRIMARY KEY CLUSTERED 
+		(
+			[ConfigurationID] ASC
+		)
+		)
+		END
+
+
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration]') AND name = N'IX_Revindex_Storefront_Configuration_1')
+		CREATE UNIQUE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_Configuration_1] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] 
+		(
+			[PortalID] ASC
+		)
+		
+
+		-- Create table Revindex_Storefront_Category
+		IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Category]') AND type in (N'U'))
+		BEGIN
+		CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Category](
+			[CategoryID] [int] IDENTITY(1,1) NOT NULL,
+			[ParentCategoryID] [int] NULL,
+			[Name] [xml] NOT NULL,
+			[Description] [xml] NULL,
+			[MetaKeywords] [xml] NULL,
+			[MetaDescription] [xml] NULL,
+			[PageTitle] [xml] NULL,
+			[DisplayTemplate] [varchar](255) NULL,
+			[Published] [bit] NOT NULL,
+			[Extension] [xml] NULL,
+			[PortalID] [int] NOT NULL,
+			[DisplayOrder] [int] NOT NULL,
+			[CreateDate] [datetime] NOT NULL,
+			[UpdateDate] [datetime] NOT NULL,
+			[RowVersion] [timestamp] NOT NULL,
+		 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_Category] PRIMARY KEY CLUSTERED 
+		(
+			[CategoryID] ASC
+		)
+		)
+		END
+		
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Category]') AND name = N'IX_Revindex_Storefront_Category')
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_Category] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_Category] 
+		(
+			[PortalID] ASC
+		)
+		
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Category]') AND name = N'IX_Revindex_Storefront_Category_1')
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_Category_1] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_Category] 
+		(
+			[ParentCategoryID] ASC
+		)
+		
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Category]') AND name = N'IX_Revindex_Storefront_Category_2')
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_Category_2] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_Category] 
+		(
+			[DisplayOrder] ASC
+		)
+
+		-- Create table Revindex_Storefront_TaxClass
+		IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_TaxClass]') AND type in (N'U'))
+		BEGIN
+		CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_TaxClass](
+			[TaxClassID] [int] IDENTITY(1,1) NOT NULL,
+			[Name] [xml] NOT NULL,
+			[PortalID] [int] NOT NULL,
+			[CreateDate] [datetime] NOT NULL,
+			[UpdateDate] [datetime] NOT NULL,
+			[RowVersion] [timestamp] NOT NULL,
+			[RateRule] [xml] NULL,
+		 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_TaxClass] PRIMARY KEY CLUSTERED 
+		(
+			[TaxClassID] ASC
+		)
+		)
+		END
+		
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_TaxClass]') AND name = N'IX_Revindex_Storefront_TaxClass')
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_TaxClass] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_TaxClass] 
+		(
+			[PortalID] ASC
+		)
+		
+		--
+		-- Create table Revindex_Storefront_UserPayment
+		--
+		IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_UserPayment]') AND type in (N'U'))
+		BEGIN
+		CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_UserPayment](
+			[UserPaymentID] [int] IDENTITY(1,1) NOT NULL,
+			[UserID] [int] NOT NULL,
+			[PortalID] [int] NOT NULL,
+			[CreateDate] [datetime] NOT NULL,
+			[UpdateDate] [datetime] NOT NULL,
+			[FirstName] [nvarchar](50) NOT NULL,
+			[LastName] [nvarchar](50) NOT NULL,
+			[Company] [nvarchar](50) NULL,
+			[Street] [nvarchar](200) NOT NULL,
+			[City] [nvarchar](50) NOT NULL,
+			[SubdivisionCode] [varchar](6) NULL,
+			[PostalCode] [varchar](10) NULL,
+			[CountryCode] [varchar](2) NOT NULL,
+			[Phone] [varchar](50) NULL,
+			[Email] [nvarchar](256) NULL,
+			[CreditCardNumber] [varchar](100) NULL,
+			[CreditCardHint] [varchar](4) NULL,
+			[CreditCardCvv] [varchar](5) NULL,
+			[CreditCardExpiryMonth] [varchar](100) NULL,
+			[CreditCardExpiryYear] [varchar](100) NULL,
+			[PaymentMethod] [int] NOT NULL,
+			[RowVersion] [timestamp] NOT NULL,
+		 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_UserPayment] PRIMARY KEY CLUSTERED 
+		(
+			[UserPaymentID] ASC
+		)
+		)
+		END
+		
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_UserPayment]') AND name = N'IX_Revindex_Storefront_UserPayment')
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_UserPayment] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_UserPayment] 
+		(
+			[UserID] ASC
+		)
+		
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_UserPayment]') AND name = N'IX_Revindex_Storefront_UserPayment_1')
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_UserPayment_1] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_UserPayment] 
+		(
+			[PortalID] ASC
+		)
+		
+		--
+		-- Create table Revindex_Storefront_UserAddress
+		--
+		IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_UserAddress]') AND type in (N'U'))
+		BEGIN
+		CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_UserAddress](
+			[UserAddressID] [int] IDENTITY(1,1) NOT NULL,
+			[UserID] [int] NOT NULL,
+			[PortalID] [int] NOT NULL,
+			[PrimaryShipping] [bit] NOT NULL,
+			[PrimaryBilling] [bit] NOT NULL,
+			[FirstName] [nvarchar](50) NOT NULL,
+			[LastName] [nvarchar](50) NOT NULL,
+			[Company] [nvarchar](50) NULL,
+			[Street] [nvarchar](200) NOT NULL,
+			[City] [nvarchar](50) NOT NULL,
+			[SubdivisionCode] [varchar](6) NULL,
+			[PostalCode] [varchar](10) NULL,
+			[CountryCode] [varchar](2) NOT NULL,
+			[Phone] [varchar](50) NULL,
+			[Email] [nvarchar](256) NULL,
+			[CreateDate] [datetime] NOT NULL,
+			[UpdateDate] [datetime] NOT NULL,
+			[RowVersion] [timestamp] NOT NULL,
+		 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_UserAddress] PRIMARY KEY CLUSTERED 
+		(
+			[UserAddressID] ASC
+		)
+		)
+		END
+		
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_UserAddress]') AND name = N'IX_Revindex_Storefront_Address_1')
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_Address_1] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_UserAddress] 
+		(
+			[PortalID] ASC
+		)
+		
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_UserAddress]') AND name = N'IX_Revindex_Storefront_UserAddress')
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_UserAddress] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_UserAddress] 
+		(
+			[UserID] ASC
+		)
+		
+
+		--
+		-- Create table Revindex_Storefront_SalesPayment
+		--
+		IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_SalesPayment]') AND type in (N'U'))
+		BEGIN
+		CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesPayment](
+			[SalesPaymentID] [int] IDENTITY(1,1) NOT NULL,
+			[SalesOrderID] [int] NOT NULL,
+			[FirstName] [nvarchar](50) NOT NULL,
+			[LastName] [nvarchar](50) NOT NULL,
+			[Company] [nvarchar](50) NULL,
+			[Street] [nvarchar](200) NOT NULL,
+			[City] [nvarchar](50) NOT NULL,
+			[SubdivisionCode] [varchar](6) NULL,
+			[PostalCode] [varchar](10) NULL,
+			[CountryCode] [varchar](2) NOT NULL,
+			[Phone] [varchar](50) NULL,
+			[Email] [nvarchar](256) NULL,
+			[CreditCardNumber] [varchar](100) NULL,
+			[CreditCardHint] [varchar](4) NULL,
+			[CreditCardCvv] [varchar](5) NULL,
+			[CreditCardExpiryMonth] [varchar](100) NULL,
+			[CreditCardExpiryYear] [varchar](100) NULL,
+			[PaymentMethod] [int] NOT NULL,
+			[PaymentGateway] [varchar](50) NULL,
+			[PaymentGatewayDetailedResponse] [nvarchar](max) NULL,
+			[PaymentGatewayTransactionID] [varchar](100) NULL,
+			[PaymentGatewayReferenceID] [varchar](100) NULL,
+			[PaymentGatewayResponseMessage] [nvarchar](max) NULL,
+			[PaymentGatewayAuthorizationCode] [varchar](max) NULL,
+			[PaymentGatewayResponseCode] [int] NULL,
+			[PaymentGatewayAvsResponseCode] [int] NULL,
+			[PaymentGatewayCvvResponseCode] [int] NULL,
+			[Amount] [decimal](19, 4) NOT NULL,
+			[CreateDate] [datetime] NOT NULL,
+			[UpdateDate] [datetime] NOT NULL,
+			[UserHostAddress] [varchar](39) NULL,
+			[TransactionType] [int] NOT NULL,
+			[PaymentDate] [datetime] NOT NULL,
+			[RowVersion] [timestamp] NOT NULL,
+			[ParentSalesPaymentID] [int] NULL,
+			[PaymentGatewayPaymentRedirectUrl] [varchar](8000) NULL,
+			[PaymentGatewayToken] [varchar](max) NULL,
+			[PaymentGatewayPayerInfo] [varchar](max) NULL,
+		 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_SalesPayment] PRIMARY KEY CLUSTERED 
+		(
+			[SalesPaymentID] ASC
+		)
+		)
+		END
+		
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_SalesPayment]') AND name = N'IX_Revindex_Storefront_SalesPayment')
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_SalesPayment] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesPayment] 
+		(
+			[SalesOrderID] ASC
+		)
+		
+		--
+		-- Create table Revindex_Storefront_Product
+		--
+		IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Product]') AND type in (N'U'))
+		BEGIN
+		CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Product](
+			[ProductID] [int] IDENTITY(1,1) NOT NULL,
+			[PortalID] [int] NOT NULL,
+			[Name] [xml] NOT NULL,
+			[Overview] [xml] NULL,
+			[Summary] [xml] NULL,
+			[Deleted] [bit] NOT NULL,
+			[Published] [bit] NOT NULL,
+			[StartDate] [datetime] NULL,
+			[StopDate] [datetime] NULL,
+			[PageTitle] [xml] NULL,
+			[MetaKeywords] [xml] NULL,
+			[MetaDescription] [xml] NULL,
+			[ProductType] [int] NOT NULL,
+			[Extension] [xml] NULL,
+			[DisplayTemplate] [varchar](255) NULL,
+			[DisplayOrder] [int] NOT NULL,
+			[CreateDate] [datetime] NOT NULL,
+			[UpdateDate] [datetime] NOT NULL,
+			[AllowInternetOrder] [bit] NOT NULL,
+			[AllowPhoneOrder] [bit] NOT NULL,
+			[RowVersion] [timestamp] NOT NULL,
+			[Specifications] [xml] NULL,
+			[FAQ] [xml] NULL,
+			[BuyingGuide] [xml] NULL,
+			[Terms] [xml] NULL,
+			[AvailabilityRule] [xml] NULL,
+			[DynamicFormCode] [nvarchar](max) NULL,
+		 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_Product] PRIMARY KEY CLUSTERED 
+		(
+			[ProductID] ASC
+		)
+		)
+		END
+		
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Product]') AND name = N'IX_Revindex_Storefront_Product')
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_Product] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_Product] 
+		(
+			[PortalID] ASC,
+			[Deleted] ASC
+		)
+		
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Product]') AND name = N'IX_Revindex_Storefront_Product_1')
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_Product_1] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_Product] 
+		(
+			[DisplayOrder] ASC
+		)
+
+		
+		--
+		-- Create table Revindex_Storefront_ProductVariant
+		--
+		IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant]') AND type in (N'U'))
+		BEGIN
+		CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant](
+			[ProductVariantID] [int] IDENTITY(1,1) NOT NULL,
+			[ProductID] [int] NOT NULL,
+			[PortalID] [int] NOT NULL,
+			[Name] [xml] NULL,
+			[Overview] [xml] NULL,
+			[Deleted] [bit] NOT NULL,
+			[Published] [bit] NOT NULL,
+			[StartDate] [datetime] NULL,
+			[StopDate] [datetime] NULL,
+			[Extension] [xml] NULL,
+			[DisplayOrder] [int] NOT NULL,
+			[SKU] [varchar](50) NULL,
+			[ManufacturerSKU] [varchar](50) NULL,
+			[DistributorSKU] [varchar](50) NULL,
+			[Price] [decimal](19, 4) NOT NULL,
+			[MSRP] [decimal](19, 4) NULL,
+			[ProductCost] [decimal](19, 4) NULL,
+			[Inventory] [int] NULL,
+			[Weight] [float] NOT NULL,
+			[Depth] [float] NOT NULL,
+			[Width] [float] NOT NULL,
+			[Height] [float] NOT NULL,
+			[MinOrderQuantity] [int] NULL,
+			[MaxOrderQuantity] [int] NULL,
+			[RecurringInterval] [int] NOT NULL,
+			[RecurringIntervalType] [int] NOT NULL,
+			[TaxClassID] [int] NULL,
+			[CreateDate] [datetime] NOT NULL,
+			[UpdateDate] [datetime] NOT NULL,
+			[RequireShipping] [bit] NOT NULL,
+			[RowVersion] [timestamp] NOT NULL,
+			[AvailabilityRule] [xml] NULL,
+			[ManufacturerID] [int] NULL,
+			[DistributorID] [int] NULL,
+			[Summary] [xml] NULL,
+			[Specifications] [xml] NULL,
+			[FAQ] [xml] NULL,
+			[BuyingGuide] [xml] NULL,
+			[Terms] [xml] NULL,
+			[PromotionRule] [xml] NULL,
+			[DownloadFile] [varchar](256) NULL,
+			[PlaceOrderActionRule] [xml] NULL,
+			[UniversalProductCode] [varchar](50) NULL,
+		 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_ProductVariant] PRIMARY KEY CLUSTERED 
+		(
+			[ProductVariantID] ASC
+		)
+		)
+		END
+		
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant]') AND name = N'IX_Revindex_Storefront_ProductVariant')
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_ProductVariant] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant] 
+		(
+			[PortalID] ASC,
+			[Deleted] ASC
+		)
+		
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant]') AND name = N'IX_Revindex_Storefront_ProductVariant_1')
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_ProductVariant_1] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant] 
+		(
+			[ProductID] ASC
+		)
+		
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant]') AND name = N'IX_Revindex_Storefront_ProductVariant_2')
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_ProductVariant_2] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant] 
+		(
+			[SKU] ASC
+		)
+		
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant]') AND name = N'IX_Revindex_Storefront_ProductVariant_3')
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_ProductVariant_3] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant] 
+		(
+			[ManufacturerSKU] ASC
+		)
+		
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant]') AND name = N'IX_Revindex_Storefront_ProductVariant_4')
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_ProductVariant_4] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant] 
+		(
+			[DisplayOrder] ASC
+		)
+		
+		--
+		-- Create table Revindex_Storefront_ProductCategory
+		--
+		IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductCategory]') AND type in (N'U'))
+		BEGIN
+		CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductCategory](
+			[ProductCategoryID] [int] IDENTITY(1,1) NOT NULL,
+			[ProductID] [int] NOT NULL,
+			[CategoryID] [int] NOT NULL,
+			[CreateDate] [datetime] NOT NULL,
+			[RowVersion] [timestamp] NOT NULL,
+		 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_ProductCategory] PRIMARY KEY CLUSTERED 
+		(
+			[ProductCategoryID] ASC
+		)
+		)
+		END
+		
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductCategory]') AND name = N'IX_Revindex_Storefront_ProductCategory')
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_ProductCategory] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductCategory] 
+		(
+			[CategoryID] ASC
+		)
+		
+		--
+		-- Create table Revindex_Storefront_SalesOrderDetail
+		--
+		IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrderDetail]') AND type in (N'U'))
+		BEGIN
+		CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrderDetail](
+			[SalesOrderDetailID] [int] IDENTITY(1,1) NOT NULL,
+			[SalesOrderID] [int] NOT NULL,
+			[ProductVariantID] [int] NOT NULL,
+			[Quantity] [int] NOT NULL,
+			[Price] [decimal](19, 4) NOT NULL,
+			[CreateDate] [datetime] NOT NULL,
+			[UpdateDate] [datetime] NOT NULL,
+			[ProductName] [xml] NOT NULL,
+			[ProductVariantName] [xml] NULL,
+			[SKU] [varchar](50) NOT NULL,
+			[ProductCost] [decimal](19, 4) NULL,
+			[RecurringInterval] [int] NOT NULL,
+			[RecurringIntervalType] [int] NOT NULL,
+			[Weight] [float] NOT NULL,
+			[Depth] [float] NOT NULL,
+			[Width] [float] NOT NULL,
+			[Height] [float] NOT NULL,
+			[RowVersion] [timestamp] NOT NULL,
+			[RequireShipping] [bit] NOT NULL,
+			[ProductVariantExtension] [xml] NULL,
+			[TaxRateRule] [xml] NULL,
+			[DiscountAmount] [decimal](19, 4) NOT NULL,
+			[DynamicFormResult] [xml] NULL,
+		 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_SalesOrderDetail] PRIMARY KEY CLUSTERED 
+		(
+			[SalesOrderDetailID] ASC
+		)
+		)
+		END
+		
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrderDetail]') AND name = N'IX_Revindex_Storefront_SalesOrderDetail')
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_SalesOrderDetail] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrderDetail] 
+		(
+			[SalesOrderID] ASC
+		)
+		
+		--
+		-- Create table Revindex_Storefront_RequiredProduct
+		--
+		IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_RequiredProduct]') AND type in (N'U'))
+		BEGIN
+		CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RequiredProduct](
+			[RequiredProductID] [int] IDENTITY(1,1) NOT NULL,
+			[ProductVariantID] [int] NOT NULL,
+			[RequiredProductVariantID] [int] NOT NULL,
+			[CreateDate] [datetime] NOT NULL,
+			[RowVersion] [timestamp] NOT NULL,
+		 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_RequiredProduct] PRIMARY KEY CLUSTERED 
+		(
+			[RequiredProductID] ASC
+		)
+		)
+		END
+		
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_RequiredProduct]') AND name = N'IX_Revindex_Storefront_RequiredProduct')
+		CREATE UNIQUE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_RequiredProduct] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_RequiredProduct] 
+		(
+			[ProductVariantID] ASC,
+			[RequiredProductVariantID] ASC
+		)
+		
+		--
+		-- Create table Revindex_Storefront_RecurringSalesOrder
+		--
+		IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_RecurringSalesOrder]') AND type in (N'U'))
+		BEGIN
+		CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RecurringSalesOrder](
+			[RecurringSalesOrderID] [int] IDENTITY(1,1) NOT NULL,
+			[UserID] [int] NOT NULL,
+			[PortalID] [int] NOT NULL,
+			[ProductVariantID] [int] NOT NULL,
+			[Quantity] [int] NOT NULL,
+			[NextRecurringDate] [datetime] NOT NULL,
+			[Status] [int] NOT NULL,
+			[OriginalSalesOrderID] [int] NULL,
+			[CreateDate] [datetime] NOT NULL,
+			[UpdateDate] [datetime] NOT NULL,
+			[ShippingFirstName] [nvarchar](50) NULL,
+			[ShippingLastName] [nvarchar](50) NULL,
+			[ShippingCompany] [nvarchar](50) NULL,
+			[ShippingStreet] [nvarchar](200) NULL,
+			[ShippingCity] [nvarchar](50) NULL,
+			[ShippingSubdivisionCode] [varchar](6) NULL,
+			[ShippingPostalCode] [varchar](10) NULL,
+			[ShippingCountryCode] [varchar](2) NULL,
+			[ShippingPhone] [varchar](50) NULL,
+			[ShippingEmail] [nvarchar](256) NULL,
+			[UserPaymentID] [int] NOT NULL,
+			[RowVersion] [timestamp] NOT NULL,
+			[ShippingMethodID] [int] NULL,
+			[CultureCode] [varchar](20) NOT NULL,
+		 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_RecurringSalesOrder] PRIMARY KEY CLUSTERED 
+		(
+			[RecurringSalesOrderID] ASC
+		)
+		)
+		END
+		
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_RecurringSalesOrder]') AND name = N'IX_Revindex_Storefront_RecurringSalesOrder')
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_RecurringSalesOrder] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_RecurringSalesOrder] 
+		(
+			[UserID] ASC
+		)
+		
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_RecurringSalesOrder]') AND name = N'IX_Revindex_Storefront_RecurringSalesOrder_1')
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_RecurringSalesOrder_1] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_RecurringSalesOrder] 
+		(
+			[PortalID] ASC
+		)
+		
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_RecurringSalesOrder]') AND name = N'IX_Revindex_Storefront_RecurringSalesOrder_2')
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_RecurringSalesOrder_2] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_RecurringSalesOrder] 
+		(
+			[Status] ASC
+		)
+		
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_RecurringSalesOrder]') AND name = N'IX_Revindex_Storefront_RecurringSalesOrder_3')
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_RecurringSalesOrder_3] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_RecurringSalesOrder] 
+		(
+			[NextRecurringDate] ASC
+		)
+		
+		--
+		-- Create table Revindex_Storefront_Gallery
+		--
+		IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Gallery]') AND type in (N'U'))
+		BEGIN
+		CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Gallery](
+			[GalleryID] [int] IDENTITY(1,1) NOT NULL,
+			[ProductID] [int] NULL,
+			[ProductVariantID] [int] NULL,
+			[MediaFile] [xml] NOT NULL,
+			[MediaType] [xml] NOT NULL,
+			[Format] [int] NOT NULL,
+			[Width] [int] NOT NULL,
+			[Height] [int] NOT NULL,
+			[AlternateText] [xml] NULL,
+			[DisplayOrder] [int] NOT NULL,
+			[PortalID] [int] NOT NULL,
+			[CreateDate] [datetime] NOT NULL,
+			[UpdateDate] [datetime] NOT NULL,
+			[RowVersion] [timestamp] NOT NULL,
+		 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_Gallery] PRIMARY KEY CLUSTERED 
+		(
+			[GalleryID] ASC
+		)
+		)
+		END
+		
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Gallery]') AND name = N'IX_Revindex_Storefront_Gallery')
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_Gallery] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_Gallery] 
+		(
+			[PortalID] ASC
+		)
+		
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Gallery]') AND name = N'IX_Revindex_Storefront_Gallery_1')
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_Gallery_1] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_Gallery] 
+		(
+			[ProductID] ASC
+		)
+		
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Gallery]') AND name = N'IX_Revindex_Storefront_Gallery_2')
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_Gallery_2] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_Gallery] 
+		(
+			[ProductVariantID] ASC
+		)
+		
+		-- Create table Revindex_Storefront_ShippingMethod
+		IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ShippingMethod]') AND type in (N'U'))
+		BEGIN
+		CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ShippingMethod](
+			[ShippingMethodID] [int] IDENTITY(1,1) NOT NULL,
+			[Name] [xml] NOT NULL,
+			[PortalID] [int] NOT NULL,
+			[CreateDate] [datetime] NOT NULL,
+			[UpdateDate] [datetime] NOT NULL,
+			[DisplayOrder] [int] NOT NULL,
+			[TaxClassID] [int] NULL,
+			[RowVersion] [timestamp] NOT NULL,
+			[RateRule] [xml] NULL,
+			[AvailabilityRule] [xml] NULL,
+			[Deleted] [bit] NOT NULL,
+		 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_ShippingMethod] PRIMARY KEY CLUSTERED 
+		(
+			[ShippingMethodID] ASC
+		)
+		) 
+		END
+		
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ShippingMethod]') AND name = N'IX_Revindex_Storefront_ShippingMethod')
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_ShippingMethod] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_ShippingMethod] 
+		(
+			[PortalID] ASC
+		)
+		
+		IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_SalesPromotion]') AND type in (N'U'))
+		BEGIN
+		CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesPromotion](
+			[SalesPromotionID] [int] IDENTITY(1,1) NOT NULL,
+			[PortalID] [int] NOT NULL,
+			[RunOrder] [int] NOT NULL,
+			[PromotionType] [int] NOT NULL,
+			[Name] [xml] NOT NULL,
+			[Description] [xml] NULL,
+			[PromotionRule] [xml] NULL,
+			[StartDate] [datetime] NULL,
+			[StopDate] [datetime] NULL,
+			[Active] [bit] NOT NULL,
+			[RowVersion] [timestamp] NOT NULL,
+			[CreateDate] [datetime] NOT NULL,
+			[UpdateDate] [datetime] NOT NULL,
+		 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_SalesPromotion] PRIMARY KEY CLUSTERED 
+		(
+			[SalesPromotionID] ASC
+		)
+		)
+		END
+
+
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_SalesPromotion]') AND name = N'IX_Revindex_Storefront_SalesPromotion')
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_SalesPromotion] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesPromotion] 
+		(
+			[PortalID] ASC
+		)
+		
+		
+		IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Coupon]') AND type in (N'U'))
+		BEGIN
+		CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Coupon](
+			[CouponID] [int] IDENTITY(1,1) NOT NULL,
+			[PortalID] [int] NOT NULL,
+			[Code] [nvarchar](100) NOT NULL,
+			[Description] [xml] NULL,
+			[Active] [bit] NOT NULL,
+			[StartDate] [datetime] NULL,
+			[StopDate] [datetime] NULL,
+			[Inventory] [int] NULL,
+			[AvailabilityRule] [xml] NULL,
+			[CreateDate] [datetime] NOT NULL,
+			[UpdateDate] [datetime] NOT NULL,
+			[RowVersion] [timestamp] NOT NULL,
+		 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_Coupon] PRIMARY KEY CLUSTERED 
+		(
+			[CouponID] ASC
+		)
+		)
+		END
+
+
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Coupon]') AND name = N'IX_Revindex_Storefront_Coupon')
+		CREATE UNIQUE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_Coupon] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_Coupon] 
+		(
+			[PortalID] ASC,
+			[Code] ASC
+		)
+			
+			
+		IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_HandlingMethod]') AND type in (N'U'))
+		BEGIN
+		CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_HandlingMethod](
+			[HandlingMethodID] [int] IDENTITY(1,1) NOT NULL,
+			[Name] [xml] NOT NULL,
+			[PortalID] [int] NOT NULL,
+			[CreateDate] [datetime] NOT NULL,
+			[UpdateDate] [datetime] NOT NULL,
+			[TaxClassID] [int] NULL,
+			[RowVersion] [timestamp] NOT NULL,
+			[RateRule] [xml] NULL,
+			[Deleted] [bit] NOT NULL,
+		 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_HandlingMethod] PRIMARY KEY CLUSTERED 
+		(
+			[HandlingMethodID] ASC
+		)
+		)
+		END
+
+
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_HandlingMethod]') AND name = N'IX_Revindex_Storefront_HandlingMethod')
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_HandlingMethod] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_HandlingMethod] 
+		(
+			[PortalID] ASC
+		)
+			
+			
+		IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Currency]') AND type in (N'U'))
+		BEGIN
+		CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Currency](
+			[CurrencyID] [int] IDENTITY(1,1) NOT NULL,
+			[CultureCode] [varchar](20) NOT NULL,
+			[ExchangeRate] [decimal](19, 4) NOT NULL,
+			[PortalID] [int] NOT NULL,
+			[PrimaryCurrency] [bit] NOT NULL,
+			[CreateDate] [datetime] NOT NULL,
+			[UpdateDate] [datetime] NOT NULL,
+			[RowVersion] [timestamp] NOT NULL,
+		 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_Currency] PRIMARY KEY CLUSTERED 
+		(
+			[CurrencyID] ASC
+		)
+		)
+		END
+
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Currency]') AND name = N'IX_Revindex_Storefront_Currency')
+		CREATE UNIQUE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_Currency] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_Currency] 
+		(
+			[PortalID] ASC,
+			[CultureCode] ASC
+		)
+		
+			
+		-- Add Foreign Keys
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_Category_Portals]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Category]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Category]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Category_Portals] FOREIGN KEY([PortalID])
+		REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID])
+		ON DELETE CASCADE
+		
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_Category_Portals]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Category]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Category] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Category_Portals]
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_Category_Revindex_Storefront_Category]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Category]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Category]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Category_Revindex_Storefront_Category] FOREIGN KEY([ParentCategoryID])
+		REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_Category] ([CategoryID])
+		
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_Category_Revindex_Storefront_Category]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Category]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Category] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Category_Revindex_Storefront_Category]
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_Configuration_Portals]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Configuration_Portals] FOREIGN KEY([PortalID])
+		REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID])
+		ON DELETE CASCADE
+		
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_Configuration_Portals]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Configuration_Portals]
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_Distributor_Portals]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Distributor]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Distributor]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Distributor_Portals] FOREIGN KEY([PortalID])
+		REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID])
+		ON DELETE CASCADE
+		
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_Distributor_Portals]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Distributor]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Distributor] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Distributor_Portals]
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_Gallery_Portals]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Gallery]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Gallery]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Gallery_Portals] FOREIGN KEY([PortalID])
+		REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID])
+		ON DELETE CASCADE
+		
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_Gallery_Portals]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Gallery]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Gallery] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Gallery_Portals]
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_Gallery_Revindex_Storefront_Product]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Gallery]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Gallery]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Gallery_Revindex_Storefront_Product] FOREIGN KEY([ProductID])
+		REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_Product] ([ProductID])
+		
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_Gallery_Revindex_Storefront_Product]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Gallery]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Gallery] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Gallery_Revindex_Storefront_Product]
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_Gallery_Revindex_Storefront_ProductVariant]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Gallery]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Gallery]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Gallery_Revindex_Storefront_ProductVariant] FOREIGN KEY([ProductVariantID])
+		REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant] ([ProductVariantID])
+		
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_Gallery_Revindex_Storefront_ProductVariant]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Gallery]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Gallery] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Gallery_Revindex_Storefront_ProductVariant]
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_Manufacturer_Portals]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Manufacturer]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Manufacturer]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Manufacturer_Portals] FOREIGN KEY([PortalID])
+		REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID])
+		ON DELETE CASCADE
+		
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_Manufacturer_Portals]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Manufacturer]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Manufacturer] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Manufacturer_Portals]
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_Product_Portals]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Product]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Product]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Product_Portals] FOREIGN KEY([PortalID])
+		REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID])
+		ON DELETE CASCADE
+		
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_Product_Portals]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Product]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Product] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Product_Portals]
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_ProductCategory_Revindex_Storefront_Category]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductCategory]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductCategory]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductCategory_Revindex_Storefront_Category] FOREIGN KEY([CategoryID])
+		REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_Category] ([CategoryID])
+		
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_ProductCategory_Revindex_Storefront_Category]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductCategory]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductCategory] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductCategory_Revindex_Storefront_Category]
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_ProductCategory_Revindex_Storefront_Product]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductCategory]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductCategory]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductCategory_Revindex_Storefront_Product] FOREIGN KEY([ProductID])
+		REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_Product] ([ProductID])
+		
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_ProductCategory_Revindex_Storefront_Product]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductCategory]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductCategory] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductCategory_Revindex_Storefront_Product]
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_ProductVariant_Portals]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductVariant_Portals] FOREIGN KEY([PortalID])
+		REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID])
+		ON DELETE CASCADE
+		
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_ProductVariant_Portals]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductVariant_Portals]
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_ProductVariant_Revindex_Storefront_Product]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductVariant_Revindex_Storefront_Product] FOREIGN KEY([ProductID])
+		REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_Product] ([ProductID])
+		
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_ProductVariant_Revindex_Storefront_Product]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductVariant_Revindex_Storefront_Product]
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_ProductVariant_Revindex_Storefront_Manufacturer]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductVariant_Revindex_Storefront_Manufacturer] FOREIGN KEY([ManufacturerID])
+		REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_Manufacturer] ([ManufacturerID])
+
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_ProductVariant_Revindex_Storefront_Manufacturer]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductVariant_Revindex_Storefront_Manufacturer]
+
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_ProductVariant_Revindex_Storefront_Distributor]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductVariant_Revindex_Storefront_Distributor] FOREIGN KEY([DistributorID])
+		REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_Distributor] ([DistributorID])
+
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_ProductVariant_Revindex_Storefront_Distributor]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductVariant_Revindex_Storefront_Distributor]
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_ProductVariant_Revindex_Storefront_TaxClass]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductVariant_Revindex_Storefront_TaxClass] FOREIGN KEY([TaxClassID])
+		REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_TaxClass] ([TaxClassID])
+		
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_ProductVariant_Revindex_Storefront_TaxClass]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductVariant_Revindex_Storefront_TaxClass]
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_RecurringSalesOrder_Portals]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_RecurringSalesOrder]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RecurringSalesOrder]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_RecurringSalesOrder_Portals] FOREIGN KEY([PortalID])
+		REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID])
+		ON DELETE CASCADE
+		
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_RecurringSalesOrder_Portals]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_RecurringSalesOrder]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RecurringSalesOrder] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_RecurringSalesOrder_Portals]
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_RecurringSalesOrder_Revindex_Storefront_ShippingMethod]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_RecurringSalesOrder]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RecurringSalesOrder]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_RecurringSalesOrder_Revindex_Storefront_ShippingMethod] FOREIGN KEY([ShippingMethodID])
+		REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_ShippingMethod] ([ShippingMethodID])
+
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_RecurringSalesOrder_Revindex_Storefront_ShippingMethod]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_RecurringSalesOrder]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RecurringSalesOrder] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_RecurringSalesOrder_Revindex_Storefront_ShippingMethod]
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_RecurringSalesOrder_Revindex_Storefront_ProductVariant]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_RecurringSalesOrder]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RecurringSalesOrder]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_RecurringSalesOrder_Revindex_Storefront_ProductVariant] FOREIGN KEY([ProductVariantID])
+		REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant] ([ProductVariantID])
+		
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_RecurringSalesOrder_Revindex_Storefront_ProductVariant]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_RecurringSalesOrder]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RecurringSalesOrder] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_RecurringSalesOrder_Revindex_Storefront_ProductVariant]
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_RecurringSalesOrder_Revindex_Storefront_SalesOrder]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_RecurringSalesOrder]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RecurringSalesOrder]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_RecurringSalesOrder_Revindex_Storefront_SalesOrder] FOREIGN KEY([OriginalSalesOrderID])
+		REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder] ([SalesOrderID])
+		
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_RecurringSalesOrder_Revindex_Storefront_SalesOrder]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_RecurringSalesOrder]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RecurringSalesOrder] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_RecurringSalesOrder_Revindex_Storefront_SalesOrder]
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_RecurringSalesOrder_Revindex_Storefront_UserPayment]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_RecurringSalesOrder]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RecurringSalesOrder]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_RecurringSalesOrder_Revindex_Storefront_UserPayment] FOREIGN KEY([UserPaymentID])
+		REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_UserPayment] ([UserPaymentID])
+		
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_RecurringSalesOrder_Revindex_Storefront_UserPayment]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_RecurringSalesOrder]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RecurringSalesOrder] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_RecurringSalesOrder_Revindex_Storefront_UserPayment]
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_RecurringSalesOrder_Users]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_RecurringSalesOrder]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RecurringSalesOrder]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_RecurringSalesOrder_Users] FOREIGN KEY([UserID])
+		REFERENCES {databaseOwner}[{objectQualifier}Users] ([UserID])
+		ON DELETE CASCADE
+		
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_RecurringSalesOrder_Users]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_RecurringSalesOrder]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RecurringSalesOrder] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_RecurringSalesOrder_Users]
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_RequiredProduct_Revindex_Storefront_ProductVariant2]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_RequiredProduct]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RequiredProduct]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_RequiredProduct_Revindex_Storefront_ProductVariant2] FOREIGN KEY([RequiredProductVariantID])
+		REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant] ([ProductVariantID])
+		
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_RequiredProduct_Revindex_Storefront_ProductVariant2]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_RequiredProduct]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RequiredProduct] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_RequiredProduct_Revindex_Storefront_ProductVariant2]
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_RequiredProduct_Revindex_Storefront_ProductVariantID]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_RequiredProduct]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RequiredProduct]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_RequiredProduct_Revindex_Storefront_ProductVariantID] FOREIGN KEY([ProductVariantID])
+		REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant] ([ProductVariantID])
+		
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_RequiredProduct_Revindex_Storefront_ProductVariantID]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_RequiredProduct]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RequiredProduct] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_RequiredProduct_Revindex_Storefront_ProductVariantID]
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_SalesOrder_Portals]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_SalesOrder_Portals] FOREIGN KEY([PortalID])
+		REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID])
+		ON DELETE CASCADE
+		
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_SalesOrder_Portals]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_SalesOrder_Portals]
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_SalesOrder_Revindex_Storefront_HandlingMethod]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_SalesOrder_Revindex_Storefront_HandlingMethod] FOREIGN KEY([HandlingMethodID])
+		REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_HandlingMethod] ([HandlingMethodID])
+
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_SalesOrder_Revindex_Storefront_HandlingMethod]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_SalesOrder_Revindex_Storefront_HandlingMethod]
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_SalesOrder_Revindex_Storefront_ShippingMethod]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_SalesOrder_Revindex_Storefront_ShippingMethod] FOREIGN KEY([ShippingMethodID])
+		REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_ShippingMethod] ([ShippingMethodID])
+
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_SalesOrder_Revindex_Storefront_ShippingMethod]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_SalesOrder_Revindex_Storefront_ShippingMethod]
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_SalesOrder_Revindex_Storefront_UserPayment]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_SalesOrder_Revindex_Storefront_UserPayment] FOREIGN KEY([PreferredUserPaymentID])
+		REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_UserPayment] ([UserPaymentID])
+
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_SalesOrder_Revindex_Storefront_UserPayment]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_SalesOrder_Revindex_Storefront_UserPayment]
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_SalesOrder_Users]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_SalesOrder_Users] FOREIGN KEY([UserID])
+		REFERENCES {databaseOwner}[{objectQualifier}Users] ([UserID])
+		ON DELETE CASCADE
+		
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_SalesOrder_Users]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_SalesOrder_Users]
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_SalesOrderDetail_Revindex_Storefront_ProductVariant]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrderDetail]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrderDetail]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_SalesOrderDetail_Revindex_Storefront_ProductVariant] FOREIGN KEY([ProductVariantID])
+		REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant] ([ProductVariantID])
+		
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_SalesOrderDetail_Revindex_Storefront_ProductVariant]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrderDetail]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrderDetail] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_SalesOrderDetail_Revindex_Storefront_ProductVariant]
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_SalesOrderDetail_Revindex_Storefront_SalesOrder]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrderDetail]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrderDetail]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_SalesOrderDetail_Revindex_Storefront_SalesOrder] FOREIGN KEY([SalesOrderID])
+		REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder] ([SalesOrderID])
+		ON DELETE CASCADE
+		
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_SalesOrderDetail_Revindex_Storefront_SalesOrder]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrderDetail]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrderDetail] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_SalesOrderDetail_Revindex_Storefront_SalesOrder]
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_SalesPayment_Revindex_Storefront_SalesOrder]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_SalesPayment]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesPayment]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_SalesPayment_Revindex_Storefront_SalesOrder] FOREIGN KEY([SalesOrderID])
+		REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder] ([SalesOrderID])
+		ON DELETE CASCADE
+		
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_SalesPayment_Revindex_Storefront_SalesOrder]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_SalesPayment]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesPayment] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_SalesPayment_Revindex_Storefront_SalesOrder]
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_SalesPayment_Revindex_Storefront_SalesPayment]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_SalesPayment]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesPayment]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_SalesPayment_Revindex_Storefront_SalesPayment] FOREIGN KEY([ParentSalesPaymentID])
+		REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesPayment] ([SalesPaymentID])
+
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_SalesPayment_Revindex_Storefront_SalesPayment]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_SalesPayment]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesPayment] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_SalesPayment_Revindex_Storefront_SalesPayment]
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_TaxClass_Portals]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_TaxClass]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_TaxClass]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_TaxClass_Portals] FOREIGN KEY([PortalID])
+		REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID])
+		ON DELETE CASCADE
+		
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_TaxClass_Portals]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_TaxClass]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_TaxClass] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_TaxClass_Portals]
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_UserAddress_Portals]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_UserAddress]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_UserAddress]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_UserAddress_Portals] FOREIGN KEY([PortalID])
+		REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID])
+		ON DELETE CASCADE
+		
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_UserAddress_Portals]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_UserAddress]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_UserAddress] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_UserAddress_Portals]
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_UserAddress_Users]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_UserAddress]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_UserAddress]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_UserAddress_Users] FOREIGN KEY([UserID])
+		REFERENCES {databaseOwner}[{objectQualifier}Users] ([UserID])
+		ON DELETE CASCADE
+		
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_UserAddress_Users]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_UserAddress]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_UserAddress] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_UserAddress_Users]
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_UserPayment_Portals]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_UserPayment]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_UserPayment]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_UserPayment_Portals] FOREIGN KEY([PortalID])
+		REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID])
+		ON DELETE CASCADE
+		
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_UserPayment_Portals]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_UserPayment]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_UserPayment] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_UserPayment_Portals]
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_UserPayment_Users]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_UserPayment]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_UserPayment]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_UserPayment_Users] FOREIGN KEY([UserID])
+		REFERENCES {databaseOwner}[{objectQualifier}Users] ([UserID])
+		ON DELETE CASCADE
+		
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_UserPayment_Users]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_UserPayment]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_UserPayment] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_UserPayment_Users]
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_ShippingMethod_Portals]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ShippingMethod]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ShippingMethod]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ShippingMethod_Portals] FOREIGN KEY([PortalID])
+		REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID])
+		ON DELETE CASCADE
+		
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_ShippingMethod_Portals]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ShippingMethod]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ShippingMethod] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ShippingMethod_Portals]
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_ShippingMethod_Revindex_Storefront_TaxClass]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ShippingMethod]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ShippingMethod]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ShippingMethod_Revindex_Storefront_TaxClass] FOREIGN KEY([TaxClassID])
+		REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_TaxClass] ([TaxClassID])
+
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_ShippingMethod_Revindex_Storefront_TaxClass]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ShippingMethod]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ShippingMethod] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ShippingMethod_Revindex_Storefront_TaxClass]
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_SalesPromotion_Portals]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_SalesPromotion]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesPromotion]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_SalesPromotion_Portals] FOREIGN KEY([PortalID])
+		REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID])
+		ON DELETE CASCADE
+
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_SalesPromotion_Portals]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_SalesPromotion]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesPromotion] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_SalesPromotion_Portals]
+
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_Coupon_Portals]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Coupon]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Coupon]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Coupon_Portals] FOREIGN KEY([PortalID])
+		REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID])
+		ON DELETE CASCADE
+
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_Coupon_Portals]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Coupon]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Coupon] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Coupon_Portals]
+
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_HandlingMethod_Portals]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_HandlingMethod]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_HandlingMethod]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_HandlingMethod_Portals] FOREIGN KEY([PortalID])
+		REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID])
+		ON DELETE CASCADE
+
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_HandlingMethod_Portals]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_HandlingMethod]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_HandlingMethod] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_HandlingMethod_Portals]
+
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_HandlingMethod_Revindex_Storefront_TaxClass]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_HandlingMethod]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_HandlingMethod]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_HandlingMethod_Revindex_Storefront_TaxClass] FOREIGN KEY([TaxClassID])
+		REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_TaxClass] ([TaxClassID])
+
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_HandlingMethod_Revindex_Storefront_TaxClass]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_HandlingMethod]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_HandlingMethod] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_HandlingMethod_Revindex_Storefront_TaxClass]
+
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_Currency_Portals]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Currency]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Currency]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Currency_Portals] FOREIGN KEY([PortalID])
+		REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID])
+		ON DELETE CASCADE
+
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_Currency_Portals]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Currency]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Currency] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Currency_Portals]
+
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

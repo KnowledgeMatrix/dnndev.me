@@ -1,0 +1,402 @@
+﻿.idea-info-panel > a.idea-vote-button.disabled {
+    opacity: 0.5;
+}
+
+.idea-vote-options {
+    width: 180px;
+}
+
+    .idea-vote-options:before {
+        position: absolute;
+        content: '';
+        top: -7px;
+        width: 0;
+        height: 0;
+        margin-left: 40px;
+        border-left: 7px solid transparent;
+        border-right: 7px solid transparent;
+        border-bottom: 7px solid white;
+        background: transparent;
+    }
+
+    .idea-vote-options.voting {
+        background-image: url('../../../Images/dnnanim.gif');
+        background-position: center center;
+        background-repeat: no-repeat;
+    }
+
+
+    .idea-vote-options .remaining {
+        display: block;
+        padding: 6px 6px 6px 0;
+    }
+
+        .idea-vote-options .remaining .value {
+            color: rgb(195, 195, 13);
+            font-weight: bold;
+            font-size: 13pt;
+        }
+
+table.list-tbl tbody td {
+    padding: 10px 15px 10px 15px;
+}
+
+.idea-sort-filter-container select {
+    -moz-border-radius: 1px;
+    -webkit-border-radius: 1px;
+    background: #f8f8f8;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    color: #888;
+    cursor: pointer;
+    display: inline-block;
+    margin: 0;
+    outline: none;
+    padding: 7px;
+}
+
+
+.idea-list-vote-panel {
+    padding: 0;
+    width: 150px;
+    vertical-align: bottom;
+    position: relative;
+}
+
+.attendee-loading {
+    background-image: url('../../../Images/dnnanim.gif');
+    background-position: center center;
+    background-repeat: no-repeat;
+    opacity: 1.0;
+}
+
+.idea-list-vote-panel div.vote-count {
+    font-family: calibri, tahoma, sans-serif;
+    float: left;
+    font-size: 135%;
+    font-weight: bold;
+    text-align: center;
+    color: rgb(125, 125, 125);
+    margin-right: 6px;
+}
+
+.idea-list-vote-panel div.vote-label {
+    font-family: ubuntu, tahoma, calibri;
+    color: rgb(192, 192, 192);
+    font-size: 75%;
+    font-weight: normal;
+    text-align: center;
+}
+
+.idea-list-vote-panel a.vote-button {
+    float: right;
+    font-size: 125%;
+}
+
+.idea-list-vote-panel ul.status {
+    margin-left: 0;
+}
+
+    .idea-list-vote-panel ul.status > li {
+        list-style-type: none;
+        display: inline;
+    }
+
+.idea-list-vote-panel .idea-status-label {
+    color: #666;
+    font-size: 105%;
+    font-weight: bold;
+    font-family: tahoma;
+}
+
+.idea-vote-button {
+    width: 50px;
+}
+
+.attending-count {
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+}
+
+.attend-button {
+    text-align: center;
+    margin-top: 8px;
+}
+
+.socialevents-displaytime {
+    display: block;
+    padding: 3px 0 0 0;
+    font-weight: bold;
+}
+
+.socialevents-add-to-cal {
+    display: block;
+    padding: 3px 0 0 0;
+    color: #999;
+    font-weight: bold;
+}
+
+.socialevents-displaytimezone {
+    display: block;
+    padding: 3px 0 0 0;
+    color: #999;
+}
+
+.socialevents-address {
+    display: block;
+    padding: 3px 0 0 20px;
+    background: url(images/places_icon.png) no-repeat 0 2px;
+    margin-left: -3px;
+}
+
+.socialevents-seats {
+    display: block;
+    padding: 3px 0 0 0;
+    font-weight: bold;
+}
+
+.list-tbl .socialevents-seats {
+    margin: 0 0 1em 0;
+}
+
+.socialevents-detail-dateaddress {
+    margin-top: 12px;
+}
+
+.socialevents-detail-voteContainer {
+    padding: 0 0 0 62px;
+    margin-bottom: 20px;
+}
+
+    .socialevents-detail-voteContainer .idea-vote-options {
+        margin-left: 0px;
+        margin-top: 10px;
+    }
+
+    .socialevents-detail-voteContainer .socialevent-attend-button {
+        margin: 0;
+    }
+
+.socialevents-todaylabel {
+    background: url("images/star.png") no-repeat scroll 0 0 transparent;
+    color: #FE9E47;
+    display: block;
+    font-weight: bold;
+    height: 30px;
+    left: 42px;
+    padding-left: 20px;
+    position: relative;
+    text-transform: uppercase;
+    top: 0;
+}
+
+.detail-main-container .idea-content {
+    padding: 20px;
+    margin: 0 0 0 62px;
+    border-left: 1px solid #dfdfdf;
+}
+
+.socialevents-detailinfo {
+    margin: 10px 0 10px 62px;
+}
+
+.socialevents-detail-guests {
+    float: left;
+    width: 265px;
+    height: 200px;
+}
+
+    .socialevents-detail-guests > div {
+        height: 100px;
+        vertical-align: top;
+    }
+
+        .socialevents-detail-guests > div > .pinkLink {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .socialevents-detail-guests > div > div > a {
+            vertical-align: bottom;
+            display: inline-block;
+        }
+
+            .socialevents-detail-guests > div > div > a.socialevents-guest-avatar {
+                display: inline-block;
+                margin-right: 5px;
+            }
+
+
+.socialevents-embeded-map {
+    position: relative;
+    float: left;
+    width: 350px;
+    height: 200px;
+}
+
+.dnnFormPopup .ui-dialog-buttonpane .ui-dialog-buttonset {
+    float: left;
+}
+
+/* guest list */
+td.guest-list-avator-td {
+    width: 45px;
+}
+
+td.guest-list-name-td {
+    vertical-align: middle;
+}
+
+    td.guest-list-name-td a.dnnSocialLink {
+        font-weight: bold;
+        font-size: 15px;
+    }
+
+td.guest-list-friend-td {
+    width: 100px;
+    vertical-align: middle;
+}
+
+    td.guest-list-friend-td a.dnnSecondaryAction {
+        white-space: nowrap;
+        margin: 0;
+    }
+
+        td.guest-list-friend-td a.dnnSecondaryAction.disabled,
+        td.guest-list-friend-td a.dnnSecondaryAction.disabled:hover,
+        td.guest-list-friend-td a.dnnSecondaryAction.disabled:active {
+            background: #bbb;
+            border: 1px solid #aaa;
+            color: #fff;
+            font-weight: normal;
+            border-radius: 0;
+            -moz-border-radius: 0;
+            -webkit-border-radius: 0;
+            box-shadow: none;
+            -moz-box-shadow: none;
+            -webkit-box-shadow: none;
+            text-shadow: none;
+            cursor: default;
+        }
+
+#guest-page .dnnMultipleControls {
+    width: 50%;
+}
+
+    #guest-page .dnnMultipleControls > div {
+        vertical-align: top;
+    }
+
+        #guest-page .dnnMultipleControls > div > input[type="checkbox"].normalCheckBox {
+            margin: 10px 5px 0 0;
+        }
+
+            #guest-page .dnnMultipleControls > div > input[type="checkbox"].normalCheckBox + label {
+                display: inline-block;
+                margin: 10px 5px 0 0;
+            }
+
+#txtMaxSeats {
+    width: 90%;
+    margin-bottom: 0;
+}
+
+
+div#inviteFriendsFormItem > div.inviteFriendsDiv {
+    margin-bottom: 15px;
+}
+
+div.inviteFriendsSearch {
+    padding: 5px;
+    background: #eee;
+}
+
+    #wizard .dnnFormItem div.inviteFriendsSearch > input[type="text"].searchFriendsFilter {
+        width: 100%;
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        margin-bottom: 0;
+        max-width: inherit;
+    }
+
+table.inviteFriendsTable {
+    width: 100%;
+    border: 1px solid #ccc;
+}
+
+    table.inviteFriendsTable thead,
+    table.inviteFriendsTable tbody {
+        width: 100%;
+    }
+
+    table.inviteFriendsTable tr {
+        width: 100%;
+    }
+
+tr.inviteFriendsTable-altRow {
+    background-color: #eee;
+}
+
+table.inviteFriendsTable tbody tr {
+    border-top: 1px solid #ccc;
+}
+
+    table.inviteFriendsTable tbody tr:first-child {
+        border-top: none;
+    }
+
+table.inviteFriendsTable th {
+    background: -moz-linear-gradient(top, #f5f5f5 0%, #dfdfdf 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f5f5f5), color-stop(100%,#dfdfdf));
+    background: -webkit-linear-gradient(top, #f5f5f5 0%,#dfdfdf 100%);
+    background: -o-linear-gradient(top, #f5f5f5 0%,#dfdfdf 100%);
+    background: -ms-linear-gradient(top, #f5f5f5 0%,#dfdfdf 100%);
+    background: linear-gradient(top, #f5f5f5 0%,#dfdfdf 100%);
+    text-align: left;
+    text-shadow: 1px 1px 0 rgba(255,255,255,0.8);
+    font-weight: bold;
+    color: #555;
+    text-decoration: none;
+    padding: 4px 8px 4px 8px;
+}
+
+table.inviteFriendsTable td {
+    text-align: left;
+    text-decoration: none;
+    padding: 4px 8px 4px 8px;
+}
+
+table.inviteFriendsTable tr th:first-child,
+table.inviteFriendsTable tr td:first-child {
+    width: 30px;
+    padding: 4px 0 4px 20px;
+}
+
+div.inviteFriend-avator {
+    display: inline-block;
+    margin-right: 8px;
+}
+
+div.inviteFriend-avator + a {
+    display: inline-block;
+    vertical-align: top;
+    margin-top: 16px;
+}
+
+.dnnFormItem table.inviteFriendsTable td input[type="checkbox"].normalCheckBox {
+    margin-top: 16px;
+}
+
+.inviteFriendsTable-scrollDiv {
+    width: 100%;
+    height: auto;
+    max-height: 205px;
+    overflow: auto;
+}
+
+
+.redactor-box .redactor-editor {
+    min-height: 260px;
+}

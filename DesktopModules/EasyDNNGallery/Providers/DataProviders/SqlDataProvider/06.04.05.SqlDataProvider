@@ -1,0 +1,5 @@
+if not exists (select * from INFORMATION_SCHEMA.columns where table_name = '{objectQualifier}EasyGalleryPortfolioProSettings' and column_name = 'ShowDescriptionInLightbox')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryPortfolioProSettings] ADD ShowDescriptionInLightbox BIT CONSTRAINT DF_{objectQualifier}EasyGalleryPortfolioProSettings_ShowDescriptionInLightbox DEFAULT (0) NOT NULL
+END
+GO

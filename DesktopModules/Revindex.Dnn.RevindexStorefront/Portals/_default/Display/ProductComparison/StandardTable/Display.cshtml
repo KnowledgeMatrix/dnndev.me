@@ -1,0 +1,196 @@
+﻿@using Revindex.Business.Revindex.Revindex.Storefront;
+@using Revindex.Dnn.RevindexStorefront.Models;
+@using Revindex.Web.Mvc.Dnn.Helpers;
+@inherits Revindex.Dnn.RevindexStorefront.Views.ProductComparisonWebViewPage<ProductComparisonViewModel>
+
+<div class="rvdsf rvdsf-productcomparison-container container-fluid">
+    <div id="rvdsfProductComparisonMessage" class="alert alert-info" style="@(Model.ProductVariants.Count == 0 ? "" : "display:none")">@Html.LocalizeString(Global.LocalizedStrings.Message_ProductComparisonEmpty, Global.FilePaths.LocalSharedResourceFile)</div>
+    <table id="rvdsfProductComparisonTable" class="table table-striped rvdsf-productcomparison-table" style="table-layout:fixed;">
+        <thead>
+            <tr>
+                <th><button type="button" class="btn btn-primary" onclick="location.href = '@Model.ProductList.TabUrl'"><span class="glyphicon glyphicon-plus"></span><span class="hidden-xs"> Product</span></button></th>
+                @foreach (var productVariant in Model.ProductVariants)
+                {
+                    <th><button class="btn btn-danger" type="button" onclick="rvdsfProductComparison.removeProductVariant(@productVariant.ProductVariantID, this.parentElement.cellIndex, 'rvdsfProductComparisonTable', 'rvdsfProductComparisonMessage')"><span class="glyphicon glyphicon-remove"></span></button></th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@Html.LocalizeString("ProductLabel")</td>
+                @foreach (var productVariant in Model.ProductVariants)
+                {
+                    <td>
+                        <div class="rvdsf-product-gallery-container">
+                            @if (productVariant.Product.DefaultThumbnailGallery != null)
+                            {
+                                <a href="@productVariant.ProductDetail.TabUrl"><img class="img-responsive center-block" src="@productVariant.MainThumbnailGallery.MediaUrl" alt="@productVariant.MainThumbnailGallery.AlternateText" /></a>
+                            }
+                        </div>
+                        <div class="rvdsf-field-name">
+                            <a href="@productVariant.ProductDetail.TabUrl">@productVariant.Product.Name</a>
+                        </div>
+                        @if (!String.IsNullOrEmpty(productVariant.Name))
+                        {
+                            <div class="rvdsf-productvariant-name">@productVariant.Name</div>
+                        }
+                    </td>
+                }
+            </tr>
+            <tr>
+                <td>@Html.LocalizeString("RatingsLabel")</td>
+                @foreach (var productVariant in Model.ProductVariants)
+                {
+                    <td>
+                        @if (productVariant.Product.ShowProductReviews)
+                        {
+                            <div class="rvdsf-field-rating">
+                                <input type="hidden" class="rating" data-readonly data-fractions="2" value="@productVariant.Product.AverageOverallRating" data-filled="glyphicon glyphicon-star" data-empty="glyphicon glyphicon-star-empty" />
+                            </div>
+                        }
+                    </td>
+                }
+            </tr>
+            <tr>
+                <td>@Html.LocalizeString("PriceLabel")</td>
+                @foreach (var productVariant in Model.ProductVariants)
+                {
+                    <td>
+                        <div class="rvdsf-field-price">
+                            @if (productVariant.Product.ShowPrice && productVariant.SalesType != SalesType.Quote)
+                            {
+                                if (productVariant.CombinedPromotionPrice.HasValue)
+                                {
+                                    <span class="rvdsf-label-price"><s>@productVariant.FormattedCombinedPrice</s></span>
+                                    <span class="rvdsf-label-promotionprice">@productVariant.FormattedCombinedPromotionPrice</span>
+                                }
+                                else
+                                {
+                                    <span class="rvdsf-label-price">@productVariant.FormattedCombinedPrice</span>
+                                }
+                            }
+                        </div>
+                    </td>
+                }
+            </tr>
+            <tr>
+                <td>@Html.LocalizeString("MSRPLabel")</td>
+                @foreach (var productVariant in Model.ProductVariants)
+                {
+                    <td>@productVariant.FormattedMSRP</td>
+                }
+            </tr>
+            @if (Model.ShowSku)
+            {
+                <tr>
+                    <td>@Html.LocalizeString("SKULabel")</td>
+                    @foreach (var productVariant in Model.ProductVariants)
+                    {
+                        <td>@productVariant.SKU</td>
+                    }
+                </tr>
+            }
+            <tr>
+                <td>@Html.LocalizeString("ManufacturerLabel")</td>
+                @foreach (var productVariant in Model.ProductVariants)
+                {
+                    <td>@(productVariant.Manufacturer == null ? "" : productVariant.Manufacturer.Name)</td>
+                }
+            </tr>
+            @foreach (var productAttributeGroup in Model.ProductAttributeGroups)
+            {
+                if (productAttributeGroup != null)
+                { 
+                    <tr class="h4" style="cursor: pointer">
+                        <td colspan="@(Model.ProductVariants.Count + 1)"><span class="glyphicon glyphicon-chevron-down"></span> @productAttributeGroup.Name</td>
+                    </tr>
+                }
+                foreach (var productAttributeDefinition in Model.ProductAttributeDefinitions.Where(pad => pad.ProductAttributeGroup == productAttributeGroup))
+                {
+                    <tr>
+                        <td>@productAttributeDefinition.Name:</td>
+                        @foreach (var productVariant in Model.ProductVariants)
+                        {
+                            <td>
+                                @if (productVariant.MainProductAttributes.Where(pa => pa.ProductAttributeDefinitionID == productAttributeDefinition.ProductAttributeDefinitionID).FirstOrDefault() != null)
+                                {
+                                    var productAttribute = productVariant.MainProductAttributes.Where(pa => pa.ProductAttributeDefinitionID == productAttributeDefinition.ProductAttributeDefinitionID).FirstOrDefault();
+                                    if (productAttributeDefinition.ProductAttributeType == ProductAttributeType.Boolean && productAttribute.BooleanValue.HasValue)
+                                    {
+                                        if (productAttribute.BooleanValue == true)
+                                        {
+                                            <span class="glyphicon glyphicon-ok"></span>
+                                        }
+                                        else
+                                        {
+                                            <span class="glyphicon glyphicon-remove"></span>
+                                        }
+                                    }
+                                    else if (productAttributeDefinition.ProductAttributeType == ProductAttributeType.Decimal && productAttribute.DecimalValue.HasValue)
+                                    {
+                                        <text>@productAttribute.DecimalValue.Value.ToString("#.##")</text>
+                                    }
+                                    else if (productAttributeDefinition.ProductAttributeType == ProductAttributeType.Integer && productAttribute.IntegerValue.HasValue)
+                                    {
+                                        <text>@productAttribute.IntegerValue.Value.ToString()</text>
+                                    }
+                                    else if (productAttributeDefinition.ProductAttributeType == ProductAttributeType.Selection)
+                                    {
+                                        <span>@String.Join(", ", productAttribute.SelectionValue.Select(sel => sel.Text).ToArray())</span>
+                                    }
+                                    else
+                                    {
+                                        <text>@Html.Raw(productAttribute.StringValue)</text>
+                                    }
+                                }
+                            </td>
+                        }
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+@* Uses Bootstrap Rating. See https://github.com/dreyescat/bootstrap-rating *@
+<link href="~/DesktopModules/Revindex.Dnn.RevindexStorefront/Scripts/bootstrap-rating/bootstrap-rating.css" media="all" rel="stylesheet" type="text/css" />
+<script src="~/DesktopModules/Revindex.Dnn.RevindexStorefront/Scripts/bootstrap-rating/bootstrap-rating.min.js"></script>
+<script type="text/javascript">
+    var rvdsfProductComparison = rvdsfProductComparison || {}
+    rvdsfProductComparison.removeProductVariant = function (productVariantID, cellIndex, tableID, messageContainerID) {
+        var servicesFramework = $.ServicesFramework(@Dnn.Module.ModuleID);
+
+        $.ajax({
+            type: "DELETE",
+            headers: { "Accept-Language": "@Dnn.Portal.CultureCode" },
+            beforeSend: servicesFramework.setModuleHeaders,
+            url: servicesFramework.getServiceRoot("@Dnn.Module.DesktopModule.FolderName") + "ProductComparison/ProductVariant?productVariantID=" + productVariantID
+        })
+        .done(function (data, textStatus, jqXHR) {
+            // Remove column
+            $("#" + tableID + " th:nth-child(" + (cellIndex + 1) + ")").each(function () { this.remove() })
+            $("#" + tableID + " td:nth-child(" + (cellIndex + 1) + ")").each(function () { this.remove() })
+
+            // Show message if nothing left to compare
+            var numVariants = $("#" + tableID + " tr:nth-child(1) > td").length - 1;
+            if (numVariants == 0) {
+                $("#" + messageContainerID).show()
+            }
+
+            // Make sure table group row reflects the correct number of columns
+            $("#" + tableID).find("tr.h4 td").attr("colspan", numVariants + 1)
+        })
+        .fail(function (data, textStatus, errorThrown) {
+            $("#" + messageContainerID).attr("class", "alert alert-danger").html("<span class='glyphicon glyphicon-remove'></span> @HttpUtility.JavaScriptStringEncode(Html.LocalizeString(Global.LocalizedStrings.Message_UnknownErrorOccured, Global.FilePaths.LocalSharedResourceFile))").show()
+        })
+    }
+
+    $(document).ready(function () {
+        // Make table groups collapsible
+        $('.rvdsf-productcomparison-table tr.h4').click(function () {
+            $(this).nextUntil('tr.h4').slideToggle(100)
+            $(this).find("span.glyphicon").toggleClass('glyphicon-chevron-right').toggleClass('glyphicon-chevron-down')
+        })
+    })
+</script>
+

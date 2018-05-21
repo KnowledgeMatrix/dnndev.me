@@ -1,0 +1,106 @@
+    .social-share-container.loading {
+        background: url('/images/dnnanim.gif') center center no-repeat;
+        height: 25px;
+        width: 257px;
+    }
+
+        .social-share-container.loading ul {
+            display: none;
+        }
+
+        .social-share-container.loading .social-share-transforming {
+            display: none;
+        }
+
+    .social-share-container.transforming .social-share-transforming {
+        display: block;
+    }
+
+    .social-share-container:not(.transforming) .social-share-transforming {
+        display: none;
+    }
+
+    .social-share-container.transforming ul {
+        display: none;
+    }
+
+    .social-share-container .social-share-facebook-like-container {
+        position: relative;
+        display: inline-block;
+    }
+
+.social-share-dialog {
+    display: none;
+}
+
+.social-share-url-dialog {
+    display: none;
+    min-height: 20px !important;
+}
+
+
+/* Social links */
+ul.socialConnect {
+    display: block;
+    margin: 0 0 15px 0;
+    float: right;
+}
+
+    ul.socialConnect li {
+        float: left;
+        color: #999;
+        font-weight: bold;
+        list-style-type: none;
+        padding-left: 15px;
+    }
+
+    ul.socialConnect li:first-child {
+         padding-left: 0;
+    }
+
+        ul.socialConnect li a {
+            display: inline-block;
+            vertical-align: top;
+            background-image: url(images/spriteSocial.png);
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+            ul.socialConnect li a.socialConnect-twitter {
+                background-position: -7px -6px;
+            }
+
+            ul.socialConnect li a.socialConnect-facebook {
+                background-position: -37px -6px;
+            }
+
+            ul.socialConnect li a.socialConnect-linkedin {
+                background-position: -67px -6px;
+            }
+
+            ul.socialConnect li a.socialConnect-googleplus {
+                background-position: -97px -6px;
+            }
+            ul.socialConnect li a.socialConnect-pinterest {
+                background-position: -127px -5px;
+            }
+
+            ul.socialConnect li a.socialConnect-twitter:hover {
+                background-position: -157px -6px;
+            }
+
+            ul.socialConnect li a.socialConnect-facebook:hover {
+                background-position: -187px -6px;
+            }
+
+            ul.socialConnect li a.socialConnect-linkedin:hover {
+                background-position: -217px -6px;
+            }
+
+            ul.socialConnect li a.socialConnect-googleplus:hover {
+                background-position: -247px -6px;
+            }
+            ul.socialConnect li a.socialConnect-pinterest:hover {
+                background-position: -277px -5px;
+            }

@@ -1,0 +1,93 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+SET XACT_ABORT ON
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD SalesOrderBusinessTaxNumberValidate bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_SalesOrderBusinessTaxNumberValidate DEFAULT 1
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_SalesOrderBusinessTaxNumberValidate
+
+	-- Support NMI payment gateway
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		PaymentGatewaysNMIKeyID varchar(255) NULL,
+		PaymentGatewaysNMIKey varchar(255) NULL,
+		PaymentGatewaysNMIUsername varchar(255) NULL,
+		PaymentGatewaysNMIPassword varchar(255) NULL,
+		PaymentGatewaysNMIGatewayUrl varchar(255) NULL
+
+	-- Support limit on product list results
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD ProductListResultsMax int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductListResultsMax DEFAULT 200
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductListResultsMax
+
+	-- Support disabling alphanumeric sort on product list
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD ProductListSortNaturalActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductListSortNaturalActive DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductListSortNaturalActive
+
+	-- Support deferring required product
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_RequiredProduct ADD
+		UpdateDate datetime NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_RequiredProduct_UpdateDate DEFAULT getdate(),
+		DeferDate datetime NULL,
+		DeferInterval int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_RequiredProduct_DeferInterval DEFAULT 0,
+		DeferIntervalType int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_RequiredProduct_DeferIntervalType DEFAULT 1,
+		Quantity int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_RequiredProduct_Quantity DEFAULT 0,
+		Published bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_RequiredProduct_Published DEFAULT 1
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_RequiredProduct	DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_RequiredProduct_UpdateDate
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_RequiredProduct	DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_RequiredProduct_DeferInterval
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_RequiredProduct	DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_RequiredProduct_DeferIntervalType
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_RequiredProduct DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_RequiredProduct_Quantity
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_RequiredProduct DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_RequiredProduct_Published
+
+	-- Support Peach payment gateway
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		PaymentGatewaysPeachXmlIntegratorSender varchar(255) NULL,
+		PaymentGatewaysPeachXmlIntegratorLogin varchar(255) NULL,
+		PaymentGatewaysPeachXmlIntegratorPassword varchar(255) NULL,
+		PaymentGatewaysPeachXmlIntegratorRegistrationChannel varchar(255) NULL,
+		PaymentGatewaysPeachXmlIntegratorPaymentChannel varchar(255) NULL,
+		PaymentGatewaysPeachXmlIntegratorTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysPeachXmlIntegratorTestMode DEFAULT 0
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysPeachXmlIntegratorTestMode
+
+	-- Support payment redirect target
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesPayment ADD PaymentGatewayPaymentTarget varchar(100) NULL
+
+	-- Support reusing matching anonymous account
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD CheckoutAnonymousAccountReuse bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CheckoutAnonymousAccountReuse DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CheckoutAnonymousAccountReuse
+
+	-- Support 3DSecure
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentMethodsCreditCardAuthenticateIdentity bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsCreditCardAuthenticateIdentity DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsCreditCardAuthenticateIdentity
+
+	-- Support tokenization
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentMethodsCreditCardTokenActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsCreditCardTokenActive DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsCreditCardTokenActive
+
+COMMIT TRANSACTION
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+
+
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

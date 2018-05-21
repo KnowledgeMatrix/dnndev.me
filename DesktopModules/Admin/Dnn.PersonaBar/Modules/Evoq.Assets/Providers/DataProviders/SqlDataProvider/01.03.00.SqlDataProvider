@@ -1,0 +1,210 @@
+﻿IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetFileByContentItemId]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetFileByContentItemId]
+GO
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetFileByContentItemId]
+	@ContentItemId int
+AS
+BEGIN
+	SELECT FileId,
+			PortalId,
+			[FileName],
+			Extension,
+			Size,
+			Width,
+			Height,
+			ContentType,
+			FolderID,
+			Folder,
+			StorageLocation,
+			IsCached,
+			[UniqueId],
+			[VersionGuid],
+			SHA1Hash,
+			FolderMappingID,
+			LastModificationTime,
+			Title,
+			EnablePublishPeriod,
+			StartDate,
+			EndDate,
+			CreatedByUserID,
+			CreatedOnDate,
+			LastModifiedByUserID,
+			LastModifiedOnDate,
+			PublishedVersion,
+			ContentItemID,
+			HasBeenPublished,
+            Description
+	FROM {databaseOwner}[{objectQualifier}vw_Files] 
+	WHERE ContentItemId = @ContentItemId
+END
+GO
+
+/* Add Complete and Discard Workflow File Actions */
+
+DECLARE @ContentTypeId INT
+SELECT @ContentTypeId = ContentTypeId
+    FROM    {databaseOwner}{objectQualifier}ContentTypes
+    WHERE   ContentType = 'File'
+
+IF @ContentTypeId IS NOT NULL
+BEGIN
+	/* Add Complete Workflow File Action */ 
+	IF NOT EXISTS(SELECT ActionId FROM {databaseOwner}{objectQualifier}ContentWorkflowActions WHERE ActionType = 'CompleteWorkflow' AND ContentTypeId = @ContentTypeId)
+	BEGIN
+		INSERT INTO {databaseOwner}[{objectQualifier}ContentWorkflowActions]
+			   ([ContentTypeId]
+			   ,[ActionType]
+			   ,[ActionSource])
+		 VALUES
+			   (@ContentTypeId
+			   ,'CompleteWorkflow'
+			   ,'Evoq.PersonaBar.Assets.Components.WorkflowActions.WorkflowCompleteFileAction, Evoq.PersonaBar.Assets')
+	END
+	
+	/* Add Discard Workflow File Action */
+	IF NOT EXISTS(SELECT ActionId FROM {databaseOwner}{objectQualifier}ContentWorkflowActions WHERE ActionType = 'DiscardWorkflow' AND ContentTypeId = @ContentTypeId)
+	BEGIN
+		INSERT INTO {databaseOwner}[{objectQualifier}ContentWorkflowActions]
+			   ([ContentTypeId]
+			   ,[ActionType]
+			   ,[ActionSource])
+		 VALUES
+			   (@ContentTypeId
+			   ,'DiscardWorkflow'
+			   ,'Evoq.PersonaBar.Assets.Components.WorkflowActions.WorkflowDiscardFileAction, Evoq.PersonaBar.Assets')
+	END
+
+	/* Add Discard State File Action */
+	IF NOT EXISTS(SELECT ActionId FROM {databaseOwner}{objectQualifier}ContentWorkflowActions WHERE ActionType = 'DiscardState' AND ContentTypeId = @ContentTypeId)
+	BEGIN
+		INSERT INTO {databaseOwner}[{objectQualifier}ContentWorkflowActions]
+			   ([ContentTypeId]
+			   ,[ActionType]
+			   ,[ActionSource])
+		 VALUES
+			   (@ContentTypeId
+			   ,'DiscardState'
+			   ,'Evoq.PersonaBar.Assets.Components.WorkflowActions.StateDiscardFileAction, Evoq.PersonaBar.Assets')
+	END
+
+	/* Add Complete State File Action */
+	IF NOT EXISTS(SELECT ActionId FROM {databaseOwner}{objectQualifier}ContentWorkflowActions WHERE ActionType = 'CompleteState' AND ContentTypeId = @ContentTypeId)
+	BEGIN
+		INSERT INTO {databaseOwner}[{objectQualifier}ContentWorkflowActions]
+			   ([ContentTypeId]
+			   ,[ActionType]
+			   ,[ActionSource])
+		 VALUES
+			   (@ContentTypeId
+			   ,'CompleteState'
+			   ,'Evoq.PersonaBar.Assets.Components.WorkflowActions.StateCompleteFileAction, Evoq.PersonaBar.Assets')
+	END
+
+	/* Add Start Workflow File Action */
+	IF NOT EXISTS(SELECT ActionId FROM {databaseOwner}{objectQualifier}ContentWorkflowActions WHERE ActionType = 'StartWorkflow' AND ContentTypeId = @ContentTypeId)
+	BEGIN
+		INSERT INTO {databaseOwner}[{objectQualifier}ContentWorkflowActions]
+			   ([ContentTypeId]
+			   ,[ActionType]
+			   ,[ActionSource])
+		 VALUES
+			   (@ContentTypeId
+			   ,'StartWorkflow'
+			   ,'Evoq.PersonaBar.Assets.Components.WorkflowActions.WorkflowStartFileAction, Evoq.PersonaBar.Assets')
+	END
+END
+GO
+
+IF NOT EXISTS (SELECT SubscriptionTypeId FROM {databaseOwner}[{objectQualifier}CoreMessaging_SubscriptionTypes] WHERE SubscriptionName = 'DNNCorp_File')
+BEGIN
+    INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_SubscriptionTypes](
+        SubscriptionName, 
+        FriendlyName
+    ) VALUES(
+        'DNNCorp_File',
+        'File Subscriptions'
+    )
+END
+GO
+
+IF NOT EXISTS (SELECT SubscriptionTypeId FROM {databaseOwner}[{objectQualifier}CoreMessaging_SubscriptionTypes] WHERE SubscriptionName = 'DNNCorp_Folder')
+BEGIN
+    INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_SubscriptionTypes](
+        SubscriptionName, 
+        FriendlyName
+    ) VALUES(
+        'DNNCorp_Folder',
+        'Folder Subscriptions'
+    )
+END
+GO
+
+IF NOT EXISTS (SELECT NotificationTypeId FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] WHERE Name = 'FileUpdated')
+BEGIN
+    INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes]
+        ( Name ,
+          Description ,
+          TTL ,
+          DesktopModuleID ,
+          CreatedByUserID ,
+          CreatedOnDate ,
+          LastModifiedByUserID ,
+          LastModifiedOnDate ,
+          IsTask
+            )
+    VALUES  
+        ( N'FileUpdated' ,
+          N'File Updated Notification' ,
+          NULL ,
+          NULL ,
+          -1 ,
+          GETDATE() ,
+          -1 ,
+          GETDATE() ,
+          0
+        )
+END
+ELSE
+BEGIN
+    UPDATE {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] 
+        SET DesktopModuleID = NULL,
+            LastModifiedByUserID = -1,
+            LastModifiedOnDate = GETDATE()
+         WHERE Name = 'FileUpdated'
+END
+GO
+
+IF NOT EXISTS (SELECT NotificationTypeId FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] WHERE Name = 'FolderUpdated')
+BEGIN
+    INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes]
+        ( Name ,
+          Description ,
+          TTL ,
+          DesktopModuleID ,
+          CreatedByUserID ,
+          CreatedOnDate ,
+          LastModifiedByUserID ,
+          LastModifiedOnDate ,
+          IsTask
+            )
+    VALUES  
+        ( N'FolderUpdated' ,
+          N'Folder Updated Notfication' ,
+          NULL ,
+          NULL ,
+          -1 ,
+          GETDATE() ,
+          -1 ,
+          GETDATE() ,
+          0
+        )
+END
+ELSE
+BEGIN
+    UPDATE {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] 
+        SET DesktopModuleID = NULL,
+            LastModifiedByUserID = -1,
+            LastModifiedOnDate = GETDATE()
+         WHERE Name = 'FolderUpdated'
+END
+GO

@@ -1,0 +1,537 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="lblRequireSSL.Text" xml:space="preserve">
+    <value>Force SSL at Checkout</value>
+  </data>
+  <data name="lblRequireSSL.Help" xml:space="preserve">
+    <value>Force SSL to be used during checkout.</value>
+  </data>
+  <data name="lblSSLNote.Text" xml:space="preserve">
+    <value>NOTE</value>
+  </data>
+  <data name="SSLMessage.Text" xml:space="preserve">
+    <value>This setting forces HTTPS during chekout.  HTTPS must be properly setup on the server; otherwise the checkout page will not load.</value>
+  </data>
+  <data name="lblSSLNote.Help" xml:space="preserve">
+    <value>Important message about using SSL setting.</value>
+  </data>
+  <data name="ControlTitle_settings.Text" xml:space="preserve">
+    <value>Account Settings</value>
+  </data>
+  <data name="dshMainCartSettings.Text" xml:space="preserve">
+    <value>Main Cart Settings</value>
+  </data>
+  <data name="lblIncludeVAT.Help" xml:space="preserve">
+    <value>Check to display product's price including VAT.</value>
+  </data>
+  <data name="lblIncludeVAT.Text" xml:space="preserve">
+    <value>Include VAT</value>
+  </data>
+  <data name="lblProductColumn.Help" xml:space="preserve">
+    <value>Select the product attribute to display in the product column.</value>
+  </data>
+  <data name="lblProductColumn.Text" xml:space="preserve">
+    <value>Product Column</value>
+  </data>
+  <data name="lblShowThumbnail.Help" xml:space="preserve">
+    <value>Check to display product's thumbnail in the user's cart.</value>
+  </data>
+  <data name="lblShowThumbnail.Text" xml:space="preserve">
+    <value>Show Thumbnail</value>
+  </data>
+  <data name="lblThumbnailWidth.Help" xml:space="preserve">
+    <value>Enter the thumbnail width in pixels. Default value: 100.</value>
+  </data>
+  <data name="lblThumbnailWidth.Text" xml:space="preserve">
+    <value>Thumbnail Width</value>
+  </data>
+  <data name="ModelName.Text" xml:space="preserve">
+    <value>Model Name</value>
+  </data>
+  <data name="ModelNumber.Text" xml:space="preserve">
+    <value>Model Number</value>
+  </data>
+  <data name="ProductTitle.Text" xml:space="preserve">
+    <value>Product Title</value>
+  </data>
+  <data name="lblGIFBgColor.Help" xml:space="preserve">
+    <value>Enter the hex value of the background color to use with GIF image format. Valid values: #FFFFFF, #f00, FF0000,  F09, ...</value>
+  </data>
+  <data name="lblGIFBgColor.Text" xml:space="preserve">
+    <value>GIF Background:</value>
+  </data>
+  <data name="lblDefaultView.Help" xml:space="preserve">
+    <value>Select the default view to display.</value>
+  </data>
+  <data name="lblDefaultView.Text" xml:space="preserve">
+    <value>Default View</value>
+  </data>
+  <data name="CustomerCart.Text" xml:space="preserve">
+    <value>Customer Cart</value>
+  </data>
+  <data name="CustomerOrders.Text" xml:space="preserve">
+    <value>Customer Orders</value>
+  </data>
+  <data name="CustomerDigitalDownloads.Text" xml:space="preserve">
+    <value>Customer Digital Downloads</value>
+  </data>
+  <data name="lblEnableWishlist.Help" xml:space="preserve">
+    <value>If true allows users to store products in a wishlist</value>
+  </data>
+  <data name="lblEnableWishlist.Text" xml:space="preserve">
+    <value>Enabled Wishlist</value>
+  </data>
+  <data name="lblAllowAnonCheckout.Help" xml:space="preserve">
+    <value>If selected users will be allowed to checkout as guests&lt;br /&gt; i.e. they will not be required to create a user account on the site before they are allowed to checkout. However if they have a product in their cart that is a digital download, they will NOT be able to checkout as a guest.</value>
+  </data>
+  <data name="lblAllowAnonCheckout.Text" xml:space="preserve">
+    <value>Allow Guest Checkout</value>
+  </data>
+  <data name="lblAcceptDonations.Help" xml:space="preserve">
+    <value>If selected at the point of checkout the user will have the option to make a donation and add this to the subtotal of their cart.</value>
+  </data>
+  <data name="lblAcceptDonations.Text" xml:space="preserve">
+    <value>Accept Donations</value>
+  </data>
+  <data name="lblAddEditDonationAmount.Text" xml:space="preserve">
+    <value>Add / Edit Donation Amounts</value>
+  </data>
+  <data name="lblDonationAmount.Help" xml:space="preserve">
+    <value>Enter a predefined amount the user can select to donate, note the user will have a free textbox also to enter their own amount.</value>
+  </data>
+  <data name="lblDonationAmount.Text" xml:space="preserve">
+    <value>Donation Amount</value>
+  </data>
+  <data name="lblDonations.Text" xml:space="preserve">
+    <value>Donation Settings</value>
+  </data>
+  <data name="lblExistingDonationAmount.Text" xml:space="preserve">
+    <value>Existing Donation Amounts</value>
+  </data>
+  <data name="lnkCancel.Text" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="lnkDelete.Text" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="lnkSave.Text" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="rfDonations.Text" xml:space="preserve">
+    <value>Required</value>
+  </data>
+  <data name="lblDonationsTemplate.Help" xml:space="preserve">
+    <value>The template that we should use when outputting the donation control.</value>
+  </data>
+  <data name="lblDonationsTemplate.Text" xml:space="preserve">
+    <value>Donations Template</value>
+  </data>
+  <data name="lblCartSettings.Text" xml:space="preserve">
+    <value>Cart Settings</value>
+  </data>
+  <data name="lblHideDownloadLink.Help" xml:space="preserve">
+    <value>When checked the Digital Download Locker link is hidden from the My Account submenu bar.</value>
+  </data>
+  <data name="lblHideDownloadLink.Text" xml:space="preserve">
+    <value>Hide Download Locker Link</value>
+  </data>
+  <data name="lblDonationThankyouMessage.Help" xml:space="preserve">
+    <value>If selected, once the user has made a donation they will be displayed a thank you message. The message is defined in sharedresources.ascx.resx and can be customized as per your needs.</value>
+  </data>
+  <data name="lblDonationThankyouMessage.Text" xml:space="preserve">
+    <value>Display Thank you Message</value>
+  </data>
+  <data name="lblDisplayContinueShoppingButton.Help" xml:space="preserve">
+    <value>If selected a button will be displayed on the cart page, that when clicked will redircect the user to the store catalogue page.</value>
+  </data>
+  <data name="lblDisplayContinueShoppingButton.Text" xml:space="preserve">
+    <value>Display Continue Shopping Button</value>
+  </data>
+  <data name="lblDisplayPricesInVat.Help" xml:space="preserve">
+    <value>If checked the prices are displayed inclusive of VAT in the cart and mini cart</value>
+  </data>
+  <data name="lblDisplayPricesInVat.Text" xml:space="preserve">
+    <value>Display Prices inc VAT/GST</value>
+  </data>
+  <data name="lblDisplayCheckoutLink.Help" xml:space="preserve">
+    <value>When checked the checkout link is displayed in the thank you message</value>
+  </data>
+  <data name="lblDisplayCheckoutLink.Text" xml:space="preserve">
+    <value>Display Checkout Link</value>
+  </data>
+  <data name="lblDonationThankyouMessageData.Help" xml:space="preserve">
+    <value>The message to display when a donation is added to the basket. This can contain HTML</value>
+  </data>
+  <data name="lblDonationThankyouMessageData.Text" xml:space="preserve">
+    <value>Donation Message</value>
+  </data>
+  <data name="lblDisplayCompanyName.Help" xml:space="preserve">
+    <value>If selected at the point of checkout a textbox will be displayed for the user to enter their company name, it is also possible to specify if this is a required field that the user MUST enter.</value>
+  </data>
+  <data name="lblDisplayCompanyName.Text" xml:space="preserve">
+    <value>Request Company Name</value>
+  </data>
+  <data name="lblDisplayVatNumber.Help" xml:space="preserve">
+    <value>If selected at the point of checkbox a textbox will be displayed for the user to enter their VAT number.</value>
+  </data>
+  <data name="lblDisplayVatNumber.Text" xml:space="preserve">
+    <value>Require VAT Number</value>
+  </data>
+  <data name="lblEnableExpressCheckout.Help" xml:space="preserve">
+    <value>When checked a 2 step checkout process is used when cart only contains digital download items.</value>
+  </data>
+  <data name="lblEnableExpressCheckout.Text" xml:space="preserve">
+    <value>Enable Express Checkout</value>
+  </data>
+  <data name="lblDisplayOrderNotesTextbox.Help" xml:space="preserve">
+    <value>If selected a textbox will be visible on the cart details page where the customer will be able to enter notes to accompany the order.</value>
+  </data>
+  <data name="lblDisplayOrderNotesTextbox.Text" xml:space="preserve">
+    <value>Display Order Notes Textbox</value>
+  </data>
+  <data name="chkCompanyNameRequired.Text" xml:space="preserve">
+    <value>Company Name Is Mandatory</value>
+  </data>
+  <data name="lblSinglePageCheckout.Help" xml:space="preserve">
+    <value>If selected the checkout process will be completed on a single page rather than the 3 or 4 page option we offer.</value>
+  </data>
+  <data name="lblSinglePageCheckout.Text" xml:space="preserve">
+    <value>Single Page Checkout</value>
+  </data>
+  <data name="lblCheckoutOption.Help" xml:space="preserve">
+    <value>The checkout option we should use.</value>
+  </data>
+  <data name="lblCheckoutOption.Text" xml:space="preserve">
+    <value>Checkout Option</value>
+  </data>
+  <data name="lblOrders.Text" xml:space="preserve">
+    <value>Order Management Settings</value>
+  </data>
+  <data name="lblShowOrderThumbnail.Help" xml:space="preserve">
+    <value>If selected in the order section the product thumbnail will be displayed along with the product title.</value>
+  </data>
+  <data name="lblShowOrderThumbnail.Text" xml:space="preserve">
+    <value>Show Order Item Thumbnail</value>
+  </data>
+  <data name="lblDigitalDownloads.Text" xml:space="preserve">
+    <value>Digital Download Locker</value>
+  </data>
+  <data name="lblShowDDThumbnail.Help" xml:space="preserve">
+    <value>Show the product thumbnail in the digital download locker.</value>
+  </data>
+  <data name="lblShowDDThumbnail.Text" xml:space="preserve">
+    <value>Show Product Thumbnail</value>
+  </data>
+  <data name="lblHideOrderManagementSection.Help" xml:space="preserve">
+    <value>If selected we will hide a customers order management section from the my account module.</value>
+  </data>
+  <data name="lblHideOrderManagementSection.Text" xml:space="preserve">
+    <value>Hide Order Management Section</value>
+  </data>
+  <data name="lblHideSubtotalMiniCart.Help" xml:space="preserve">
+    <value>If selected we will not show the subtotal of the mini-cart, you may want this if you only sell request for quote items.</value>
+  </data>
+  <data name="lblHideSubtotalMiniCart.Text" xml:space="preserve">
+    <value>Hide Mini Cart Subtotal</value>
+  </data>
+  <data name="lblMiniCartTemplate.Help" xml:space="preserve">
+    <value>The template that we will use to display the mini cart.</value>
+  </data>
+  <data name="lblMiniCartTemplate.Text" xml:space="preserve">
+    <value>Mini Cart Template</value>
+  </data>
+  <data name="lblCheckForUserPrefix.Help" xml:space="preserve">
+    <value>When checked we look for a profile attribute called "cvStoreOrderPrefix" to prefix the order with. Any orders from users with this profile attribute set will have the value in front of the order number.</value>
+  </data>
+  <data name="lblCheckForUserPrefix.Text" xml:space="preserve">
+    <value>Check for User Order Prefix</value>
+  </data>
+  <data name="lblAutoCreateAnonUserAccount.Help" xml:space="preserve">
+    <value>If selected and a user checks out anonymously we will auto create the user an account on the DNN portal. If this is not selected the user will have the option to create the account themselves.</value>
+  </data>
+  <data name="lblAutoCreateAnonUserAccount.Text" xml:space="preserve">
+    <value>Auto Create Anon User Account</value>
+  </data>
+  <data name="lblDisplayDigitalDownloadLinksInOrderDetails.Help" xml:space="preserve">
+    <value>If the order contains digital downloads should the user be able to download from the order details page.</value>
+  </data>
+  <data name="lblDisplayDigitalDownloadLinksInOrderDetails.Text" xml:space="preserve">
+    <value>Display Digital Download Links</value>
+  </data>
+  <data name="lblDisplayMinSubtotalErrorOnCartPage.Help" xml:space="preserve">
+    <value>If selected we will display the minimum subtotal error on the page rather than the jQuery notification caption at the top right of the page.</value>
+  </data>
+  <data name="lblDisplayMinSubtotalErrorOnCartPage.Text" xml:space="preserve">
+    <value>Display Min Subtotal Error On Page</value>
+  </data>
+  <data name="lblCartItemTemplate.Help" xml:space="preserve">
+    <value>Template used to output each item in the user's cart, by default this is CartDetailsItem.htm</value>
+  </data>
+  <data name="lblCartItemTemplate.Text" xml:space="preserve">
+    <value>Cart Item Template</value>
+  </data>
+  <data name="lblCartTemplate.Help" xml:space="preserve">
+    <value>Template used to display the cart to the user, by default this is CartDetails.htm</value>
+  </data>
+  <data name="lblCartTemplate.Text" xml:space="preserve">
+    <value>Cart Template</value>
+  </data>
+  <data name="lblHideMiniCartWhenEmpty.Help" xml:space="preserve">
+    <value>If selected we will only display the mini cart when their are items in the cart.</value>
+  </data>
+  <data name="lblHideMiniCartWhenEmpty.Text" xml:space="preserve">
+    <value>Hide Mini Cart When Empty</value>
+  </data>
+  <data name="lblDisplayTaxTotalInCart.Help" xml:space="preserve">
+    <value>Display tax estimated amount in the cart details page.</value>
+  </data>
+  <data name="lblDisplayTaxTotalInCart.Text" xml:space="preserve">
+    <value>Display Tax Amount In Cart</value>
+  </data>
+  <data name="lblAgreeToSiteTerms.Help" xml:space="preserve">
+    <value>If selected we will output a checkbox stating that the customer must agree to the store terms and conditions before they are allowed to proceed to the checkout process.</value>
+  </data>
+  <data name="lblAgreeToSiteTerms.Text" xml:space="preserve">
+    <value>Must Agree To Store T &amp; C</value>
+  </data>
+  <data name="lblSinglePageCheckoutShowTerms.Help" xml:space="preserve">
+    <value>When checked we show the terms and conditions checkbox on the single page checkout, the customer needs to tick to accept these before the order can be placed.</value>
+  </data>
+  <data name="lblSinglePageCheckoutShowTerms.Text" xml:space="preserve">
+    <value>Show T &amp; C Checkbox on Single Page Checkout</value>
+  </data>
+  <data name="lblCustomField1.Help" xml:space="preserve">
+    <value>Optionally output a custom field the customer can complete during the checkout stage only applicable in singlepage checkout.</value>
+  </data>
+  <data name="lblCustomField1.Text" xml:space="preserve">
+    <value>Checkout Custom Field 1</value>
+  </data>
+  <data name="lblCustomField2.Help" xml:space="preserve">
+    <value>Optionally output a custom field the customer can complete during the checkout stage only applicable in singlepage checkout.</value>
+  </data>
+  <data name="lblCustomField2.Text" xml:space="preserve">
+    <value>Checkout Custom Field 2</value>
+  </data>
+  <data name="lblCustomField3.Help" xml:space="preserve">
+    <value>Optionally output a custom field the customer can complete during the checkout stage only applicable in singlepage checkout.</value>
+  </data>
+  <data name="lblCustomField3.Text" xml:space="preserve">
+    <value>Checkout Custom Field 3</value>
+  </data>
+  <data name="lblRequireKvkNumber.Help" xml:space="preserve">
+    <value>Require KVK number, this option is only available for the single page checkout.</value>
+  </data>
+  <data name="lblRequireKvkNumber.Text" xml:space="preserve">
+    <value>Require KVK Number</value>
+  </data>
+  <data name="lblSelect.Text" xml:space="preserve">
+    <value>Select (Optional)</value>
+  </data>
+  <data name="chkKvkNumberMandatory.Text" xml:space="preserve">
+    <value>KVK Number Is Mandatory</value>
+  </data>
+  <data name="chkVatNumberMandatory.Text" xml:space="preserve">
+    <value>VAT Number Is Mandatory</value>
+  </data>
+  <data name="lblSinglePageCheckoutShowProductImage.Help" xml:space="preserve">
+    <value>If selected we will display the product image on the single page checkout in the order summary.</value>
+  </data>
+  <data name="lblSinglePageCheckoutShowProductImage.Text" xml:space="preserve">
+    <value>Show Product Image On Single Page Checkout</value>
+  </data>
+  <data name="lblErrorMessageDisplayTime.Help" xml:space="preserve">
+    <value>The length in miliseconds we will display the error message to user on the checkout page.</value>
+  </data>
+  <data name="lblErrorMessageDisplayTime.Text" xml:space="preserve">
+    <value>Cart Error Message Timeout</value>
+  </data>
+  <data name="lblAnonUserCheckoutMessage.Help" xml:space="preserve">
+    <value>The message we will display to the user is they are not logged in on the my cart page.</value>
+  </data>
+  <data name="lblAnonUserCheckoutMessage.Text" xml:space="preserve">
+    <value>Anonymous User Login Message</value>
+  </data>
+  <data name="lblPromptLoginMessage.Help" xml:space="preserve">
+    <value>The message we should display to the user to prompt them to login on the my cart details page.</value>
+  </data>
+  <data name="lblPromptLoginMessage.Text" xml:space="preserve">
+    <value>Prompt Login Message</value>
+  </data>
+  <data name="lblSinglePageCheckoutEnableAddressBook.Help" xml:space="preserve">
+    <value>If selected and we are using the singlepage checkout, the customer will be able to store their addresses in an address book for future use.</value>
+  </data>
+  <data name="lblSinglePageCheckoutEnableAddressBook.Text" xml:space="preserve">
+    <value>SinglePage Enable Customer Address Book</value>
+  </data>
+  <data name="lblSuppressShippingEstInCart.Help" xml:space="preserve">
+    <value>When check the shipping est will not be calculated when on the cart page. This is useful when we are using a online shipping provider which might take a few seconds to complete. When checked we won't call the shipping provider so the slowness of the webservice call is not an issue.</value>
+  </data>
+  <data name="lblSuppressShippingEstInCart.Text" xml:space="preserve">
+    <value>Suppress Shipping Est. In Cart</value>
+  </data>
+  <data name="lblHideProfileLink.Help" xml:space="preserve">
+    <value>Hide the "My Profile" link from the Cart Viper account module.</value>
+  </data>
+  <data name="lblHideProfileLink.Text" xml:space="preserve">
+    <value>Hide My Profile Link</value>
+  </data>
+  <data name="lblVipOrderProcessing.Help" xml:space="preserve">
+    <value>If selected we will output a checkbox on the cart details page, the customer will be able to select this and pay the price entered here to have their order processed by the store admin quicker.</value>
+  </data>
+  <data name="lblVipOrderProcessing.Text" xml:space="preserve">
+    <value>Enable VIP Order Processing</value>
+  </data>
+  <data name="lblApplyRole.Help" xml:space="preserve">
+    <value>Optionally apply the specified DNN role to the users account after they have made a donation.</value>
+  </data>
+  <data name="lblApplyRole.Text" xml:space="preserve">
+    <value>Apply DNN Role</value>
+  </data>
+  <data name="lblSinglePageCheckoutShowNotes.Help" xml:space="preserve">
+    <value>If selected we will show the order notes textbox on the singlepage checkout.</value>
+  </data>
+  <data name="lblSinglePageCheckoutShowNotes.Text" xml:space="preserve">
+    <value>Show order notes on singlepage checkout</value>
+  </data>
+  <data name="lblShowMyGiftCertificatesLink.Help" xml:space="preserve">
+    <value>If selected we will show the "my gift certificates" link in the my account module.</value>
+  </data>
+  <data name="lblShowMyGiftCertificatesLink.Text" xml:space="preserve">
+    <value>Show Gift Certificates Link</value>
+  </data>
+  <data name="lblRedirectOnLogin.Help" xml:space="preserve">
+    <value>When a customer completes the login on cart page this setting defines where the customer is then reedirected to once they are authenticated.</value>
+  </data>
+  <data name="lblRedirectOnLogin.Text" xml:space="preserve">
+    <value>Redirect After Login</value>
+  </data>
+  <data name="lblRedirectSuccessfulCheckout.Help" xml:space="preserve">
+    <value>Optional allows you to redirect the customer to a DNN page when they have completed the checkout and the payment has been marked as successfully completed. Leave set to none to show the standard Cart Viper success message/caption.</value>
+  </data>
+  <data name="lblRedirectSuccessfulCheckout.Text" xml:space="preserve">
+    <value>Redirect After Successful Checkout</value>
+  </data>
+  <data name="None.Text" xml:space="preserve">
+    <value>-None-</value>
+  </data>
+  <data name="TabHidden.Text" xml:space="preserve">
+    <value> (Hidden)</value>
+  </data>
+</root>

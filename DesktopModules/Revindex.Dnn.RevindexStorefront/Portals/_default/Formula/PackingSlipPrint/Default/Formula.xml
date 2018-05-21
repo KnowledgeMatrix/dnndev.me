@@ -1,0 +1,80 @@
+﻿<data method="BasicPackingSlipPrint" version="1.0">
+  <title>{xsl:value-of select="in/configuration/generalStoreName" /} Packing Slip [{xsl:value-of select="in/user/username" /} - Order #{xsl:value-of select="in/salesOrder/salesOrderNumber" /}]</title>
+  <htmlBody>
+    {xsl:for-each select=&amp;quot;in/salesOrder/shippingPackages/shippingPackage&amp;quot; }
+    &lt;h1&gt;{xsl:value-of select=&amp;quot;/in/configuration/generalStoreName&amp;quot; /} Packing Slip&lt;/h1&gt;
+
+    &lt;table border="0" cellpadding="0" cellspacing="3" style="width: 100%"&gt;
+    &lt;tbody&gt;
+    &lt;tr&gt;
+    &lt;td&gt;&lt;strong&gt;Order Number:&lt;/strong&gt;&lt;/td&gt;
+    &lt;td&gt;{xsl:value-of select=&amp;quot;/in/salesOrder/salesOrderNumber&amp;quot; /}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+    &lt;td&gt;&lt;strong&gt;PO Number:&lt;/strong&gt;&lt;/td&gt;
+    &lt;td&gt;{xsl:value-of select=&amp;quot;/in/salesOrder/purchaseOrderNumber&amp;quot; /}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+    &lt;td&gt;&lt;strong&gt;Order Date:&lt;/strong&gt;&lt;/td&gt;
+    &lt;td&gt;{xsl:value-of select=&amp;quot;format-dateTime(/in/salesOrder/orderDate, &amp;#39;[Y]-[M01]-[D01] [H01]:[m01]&amp;#39;)&amp;quot;/}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+    &lt;td style="vertical-align: top;"&gt;&lt;strong&gt;Bill To:&lt;/strong&gt;&lt;/td&gt;
+    &lt;td&gt;{xsl:value-of select=&amp;quot;/in/salesOrder/billingCompany&amp;quot; /}&lt;br /&gt;
+    {xsl:value-of select=&amp;quot;concat(/in/salesOrder/billingFirstName, &amp;#39; &amp;#39;, /in/salesOrder/billingLastName)&amp;quot; /}&lt;br /&gt;
+    {xsl:value-of select=&amp;quot;/in/salesOrder/billingStreet&amp;quot; /}, {xsl:value-of select=&amp;quot;/in/salesOrder/billingCity&amp;quot; /}, {xsl:value-of select=&amp;quot;/in/salesOrder/billingSubdivisionName&amp;quot; /}, {xsl:value-of select=&amp;quot;/in/salesOrder/billingPostalCode&amp;quot; /}, {xsl:value-of select=&amp;quot;/in/salesOrder/billingCountryName&amp;quot; /}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+    &lt;td style="vertical-align: top;"&gt;&lt;strong&gt;Ship To:&lt;/strong&gt;&lt;/td&gt;
+    &lt;td&gt;{xsl:value-of select=&amp;quot;/in/salesOrder/shippingCompany&amp;quot; /}&lt;br /&gt;
+    {xsl:value-of select=&amp;quot;concat(/in/salesOrder/shippingFirstName, &amp;#39; &amp;#39;, /in/salesOrder/shippingLastName)&amp;quot; /}&lt;br /&gt;
+    {xsl:value-of select=&amp;quot;/in/salesOrder/shippingStreet&amp;quot; /}, {xsl:value-of select=&amp;quot;/in/salesOrder/shippingCity&amp;quot; /}, {xsl:value-of select=&amp;quot;/in/salesOrder/shippingSubdivisionName&amp;quot; /}, {xsl:value-of select=&amp;quot;/in/salesOrder/shippingPostalCode&amp;quot; /}, {xsl:value-of select=&amp;quot;/in/salesOrder/shippingCountryName&amp;quot; /}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+    &lt;td style="vertical-align: top;"&gt;&lt;strong&gt;Shipping:&lt;/strong&gt;&lt;/td&gt;
+    &lt;td&gt;{xsl:value-of select=&amp;quot;/in/salesOrder/shippingMethod/name&amp;quot; /}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+    &lt;td style="vertical-align: top;"&gt;&lt;strong&gt;Package:&lt;/strong&gt;&lt;/td&gt;
+    &lt;td&gt;{xsl:value-of select=&amp;quot;name&amp;quot; /}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+    &lt;td style="vertical-align: top;"&gt;&lt;strong&gt;Total Quantity:&lt;/strong&gt;&lt;/td&gt;
+    &lt;td&gt;{xsl:value-of select=&amp;quot;sum(products/product/quantity)&amp;quot; /}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;/tbody&gt;
+    &lt;/table&gt;
+    &amp;nbsp;
+
+    &lt;table border="1" cellpadding="3" cellspacing="0" style="width: 100%; table-layout: fixed; word-wrap: break-word; background-color: #ccc; border-collapse: collapse;"&gt;
+    &lt;tbody&gt;
+    &lt;tr&gt;
+    &lt;td style="width: 5%;"&gt;&amp;nbsp;&lt;/td&gt;
+    &lt;td style="width: 15%;"&gt;&lt;strong&gt;SKU&lt;/strong&gt;&lt;/td&gt;
+    &lt;td style="width: 45%;"&gt;&lt;strong&gt;Item&lt;/strong&gt;&lt;/td&gt;
+    &lt;td style="width: 10%;"&gt;&lt;strong&gt;Qty&lt;/strong&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;/tbody&gt;
+    &lt;/table&gt;
+    {xsl:for-each select=&amp;quot;products/product&amp;quot;} {xsl:variable name=&amp;quot;salesOrderDetailID&amp;quot; select=&amp;quot;salesOrderDetailID&amp;quot; /} {xsl:variable name=&amp;quot;salesOrderDetail&amp;quot; select=&amp;quot;/in/salesOrder/salesOrderDetails/salesOrderDetail[salesOrderDetailID=$salesOrderDetailID]&amp;quot; /}
+
+    &lt;table border="1" cellpadding="3" cellspacing="0" style="width: 100%; table-layout: fixed; word-wrap: break-word; border-collapse: collapse;"&gt;
+    &lt;tbody&gt;
+    &lt;tr&gt;
+    &lt;td style="width: 5%;"&gt;&lt;input type="checkbox" /&gt;&lt;/td&gt;
+    &lt;td style="width: 15%;"&gt;{xsl:value-of select=&amp;quot;$salesOrderDetail/sku&amp;quot; /}&lt;/td&gt;
+    &lt;td style="width: 45%;"&gt;{xsl:value-of select=&amp;quot;$salesOrderDetail/productName&amp;quot; /}&lt;br /&gt;
+    {xsl:value-of select=&amp;quot;$salesOrderDetail/productVariantName&amp;quot; /}&lt;br /&gt;
+    {xsl:for-each select=&amp;quot;$salesOrderDetail/dynamicFormResult/fields/field&amp;quot;}{xsl:value-of select=&amp;quot;replace(@id, &amp;#39;_&amp;#39;, &amp;#39; &amp;#39;)&amp;quot; /}: {xsl:value-of select=&amp;quot;.&amp;quot; /}&lt;br /&gt;
+    {/xsl:for-each}&lt;/td&gt;
+    &lt;td style="width: 10%;"&gt;{xsl:value-of select=&amp;quot;quantity&amp;quot; /}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;/tbody&gt;
+    &lt;/table&gt;
+    {/xsl:for-each}&lt;br /&gt;
+    {xsl:for-each select=&amp;quot;/in/salesOrder/dynamicFormResult/fields/field&amp;quot;}{xsl:value-of select=&amp;quot;replace(@id, &amp;#39;_&amp;#39;, &amp;#39; &amp;#39;)&amp;quot; /}: {xsl:value-of select=&amp;quot;.&amp;quot; /}&lt;br /&gt;
+    {/xsl:for-each}&amp;nbsp;
+    &lt;div style="page-break-after: always"&gt;&amp;nbsp;&lt;/div&gt;
+    {/xsl:for-each}
+  </htmlBody>
+</data>

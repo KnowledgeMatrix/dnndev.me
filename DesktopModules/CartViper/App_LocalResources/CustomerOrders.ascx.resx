@@ -1,0 +1,480 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="lblParentTitle.Text" xml:space="preserve">
+    <value>Orders</value>
+  </data>
+  <data name="lblOrderNumberHeader.Text" xml:space="preserve">
+    <value>Order ID</value>
+  </data>
+  <data name="lblOrderDateHeader.Text" xml:space="preserve">
+    <value>Order Date</value>
+  </data>
+  <data name="lblOrderTotalHeader.Text" xml:space="preserve">
+    <value>Total</value>
+  </data>
+  <data name="lblShipDateHeader.Text" xml:space="preserve">
+    <value>Status Date</value>
+  </data>
+  <data name="lnkEdit.Text" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="lblEditTitle.Text" xml:space="preserve">
+    <value>Order Details</value>
+  </data>
+  <data name="lblOrderNumberTag.Text" xml:space="preserve">
+    <value>Order ID</value>
+  </data>
+  <data name="lblOrderDateTag.Text" xml:space="preserve">
+    <value>Order Date</value>
+  </data>
+  <data name="lblBillingAddressTag.Text" xml:space="preserve">
+    <value>Billing Address</value>
+  </data>
+  <data name="lblShippingAddressTag.Text" xml:space="preserve">
+    <value>Shipping Address</value>
+  </data>
+  <data name="lblModelName.Text" xml:space="preserve">
+    <value>Product</value>
+  </data>
+  <data name="lblModelNumber.Text" xml:space="preserve">
+    <value>Model Number</value>
+  </data>
+  <data name="lblQty.Text" xml:space="preserve">
+    <value>Qty</value>
+  </data>
+  <data name="lblODPrice.Text" xml:space="preserve">
+    <value>Price</value>
+  </data>
+  <data name="lblODSubtotal.Text" xml:space="preserve">
+    <value>Subtotal</value>
+  </data>
+  <data name="lblTotalTag.Text" xml:space="preserve">
+    <value>Total</value>
+  </data>
+  <data name="ViewDetails.Text" xml:space="preserve">
+    <value>View Details</value>
+  </data>
+  <data name="NoOrdersFound.Text" xml:space="preserve">
+    <value>No Orders Found.</value>
+  </data>
+  <data name="DetailsNotFound.Text" xml:space="preserve">
+    <value>Details not found!</value>
+  </data>
+  <data name="ShipToAddressNotAvailable.Text" xml:space="preserve">
+    <value>Ship to address not available.</value>
+  </data>
+  <data name="BillToAddressNotAvailable.Text" xml:space="preserve">
+    <value>Bill to address not available.</value>
+  </data>
+  <data name="lnkCancel.Text" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="lblOrderStatusHeader.Text" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="lblOrderStatusTag.Text" xml:space="preserve">
+    <value>Order Status</value>
+  </data>
+  <data name="lblPostageTag.Text" xml:space="preserve">
+    <value>Shipping</value>
+  </data>
+  <data name="lblTaxTag.Text" xml:space="preserve">
+    <value>Tax</value>
+  </data>
+  <data name="lblTotalIncPostageTag.Text" xml:space="preserve">
+    <value>Total</value>
+  </data>
+  <data name="lnkbtnSave.Text" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="AboutChange.Text" xml:space="preserve">
+    <value>If you have any questions about this change, please feel free to contact us at {0}, or simply reply to this message.</value>
+  </data>
+  <data name="btnCancel.Text" xml:space="preserve">
+    <value>Cancel Order</value>
+  </data>
+  <data name="ChangedStatus.Text" xml:space="preserve">
+    <value>This order ({0}) has changed status to "{1}".</value>
+  </data>
+  <data name="CheckStatus.Text" xml:space="preserve">
+    <value>You can check the status of your order at any time by logging in to our site and clicking the {0} link.</value>
+  </data>
+  <data name="OrderDateFormat.Text" xml:space="preserve">
+    <value>g</value>
+  </data>
+  <data name="OrderThanks.Text" xml:space="preserve">
+    <value>Once again, thank you for your order.</value>
+  </data>
+  <data name="PlacedOrder.Text" xml:space="preserve">
+    <value>You recently placed an order with {0}</value>
+  </data>
+  <data name="RequiresPayment.Text" xml:space="preserve">
+    <value>IMPORTANT: Your order now requires payment. If you wish to pay via a specific method, or would like to cancel your order, please contact us at {0}, or simply reply to this message.</value>
+  </data>
+  <data name="StatusChanged.Text" xml:space="preserve">
+    <value>{0} Order Status Changed</value>
+  </data>
+  <data name="UserDeleted.Text" xml:space="preserve">
+    <value>This user has been deleted (ID={0}). Address is no longer available.</value>
+  </data>
+  <data name="UserNotLogged.Text" xml:space="preserve">
+    <value>Please login to view your orders.</value>
+  </data>
+  <data name="btnBack.Text" xml:space="preserve">
+    <value>Return</value>
+  </data>
+  <data name="chkSendEmailStatus.Text" xml:space="preserve">
+    <value>Confirm by email</value>
+  </data>
+  <data name="lblChangeStatus.Text" xml:space="preserve">
+    <value>Change Status:</value>
+  </data>
+  <data name="lblCommentToCustomer.Text" xml:space="preserve">
+    <value>Comment to the customer (optional):</value>
+  </data>
+  <data name="lblOrderStatusManagement.Text" xml:space="preserve">
+    <value>Order Status Management</value>
+  </data>
+  <data name="lblVatTag.Text" xml:space="preserve">
+    <value>VAT</value>
+  </data>
+  <data name="btnExport.Text" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="lblExportLabel.Help" xml:space="preserve">
+    <value>Export the selected orders to .csv file format.</value>
+  </data>
+  <data name="lblExportLabel.Text" xml:space="preserve">
+    <value>Export to .csv</value>
+  </data>
+  <data name="lblCustomerName.Text" xml:space="preserve">
+    <value>Customer Name</value>
+  </data>
+  <data name="lblShippingMethodTag.Text" xml:space="preserve">
+    <value>Shipping Method</value>
+  </data>
+  <data name="Last30DaysOrder.Text" xml:space="preserve">
+    <value>Orders for the last 30 days</value>
+  </data>
+  <data name="lblDiscount.Text" xml:space="preserve">
+    <value>Discount</value>
+  </data>
+  <data name="lblOfferCodeUsed.Text" xml:space="preserve">
+    <value>&lt;b&gt;Offer Code Used:&lt;/b&gt;  {0}</value>
+  </data>
+  <data name="lnkPdf.Text" xml:space="preserve">
+    <value>Order PDF</value>
+  </data>
+  <data name="btnDownloadAsPdf.Text" xml:space="preserve">
+    <value>Download as PDF</value>
+  </data>
+  <data name="btnReturn.Text" xml:space="preserve">
+    <value>Return To Order List</value>
+  </data>
+  <data name="lblSerialNumberInfo.Text" xml:space="preserve">
+    <value>&lt;br /&gt;Serial Number: {0}</value>
+  </data>
+  <data name="lblPaymentMethodCaption.Text" xml:space="preserve">
+    <value>Payment Method</value>
+  </data>
+  <data name="GoogleOrderNumber.Text" xml:space="preserve">
+    <value>Google Order #</value>
+  </data>
+  <data name="lblCompanyName.Text" xml:space="preserve">
+    <value>Company Name:</value>
+  </data>
+  <data name="lblVATNumber.Text" xml:space="preserve">
+    <value>VAT Number:</value>
+  </data>
+  <data name="lblOrderNotes.Text" xml:space="preserve">
+    <value>Order Notes:</value>
+  </data>
+  <data name="hypCancel.Text" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="hypSave.Text" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="lblAddress1.Text" xml:space="preserve">
+    <value>Address 1:</value>
+  </data>
+  <data name="lblAddress2.Text" xml:space="preserve">
+    <value>Address 2:</value>
+  </data>
+  <data name="lblCity.Text" xml:space="preserve">
+    <value>City:</value>
+  </data>
+  <data name="lblCountry.Text" xml:space="preserve">
+    <value>Country:</value>
+  </data>
+  <data name="lblEditBillingAddress.Text" xml:space="preserve">
+    <value>Edit Billing Address</value>
+  </data>
+  <data name="lblFirstName.Text" xml:space="preserve">
+    <value>First Name:</value>
+  </data>
+  <data name="lblPhoneNumber.Text" xml:space="preserve">
+    <value>Phone No:</value>
+  </data>
+  <data name="lblPostalCode.Text" xml:space="preserve">
+    <value>Zip Code:</value>
+  </data>
+  <data name="lblState.Text" xml:space="preserve">
+    <value>State:</value>
+  </data>
+  <data name="lblSurname.Text" xml:space="preserve">
+    <value>Surname:</value>
+  </data>
+  <data name="lblEditShippingAddress.Text" xml:space="preserve">
+    <value>Edit Shipping Address</value>
+  </data>
+  <data name="lblEmail.Text" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="lblIPAddress.Text" xml:space="preserve">
+    <value>Customer IP Address:</value>
+  </data>
+  <data name="lblDownload.Text" xml:space="preserve">
+    <value>Download</value>
+  </data>
+  <data name="lblDownloadsNotAvailable.Text" xml:space="preserve">
+    <value>N / A</value>
+  </data>
+  <data name="lblOverdue.Text" xml:space="preserve">
+    <value>Payment Overdue</value>
+  </data>
+  <data name="hypModerateItem.Text" xml:space="preserve">
+    <value>Click To Moderate Item</value>
+  </data>
+  <data name="hypAddNewItemToOrder.Text" xml:space="preserve">
+    <value>Add New Item To Order</value>
+  </data>
+  <data name="lblModerationHelp.Text" xml:space="preserve">
+    <value>This order needs to be moderated before it is officially accepted by the store. Items can be updated or removed from the order by clicking the edit icon next to the product name above.&lt;br /&gt;&lt;br /&gt; To add a new item to the order click the link below, it is also possible to set the cost and method of shipping to be used for this order. &lt;br /&gt;&lt;br /&gt;Once order has been moderated put a tick in the box below  to confirm this, the customer will receive a confirmation email and will be able to complete the transaction.</value>
+  </data>
+  <data name="lblOrderModerationManagement.Text" xml:space="preserve">
+    <value>Order Moderation Management</value>
+  </data>
+  <data name="lblHasBeenModerated.Help" xml:space="preserve">
+    <value>Tick this box to indicate you have completed the moderation process, this will send the order back to the customer to be paid.</value>
+  </data>
+  <data name="lblHasBeenModerated.Text" xml:space="preserve">
+    <value>Has Been Moderated</value>
+  </data>
+  <data name="lblShippingCost.Help" xml:space="preserve">
+    <value>Enter the shipping cost that should be charged for this order.</value>
+  </data>
+  <data name="lblShippingCost.Text" xml:space="preserve">
+    <value>Enter Shipping Cost</value>
+  </data>
+  <data name="lnkSave.Text" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="rfShippingCost.Text" xml:space="preserve">
+    <value>Shipping cost value required , if no cost enter 0.00</value>
+  </data>
+  <data name="lblShippingMethodModeration.Help" xml:space="preserve">
+    <value>The method that will be used to ship the users goods.</value>
+  </data>
+  <data name="lblShippingMethodModeration.Text" xml:space="preserve">
+    <value>Shipping Method</value>
+  </data>
+  <data name="rfShippingMethod.Text" xml:space="preserve">
+    <value>Shipping method is required.</value>
+  </data>
+  <data name="lblShippingDate.Help" xml:space="preserve">
+    <value>The date the order will be shipped.</value>
+  </data>
+  <data name="lblShippingDate.Text" xml:space="preserve">
+    <value>Shipping Date</value>
+  </data>
+  <data name="lblShippingTrackingNumber.Help" xml:space="preserve">
+    <value>The shipping number associated with this order.</value>
+  </data>
+  <data name="lblShippingTrackingNumber.Text" xml:space="preserve">
+    <value>Shipping Tracking Number</value>
+  </data>
+  <data name="ltIsInStorePickupOnly.Text" xml:space="preserve">
+    <value>&lt;br/&gt;&lt;span class="cvCartInStorePickOnly"&gt;In Store Pickup Only&lt;/span&gt;&lt;br /&gt;</value>
+  </data>
+  <data name="btnRepeatOrder.Text" xml:space="preserve">
+    <value>Repeat Order</value>
+  </data>
+  <data name="lblAddToCart.Text" xml:space="preserve">
+    <value>Add Item To Cart</value>
+  </data>
+  <data name="lblAllItemsAdded.Text" xml:space="preserve">
+    <value>All items have been added to your cart.</value>
+  </data>
+  <data name="lblNotAdded.Text" xml:space="preserve">
+    <value>The following items have not been added to your cart&lt;br /&gt;</value>
+  </data>
+  <data name="hypPayForOrder.Text" xml:space="preserve">
+    <value>Complete the order by paying now!</value>
+  </data>
+  <data name="lblAcceptDeclineOrder.Text" xml:space="preserve">
+    <value>Order Moderation Accept / Decline</value>
+  </data>
+  <data name="lnkAccept.Text" xml:space="preserve">
+    <value>Accept</value>
+  </data>
+  <data name="lnkDecline.Text" xml:space="preserve">
+    <value>Decline</value>
+  </data>
+  <data name="lblModeratorsCaption.Text" xml:space="preserve">
+    <value>Moderator's Comment</value>
+  </data>
+  <data name="RecurringPaymentSuccessCaption.Text" xml:space="preserve">
+    <value>Recurring Payment Created, Subscription ID: {0}</value>
+  </data>
+  <data name="lblContinue.Text" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="lblHandlingCharge.Text" xml:space="preserve">
+    <value>Handling</value>
+  </data>
+  <data name="CustomerRole.Text" xml:space="preserve">
+    <value>Customer Roles:</value>
+  </data>
+  <data name="lblDiscountModeration.Help" xml:space="preserve">
+    <value>This allows you to disount the order total, the discount should be entered as a positive figure ie. 5 not -5. Values less than 0 will be ignored.</value>
+  </data>
+  <data name="lblDiscountModeration.Text" xml:space="preserve">
+    <value>Discount Amount</value>
+  </data>
+  <data name="rfDiscountAmount.Text" xml:space="preserve">
+    <value>Discount Amount is required, if you don't want to discount the order just enter 0.00</value>
+  </data>
+  <data name="lblKvkNumber.Text" xml:space="preserve">
+    <value>KVK Number:</value>
+  </data>
+  <data name="lblSubscriptionStatus.Text" xml:space="preserve">
+    <value>Current Subscription Status: </value>
+  </data>
+  <data name="lblIsQuote.Text" xml:space="preserve">
+    <value>Quote</value>
+  </data>
+  <data name="hypViewOrdersByUser.Text" xml:space="preserve">
+    <value>View All Orders By This User</value>
+  </data>
+  <data name="PaymentCaptureSuccess.Text" xml:space="preserve">
+    <value>Payment has been captured</value>
+  </data>
+</root>

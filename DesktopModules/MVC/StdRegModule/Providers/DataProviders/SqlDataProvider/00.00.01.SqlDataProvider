@@ -1,0 +1,112 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}StdRegModule_Items]') AND type in (N'U'))
+DROP TABLE {databaseOwner}[{objectQualifier}StdRegModule_Items]
+GO
+
+CREATE TABLE {databaseOwner}{objectQualifier}StdRegModule_Items
+    (
+    ItemId int NOT NULL IDENTITY (1, 1),
+    ItemName nvarchar(MAX) NOT NULL,
+    ItemDescription nvarchar(MAX) NOT NULL,
+    AssignedUserId int NULL,
+    ModuleId int NOT NULL,
+    CreatedOnDate datetime NOT NULL,
+    CreatedByUserId int NOT NULL,
+    LastModifiedOnDate datetime NOT NULL,
+    LastModifiedByUserId int NOT NULL
+    )  ON [PRIMARY]
+     TEXTIMAGE_ON [PRIMARY]
+GO
+
+
+ALTER TABLE {databaseOwner}{objectQualifier}StdRegModule_Items ADD CONSTRAINT
+    PK_{objectQualifier}StdRegModule_Items PRIMARY KEY CLUSTERED 
+    (
+    ItemId
+    ) WITH( STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+
+GO
+
+/*********************script for CREATE StdRegModule_Students table at installation ************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}StdRegModule_Students]') AND type in (N'U'))
+DROP TABLE {databaseOwner}[{objectQualifier}StdRegModule_Students]
+GO
+
+CREATE TABLE {databaseOwner}{objectQualifier}StdRegModule_Students
+    (
+    StdRegID int NOT NULL IDENTITY (100, 1) PRIMARY KEY,
+    StdName nvarchar(MAX) NOT NULL,
+    StdClass nvarchar(MAX) NOT NULL,
+   StdClgName nvarchar(MAX) NOT NULL,
+    ModuleId int NOT NULL
+    
+    )  
+GO
+
+/*********************END script for CREATE StdRegModule_Students table at installation ************************/
+
+/******************SCRIPT FOR StdRegModule_getStudents STORED PROCEDURE *****************************/
+
+create procedure StdRegModule_getStudents
+@moduleid int
+as
+select * from StdRegModule_Students where ModuleId=@moduleid
+go
+
+/***************END SCRIPT*********************************/
+
+/***********ADD STUDENT SCRIPT***************/
+
+create procedure StdRegModule_AddStudent
+@StdName varchar(MAX),@StdClass varchar(MAX),@StdClgName varchar(MAX),@ModuleId int
+as
+insert StdRegModule_Students(StdName,StdClass,StdClgName,ModuleId)values(@StdName,@StdClass,@StdClgName,@ModuleId)
+go
+
+
+/***********END SCRIPT**********************/
+
+/***********UPDATE STUDENT SCRIPT**********/
+
+create procedure StdRegModule_UpdateStudent
+@StdName varchar(MAX),@StdClass varchar(MAX),@StdClgName varchar(MAX),@ModuleId int,@StdRegID int
+as
+update StdRegModule_Students set StdName=@StdName,StdClass=@StdClass,StdClgName=@StdClgName,ModuleId=@ModuleId where StdRegID=@StdRegID
+go
+
+
+/*************END SCRIPT********************/
+
+/***********DELETE STUDENT SCRIPT**********/
+
+create procedure StdRegModule_DeleteStudent 
+@@StdRegID int
+as
+delete StdRegModule_Students where StdRegID=@@StdRegID
+go
+
+/*************END SCRIPT********************/
+
+/***********GET STUDENT SCRIPT**********/
+
+create procedure StdRegModule_getStudent
+@StdRegID int 
+as 
+select * from StdRegModule_Students where StdRegID=@StdRegID
+go
+   
+/***********GET STUDENT SCRIPT**********/
+
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/

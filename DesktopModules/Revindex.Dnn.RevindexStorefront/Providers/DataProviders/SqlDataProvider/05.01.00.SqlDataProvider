@@ -1,0 +1,197 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+SET XACT_ABORT ON
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+	
+	-- Support persisted cart order into table
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder ALTER COLUMN UserID INT NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder ALTER COLUMN BillingFirstName NVARCHAR(50) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder ALTER COLUMN BillingLastName NVARCHAR(50) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder ALTER COLUMN BillingStreet NVARCHAR(200) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder ALTER COLUMN BillingCity NVARCHAR(50) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder ALTER COLUMN BillingCountryCode VARCHAR(2) NULL
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD CartSessionTimeout int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CartSessionTimeout DEFAULT 2592000
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CartSessionTimeout
+	
+COMMIT TRANSACTION
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+		
+		-- Cart abandonment report
+		INSERT {databaseOwner}[{objectQualifier}Revindex_Storefront_ReportDefinition] ([ReportDefinitionGUID], [PortalID], [Name], [Description], [Active], [DefinitionRule], [Standard], [ReportGroup], [CreateDate], [UpdateDate]) VALUES (N'028BA176-EC2B-4A97-9A66-8FF1D00C483B', NULL, N'Cart abandonment', N'Show how often do your customers abandon shopping on your site and how effective you are at recovering them.', 1, N'<rule version="1.0" type="data">&lt;data method="ReportDefinition" version="1.0"&gt;
+			  &lt;dataSources&gt;
+				&lt;sqlDataSource&gt;
+				  &lt;query&gt;DECLARE @TotalOrdersCount INT
+			DECLARE @AbandonedOrdersCount INT
+			DECLARE @RecoveredOrdersCount INT
+
+			SELECT @TotalOrdersCount = COUNT(*)
+			FROM {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder so
+			WHERE so.OrderDate BETWEEN @StartDate AND @StopDate
+
+			SELECT @AbandonedOrdersCount = COUNT(*)
+			FROM {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder so
+			WHERE so.Status = 7 
+			AND so.OrderDate BETWEEN @StartDate AND @StopDate
+
+			SELECT @RecoveredOrdersCount = COUNT(*)
+			FROM {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder so
+			WHERE (so.Status = 1 OR so.Status = 2 OR so.Status = 3 OR so.Status = 4)
+			AND so.OrderDate BETWEEN @StartDate AND @StopDate
+			AND DATEDIFF(second, so.CreateDate, so.OrderDate) &amp;gt; @AbandonmentTimeout 
+
+			SELECT @TotalOrdersCount AS ''TotalOrdersCount'', @TotalOrdersCount - @AbandonedOrdersCount - @RecoveredOrdersCount AS ''OtherOrdersCount'', @AbandonedOrdersCount AS ''AbandonedOrdersCount'', @RecoveredOrdersCount AS ''RecoveredOrdersCount''
+			&lt;/query&gt;
+				  &lt;parameters&gt;
+					&lt;controlParameter&gt;
+					  &lt;name&gt;@StartDate&lt;/name&gt;
+					  &lt;dataType&gt;6&lt;/dataType&gt;
+					  &lt;field&gt;
+						&lt;datePicker&gt;
+						  &lt;autoPostBack&gt;False&lt;/autoPostBack&gt;
+						  &lt;id&gt;StartDate&lt;/id&gt;
+						  &lt;inputControlHeight&gt;&lt;/inputControlHeight&gt;
+						  &lt;inputControlWidth&gt;&lt;/inputControlWidth&gt;
+						  &lt;label&gt;
+							&lt;locale en-US="Start date:" /&gt;
+						  &lt;/label&gt;
+						  &lt;required&gt;True&lt;/required&gt;
+						  &lt;selectedDates /&gt;
+						  &lt;validatorText&gt;
+							&lt;locale en-US="Start date is required." /&gt;
+						  &lt;/validatorText&gt;
+						&lt;/datePicker&gt;
+					  &lt;/field&gt;
+					&lt;/controlParameter&gt;
+					&lt;controlParameter&gt;
+					  &lt;name&gt;@StopDate&lt;/name&gt;
+					  &lt;dataType&gt;6&lt;/dataType&gt;
+					  &lt;field&gt;
+						&lt;datePicker&gt;
+						  &lt;autoPostBack&gt;False&lt;/autoPostBack&gt;
+						  &lt;id&gt;StopDate&lt;/id&gt;
+						  &lt;inputControlHeight&gt;&lt;/inputControlHeight&gt;
+						  &lt;inputControlWidth&gt;&lt;/inputControlWidth&gt;
+						  &lt;label&gt;
+							&lt;locale en-US="Stop date:" /&gt;
+						  &lt;/label&gt;
+						  &lt;required&gt;True&lt;/required&gt;
+						  &lt;selectedDates /&gt;
+						  &lt;validatorText&gt;
+							&lt;locale en-US="Stop date is required." /&gt;
+						  &lt;/validatorText&gt;
+						&lt;/datePicker&gt;
+					  &lt;/field&gt;
+					&lt;/controlParameter&gt;
+					&lt;controlParameter&gt;
+					  &lt;name&gt;@AbandonmentTimeout&lt;/name&gt;
+					  &lt;dataType&gt;11&lt;/dataType&gt;
+					  &lt;field&gt;
+						&lt;textBox&gt;
+						  &lt;autoPostBack&gt;False&lt;/autoPostBack&gt;
+						  &lt;causesValidation&gt;False&lt;/causesValidation&gt;
+						  &lt;dataType&gt;Integer&lt;/dataType&gt;
+						  &lt;id&gt;AbandonmentTimeout&lt;/id&gt;
+						  &lt;inputControlHeight&gt;&lt;/inputControlHeight&gt;
+						  &lt;inputControlWidth&gt;&lt;/inputControlWidth&gt;
+						  &lt;label&gt;
+							&lt;locale en-US="Cart is abandoned after (sec):" /&gt;
+						  &lt;/label&gt;
+						  &lt;maxLength&gt;&lt;/maxLength&gt;
+						  &lt;maxValue&gt;2000000000&lt;/maxValue&gt;
+						  &lt;minValue&gt;0&lt;/minValue&gt;
+						  &lt;required&gt;True&lt;/required&gt;
+						  &lt;text&gt;
+							&lt;locale en-US="86400" /&gt;
+						  &lt;/text&gt;
+						  &lt;textMode&gt;SingleLine&lt;/textMode&gt;
+						  &lt;validatorText&gt;
+							&lt;locale en-US="Abandonment timeout is required." /&gt;
+						  &lt;/validatorText&gt;
+						  &lt;wrap&gt;True&lt;/wrap&gt;
+						&lt;/textBox&gt;
+					  &lt;/field&gt;
+					&lt;/controlParameter&gt;
+				  &lt;/parameters&gt;
+				&lt;/sqlDataSource&gt;
+			  &lt;/dataSources&gt;
+			  &lt;visualizers&gt;
+				&lt;htmlVisualizer&gt;
+				  &lt;html&gt;&amp;lt;div style="width: 600px; height: 300px; margin: 10px auto; border: 1px solid #cccccc;" id="chart_div"&amp;gt;&amp;lt;/div&amp;gt;
+			&amp;lt;script type="text/javascript" src="https://www.google.com/jsapi"&amp;gt;&amp;lt;/script&amp;gt;
+			&amp;lt;script type="text/javascript"&amp;gt;
+			// The graphic uses Google Chart. Please refer to Google Chart docs for more information on customizing chart data and style
+			// https://developers.google.com/chart/
+
+			google.load("visualization", "1.0", {packages:["corechart"]});
+			google.setOnLoadCallback(drawChart);
+			function drawChart() 
+			{
+				var data = google.visualization.arrayToDataTable([
+					[''Status'', ''Count''],
+					["Abandoned orders", [[xsl:value-of select="/in/dataSet/dataTable/dataRow/AbandonedOrdersCount" /]]],
+					["Recovered orders", [[xsl:value-of select="/in/dataSet/dataTable/dataRow/RecoveredOrdersCount" /]]],
+					["Other orders", [[xsl:value-of select="/in/dataSet/dataTable/dataRow/OtherOrdersCount" /]]],
+				]);
+
+				var options = {
+					title: ''Cart abandonment''
+				};
+
+				var chart = new google.visualization.PieChart(document.getElementById(''chart_div''));
+				chart.draw(data, options);
+			}
+			&amp;lt;/script&amp;gt;
+			&amp;lt;table cellspacing="0" cellpadding="3" style="width: 100%; border-top-width: 1px; border-top-style: solid; border-top-color: #cccccc; border-left-width: 1px; border-left-style: solid; border-left-color: #cccccc; border-right-width: 1px;"&amp;gt;
+				&amp;lt;colgroup&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;/colgroup&amp;gt;
+				&amp;lt;tbody&amp;gt;
+					&amp;lt;tr&amp;gt;
+						&amp;lt;td style="width: 30%;"&amp;gt;&amp;lt;strong&amp;gt;Total orders:&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+						&amp;lt;td style="width: 70%;"&amp;gt;[[xsl:value-of select="/in/dataSet/dataTable/dataRow/TotalOrdersCount" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;/tr&amp;gt;
+					&amp;lt;tr&amp;gt;
+						&amp;lt;td style="width: 30%;"&amp;gt;&amp;lt;strong&amp;gt;Abandoned orders:&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+						&amp;lt;td style="width: 70%;"&amp;gt;[[xsl:value-of select="/in/dataSet/dataTable/dataRow/AbandonedOrdersCount" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;/tr&amp;gt;
+					&amp;lt;tr&amp;gt;
+						&amp;lt;td style="width: 30%;"&amp;gt;&amp;lt;strong&amp;gt;Abandoned rate:&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+						&amp;lt;td style="width: 70%;"&amp;gt;[[xsl:value-of select="format-number((/in/dataSet/dataTable/dataRow/AbandonedOrdersCount div /in/dataSet/dataTable/dataRow/TotalOrdersCount) * 100, ''0.0'')" /]]%&amp;lt;/td&amp;gt;
+					&amp;lt;/tr&amp;gt;
+					&amp;lt;tr&amp;gt;
+						&amp;lt;td style="width: 30%;"&amp;gt;&amp;lt;strong&amp;gt;Recovered orders:&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+						&amp;lt;td style="width: 70%;"&amp;gt;[[xsl:value-of select="/in/dataSet/dataTable/dataRow/RecoveredOrdersCount" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;/tr&amp;gt;
+					&amp;lt;tr&amp;gt;
+						&amp;lt;td style="width: 30%;"&amp;gt;&amp;lt;strong&amp;gt;Recovery rate:&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+						&amp;lt;td style="width: 70%;"&amp;gt;[[xsl:value-of select="format-number((/in/dataSet/dataTable/dataRow/RecoveredOrdersCount div (/in/dataSet/dataTable/dataRow/AbandonedOrdersCount + /in/dataSet/dataTable/dataRow/RecoveredOrdersCount)) * 100, ''0.0'')" /]]%&amp;lt;/td&amp;gt;
+					&amp;lt;/tr&amp;gt;
+				&amp;lt;/tbody&amp;gt;
+			&amp;lt;/table&amp;gt;&lt;/html&gt;
+				&lt;/htmlVisualizer&gt;
+			  &lt;/visualizers&gt;
+			&lt;/data&gt;</rule>', 1, 2, GETDATE(), GETDATE())
+		
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

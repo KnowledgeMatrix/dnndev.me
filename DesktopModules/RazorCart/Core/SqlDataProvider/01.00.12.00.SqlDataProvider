@@ -1,0 +1,373 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****               Create Tables                      *****/
+/************************************************************/
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_CategoryQtyDiscounts') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_CategoryQtyDiscounts
+	(
+		[QtyDiscountID] [INT] IDENTITY(1,1) NOT NULL,
+		[CategoryID] [INT] NOT NULL,
+		[QtyFrom] [INT] NULL,
+		[QtyTo] [INT] NULL,
+		[Price] [MONEY] NULL,
+		[DiscountGroup] [VARCHAR](50) NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_CategoryQtyDiscounts] PRIMARY KEY CLUSTERED
+		(
+			[QtyDiscountID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ProductVariantInventory') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_ProductVariantInventory
+	(
+		[VariantInventoryID] [INT] IDENTITY(1,1) NOT NULL,
+		[ProductID] [INT] NOT NULL,
+		[VariantName] [VARCHAR](500) NULL,
+		[Sku] [VARCHAR](50) NULL,
+		[QtyOnHand] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_ProductVariantInventory] PRIMARY KEY CLUSTERED
+		(
+			[VariantInventoryID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ProductVariantInvLinker') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_ProductVariantInvLinker
+	(
+		[ID] [INT] IDENTITY(1,1) NOT NULL,
+		[ProductID] [INT] NOT NULL,
+		[VariantInventoryID] [INT] NOT NULL,
+		[VariantID] [INT] NOT NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_ProductVariantInvLinker] PRIMARY KEY CLUSTERED
+		(
+			[ID] ASC
+		)
+	)
+END
+GO
+
+
+
+/************************************************************/
+/*****                  Alter Tables                    *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****                Drop Sprocs                       *****/
+/************************************************************/
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_CreateCategoryQuantityDiscount') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateCategoryQuantityDiscount
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_GetCategoryQuantityDiscountByID') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_GetCategoryQuantityDiscountByID
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListCategoryQuantityDiscounts') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListCategoryQuantityDiscounts
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_UpdateCategoryQuantityDiscount') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateCategoryQuantityDiscount
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_DeleteCategoryQuantityDiscount') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_DeleteCategoryQuantityDiscount
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_CreateProductInventory') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateProductInventory
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_GetProductInventoryByID') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_GetProductInventoryByID
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListProductInventory') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListProductInventory
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_UpdateProductInventory') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateProductInventory
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_DeleteProductInventory') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_DeleteProductInventory
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_CreateProductInventoryVariant') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateProductInventoryVariant
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListProductInventoryVariants') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListProductInventoryVariants
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ClearProductInventoryVariants') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ClearProductInventoryVariants
+GO
+
+
+
+/************************************************************/
+/*****               Create Sprocs                      *****/
+/************************************************************/
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateCategoryQuantityDiscount
+	@CategoryID INT = NULL,
+	@QtyFrom INT = NULL,
+	@QtyTo INT = NULL,
+	@Price MONEY = NULL,
+	@DiscountGroup VARCHAR(50) = NULL
+AS
+BEGIN
+	INSERT INTO
+		{databaseOwner}{objectQualifier}Smith_CategoryQtyDiscounts
+		([CategoryID]
+		,[QtyFrom]
+		,[QtyTo]
+		,[Price]
+		,[DiscountGroup])
+	VALUES
+		(@CategoryID
+		,@QtyFrom
+		,@QtyTo
+		,@Price
+		,@DiscountGroup)
+	SELECT SCOPE_IDENTITY()
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_GetCategoryQuantityDiscountByID
+	@QtyDiscountID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SELECT
+		CQD.*
+	FROM
+		{databaseOwner}{objectQualifier}Smith_CategoryQtyDiscounts CQD
+	INNER JOIN
+		{databaseOwner}{objectQualifier}Smith_Category C
+	ON
+		C.[CategoryID] = CQD.[CategoryID]
+	WHERE
+		CQD.[QtyDiscountID] = @QtyDiscountID
+		AND C.[PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListCategoryQuantityDiscounts
+	@CategoryID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SELECT
+		CQD.*
+	FROM
+		{databaseOwner}{objectQualifier}Smith_CategoryQtyDiscounts CQD
+	INNER JOIN
+		{databaseOwner}{objectQualifier}Smith_Category C
+	ON
+		C.[CategoryID] = CQD.[CategoryID]
+	WHERE
+		C.[CategoryID] = @CategoryID
+		AND C.[PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateCategoryQuantityDiscount
+	@QtyDiscountID INT = NULL,
+	@CategoryID INT = NULL,
+	@QtyFrom INT = NULL,
+	@QtyTo INT = NULL,
+	@Price MONEY = NULL,
+	@DiscountGroup VARCHAR(50) = NULL
+AS
+BEGIN
+	UPDATE
+		{databaseOwner}{objectQualifier}Smith_CategoryQtyDiscounts
+	SET
+		[CategoryID] = @CategoryID,
+		[QtyFrom] = @QtyFrom,
+		[QtyTo] = @QtyTo,
+		[Price] = @Price,
+		[DiscountGroup] = @DiscountGroup
+	WHERE
+		[QtyDiscountID] = @QtyDiscountID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_DeleteCategoryQuantityDiscount
+	@QtyDiscountID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	DELETE CQD FROM
+		{databaseOwner}{objectQualifier}Smith_CategoryQtyDiscounts CQD
+	INNER JOIN
+		{databaseOwner}{objectQualifier}Smith_Category C
+	ON
+		C.[CategoryID] = CQD.[CategoryID]
+	WHERE
+		CQD.[QtyDiscountID] = @QtyDiscountID
+		AND C.[PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateProductInventory
+	@ProductID INT = NULL,
+	@VariantName VARCHAR(500) = NULL,
+	@Sku VARCHAR(50) = NULL,
+	@QtyOnHand INT = NULL
+AS
+BEGIN
+	INSERT INTO
+		{databaseOwner}{objectQualifier}Smith_ProductVariantInventory
+		([ProductID]
+		,[VariantName]
+		,[Sku]
+		,[QtyOnHand])
+	VALUES
+		(@ProductID
+		,@VariantName
+		,@Sku
+		,@QtyOnHand)
+	SELECT SCOPE_IDENTITY()
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_GetProductInventoryByID
+	@VariantInventoryID INT = NULL,
+	@ProductID INT = NULL
+AS
+BEGIN
+	SELECT
+		PVI.*
+	FROM
+		{databaseOwner}{objectQualifier}Smith_ProductVariantInventory PVI
+	WHERE
+		PVI.[VariantInventoryID] = @VariantInventoryID
+		AND PVI.[ProductID] = @ProductID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListProductInventory
+	@ProductID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SELECT
+		PVI.*
+	FROM
+		{databaseOwner}{objectQualifier}Smith_ProductVariantInventory PVI
+	INNER JOIN
+		{databaseOwner}{objectQualifier}Smith_Products P
+	ON
+		P.[ProductID] = PVI.[ProductID]
+	WHERE
+		PVI.[ProductID] = @ProductID
+		AND P.[PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateProductInventory
+	@VariantInventoryID INT = NULL,
+	@ProductID INT = NULL,
+	@VariantName VARCHAR(500) = NULL,
+	@Sku VARCHAR(50) = NULL,
+	@QtyOnHand INT = NULL
+AS
+BEGIN
+	UPDATE
+		{databaseOwner}{objectQualifier}Smith_ProductVariantInventory
+	SET
+		[ProductID] = @ProductID,
+		[VariantName] = @VariantName,
+		[Sku] = @Sku,
+		[QtyOnHand] = @QtyOnHand
+	WHERE
+		[VariantInventoryID] = @VariantInventoryID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_DeleteProductInventory
+	@VariantInventoryID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	DELETE PVI FROM
+		{databaseOwner}{objectQualifier}Smith_ProductVariantInventory PVI
+	INNER JOIN
+		{databaseOwner}{objectQualifier}Smith_Products P
+	ON
+		P.[ProductID] = PVI.[ProductID]
+	WHERE
+		PVI.[VariantInventoryID] = @VariantInventoryID
+		AND P.[PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateProductInventoryVariant
+	@ProductID INT = NULL,
+	@VariantInventoryID INT = NULL,
+	@VariantID INT = NULL
+AS
+BEGIN
+	INSERT INTO
+		{databaseOwner}{objectQualifier}Smith_ProductVariantInvLinker
+		([ProductID]
+		,[VariantInventoryID]
+		,[VariantID])
+	VALUES
+		(@ProductID
+		,@VariantInventoryID
+		,@VariantID)
+	SELECT SCOPE_IDENTITY()
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListProductInventoryVariants
+	@VariantInventoryID INT = NULL,
+	@ProductID INT = NULL
+AS
+BEGIN
+	SELECT
+		PVIL.*, PV.[VariantName]
+	FROM
+		{databaseOwner}{objectQualifier}Smith_ProductVariantInvLinker PVIL
+	INNER JOIN
+		{databaseOwner}{objectQualifier}Smith_ProductVariant PV
+	ON
+		PV.[VariantID] = PVIL.[VariantID]
+	WHERE
+		PVIL.[VariantInventoryID] = @VariantInventoryID
+		AND PVIL.[ProductID] = @ProductID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ClearProductInventoryVariants
+	@VariantInventoryID INT = NULL,
+	@ProductID INT = NULL
+AS
+BEGIN
+	DELETE FROM
+		{databaseOwner}{objectQualifier}Smith_ProductVariantInvLinker
+	WHERE
+		[VariantInventoryID] = @VariantInventoryID
+		AND [ProductID] = @ProductID
+END
+GO
+
+
+
+/************************************************************/
+/*****               End of Script                      *****/
+/************************************************************/

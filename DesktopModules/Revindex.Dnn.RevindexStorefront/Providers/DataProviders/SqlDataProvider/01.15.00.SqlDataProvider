@@ -1,0 +1,42 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+GO
+
+BEGIN TRY
+	BEGIN TRANSACTION
+
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		PaymentGatewaysPayPalWPSEmail varchar(256) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysPayPalWPSEmail DEFAULT '',
+		PaymentGatewaysPayPalWPSUsername varchar(256) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysPayPalWPSUsername DEFAULT '',
+		PaymentGatewaysPayPalWPSPassword varchar(256) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysPayPalWPSPassword DEFAULT '',
+		PaymentGatewaysPayPalWPSSignature varchar(256) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysPayPalWPSSignature DEFAULT '',
+		PaymentGatewaysPayPalWPSTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysPayPalWPSTestMode DEFAULT 0
+		
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration
+			DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysPayPalWPSEmail
+		
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration
+			DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysPayPalWPSUsername
+		
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration
+			DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysPayPalWPSPassword
+		
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration
+			DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysPayPalWPSSignature
+		
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration
+			DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysPayPalWPSTestMode
+		
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

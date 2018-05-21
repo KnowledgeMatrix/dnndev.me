@@ -1,0 +1,24 @@
+﻿
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Ideas_Vote_Commit]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Vote_Commit]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Vote_Commit]
+	@IdeaId INT,
+	@IsClosed BIT
+AS
+BEGIN
+	IF @IsClosed = 0
+		BEGIN
+			UPDATE  {databaseOwner}{objectQualifier}Ideas_Vote
+			SET     [Committed] = 0
+			WHERE   IdeaId = @IdeaId
+		END
+	ELSE
+		BEGIN
+			UPDATE  {databaseOwner}{objectQualifier}Ideas_Vote
+			SET     [Committed] = 1
+			WHERE   IdeaId = @IdeaId
+		END
+END
+GO

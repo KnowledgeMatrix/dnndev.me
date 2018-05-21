@@ -1,0 +1,51 @@
+<html>
+<head></head>
+<body>
+<h1>[STORENAME]</h1>
+Purchase Order Details:<br/>
+<h2>Supplier Details</h2>
+[SUPPLIERNAME]<br />
+[SUPPLIERADDRESS]<br />
+[SUPPLIERPHONE]<br />
+[SUPPLIEREMAIL]<br />
+<h2>Billing Address</h2>
+[BILLADDRESS]
+<br/><br/>
+Order Number:[ORDERNUMBER]<br/>
+Order Date:[ORDERDATE]<br />
+Offer Code Used:[OFFERCODE]<br />
+Payment Status:[ORDERSTATUS]<br/>
+Payment Method:[PAYMENTMETHOD]
+<br/>
+<h3>Order Details</h3>
+<table>
+<tr>
+<td><strong>Item</strong></td>
+<td><strong>Quantity</strong></td>
+<td><strong>Unit Price</strong></td>
+</tr>
+[ORDERDETAILS]
+<tr>
+<td colspan="2" style="text-align:right;"><strong>Subtotal:</strong></td>
+<td>[PURCHASEORDERSUBTOTAL]</td>
+</tr>
+<tr>
+<td colspan="2" style="text-align:right;"><strong>Shipping:</strong></td>
+<td>[SHIPPING]</td>
+</tr>
+<tr>
+<td colspan="2" style="text-align:right;"><strong>Tax:</strong></td>
+<td>[PURCHASEORDERTAX]</td>
+</tr>
+<tr>
+<td colspan="2" style="text-align:right;"><strong>Total:</strong></td>
+<td>[PURCHASEORDERTOTAL]</td>
+</tr>
+</table>
+<br/>
+<br/>
+Order will be shipping via: [SHIPPINGMETHOD]<br/><br/>
+<h2>Shipping Address</h2>
+[SHIPPINGADDRESS]
+</body>
+</html>

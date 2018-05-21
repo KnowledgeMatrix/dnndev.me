@@ -1,0 +1,114 @@
+<div style="position:relative">
+    <div id="updateCartDiv" style="position:absolute;width:100%; height:100%;z-index:1000;background:#fff;opacity:0.9;margin-top:20px;display:none;"><h2><em class="fa fa-shopping-cart"></em> Updating the cart</h2></div>
+    <ul class="cvCartDetails">
+      <li>
+        <ul class="cvCartDetailHeaders">
+            <li class="cvCartDetailsHeaderProduct">[PRODUCTHEADER]</li>
+            <li class="cvCartDetailsHeaderQty">[QUANTITYHEADER]</li>
+            <li class="cvCartDetailsHeaderPrice">[PRICEHEADER]</li>
+            <li class="cvCartDetailsHeaderLineTotal">[LINETOTALHEADER]</li>
+        </ul>
+        <div style="clear:both;"></div>
+      </li>
+      <li>
+          [CARTITEMS]
+        <div style="clear:both;"></div>
+      </li>
+      <li>
+          <div class="cvCartFooter">
+              <div class="cvCartFooterItem">
+                  <span class="cartLabels">[SUBTOTALLABEL]</span>
+                  <span class="cartLabelsRed cartTotal">[SUBTOTAL]</span>
+              
+                  <a href="javascript:UpdateCart()" class="CvStandardButton UpdateCart">
+                     [LOCALIZATION:lblUpdateEntireCart.Text]
+                  </a>
+                  <a href="javascript:DeleteAllItemsFromCart()" class="CvStandardButton DeleteCart">
+                     [LOCALIZATION:lblDeleteCart.Text]
+                  </a>
+              </div>
+			  
+			  #if(SHOWSHIPPINGEST)
+              <div class="cvCartFooterItem">
+                  <span class="cartLabels">[SHIPPINGLABEL]</span> 
+                  <span class="cartLabelsRed cartShippingEstimate">[SHIPPING]</span>
+                  <span class="imgShippingEstHelp cvHelpIcon">
+                    <i class="fa fa-question-circle fa-lg"></i>
+                  </span>
+              </div>
+			  #end
+			  
+              #if(SHOWHANDLINGFEE)
+              <div class="cvCartFooterItem">
+                  <span class="cartLabels">[HANDLINGLABEL]</span> <span class="cartLabelsRed cartHandling">
+                      [HANDLING]</span>
+              </div>
+              #end
+              #if(SHOWTAX)
+              <div class="cvCartFooterItem">
+                  <span class="cartLabels">[TAXLABEL]</span> <span class="cartLabelsRed cartTax">
+                      [TAX]</span>
+                  <span class="imgTaxEst cvHelpIcon">
+                    <i class="fa fa-question-cirlce fa-lg"></i>
+                  </span>
+              </div>
+              #end
+              <div class="cvCartFooterItem">
+                  <span class="cartLabels lblDiscountAmount">[DISCOUNTLABEL]</span> <span class="cartLabelsRed cartDiscountAmount">
+                      [DISCOUNT]</span>
+              </div>
+              #if(SHOWTAX)
+              <div class="cvCartFooterItem">
+                  <span class="cartLabels">[LOCALIZATION:lblTotal]</span> <span class="cartLabelsRed cartGrandTotal">
+                      [GRANDTOTAL]</span>
+              </div>
+              #end
+
+              <div class="cvCartFooterItem">
+                <span class="cartLabels">[LOCALIZATION:lblCouponCode]</span>
+                [COUPONCODE]
+              </div>
+
+              #if(ENABLEVIPPROCESSING)
+              <div class="cvCartFooterItem">
+                [VIPPROCESSING]
+                <div class="cartDetailOrderNotes">
+                <span class="imgVIPOrderProcessingHelp cvHelpIcon">
+                    <i class="fa fa-question-circle fa-lg"></i>
+                </span>
+                </div>
+              </div>
+              #end
+
+
+              #if(SHOWNOTES)
+              <div class="cvCartFooterItem">
+                <span class="cartLabels" style="vertical-align:top;">[LOCALIZATION:lblNotesToStore]</span>
+                [NOTES]
+                <div class="cartDetailOrderNotes">
+                <span class="imgNotesToStoreHelp cvHelpIcon">
+                    <i class="fa fa-question-circle fa-lg"></i>
+                </span>
+                </div>
+              </div>
+              #end
+
+              #if(SHOWTANDC)
+              <div class="cvCartFooterItem">
+                <input type="checkbox" id="chkAgreeToStoreTerms" value="true"/>[LOCALIZATION:chkAgreeToStoreTerms]
+                <div class="cartDetailOrderNotes">
+                    <span class="imgTermsHelp cvHelpIcon">
+                        <i class="fa fa-question-circle fa-lg"></i>
+                    </span>
+                </div>
+                <div id="tandcWarning" style="display:none;" class="warningCaption">[LOCALIZATION:lblTandcError]</div>
+              </div>
+              #end
+
+              <div style="clear: both;">
+              </div>
+          </div>
+      </li>
+     </ul>
+
+ </div>

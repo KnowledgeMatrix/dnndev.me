@@ -1,0 +1,278 @@
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}ContentItemUrlProvider_AddSlug]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}ContentItemUrlProvider_AddSlug]
+GO
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}ContentItemUrlProvider_AddSlug] (
+	@TabId INT,
+	@ContentItemId INT,
+	@Slug NVARCHAR(255),
+	@Separator NVARCHAR(1)
+) AS
+BEGIN
+	DECLARE @OrigSlug NVARCHAR(255) = @Slug
+
+	DECLARE @ReserverdWordList NVARCHAR(MAX)
+
+	SELECT @ReserverdWordList = s.SettingValue
+	FROM {databaseOwner}[{objectQualifier}ExtensionUrlProviders] p
+		JOIN {databaseOwner}[{objectQualifier}ExtensionUrlProviderSetting] s 
+			ON p.ExtensionUrlProviderID = s.ExtensionUrlProviderID
+	WHERE p.ProviderName = 'Evoq Content Item Url Extension Provider'
+		AND s.SettingName = 'ReservedWordList'
+
+	DECLARE @ReservedWords AS TABLE (Word NVARCHAR(MAX))
+	INSERT INTO @ReservedWords (Word) 
+	SELECT item FROM {databaseOwner}[{objectQualifier}SplitStrings_CTE](@ReserverdWordList, ',')
+		UNION SELECT 'module' 
+		UNION SELECT 'ctl' 
+		UNION SELECT 'moduleid' 
+		UNION SELECT 'tabid' 
+		UNION SELECT 'groupid' 
+		UNION SELECT 'skinSrc'
+
+	DECLARE @i INT = 1
+
+	WHILE EXISTS(
+	SELECT * FROM {databaseOwner}[{objectQualifier}ContentItem_Slug] WITH (NOLOCK)
+		WHERE TabId = @TabId
+		  AND (ContentItemId IS NULL OR ContentItemId <> @ContentItemId)
+		  AND Slug = @Slug)
+		OR @Slug IN (SELECT Word FROM @ReservedWords)
+	BEGIN			     
+		SET @Slug = @OrigSlug + @Separator + CONVERT(NVARCHAR(5), @i)
+		SET @i = @i + 1
+	END
+
+	UPDATE {databaseOwner}[{objectQualifier}ContentItem_Slug]
+	SET HttpStatus = 301
+	WHERE TabId = @TabId AND ContentItemId = @ContentItemId 
+	  AND Slug <> @Slug 
+	  AND HttpStatus = 200
+
+	UPDATE {databaseOwner}[{objectQualifier}ContentItem_Slug]
+	SET HttpStatus = 200
+	WHERE TabId = @TabId AND ContentItemId = @ContentItemId 
+	  AND Slug = @Slug
+
+	IF @@ROWCOUNT = 0 
+	BEGIN
+		INSERT {databaseOwner}[{objectQualifier}ContentItem_Slug](TabId, ContentItemId, HttpStatus, Slug)
+		VALUES (@TabId, @ContentItemId, 200, @Slug)
+	END
+
+	SELECT @Slug
+END
+GO
+
+/* DNN-7162 - Content Items Indexes */
+IF  EXISTS (SELECT * FROM sys.indexes WHERE name = N'IX_{objectQualifier}ContentItem_Slug_ContentItemId')
+	DROP INDEX [IX_{objectQualifier}ContentItem_Slug_ContentItemId] ON {databaseOwner}[{objectQualifier}ContentItem_Slug]
+GO
+CREATE NONCLUSTERED INDEX [IX_{objectQualifier}ContentItem_Slug_ContentItemId] ON {databaseOwner}[{objectQualifier}ContentItem_Slug]
+(
+	[ContentItemId]
+)
+GO
+
+/********************************************************
+ * SPROC: PersonaBar_GetUserRecentActivity
+ ********************************************************/
+IF EXISTS (SELECT * FROM dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}PersonaBar_GetUserRecentActivity') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}PersonaBar_GetUserRecentActivity
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}PersonaBar_GetUserRecentActivity (
+	@PortalId INT,
+	@UserId INT,
+	@PageIndex INT,
+	@PageSize INT
+) AS
+BEGIN
+	;WITH RecentActivities
+	AS
+	(	
+	--User Activity
+	SELECT SAD.FriendlyName AS Area, USL.CreatedOnDate, SAD.ScoringActionDefId,
+	"Title" = CASE WHEN CIMD.MetaDataValue <> '' THEN CIMD.MetaDataValue ELSE CI.Content END,
+	ROW_NUMBER() OVER ( ORDER BY USL.UserScoringLogId DESC) AS RowNumber 
+	FROM {databaseOwner}[{objectQualifier}Mechanics_UserScoringLog] USL WITH (NOLOCK)
+	INNER JOIN {databaseOwner}[{objectQualifier}vw_Mechanics_ScoringActionDefinitions] SAD
+		ON USL.ScoringActionDefId = SAD.ScoringActionDefId
+	LEFT OUTER JOIN {databaseOwner}[{objectQualifier}ContentItems] CI
+        ON USL.ContentItemId = CI.ContentItemId
+	LEFT OUTER JOIN	{databaseOwner}{objectQualifier}ContentItems_MetaData CIMD WITH (NOLOCK)
+		ON CIMD.ContentItemID = USL.ContentItemId
+		  AND CIMD.MetaDataID = (SELECT MetaDataID FROM {databaseOwner}{objectQualifier}MetaData WITH (NOLOCK) WHERE MetaDataName = 'Title')
+	WHERE USL.UserId =  @UserID
+		AND USL.PortalId = @PortalId
+		AND SAD.ActionType IN(0,2,7,11) -- Interacted = 0, Created = 2, FormedRelationship = 7, Shared = 11
+	)
+	SELECT * FROM RecentActivities
+	WHERE RowNumber BETWEEN (@PageIndex * @PageSize + 1) AND ((@PageIndex + 1) * @PageSize);
+END
+GO
+
+/********************************************************
+ * SPROC: PersonaBar_GetUserDetail - overrides 8.02
+ ********************************************************/
+IF EXISTS (SELECT * FROM dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}PersonaBar_GetUserDetail') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}PersonaBar_GetUserDetail
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}PersonaBar_GetUserDetail (
+	@PortalId INT,
+	@UserId INT
+) AS
+BEGIN
+	--Basic Details
+	SELECT UP.PortalID, U.UserID, U.Username, U.DisplayName, US.LastModifiedOnDate,
+		"IsDeleted" = CASE WHEN u.IsDeleted = 1 OR up.IsDeleted = 0 THEN 0 ELSE 1 END,
+		COALESCE(us.ContentCreatedCount, 0) AS [TotalContribution],
+		COALESCE(us.ReputationPoints, 0) AS [Reputation],	
+		COALESCE(us.ExperiencePoints, 0) AS [Experience]
+	FROM {databaseOwner}{objectQualifier}Users U WITH (NOLOCK)
+		INNER JOIN {databaseOwner}{objectQualifier}UserPortals UP WITH (NOLOCK)
+			ON U.UserID = UP.UserId
+		LEFT OUTER JOIN {databaseOwner}[{objectQualifier}Mechanics_UserScoring] US 
+			ON US.UserId = U.UserID AND UP.PortalId = US.PortalId
+	WHERE UP.PortalId = @PortalId
+		AND U.UserID = @UserID
+		AND UP.PortalId = @PortalId
+
+	--Rank
+	DECLARE @RP INT
+	SELECT @RP = US.ReputationPoints
+	FROM {databaseOwner}[{objectQualifier}Mechanics_UserScoring] US WITH (NOLOCK)
+	WHERE US.UserID = @UserID
+	AND US.PortalId = @PortalId
+		
+	IF @RP IS NOT NULL
+	BEGIN
+		SELECT @RP = COUNT(*) + 1 
+		FROM {databaseOwner}[{objectQualifier}Mechanics_UserScoring] US WITH (NOLOCK)
+		WHERE US.PortalId = @PortalId
+			AND US.ReputationPoints > @RP 
+	END
+	SELECT COALESCE(@RP, -1) As Rank
+
+	--Time on site
+	SELECT IsNull(SUM(TimeOnPage),0) AS TimeOnPage 
+		FROM {databaseOwner}[{objectQualifier}Analytics_Fact_Users]
+		WHERE UserID = @UserID
+		AND PortalId = @PortalId	
+
+	--Optimal Engagement
+	IF EXISTS(SELECT * FROM dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Get_Optimal_Score') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	BEGIN
+		DECLARE @SprocResults TABLE ([OptimalEngagementScore] DECIMAL(18,0))
+		INSERT INTO @SprocResults
+		EXEC {databaseOwner}{objectQualifier}Analytics_Get_Optimal_Score @PortalId, 'Engagement'
+
+		SELECT TOP 1 CONVERT(INT, [OptimalEngagementScore]) OptimalEngagementScore FROM @SprocResults
+	END
+	ELSE
+		SELECT 0 OptimalEngagementScore
+
+	--Engagement (available in Social only)
+	IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Users]') AND type in (N'U'))
+    BEGIN
+		SELECT TOP 1 Engagement
+		FROM {databaseOwner}[{objectQualifier}Analytics_Users]
+		WHERE UserID = @UserID
+		AND PortalId = @PortalId	
+    END
+	ELSE
+		SELECT CAST('' AS XML)
+
+	--Influence (available in Social only)
+	IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_UserInfluenceRollup]') AND type in (N'U'))
+    BEGIN
+		SELECT InfluenceYearly Influence
+		FROM {databaseOwner}{objectQualifier}Analytics_UserInfluenceRollup
+		WHERE UserID = @UserID AND PortalId = @PortalId
+    END
+	ELSE
+		SELECT -1 Influence
+
+	SELECT COUNT(*) TotalResults
+	FROM {databaseOwner}[{objectQualifier}Mechanics_UserScoringLog] USL WITH (NOLOCK)
+	INNER JOIN {databaseOwner}[{objectQualifier}vw_Mechanics_ScoringActionDefinitions] SAD
+		ON USL.ScoringActionDefId = SAD.ScoringActionDefId
+	LEFT OUTER JOIN {databaseOwner}[{objectQualifier}ContentItems] CI
+        ON USL.ContentItemId = CI.ContentItemId
+	LEFT OUTER JOIN	{databaseOwner}{objectQualifier}ContentItems_MetaData CIMD WITH (NOLOCK)
+		ON CIMD.ContentItemID = USL.ContentItemId
+		  AND CIMD.MetaDataID = (SELECT MetaDataID FROM {databaseOwner}{objectQualifier}MetaData WITH (NOLOCK) WHERE MetaDataName = 'Title')
+	WHERE USL.UserId =  @UserID
+		AND USL.PortalId = @PortalId
+		AND SAD.ActionType IN(0,2,7,11) -- Interacted = 0, Created = 2, FormedRelationship = 7, Shared = 11
+
+	SELECT COUNT(RoleID)
+	FROM {databaseOwner}{objectQualifier}vw_UserRoles
+	WHERE UserID = @UserId AND PortalID = @PortalId
+
+	--User Activity
+ 	EXEC  {databaseOwner}{objectQualifier}PersonaBar_GetUserRecentActivity @PortalId, @UserId, 0, 5
+	SELECT TOP 5 UserRoleID, UserID, RoleID, EffectiveDate, ExpiryDate, Status, IsOwner, RoleName, LastModifiedByUserID
+	FROM {databaseOwner}{objectQualifier}vw_UserRoles
+	WHERE UserID = @UserId AND PortalID = @PortalId
+	ORDER BY RoleName DESC
+END
+GO
+
+
+/********************************************************
+ * SPROC: PersonaBar_GetUserRoles
+ ********************************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}PersonaBar_GetUserRoles') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}PersonaBar_GetUserRoles
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}PersonaBar_GetUserRoles (
+	@PortalId INT,
+	@UserId INT,
+	@PageIndex INT,
+	@PageSize INT,
+  	@SortColumn NVARCHAR(50),
+  	@SortAscending BIT
+) AS
+BEGIN
+	SELECT COUNT(RoleID) FROM {databaseOwner}{objectQualifier}vw_UserRoles
+	WHERE UserID = @UserId AND PortalID = @PortalId
+
+	;WITH UserRoles
+	AS
+	(	
+	SELECT *, ROW_NUMBER() OVER (ORDER BY CASE
+								WHEN @SortColumn = 'RoleName'
+								AND @SortAscending = 1
+								THEN RoleName
+								END ASC, CASE
+								WHEN @SortColumn = 'RoleName'
+								AND @SortAscending = 0
+								THEN RoleName
+								END DESC, CASE
+								WHEN @SortColumn = 'ExpiryDate'
+								AND @SortAscending = 0
+								THEN ExpiryDate
+								END DESC, CASE
+								WHEN @SortColumn = 'ExpiryDate'
+								AND @SortAscending = 1
+								THEN ExpiryDate
+								END ASC, CASE
+								WHEN @SortColumn = 'EffectiveDate'
+								AND @SortAscending = 0
+								THEN EffectiveDate
+								END DESC, CASE
+								WHEN @SortColumn = 'EffectiveDate'
+								AND @SortAscending = 1
+								THEN EffectiveDate
+								END ASC, RoleName DESC) AS RowNumber 
+	FROM {databaseOwner}{objectQualifier}vw_UserRoles
+	WHERE UserID = @UserId AND PortalID = @PortalId
+	)
+	SELECT * FROM UserRoles
+	WHERE RowNumber BETWEEN (@PageIndex * @PageSize + 1) AND ((@PageIndex + 1) * @PageSize)
+
+END
+GO

@@ -1,0 +1,97 @@
+﻿IF NOT EXISTS (SELECT 1 FROM sys.indexes
+				WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Discussions_Topic]')
+				AND name = N'IX_{objectQualifier}Discussions_Topic_ContentItemId')
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Discussions_Topic_ContentItemId]
+		ON {databaseOwner}[{objectQualifier}Discussions_Topic] ([ContentItemId])
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes
+				WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Discussions_Topic]')
+				AND name = N'IX_{objectQualifier}Discussions_Topic_TopicId_GroupID_ContentItemId_Deleted')
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Discussions_Topic_TopicId_GroupID_ContentItemId_Deleted]
+		ON {databaseOwner}[{objectQualifier}Discussions_Topic] ([TopicId],[GroupId],[ContentItemId],[Deleted])
+GO
+
+
+/* Migrate Subscriptions */
+IF exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Subscriptions_Type') and OBJECTPROPERTY(id, N'IsTable') = 1)
+BEGIN
+	DECLARE @DesktopModuleId INT
+	DECLARE @NewSubscriptionTypeId INT
+
+	SET @DesktopModuleId = (SELECT ISNULL(DesktopModuleId, -1) FROM {databaseOwner}{objectQualifier}DesktopModules WHERE ModuleName = 'Discussions' )
+
+	IF @DesktopModuleId > 0
+		BEGIN
+			-- Means the module is being upgraded, migrate subscriptions
+			SET @NewSubscriptionTypeId = (SELECT TOP 1 SubscriptionTypeId FROM {databaseOwner}{objectQualifier}CoreMessaging_SubscriptionTypes WHERE SubscriptionName = 'DNNCorp_Discussions_Topic')
+
+			IF @NewSubscriptionTypeId IS NULL
+				BEGIN
+					INSERT {databaseOwner}{objectQualifier}CoreMessaging_SubscriptionTypes
+					(SubscriptionName, FriendlyName, DesktopModuleId)
+					VALUES
+					('DNNCorp_Discussions_Topic', 'Discussions Subscriptions', @DesktopModuleId)
+					
+					SET @NewSubscriptionTypeId = (SELECT SCOPE_IDENTITY())
+
+					-- get all subscribers and copy over
+					DECLARE @OldSubscriptionTypeId INT
+					SET @OldSubscriptionTypeId = (SELECT TOP 1 SubscriptionTypeId FROM {databaseOwner}{objectQualifier}Subscriptions_Type WHERE SubscriptionName = 'DNNCorp_Discussions_Topic')
+
+					IF @OldSubscriptionTypeId > 0
+						BEGIN
+							DECLARE @PortalId INT
+							DECLARE @UserId INT
+							DECLARE @CreatedOnDate DATETIME
+							DECLARE @ModuleId INT
+							DECLARE @ObjectKey NVARCHAR(255)					
+							DECLARE @ContentItemId INT
+							DECLARE @GroupId INT
+							DECLARE @Description NVARCHAR(255)
+
+							DECLARE DiscussionsMigrate_Cursor CURSOR
+							FOR
+								SELECT  DISTINCT ss.PortalId, ss.UserId, ss.CreatedOnDate, ss.ModuleId, ss.GroupId, ss.ContentItemId
+								FROM    {databaseOwner}{objectQualifier}Subscriptions_Subscriber ss
+										INNER JOIN {databaseOwner}{objectQualifier}Modules m ON ss.ModuleID = m.ModuleID
+								WHERE	SubscriptionTypeId = @OldSubscriptionTypeId
+
+								OPEN DiscussionsMigrate_Cursor
+								FETCH NEXT FROM DiscussionsMigrate_Cursor 
+								INTO @PortalId, @UserId, @CreatedOnDate, @ModuleId, @GroupId, @ContentItemId
+
+								WHILE @@FETCH_STATUS = 0 
+								BEGIN
+
+									BEGIN TRANSACTION
+										-- after selecting row of data in cursor
+										IF @ContentItemId > 0
+											BEGIN
+												SET @ObjectKey = 'gid=' + CONVERT(NVARCHAR(10), @GroupId) + ';cid=' + CONVERT(NVARCHAR(10), @ContentItemId)
+												SET @Description = 'Discussion Topic Activity'
+											END	
+										ELSE
+											BEGIN
+												SET @ObjectKey = 'gid=' + CONVERT(NVARCHAR(10), @GroupId)
+												SET @Description = 'New Discussion Topics'
+											END		
+								
+										INSERT {databaseOwner}{objectQualifier}CoreMessaging_Subscriptions
+											(UserId, PortalId, SubscriptionTypeId, ObjectKey, CreatedOnDate, ModuleId, [Description], TabId)
+										VALUES
+											(@UserId, @PortalId, @NewSubscriptionTypeId, @ObjectKey, @CreatedOnDate, @ModuleId, @Description, 0)
+
+
+										COMMIT
+
+											FETCH NEXT FROM DiscussionsMigrate_Cursor INTO @PortalId, @UserId, @CreatedOnDate, @ModuleId, @GroupId, @ContentItemId
+										END
+								
+								CLOSE DiscussionsMigrate_Cursor
+								DEALLOCATE DiscussionsMigrate_Cursor
+						END
+				END
+		END
+END
+GO

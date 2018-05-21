@@ -1,0 +1,67 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}StructuredContent_HtmlPro_ContentItems_GetById') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}StructuredContent_HtmlPro_ContentItems_GetById
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}StructuredContent_HtmlPro_ContentItems_Save') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}StructuredContent_HtmlPro_ContentItems_Save
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}StructuredContent_HtmlPro_ContentItems_DeleteByModuleId') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}StructuredContent_HtmlPro_ContentItems_DeleteByModuleId
+GO
+
+IF EXISTS (SELECT * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}StructuredContent_HtmlPro_ContentItems') and OBJECTPROPERTY(id, N'IsTable') = 1)
+	DROP TABLE {databaseOwner}{objectQualifier}StructuredContent_HtmlPro_ContentItems
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}StructuredContent_HtmlPro_Migration_AddExceptionLog') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}StructuredContent_HtmlPro_Migration_AddExceptionLog
+GO
+
+IF EXISTS (SELECT * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}StructuredContent_HtmlPro_MigrationExceptionLog') and OBJECTPROPERTY(id, N'IsTable') = 1)
+	DROP TABLE {databaseOwner}{objectQualifier}StructuredContent_HtmlPro_MigrationExceptionLog
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}StructuredContent_HtmlPro_Migration_EnqueueHtmlProModulesToMigrate') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}StructuredContent_HtmlPro_Migration_EnqueueHtmlProModulesToMigrate
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}StructuredContent_HtmlPro_Migration_GetHtmlProModulesToMigrate') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}StructuredContent_HtmlPro_Migration_GetHtmlProModulesToMigrate
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}StructuredContent_HtmlPro_Migration_UpdateHtmlProModuleMigrationStatus') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}StructuredContent_HtmlPro_Migration_UpdateHtmlProModuleMigrationStatus
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}StructuredContent_HtmlPro_Migration_ResetInProgressMigrationsToPending') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}StructuredContent_HtmlPro_Migration_ResetInProgressMigrationsToPending
+GO
+
+IF EXISTS (SELECT * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}StructuredContent_HtmlPro_MigrationLog') and OBJECTPROPERTY(id, N'IsTable') = 1)
+	DROP TABLE {databaseOwner}{objectQualifier}StructuredContent_HtmlPro_MigrationLog
+GO
+
+DELETE FROM {databaseOwner}{objectQualifier}Schedule WHERE TypeFullName = 'Evoq.StructuredContent.HtmlPro.Components.Migration.MigrationScheduler, Evoq.StructuredContent.HtmlPro';
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}StructuredContent_HtmlPro_Migration_DeleteByModuleId') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}StructuredContent_HtmlPro_Migration_DeleteByModuleId
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}StructuredContent_HtmlPro_Migration_GetFirstLogIdByPortalId') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}StructuredContent_HtmlPro_Migration_GetFirstLogIdByPortalId
+GO
+
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/

@@ -1,0 +1,24 @@
+@using System.Dynamic;
+@using CartViper.Modules.Store.Cart;
+@using CartViper.Modules.Store.Extensions;
+
+@inherits DotNetNuke.Web.Razor.DotNetNukeWebPage<dynamic>
+
+@{
+
+// load it onto CartDetailsItem.htm with the below:
+//[RAZOR:CartItemProductSummary.cshtml,ITEMID]
+    var lineItem = new CartController().GetItem(int.Parse(Model.ITEMID));
+    @lineItem.ProductInfo.Summary
+}
+
+
+
+
+
+
+																 
+
+
+
+

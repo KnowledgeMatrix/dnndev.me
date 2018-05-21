@@ -1,0 +1,87 @@
+﻿<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Strict//EN'   'http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd'>
+<html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en' lang='en'>
+<head>
+	<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
+	<meta http-equiv='Content-Style-Type' content='text/css' />
+	<meta http-equiv='Content-Script-Type' content='text/javascript' />
+	<title></title>
+	<style type="text/css">
+		body {
+			margin: 0;
+			padding: 0;
+			background-color: #000000;
+			height: 100%;
+			width: 100%;
+		}
+
+		#flash {
+			display: block;
+		}
+
+		html {
+			margin: 0;
+			padding: 0;
+			height: 100%;
+			width: 100%;
+		}
+	</style>
+	<link rel="stylesheet" type="text/css" href="static/flowplayer-6.0.3/skin/minimalist.css">
+	<script type='text/javascript' src='static/eds_jquery/eds1.10.2.js'></script>
+	<script type='text/javascript' src='js/swfobject.js'></script>
+
+
+	<script type='text/javascript'>
+		function getQuerystring(key, default_) {
+			if (default_ == null) default_ = "";
+			key = key.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+			var regex = new RegExp("[\\?&]" + key + "=([^&#]*)");
+			var qs = regex.exec(window.location.href);
+			if (qs == null)
+				return default_;
+			else
+				return qs[1];
+		}
+
+		function infob(fullscr2) {
+			if (fullscr2 == "on") {
+				return true;
+			}
+			if (fullscr2 == "off") {
+				return false;
+			}
+		}
+
+
+		var vw = getQuerystring('videowidth') + "px";
+		var vh = getQuerystring('videoheight');
+		var pskin = getQuerystring('playerskin');
+		var play = infob(getQuerystring('playonload'));
+		var info = getQuerystring('info');
+		var desc = getQuerystring('description');
+		var fullscr = getQuerystring('allowfullscreen');
+		//var fullScreen= infob(fullscr);
+		var vp = getQuerystring('videourl');
+	</script>
+
+</head>
+<body>
+	<div id="flowplayer" class="flowplayer" data-swf="static/flowplayer-6.0.3/flowplayer.swf" style="width: 100%; height: 440px">
+		<video>
+			<source type="video/mp4" src="#">
+		</video>
+	</div>
+	<script type="text/javascript">
+		eds1_10('#flowplayer').height(parseInt(vh) - 40);
+		eds1_10('#flowplayer video source').attr('src', vp);
+		if (play == 'true') {
+			eds1_10('#flowplayer video').attr('autoplay', true);
+		}
+		eds1_10(document).ready(function ($) {
+			if (eds1_10("#flowplayer video")[0])
+				eds1_10("#flowplayer video")[0].load();
+		})
+	</script>
+	<script type='text/javascript' src='static/flowplayer-6.0.3/flowplayer_1.10.min.js'></script>
+</body>
+</html>

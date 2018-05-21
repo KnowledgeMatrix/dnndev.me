@@ -1,0 +1,294 @@
+﻿
+/* Update mechanics action types (for upgrades) */
+DECLARE @DesktopModuleId INT
+SET @DesktopModuleId = ( SELECT DesktopModuleID FROM {databaseOwner}[{objectQualifier}DesktopModules] WHERE  ModuleName = 'Social Events' AND FolderName = 'DNNCorp/SocialEvents')
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 0
+	WHERE ActionName = 'AttendEventInvite' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 5
+	WHERE ActionName = 'CreatedFlaggedEvent' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 0
+	WHERE ActionName = 'DeclineEventInvite' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 0
+	WHERE ActionName = 'MayAttendEventInvite' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 9
+	WHERE ActionName = 'ApprovedEvent' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 9
+	WHERE ActionName = 'DeletedEvent' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 5
+	WHERE ActionName = 'CreatedFlaggedComment' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 7
+	WHERE ActionName = 'SubscribedToAllEvents' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 7
+	WHERE ActionName = 'SubscribedToEvent' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 8
+	WHERE ActionName = 'UnsubscribedFromAllEvents' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 8
+	WHERE ActionName = 'UnsubscribedFromEvent' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 7
+	WHERE ActionName = 'LikedEvent' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 8
+	WHERE ActionName = 'UnLikedEvent' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 7
+	WHERE ActionName = 'LikedEventComment' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 8
+	WHERE ActionName = 'UnLikedEventComment' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 12
+	WHERE ActionName = 'ProvidedLikedEvent' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 13
+	WHERE ActionName = 'ProvidedUnLikedEvent' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 12
+	WHERE ActionName = 'ProvidedLikedEventComment' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 13
+	WHERE ActionName = 'ProvidedUnLikedEventComment' AND DesktopModuleId = @DesktopModuleId
+GO
+
+/************************************/
+/*****	Social Events Search	*****/
+/************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}SocialEvents_Event_Search]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Event_Search]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Event_Search]
+	@ModuleId INT ,
+	@GroupId INT ,
+	@StartDate DATETIME = null,
+	@EndDate DATETIME = null,
+	@PageSize INT ,
+	@PageIndex INT ,
+	@Filter INT ,
+	@SortColumn VARCHAR(32) ,
+	@SortAscending BIT ,
+	@Keyword NVARCHAR(128) ,
+	@UserId INT ,
+	@Tags NVARCHAR(256)
+AS
+BEGIN
+
+	-- Only run one to cacluate the length of the tags and insert the tags into
+	-- temp table so as to not have to call the table valued function for every row.
+	DECLARE @TagLength Int
+	DECLARE @MetID Int
+
+	Set @TagLength = ( SELECT LEN(@Tags) - LEN(REPLACE(@Tags, ',', '')) + 1)
+
+	SELECT	@MetID = MetaDataID
+	FROM	{databaseOwner}{objectQualifier}MetaData
+	WHERE	MetaDataName = 'Title'
+
+	Create Table #Tags(
+		RowNumber smallint,
+		RowValue nvarchar(50) COLLATE DATABASE_DEFAULT)
+
+	Create Table #Taxonomy(
+		TermID Int,
+		Name nVarchar(250) COLLATE DATABASE_DEFAULT)
+
+	Insert Into #Tags
+		Select RowNumber,RowValue
+		From {databaseOwner}{objectQualifier}ConvertListToTable(',', @Tags);
+
+	Insert Into #Taxonomy
+		Select TermID, Name
+		From {databaseOwner}{objectQualifier}Taxonomy_Terms TT
+			Inner Join #Tags T on TT.Name = T.RowValue;
+
+	WITH TopicSet
+	AS (
+		SELECT	COUNT(*) OVER () AS TotalRecords,
+				EventId,
+				E.ContentItemId,
+				GroupId,
+				PortalId,
+				ViewCount,
+				Approved,
+				Deleted,
+				Content,
+				ContentTypeID,
+				TabID,
+				ModuleID,
+				ContentKey,
+				Indexed,
+				[MaxAttendees],
+				[InvitationOnly],
+				[ShowGuests],
+				[Attending],
+				[NotAttending],
+				[MayAttend],
+				[StartTime],
+				[EndTime],
+				[Street],
+				[City],
+				[Region],
+				[PostalCode],
+				[Country],
+				[InviteType],
+				CI.CreatedByUserID,
+				CI.CreatedOnDate,
+				CI.LastModifiedByUserID,
+				CI.LastModifiedOnDate,
+				CIMD.MetaDataValue AS ContentTitle,
+				U.DisplayName AS DisplayName,
+				ROW_NUMBER() OVER
+					( ORDER BY
+						CASE WHEN @SortColumn = 'EventStartTime' AND @SortAscending = 1 THEN [StartTime] END ASC,
+						CASE WHEN @SortColumn = 'EventStartTime' AND @SortAscending = 0 THEN [StartTime] END DESC,
+						CASE WHEN @SortColumn = 'CreatedDate' AND @SortAscending = 1 THEN CI.CreatedOnDate END ASC,
+						CASE WHEN @SortColumn = 'CreatedDate' AND @SortAscending = 0 THEN CI.CreatedOnDate END DESC,
+						CASE WHEN @SortColumn = 'LastActive' AND @SortAscending = 1 THEN CI.LastModifiedOnDate END ASC,
+						CASE WHEN @SortColumn = 'LastActive' AND @SortAscending = 0 THEN CI.LastModifiedOnDate END DESC,
+						CASE WHEN @SortColumn = 'Title' AND @SortAscending = 1 THEN MetaDataValue END ASC,
+						CASE WHEN @SortColumn = 'Title' AND @SortAscending = 0 THEN MetaDataValue END DESC,
+						CASE WHEN @SortColumn = 'Author' AND @SortAscending = 1 THEN DisplayName END ASC,
+						CASE WHEN @SortColumn = 'Author' AND @SortAscending = 0 THEN DisplayName END DESC,
+						CASE WHEN @SortColumn = 'Views' AND @SortAscending = 0 THEN [ViewCount] END DESC,
+						CASE WHEN @SortColumn = 'Views' AND @SortAscending = 1 THEN [ViewCount] END ASC
+					) AS [RowNumber]
+		FROM	{databaseOwner}{objectQualifier}SocialEvents_Event AS E
+				INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI ON CI.ContentItemID = E.ContentItemId
+				INNER JOIN {databaseOwner}{objectQualifier}Users U ON U.UserID = CI.CreatedByUserID
+				LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD
+					ON CIMD.ContentItemID = E.ContentItemId	AND CIMD.MetaDataID = @MetID
+		WHERE	CI.ModuleId = @ModuleId
+		  AND	Deleted = 0
+		  AND ( (@GroupId < 1 AND E.GroupId < 1) OR E.GroupId = @GroupId)
+		  AND ( @Filter < 0
+				OR (@Filter = 0
+					AND (@StartDate IS NULL
+					OR (E.StartTime BETWEEN @StartDate AND @EndDate))
+					AND (Approved = 1 OR E.UserId = @UserId))
+				OR (@Filter = 2
+					AND (	SELECT	COUNT(CommentId)
+							FROM	{databaseOwner}{objectQualifier}Journal_Comments JC
+									INNER JOIN {databaseOwner}{objectQualifier}Journal J ON JC.JournalId = J.JournalId
+							WHERE	ContentItemId = J.ContentItemId
+							  AND	ContentItemId = E.ContentItemId) < 1)
+				OR (@Filter = 3
+					AND CI.CreatedByUserID = @UserId)
+				OR (@Filter = 4
+					AND (	SELECT	COUNT(CommentId)
+							FROM	{databaseOwner}{objectQualifier}Journal AS J
+									INNER JOIN {databaseOwner}{objectQualifier}Journal_Comments JC ON JC.JournalId = J.JournalId
+							WHERE	ContentItemId = J.ContentItemId
+							  AND	ContentItemId = E.ContentItemId
+							  AND	JC.UserId = @UserId) > 0)
+				OR (@Filter = 5
+					AND ((E.StartTime > @StartDate) OR (@StartDate < E.EndTime))
+					AND (Approved = 1 OR E.UserId = @UserId))
+			  )
+		  AND ( @Tags IS NULL OR LEN(@Tags) = 0
+				OR (	SELECT	COUNT(*)
+						FROM	{databaseOwner}{objectQualifier}ContentItems_Tags CIT
+								INNER JOIN #Taxonomy T On CIT.TermID = T.TermID
+						WHERE CIT.ContentItemID = E.ContentItemId
+						AND (	SELECT	[Approved]
+								FROM	{databaseOwner}{objectQualifier}SocialEvents_Event
+								WHERE EventId = E.EventId) = 1) = @TagLength
+			  )
+		)
+	SELECT	TOP (@PageSize) *
+	FROM	TopicSet
+	WHERE	RowNumber >= (@PageIndex * @PageSize) + 1;
+
+	Drop Table #Tags
+	Drop Table #Taxonomy
+END
+GO
+
+
+/********************************************************
+ * SPROC: SocialEvents_Event_GetByUserId
+ ********************************************************/
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}SocialEvents_Event_GetByUserId]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Idea_GetByUserId]
+GO	
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Event_GetByUserId]
+	@PortalId INT ,
+	@UserId INT
+AS 
+	SELECT  EventId ,
+			E.ContentItemId ,
+			GroupId ,
+			PortalId ,
+			UserId ,
+			StartTime ,
+			EndTime ,
+			ViewCount ,
+			Approved ,
+			Deleted ,
+			Street ,
+			City ,
+			Region ,
+			Country ,
+			PostalCode ,
+			MaxAttendees ,
+			InvitationOnly ,
+			ShowGuests ,
+			Attending ,
+			NotAttending ,
+			MayAttend ,
+			InviteType ,
+			Content ,
+			ContentTypeID ,
+			TabID ,
+			ModuleID ,
+			ContentKey ,
+			Indexed ,
+			CreatedByUserId ,
+			CreatedOnDate ,
+			LastModifiedByUserID ,
+			LastModifiedOnDate ,
+			CIMD.MetaDataValue AS ContentTitle ,
+			1 AS TotalRecords
+	FROM   {databaseOwner}{objectQualifier}SocialEvents_Event E
+			INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI ON E.ContentItemId = CI.ContentItemID
+			LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD ON CIMD.ContentItemID = E.ContentItemID
+															  AND CIMD.MetaDataID = ( SELECT
+															  MetaDataID
+															  FROM
+															  {databaseOwner}[{objectQualifier}MetaData]
+															  WHERE
+															  MetaDataName = 'Title'
+															  )
+	WHERE   PortalId = @PortalId
+			AND CreatedByUserId = @UserId	
+GO

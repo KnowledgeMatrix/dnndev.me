@@ -1,0 +1,104 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+SET XACT_ABORT ON
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+
+	-- Add configuration column
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD ApiActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ApiActive DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ApiActive
+	
+	-- Create UserApi table
+	CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_UserApi](
+		[UserApiID] [int] IDENTITY(1,1) NOT NULL,
+		[PortalID] [int] NOT NULL,
+		[UserID] [int] NOT NULL,
+		[ApiKey] [varchar](255) NOT NULL,
+		[Active] [bit] NOT NULL,
+		[CreateDate] [datetime] NOT NULL,
+		[UpdateDate] [datetime] NOT NULL,
+		[RowVersion] [timestamp] NOT NULL,
+	 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_UserApi] PRIMARY KEY CLUSTERED 
+	(
+		[UserApiID] ASC
+	) 
+	) 
+
+
+	CREATE UNIQUE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_UserApi_1] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_UserApi] 
+	(
+		[PortalID] ASC,
+		[UserID] ASC
+	) 
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_UserApi]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_UserApi_Portals] FOREIGN KEY([PortalID])
+	REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID])
+	ON DELETE CASCADE
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_UserApi] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_UserApi_Portals]
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_UserApi]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_UserApi_Users] FOREIGN KEY([UserID])
+	REFERENCES {databaseOwner}[{objectQualifier}Users] ([UserID])
+	ON DELETE CASCADE
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_UserApi] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_UserApi_Users]
+
+	-- Delete any duplicate ProductCategory records
+	DELETE b FROM {databaseOwner}{objectQualifier}Revindex_Storefront_ProductCategory b
+	JOIN (
+		SELECT MIN(pc.ProductCategoryID) AS MinProductCategoryID, pc.CategoryID, pc.ProductID, COUNT(*) AS Counted
+		FROM {databaseOwner}{objectQualifier}Revindex_Storefront_ProductCategory pc
+		GROUP BY pc.CategoryID, pc.ProductID
+		HAVING COUNT(*) > 1
+	) AS a
+	ON a.CategoryID = b.CategoryID AND a.ProductID = b.ProductID
+	AND a.MinProductCategoryID <> b.ProductCategoryID
+
+	-- Add unique index on ProductCategory
+	CREATE UNIQUE NONCLUSTERED INDEX IX_{objectQualifier}Revindex_Storefront_ProductCategory_1 ON {databaseOwner}{objectQualifier}Revindex_Storefront_ProductCategory
+	(
+		ProductID,
+		CategoryID
+	) 
+	
+	-- Add VAT Number
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD CheckoutBusinessTaxNumberShow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CheckoutBusinessTaxNumberShow DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CheckoutBusinessTaxNumberShow
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder ADD BusinessTaxNumber varchar(50) NULL
+	
+	-- Add support for auto install
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD GeneralInstallAutoActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_GeneralInstallAutoActive DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_GeneralInstallAutoActive
+	
+COMMIT TRANSACTION
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+		
+		-- Upgrade default Checkout template to "Standard7"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CheckoutDisplayTemplate = 'Standard7' WHERE CheckoutDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default Confirmation template to "Standard5"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ConfirmationDisplayTemplate = 'Standard5' WHERE ConfirmationDisplayTemplate LIKE 'Standard%'
+		
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

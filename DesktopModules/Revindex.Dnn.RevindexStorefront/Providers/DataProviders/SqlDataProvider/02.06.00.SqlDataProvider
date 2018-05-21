@@ -1,0 +1,95 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+SET XACT_ABORT ON
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+
+	-- Add USA ePay payment gateway columns
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		PaymentGatewaysUSAePayTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysUSAePayTestMode DEFAULT 0,
+		PaymentGatewaysUSAePaySourceKey varchar(256) NULL
+		
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysUSAePayTestMode
+	
+	-- Add FedEx Shipping
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		ShippingGatewaysFedExKey varchar(256) NULL,
+		ShippingGatewaysFedExPassword varchar(256) NULL,
+		ShippingGatewaysFedExAccountNumber varchar(256) NULL,
+		ShippingGatewaysFedExMeterNumber varchar(256) NULL,
+		ShippingGatewaysFedExTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ShippingGatewaysFedExTestMode DEFAULT 0
+		
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ShippingGatewaysFedExTestMode
+		
+	-- Add UPS Shipping
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		ShippingGatewaysUPSAccessKey varchar(256) NULL,
+		ShippingGatewaysUPSPassword varchar(256) NULL,
+		ShippingGatewaysUPSUsername varchar(256) NULL,
+		ShippingGatewaysUPSShipperNumber varchar(256) NULL,
+		ShippingGatewaysUPSTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ShippingGatewaysUPSTestMode DEFAULT 0
+		
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ShippingGatewaysUPSTestMode
+		
+	-- Add USPS Shipping
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		ShippingGatewaysUSPSUserID varchar(256) NULL,
+		ShippingGatewaysUSPSPassword varchar(256) NULL,
+		ShippingGatewaysUSPSTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ShippingGatewaysUSPSTestMode DEFAULT 0
+		
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ShippingGatewaysUSPSTestMode
+	
+	-- Add integrated shipping methods
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod ADD
+		UniversalServiceName varchar(256) NULL
+		
+	-- Add address info in Configuration
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		GeneralStoreStreet nvarchar(200) NULL,
+		GeneralStoreCity nvarchar(50) NULL,
+		GeneralStoreSubdivisionCode varchar(6) NULL,
+		GeneralStorePostalCode varchar(10) NULL,
+		GeneralStoreCountryCode varchar(2) NULL
+		
+	-- Add shipping universal service name to SalesOrder table
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder ADD ShippingUniversalServiceName varchar(256) NULL
+	
+	-- Add support for Chase Paymentech Orbital Gateway
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		PaymentGatewaysChasePaymentechOGTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysChasePaymentechOGTestMode DEFAULT 0,
+		PaymentGatewaysChasePaymentechOGUsername varchar(256) NULL,
+		PaymentGatewaysChasePaymentechOGPassword varchar(256) NULL,
+		PaymentGatewaysChasePaymentechOGMerchantID varchar(256) NULL,
+		PaymentGatewaysChasePaymentechOGTerminalID varchar(256) NULL
+		
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysChasePaymentechOGTestMode
+	
+COMMIT TRANSACTION
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+			
+		-- Set default Store address
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration SET GeneralStoreSubdivisionCode = 'US-CA', GeneralStoreCountryCode = 'US'
+		
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

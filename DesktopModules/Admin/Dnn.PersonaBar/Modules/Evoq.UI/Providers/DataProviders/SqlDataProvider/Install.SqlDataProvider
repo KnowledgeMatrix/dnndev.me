@@ -1,0 +1,112 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+/********************************************************
+ * SPROC: PersonaBar_GetTasks
+ ********************************************************/
+IF EXISTS (SELECT * FROM dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}PersonaBar_Evoq_GetTasks') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}PersonaBar_Evoq_GetTasks
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}PersonaBar_Evoq_GetTasks (
+    @PortalId INT,
+    @UserId INT,
+    @PageIndex INT = 0,
+    @PageSize INT = 10,
+    @AfterNotificationId INT = 0
+) AS
+BEGIN
+    ;WITH GroupTasksCTE
+    AS
+    (    
+        SELECT M.MessageID AS NotificationId, M.Subject, M.Body, M.NotificationTypeID, 
+        M.SenderUserID, M.CreatedOnDate, U.DisplayName AS SenderDisplayName,
+        COUNT(*) OVER () AS TotalTasks,
+        ROW_NUMBER() OVER (PARTITION BY M.NotificationTypeId, M.Context, M.Subject ORDER BY M.MessageID) AS GroupedRowNumber,
+        ROW_NUMBER() OVER (ORDER BY M.MessageID) AS MainRowNumber,
+        COUNT(*) OVER(PARTITION BY M.NotificationTypeId, M.Context, M.Subject) AS Count
+        FROM {databaseOwner}{objectQualifier}CoreMessaging_Messages M WITH (NOLOCK)
+        INNER JOIN {databaseOwner}{objectQualifier}CoreMessaging_MessageRecipients MR WITH (NOLOCK)
+            ON M.MessageID = MR.MessageID
+        INNER JOIN {databaseOwner}{objectQualifier}CoreMessaging_NotificationTypes NT WITH (NOLOCK)
+            ON M.NotificationTypeId = NT.NotificationTypeId
+        INNER JOIN {databaseOwner}{objectQualifier}Users U WITH (NOLOCK)
+            ON M.SenderUserID = U.UserID
+        WHERE M.NotificationTypeId IS NOT NULL
+            AND MR.UserID = @UserId
+            AND M.PortalID = @PortalId
+            AND M.MessageID > @AfterNotificationId
+            AND (M.[ExpirationDate] IS NULL OR (M.[ExpirationDate] IS NOT NULL AND M.[ExpirationDate] > GETUTCDATE()))
+			AND NT.IsTask = 1
+    )
+    SELECT TOP (@PageSize) *,
+    COUNT(*) OVER () AS TotalRollups
+    FROM GroupTasksCTE
+    WHERE  GroupedRowNumber = 1
+    AND MainRowNumber > (@PageIndex * @PageSize)
+    ORDER BY NotificationId;
+END
+GO
+
+/********************************************************
+ * SPROC: PersonaBar_GetTask
+ ********************************************************/
+IF EXISTS (SELECT * FROM dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}PersonaBar_Evoq_GetTask') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}PersonaBar_Evoq_GetTask
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}PersonaBar_Evoq_GetTask (
+    @PortalId INT,
+    @UserId INT,
+    @NotificationId INT,
+    @IndexId INT
+) AS
+BEGIN
+    DECLARE @Subject nvarchar(400)
+    DECLARE @Context nvarchar(200)
+    DECLARE @NotificationTypeId INT
+
+    SELECT @Subject = Subject, @Context = Context, @NotificationTypeId = NotificationTypeId
+    FROM {databaseOwner}{objectQualifier}CoreMessaging_Messages M WITH (NOLOCK)
+    WHERE M.MessageID = @NotificationId
+
+    ;WITH GroupTasksCTE
+    AS
+    (
+        SELECT M.MessageID AS NotificationId, M.Subject, M.Body, M.NotificationTypeID, 
+        M.SenderUserID, M.CreatedOnDate, U.DisplayName AS SenderDisplayName,
+        ROW_NUMBER() OVER (ORDER BY M.MessageID) AS RowNumber
+        FROM {databaseOwner}{objectQualifier}CoreMessaging_Messages M WITH (NOLOCK)
+        INNER JOIN {databaseOwner}{objectQualifier}CoreMessaging_MessageRecipients MR
+            ON M.MessageID = MR.MessageID
+        INNER JOIN {databaseOwner}{objectQualifier}CoreMessaging_NotificationTypes NT
+            ON M.NotificationTypeId = NT.NotificationTypeId
+        INNER JOIN {databaseOwner}{objectQualifier}Users U
+            ON M.SenderUserID = U.UserID
+        WHERE M.NotificationTypeId IS NOT NULL
+            AND MR.UserID = @UserId
+            AND M.PortalID = @PortalId
+            AND (M.[ExpirationDate] IS NULL OR (M.[ExpirationDate] IS NOT NULL AND M.[ExpirationDate] > GETUTCDATE()))
+            AND NT.IsTask = 1
+            AND M.Subject = @Subject
+            AND M.Context = @Context
+            AND M.NotificationTypeId = @NotificationTypeId
+    )
+    SELECT TOP 1 * FROM GroupTasksCTE
+    WHERE RowNumber = @IndexId
+    ORDER BY NotificationId;
+END
+GO
+
+/* CONTENT-7559: enable registration notification show in task. */
+UPDATE {databaseOwner}{objectQualifier}CoreMessaging_NotificationTypes SET IsTask = 1
+    WHERE Name IN ( N'NewUserRegistration',
+	                N'NewUnauthorizedUserRegistration')
+GO

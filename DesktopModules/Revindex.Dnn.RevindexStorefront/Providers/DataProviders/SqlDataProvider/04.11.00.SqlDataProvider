@@ -1,0 +1,118 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+SET XACT_ABORT ON
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+	
+	-- Support shipping form on PayPal Express
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysPayPalECShippingFormActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysPayPalECShippingFormActive DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysPayPalECShippingFormActive
+	
+	-- Support Australia Post shipping gateway
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		ShippingGatewaysAustraliaPostAPIKey varchar(255) NULL,
+		ShippingGatewaysAustraliaPostTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ShippingGatewaysAustraliaPostTestMode DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ShippingGatewaysAustraliaPostTestMode
+	
+	-- Create package table
+	CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Package](
+		[PackageID] [int] IDENTITY(1,1) NOT NULL,
+		[PortalID] [int] NOT NULL,
+		[Name] [xml] NULL,
+		[PackageType] [int] NOT NULL,
+		[Weight] [float] NOT NULL,
+		[Depth] [float] NOT NULL,
+		[Width] [float] NOT NULL,
+		[Height] [float] NOT NULL,
+		[InternalDepth] [float] NOT NULL,
+		[InternalWidth] [float] NOT NULL,
+		[InternalHeight] [float] NOT NULL,
+		[CreateDate] [datetime] NOT NULL,
+		[UpdateDate] [datetime] NOT NULL,
+		[RowVersion] [timestamp] NOT NULL,
+		[MaxWeightCapacity] [float] NOT NULL,
+		[MaxQuantityCapacity] [int] NOT NULL,
+	 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_Package] PRIMARY KEY CLUSTERED 
+	(
+		[PackageID] ASC
+	)
+	)
+
+
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_Package] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_Package] 
+	(
+		[PortalID] ASC
+	)
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Package]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Package_Portals] FOREIGN KEY([PortalID])
+	REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID])
+	ON DELETE CASCADE
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Package] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Package_Portals]
+	
+	-- Support packing rules	
+	CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_PackingMethod](
+		[PackingMethodID] [int] IDENTITY(1,1) NOT NULL,
+		[Name] [xml] NULL,
+		[PortalID] [int] NOT NULL,
+		[CreateDate] [datetime] NOT NULL,
+		[UpdateDate] [datetime] NOT NULL,
+		[RowVersion] [timestamp] NOT NULL,
+		[PackRule] [xml] NULL,
+		[Deleted] [bit] NOT NULL,
+	 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_PackingMethod] PRIMARY KEY CLUSTERED 
+	(
+		[PackingMethodID] ASC
+	)
+	)
+
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_PackingMethod] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_PackingMethod] 
+	(
+		[PortalID] ASC
+	)
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_PackingMethod]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_PackingMethod_Portals] FOREIGN KEY([PortalID])
+	REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID])
+	ON DELETE CASCADE
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_PackingMethod] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_PackingMethod_Portals]
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder ADD PackingMethodID int NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder ADD CONSTRAINT
+	FK_{objectQualifier}Revindex_Storefront_SalesOrder_Revindex_Storefront_PackingMethod FOREIGN KEY
+	(
+	PackingMethodID
+	) REFERENCES {databaseOwner}{objectQualifier}Revindex_Storefront_PackingMethod
+	(
+	PackingMethodID
+	) ON UPDATE  NO ACTION 
+	 ON DELETE  NO ACTION 
+	
+COMMIT TRANSACTION
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+		
+		
+		
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

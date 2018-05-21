@@ -1,0 +1,38 @@
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}sc_InsertPreviousFileCrawlerRunItem') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+drop procedure {databaseOwner}{objectQualifier}sc_InsertPreviousFileCrawlerRunItem
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}sc_InsertPreviousFileCrawlerRunItem]
+		@FileId int,
+		@SearchTypeId int,
+		@ScheduleId int,
+		@FileName nvarchar(246),
+		@Url nvarchar(246),
+		@FileUniqueId uniqueidentifier,
+		@Sha1Hash varchar(40),
+		@BodyIndexed bit
+AS
+BEGIN
+IF NOT EXISTS(SELECT 1 FROM {objectQualifier}SearchPreviousFileCrawlerRunItems WHERE FileId = @FileId AND SearchTypeId = @SearchTypeId AND ScheduleId = @ScheduleId)	
+	BEGIN
+	INSERT INTO {objectQualifier}SearchPreviousFileCrawlerRunItems
+	  (FileId,
+		SearchTypeId,
+		ScheduleId,
+		FileName,
+		Url,
+		FileUniqueId,
+		Sha1Hash,
+		BodyIndexed)	
+      VALUES
+	  (@FileId,
+		@SearchTypeId,
+		@ScheduleId,
+		@FileName,
+		@Url,
+		@FileUniqueId,
+		@Sha1Hash,
+		@BodyIndexed)
+	END 
+END
+GO

@@ -1,0 +1,100 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+SET XACT_ABORT ON
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+	
+	-- Support ShipWorks
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration 
+		ADD FulfillmentGatewaysShipWorksUsername varchar(255) NULL,
+			FulfillmentGatewaysShipWorksPassword varchar(255) NULL
+			
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD FulfillmentMethodsShipWorksActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_FulfillmentMethodsShipWorksActive DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_FulfillmentMethodsShipWorksActive
+	
+	-- Allow configuring show/hide price on product detail
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD ProductDetailPriceShow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductDetailPriceShow DEFAULT 1
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductDetailPriceShow
+	
+	-- Allow configuring show/hide price on product list
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD ProductListPriceShow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductListPriceShow DEFAULT 1
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductListPriceShow
+	
+COMMIT TRANSACTION
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+		
+		-- Upgrade default Cart template to "Standard9"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CartDisplayTemplate = 'Standard9' WHERE CartDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default CartSummary template to "Standard3"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CartSummaryDisplayTemplate = 'Standard3' WHERE CartSummaryDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default Category template to "Standard3"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CategoryDisplayTemplate = 'Standard3' WHERE CategoryDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default Checkout template to "Standard16"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CheckoutDisplayTemplate = 'Standard16' WHERE CheckoutDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default Confirmation template to "Standard10"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ConfirmationDisplayTemplate = 'Standard10' WHERE ConfirmationDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default Manufacturer template to "Standard2"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ManufacturerDisplayTemplate = 'Standard2' WHERE ManufacturerDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default ProductComparison template to "Standard3"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductComparisonDisplayTemplate = 'Standard3' WHERE ProductComparisonDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default ProductDetail template to "Standard12"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductDetailDisplayTemplate = 'Standard12' WHERE ProductDetailDisplayTemplate LIKE 'Standard%'
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Product] SET DisplayTemplate = 'Standard12' WHERE DisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default ProductFilter template to "Standard3"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductFilterDisplayTemplate = 'Standard3' WHERE ProductFilterDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default ProductList template to "Standard8"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductListDisplayTemplate = 'Standard8' WHERE ProductListDisplayTemplate LIKE 'Standard%'
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Category] SET DisplayTemplate = 'Standard8' WHERE DisplayTemplate LIKE 'Standard%'
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Manufacturer] SET DisplayTemplate = 'Standard8' WHERE DisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default ProductSearch template to "Standard2"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductSearchDisplayTemplate = 'Standard2' WHERE ProductSearchDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default ProductShowcase template to "Standard4"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductShowcaseDisplayTemplate = 'Standard4' WHERE ProductShowcaseDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default QuickOrder template to "Standard2"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET QuickOrderDisplayTemplate = 'Standard2' WHERE QuickOrderDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default WishList template to "Standard2"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET WishListDisplayTemplate = 'Standard2' WHERE WishListDisplayTemplate LIKE 'Standard%'
+		
+		-- Change Google charts to use v1.0 instead of v1.1. Google renamed v1.1 to v1.0.
+		-- http://stackoverflow.com/questions/18576876/google-visualization-api-object-function-return-s-has-no-method-isenabl
+		-- https://groups.google.com/forum/#!msg/google-visualization-api/N2zillJXEWM/lCcD-pPP3dEJ
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ReportDefinition
+		SET DefinitionRule = REPLACE(CAST(DefinitionRule AS NVARCHAR(max)), 'google.load("visualization", "1.1"', 'google.load("visualization", "1.0"')
+		WHERE DefinitionRule IS NOT NULL
+		
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

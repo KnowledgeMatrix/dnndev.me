@@ -1,0 +1,111 @@
+﻿<!-- panel -->
+<div class="socialpanelheader" id="templates-headerPanel">
+    <h3 data-bind="html: resx.pages_ViewPageTemplate"></h3>
+   
+    <div class="search-container xtra-margin-top right-container">
+        <input type="text" class="personaBar-input search" data-bind="event: {keydown: searchKeyDown, keyup: searchKeyUp}, value: searchKeyword, valueUpdate: 'afterkeydown', hasFocus: searchFocus" maxlength="50" aria-label="Search" />
+        <button class="dnn-ui-common-button large add-template-button" role="primary" data-bind="html: resx.pages_AddTemplate, click: $root.addTemplate, visible: canEdit()" href="#"></button>
+    </div>
+</div>
+
+<div class="socialpanelbody templatesPanelContainer pagePanel" id="templates-bodyPanel">
+    
+    <div class="page-settings add-template pageSettingsForm" id="templates-addTemplate" style="display: none" data-bind="slideToggleVisible: visibleAddTemplateForm">
+        <div class="dnnFormMessage dnnFormError" data-bind="visible: status.code() > 0, html: resx['pagesettings_Errors_' + status.message()]"></div>
+        <div class="dnnFormMessage dnnFormError" data-bind="validationMessage: page.templateId"></div>
+        <div class="dnnFormMessage dnnFormError" data-bind="text: resx.pagesettings_Errors_templates_NoTemplateExisting, visible: pageTemplates().length == 0"></div>
+        
+        <div id="page-details" data-bind="visible: pageTemplates().length > 0">
+            <div class="dnnForm edit-form">
+                <div class="form-item short short-left">
+                    <span class="caption required" data-bind="html: resx.pagesettings_Fields_TemplateName"></span>
+                    <input type="text" data-bind="value: page.name, css: { error: isErrorField('templateName') }, hasFocus: isErrorField('templateName'), valueUpdate: 'afterkeydown'" maxlength="50" aria-label="Name" />
+                </div>
+                <div class="form-item">
+                    <span class="caption" data-bind="html: resx.pagesettings_Fields_Description"></span>
+                    <textarea type="text" class="tall" data-bind="value: page.description" aria-label="Description" />
+                </div>
+            </div>
+            <div class="dnnForm edit-form" data-bind="visible: pageTemplates().length > 0">
+                <div class="form-item">
+                    <span class="caption subtitle required" data-bind="html: resx.pagesettings_Fields_Layout"></span>
+                </div>
+                <div class="pagetemplate-list-container" data-bind="foreach: pageTemplates">
+                    <div class="pagetemplate-list-item" data-bind="attr:{'data-template-id': id}, click: $root.selectTemplate, css: {'selected': selected}">
+                        <span class="thumbnail"><img class="list" data-bind="attr: { src: thumbnail, alt: name }" /></span>
+                        <span class="name" data-bind="html: name"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions" data-bind="visible: pageTemplates().length > 0">
+            <a class="button cancel secondarybtn" data-bind="click: cancelTemplate, html: resx.pages_Cancel"></a>
+            <a class="button create-page primarybtn" data-bind="click: saveTemplate, html: resx.pagesettings_CreateTemplate"></a>
+        </div>
+    </div>
+
+    <div class="pagehierarchy-container" data-bind="css: {'drag-view': inDrag(), 'addingTemplate': visibleAddTemplateForm}">
+        <div class="pages-list-scroller">
+            <div class="pages-list-container" data-bind="template:{name: 'templates-list-template', foreach: pagesList }"></div>
+        </div>
+        <div class="pages-drag-container" data-bind="visible: inDrag && dragPage().id > 0">
+            <div class="pages-list">
+                <ul data-bind="template:{name: 'templates-drag-item-template', data: dragPage }"></ul>
+            </div>
+        </div>
+    </div>
+    <div class="thumbnails-loader-wrapper"></div>
+    <div class="scroll-fix"></div> <!-- Safari OSX can't scroll if remove this div or if have 'clear' class (clear: both; css rule) -->
+</div>
+
+<script type="text/html" id="templates-path-template">
+    <a href="#" data-bind="html: name, click: $root.doSelectPage">
+    </a>
+</script>
+
+<script type="text/html" id="templates-list-template">
+    <div class="pages-list templates-list" data-bind="css: { 'animate': $root.inDrag()}, attr: {'data-page-level': level, 'data-parent-id': parentId}">
+        <ul data-bind="template:{name: 'templates-list-item-template', foreach: pages }"></ul>
+    </div>
+</script>
+
+<script type="text/html" id="templates-list-item-template">
+    <li data-bind="click: $root.pageItemClick, attr: {'data-page-id': id }, css: {'selected': $root.selectedPage().id == $data.id}">
+        <div class="page-item">
+            <span class="thumbnail" data-bind="css:{'has-children': childCount > 0}">
+                <img class="list" data-bind="attr: { src: thumbnail, alt: name }, event: {mouseover: $root.mouseOverThumbnail, mouseout: $root.mouseOutThumbnail}" />
+            </span>
+            <span class="summary">
+                <span class="subtitle field-name" data-bind="html: name"></span>
+                <span><label data-bind="html: $root.resx.pages_Published"></label><span data-bind="html: publishDate"></span></span>
+                <span class="status" data-bind="css: { 'visible': (status == 'Hidden' || status == 'Disabled') }"></span>
+
+                <span class="actions">
+                    <span class="child-count" data-bind="html: childCount, visible: childCount > 0"></span>
+                    <span class="buttons">
+                        <span class="edit-page" data-bind="click: $root.editPageClick, clickBubble: false, attr: { title: $root.resx.pages_Edit }, visible: $root.canEdit()"></span>
+                        <span class="delete-page" data-bind="click: (isspecial ? null : $root.deletePageClick), clickBubble: false, attr: { title: $root.resx.pages_Delete }, css: { 'action-disabled': isspecial }, visible: $root.canEdit() && !useDefaultSkin"></span>
+                    </span>
+                </span>
+            </span>
+
+            <span class="drag-area" data-bind="click: function () { return false; }, clickBubble: false, visible: $root.searchKeyword() == ''"></span>
+        </div>
+    </li>
+</script>
+
+<script type="text/html" id="templates-drag-item-template">
+    <li data-bind="attr: {'data-page-id': id}">
+        <div class="page-item drag-item">
+            <span class="thumbnail" data-bind="css:{'has-children': childCount > 0}">
+                <img class="list" data-bind="attr: { src: thumbnail, alt: name }" />
+            </span>
+            <span class="summary">
+                <span class="subtitle field-name" data-bind="html: name"></span>
+                <span><label data-bind="html: $root.resx.pages_Published"></label><span data-bind="html: publishDate"></span></span>
+                <span class="drag-area" data-bind="html: $root.resx.pages_DragPageTooltip"></span>
+            </span>
+        </div>
+    </li>
+</script>

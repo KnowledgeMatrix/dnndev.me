@@ -1,0 +1,11 @@
+﻿<div>
+    <div>
+        <label data-bind="html: configurations[0].localizedName"></label>
+        <input data-bind="value: configurations[0].value" type="text" />
+    </div>
+    <div class="gtmUseTagManagerForGA">
+        <label data-bind="html: configurations[1].localizedName"></label>
+        <input id="gtmUseTagManagerForGA" data-bind="attr: {'checked': configurations[1].value() === 'true'}, click: useTagManagerForGAChanged" type="checkbox" />
+    </div>
+    <div class="clear"></div>
+</div>

@@ -1,0 +1,20 @@
+﻿<data method="BasicRightReceiptEmail" version="1.0">
+  <mailFrom></mailFrom>
+  <mailTo></mailTo>
+  <subject>{xsl:value-of select="in/configuration/generalStoreName" /} Access Rights</subject>
+  <htmlBody>
+    &lt;p&gt;Hi {xsl:value-of select=&amp;quot;concat(in/user/firstName, &amp;#39; &amp;#39;, in/user/lastName)&amp;quot; /}&lt;/p&gt;
+
+    &lt;p&gt;Here are your access rights issued to you with the following codes:&lt;/p&gt;
+
+    &lt;p&gt;{xsl:for-each select=&amp;quot;in/rights/right&amp;quot; } &lt;strong&gt;{xsl:value-of select=&amp;quot;rightDefinition/name&amp;quot; /}&lt;/strong&gt;&lt;br /&gt;
+    {xsl:value-of select=&amp;quot;code&amp;quot; /}&lt;br /&gt;
+    &lt;br /&gt;
+    {/xsl:for-each}&lt;/p&gt;
+
+    &lt;p&gt;Remember, keep the codes in a safe place and delete this email after reading. You can visit &lt;a href="{xsl:value-of select='in/manageRight/tabUrl' /}"&gt;your account page&lt;/a&gt; anytime to obtain more information about your access rights.&amp;nbsp;&lt;/p&gt;
+
+    &lt;p&gt;If you have any questions, please do not hesitate to contact customer support.&lt;/p&gt;
+
+  </htmlBody>
+</data>

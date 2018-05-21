@@ -1,0 +1,10 @@
+﻿
+/* Update mechanics action types (for upgrades) */
+DECLARE @DesktopModuleId INT
+SET @DesktopModuleId = ( SELECT DesktopModuleID FROM {databaseOwner}[{objectQualifier}DesktopModules] WHERE  ModuleName = 'SocialSharing' AND FolderName = 'DNNCorp/SocialSharing')
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 11
+	WHERE ActionName = 'Share' AND DesktopModuleId = @DesktopModuleId
+
+GO

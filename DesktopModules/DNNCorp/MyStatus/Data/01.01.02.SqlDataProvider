@@ -1,0 +1,20 @@
+﻿IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}MyStatus_GetItemCount]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}MyStatus_GetItemCount]
+GO
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}MyStatus_GetItemCount]
+	@PortalId INT,
+	@UserId INT,
+	@ContentTypeId INT
+AS
+BEGIN
+	SELECT COUNT(*) FROM {databaseOwner}[{objectQualifier}ContentItems] CI
+	INNER JOIN {databaseOwner}[{objectQualifier}Modules] M ON M.ModuleID = CI.ModuleID
+		WHERE CI.[CreatedByUserID] = @UserId
+		  AND CI.[ContentTypeId] = @ContentTypeId
+		  AND CI.[TabID] != -1
+		  AND CI.[ModuleID] != -1
+		  AND CI.[ContentKey] IS NOT NULL
+		  AND CI.[ContentKey] <> ''
+		  AND M.PortalID = @PortalId	
+END
+GO

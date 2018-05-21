@@ -1,0 +1,51 @@
+﻿
+/* Sitemap Provider */
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Discussions_Topic_GetSitemap') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Discussions_Topic_GetSitemap
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Discussions_Topic_GetSitemap]
+	@PortalId INT
+AS	
+	SELECT  T.TopicId ,
+			T.ContentItemId ,
+			T.GroupId ,
+			T.PortalId ,
+			T.ViewCount ,
+			T.Approved ,
+			T.ApprovedDate ,
+			T.Deleted ,
+			T.Closed ,
+			T.ClosedDate ,
+			T.Protected ,
+			T.ProtectedDate ,
+			T.Pinned ,
+			T.PinnedDate ,
+			CI.Content ,
+			CI.ContentTypeID ,
+			CI.TabID ,
+			CI.ModuleID ,
+			CI.ContentKey ,
+			CI.Indexed ,
+			CI.CreatedByUserId ,
+			CI.CreatedOnDate ,
+			CI.LastModifiedByUserID ,
+			CI.LastModifiedOnDate ,
+			CIMD.MetaDataValue AS ContentTitle ,
+			COUNT(*) OVER () AS TotalRecords
+	FROM    {databaseOwner}{objectQualifier}Discussions_Topic T WITH (NOLOCK) 
+			INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI WITH (NOLOCK) ON T.ContentItemId = CI.ContentItemID
+			LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD WITH (NOLOCK) ON CIMD.ContentItemID = T.ContentItemId
+																					  AND CIMD.MetaDataID = ( SELECT
+																					  MetaDataID
+																					  FROM
+																					   {databaseOwner}[{objectQualifier}MetaData] WITH (NOLOCK) 
+																					  WHERE
+																					  MetaDataName = 'Title'
+																					  )
+			LEFT OUTER JOIN  {databaseOwner}{objectQualifier}Roles R WITH (NOLOCK) ON T.GroupId = R.RoleID
+	WHERE   Deleted = 0
+			AND T.Approved = 1
+			AND T.PortalId = @PortalId
+			AND ((T.GroupId < 1) OR (T.GroupId > 0 AND IsPublic = 1))
+GO

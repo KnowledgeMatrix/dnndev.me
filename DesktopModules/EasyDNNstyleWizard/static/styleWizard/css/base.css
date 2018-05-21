@@ -1,0 +1,2795 @@
+@charset "UTF-8";
+/* @import url("https://fonts.googleapis.com/css?family=Exo+2") */
+/* cyrillic */
+@import url("../../font-awesome/css/font-awesome.min.css");
+@font-face {
+  font-family: "Exo 2";
+  font-style: normal;
+  font-weight: 400;
+  src: local("Exo 2"), local("Exo2-Regular"), url(https://fonts.gstatic.com/s/exo2/v3/pEbpp8gu02JrI5SDG9jj6g.woff2) format("woff2");
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* latin-ext */
+@font-face {
+  font-family: "Exo 2";
+  font-style: normal;
+  font-weight: 400;
+  src: local("Exo 2"), local("Exo2-Regular"), url(https://fonts.gstatic.com/s/exo2/v3/sZoRRDfBcJL9e6dHdMU_Tg.woff2) format("woff2");
+  unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: "Exo 2";
+  font-style: normal;
+  font-weight: 400;
+  src: local("Exo 2"), local("Exo2-Regular"), url(https://fonts.gstatic.com/s/exo2/v3/-A4eIjQkAwKL411pgtQ4VA.woff2) format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215;
+}
+@font-face {
+  font-family: "Exo 2";
+  font-style: normal;
+  font-weight: 400;
+  src: local("Exo 2"), local("Exo2-Regular"), url(https://fonts.gstatic.com/s/exo2/v3/-A4eIjQkAwKL411pgtQ4VA.woff2) format("woff2");
+}
+@font-face {
+  font-family: "Exo 2";
+  font-style: normal;
+  font-weight: 400;
+  src: local("Exo 2"), local("Exo2-Regular"), url(https://fonts.gstatic.com/s/exo2/v3/8C2PVL2WIMUnPF90ukjrZQ.woff) format("woff");
+}
+body.noSelect {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+body #EasyDNNstyleWizardCollections {
+  display: block;
+  position: fixed;
+  top: 220px;
+  left: 0;
+  right: auto;
+  bottom: auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  transform: rotate(90deg) translateY(30px);
+  -ms-transform: rotate(90deg) translateY(30px);
+  -webkit-transform: rotate(90deg) translateY(30px);
+  transform-origin: 0% 100%;
+  -ms-transform-origin: 0% 100%;
+  -webkit-transform-origin: 0% 100%;
+  -o-transform-origin: 0% 100%;
+  -moz-transform-origin: 0% 100%;
+  z-index: 9999999;
+  overflow: visible;
+  box-sizing: content-box;
+  font-size: 0;
+  line-height: 0;
+}
+body #EasyDNNstyleWizardCollections > li {
+  display: inline-block;
+  margin: 0 4px 0 0;
+  padding: 3px 12px 3px 30px;
+  border: 0;
+  border-top: 2px solid transparent;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 3px 3px 0 0;
+  background: #252525;
+  cursor: pointer;
+  box-sizing: content-box;
+  transition: background 200ms ease, border-color 200ms ease;
+  -webkit-transition: background 200ms ease, border-color 200ms ease;
+  -o-transition: background 200ms ease, border-color 200ms ease;
+  -moz-transition: background 200ms ease, border-color 200ms ease;
+  position: relative;
+  font-size: 0;
+  line-height: 0;
+}
+body #EasyDNNstyleWizardCollections > li > span {
+  font: bold 15px/1.3 Arial;
+  color: #fff;
+  transition: all 200ms ease;
+  -webkit-transition: all 200ms ease;
+  -o-transition: all 200ms ease;
+  -moz-transition: all 200ms ease;
+  box-sizing: content-box;
+}
+body #EasyDNNstyleWizardCollections > li:after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 8px;
+  right: auto;
+  bottom: auto;
+  font: 14px/1.3 FontAwesome;
+  color: #ff6633;
+}
+body #EasyDNNstyleWizardCollections > li.news:after {
+  content: "";
+}
+body #EasyDNNstyleWizardCollections > li.skin:after {
+  content: "";
+}
+body #EasyDNNstyleWizardCollections > li.containers:after {
+  content: "";
+}
+body #EasyDNNstyleWizardCollections > li.mailChimpPlus:after {
+  content: "";
+}
+body #EasyDNNstyleWizardCollections > li:hover {
+  background: #333;
+}
+body #EasyDNNstyleWizardCollections > li:hover > span {
+  color: #ff6633;
+}
+body #EasyDNNstyleWizardCollections > li.active {
+  background: #252525;
+  border-top: 2px solid #ff6633;
+  border-bottom: 1px solid #252525;
+}
+body #EasyDNNstyleWizardCollections > li.active > span {
+  color: #ff6633;
+}
+body #EasyDNNstyleWizardCollections.animateVisibility {
+  transition: transform ease 0.2s, -ms-transform ease 0.2s, -webkit-transform ease 0.2s;
+  -webkit-transition: transform ease 0.2s, -ms-transform ease 0.2s, -webkit-transform ease 0.2s;
+  -o-transition: transform ease 0.2s, -ms-transform ease 0.2s, -webkit-transform ease 0.2s;
+  -moz-transition: transform ease 0.2s, -ms-transform ease 0.2s, -webkit-transform ease 0.2s;
+}
+body #EasyDNNstyleWizardCollections.showInterface {
+  transform: rotate(90deg) translateY(-330px);
+  -ms-transform: rotate(90deg) translateY(-330px);
+  -webkit-transform: rotate(90deg) translateY(-330px);
+}
+body #EasyDNNstyleWizardCollections.rightSideInterface {
+  left: auto;
+  right: 0;
+  transform: rotate(-90deg) translateY(30px);
+  -ms-transform: rotate(-90deg) translateY(30px);
+  -webkit-transform: rotate(-90deg) translateY(30px);
+  transform-origin: 100% 100%;
+  -ms-transform-origin: 100% 100%;
+  -webkit-transform-origin: 100% 100%;
+  -o-transform-origin: 100% 100%;
+  -moz-transform-origin: 100% 100%;
+  padding: 9px 5px 0 17px;
+}
+body #EasyDNNstyleWizardCollections.rightSideInterface > span {
+  left: auto;
+  right: 0;
+  transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  -webkit-transform: rotate(180deg);
+  transform-origin: 50% 50%;
+  -ms-transform-origin: 50% 50%;
+  -webkit-transform-origin: 50% 50%;
+  -o-transform-origin: 50% 50%;
+  -moz-transform-origin: 50% 50%;
+}
+body #EasyDNNstyleWizardCollections.rightSideInterface.showInterface {
+  transform: rotate(-90deg) translateY(-330px);
+  -ms-transform: rotate(-90deg) translateY(-330px);
+  -webkit-transform: rotate(-90deg) translateY(-330px);
+}
+body #EasyDNNstyleWizardSideToggle {
+  background: #202020;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  position: fixed;
+  top: 15px;
+  left: 0;
+  right: auto;
+  bottom: auto;
+  display: block;
+  width: 40px;
+  height: 40px;
+  box-shadow: none;
+  border: 0;
+  border-radius: 5px;
+  z-index: 10000001;
+  transform: translateX(-41px);
+  -ms-transform: translateX(-41px);
+  -webkit-transform: translateX(-41px);
+  cursor: pointer;
+  font-size: 0;
+  line-height: 0;
+}
+body #EasyDNNstyleWizardSideToggle:after {
+  content: "";
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: 26px/40px FontAwesome;
+  color: #fff;
+  display: block;
+  text-align: center;
+  transition: color ease 0.2s;
+  -webkit-transition: color ease 0.2s;
+  -o-transition: color ease 0.2s;
+  -moz-transition: color ease 0.2s;
+}
+body #EasyDNNstyleWizardSideToggle:hover:after {
+  color: #ff6632;
+}
+body #EasyDNNstyleWizardSideToggle.animateVisibility {
+  transition: transform ease 0.2s, -ms-transform ease 0.2s, -webkit-transform ease 0.2s;
+  -webkit-transition: transform ease 0.2s, -ms-transform ease 0.2s, -webkit-transform ease 0.2s;
+  -o-transition: transform ease 0.2s, -ms-transform ease 0.2s, -webkit-transform ease 0.2s;
+  -moz-transition: transform ease 0.2s, -ms-transform ease 0.2s, -webkit-transform ease 0.2s;
+}
+body #EasyDNNstyleWizardSideToggle.showInterface {
+  transform: translateX(310px);
+  -ms-transform: translateX(310px);
+  -webkit-transform: translateX(310px);
+}
+body #EasyDNNstyleWizardSideToggle.rightSideInterface {
+  transform: translateX(41px);
+  -ms-transform: translateX(41px);
+  -webkit-transform: translateX(41px);
+  left: auto;
+  right: 0;
+}
+body #EasyDNNstyleWizardSideToggle.rightSideInterface.showInterface {
+  transform: translateX(-310px);
+  -ms-transform: translateX(-310px);
+  -webkit-transform: translateX(-310px);
+}
+body #EasyDNNstyleWizardToggle {
+  display: block !important;
+  width: auto;
+  height: 40px;
+  margin: 0;
+  padding: 9px 17px 0 62px;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.4);
+  border: 0;
+  border-radius: 7px 5px 0 0;
+  background: #252525;
+  position: fixed;
+  top: 80px;
+  right: auto;
+  left: 0;
+  cursor: pointer;
+  z-index: 9999999;
+  transform-origin: 0% 100%;
+  -ms-transform-origin: 0% 100%;
+  -webkit-transform-origin: 0% 100%;
+  -o-transform-origin: 0% 100%;
+  -moz-transform-origin: 0% 100%;
+  opacity: 1;
+  transition: opacity 200ms ease;
+  -webkit-transition: opacity 200ms ease;
+  -o-transition: opacity 200ms ease;
+  -moz-transition: opacity 200ms ease;
+  font: 14px/1.3 "Exo 2", sans-serif;
+  color: #fff;
+  text-transform: none;
+  box-sizing: border-box;
+  transform: rotate(90deg) translateY(0px);
+  -ms-transform: rotate(90deg) translateY(0px);
+  -webkit-transform: rotate(90deg) translateY(0px);
+}
+body #EasyDNNstyleWizardToggle > span {
+  background: #ff6632;
+  transition: background-color ease-in-out 0.2s;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: auto;
+  bottom: auto;
+  display: block;
+  width: 46px;
+  height: 40px;
+  border-radius: 5px 0 0;
+}
+body #EasyDNNstyleWizardToggle > span:after {
+  content: "";
+  display: block;
+  width: 26px;
+  height: 26px;
+  font-size: 0;
+  line-height: 0;
+  background: url(../images/interface_sprite.png) 0 0 no-repeat;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  position: absolute;
+  top: 7px;
+  left: 9px;
+  right: auto;
+  bottom: auto;
+}
+body #EasyDNNstyleWizardToggle:hover > span {
+  background-color: #828282;
+}
+body #EasyDNNstyleWizardToggle.animateVisibility {
+  transition: transform ease 0.2s, -ms-transform ease 0.2s, -webkit-transform ease 0.2s;
+  -webkit-transition: transform ease 0.2s, -ms-transform ease 0.2s, -webkit-transform ease 0.2s;
+  -o-transition: transform ease 0.2s, -ms-transform ease 0.2s, -webkit-transform ease 0.2s;
+  -moz-transition: transform ease 0.2s, -ms-transform ease 0.2s, -webkit-transform ease 0.2s;
+}
+body #EasyDNNstyleWizardToggle.showInterface {
+  transform: rotate(90deg) translateY(-330px);
+  -ms-transform: rotate(90deg) translateY(-330px);
+  -webkit-transform: rotate(90deg) translateY(-330px);
+}
+body #EasyDNNstyleWizardToggle.rightSideInterface {
+  left: auto;
+  right: 0;
+  border-radius: 5px 7px 0 0;
+  transform: rotate(-90deg) translateY(0px);
+  -ms-transform: rotate(-90deg) translateY(0px);
+  -webkit-transform: rotate(-90deg) translateY(0px);
+  transform-origin: 100% 100%;
+  -ms-transform-origin: 100% 100%;
+  -webkit-transform-origin: 100% 100%;
+  -o-transform-origin: 100% 100%;
+  -moz-transform-origin: 100% 100%;
+  padding: 9px 62px 0 17px;
+}
+body #EasyDNNstyleWizardToggle.rightSideInterface > span {
+  left: auto;
+  right: 0;
+  border-radius: 0 0 0 5px;
+  transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  -webkit-transform: rotate(180deg);
+  transform-origin: 50% 50%;
+  -ms-transform-origin: 50% 50%;
+  -webkit-transform-origin: 50% 50%;
+  -o-transform-origin: 50% 50%;
+  -moz-transform-origin: 50% 50%;
+}
+body #EasyDNNstyleWizardToggle.rightSideInterface.showInterface {
+  transform: rotate(-90deg) translateY(-330px);
+  -ms-transform: rotate(-90deg) translateY(-330px);
+  -webkit-transform: rotate(-90deg) translateY(-330px);
+}
+body #EasyDNNstyleWizard .standardScrollbar,
+body > #EasyDNNstyleWizardModalWrapper .standardScrollbar {
+  position: relative;
+}
+body #EasyDNNstyleWizard .standardScrollbar > .scrollbar,
+body > #EasyDNNstyleWizardModalWrapper .standardScrollbar > .scrollbar {
+  position: absolute;
+  left: auto;
+  right: 4px;
+  top: 0;
+  bottom: auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: block;
+  width: 1px;
+  height: 100%;
+  overflow: visible;
+  background: #4f4f4f;
+}
+body #EasyDNNstyleWizard .standardScrollbar > .scrollbar > .track,
+body > #EasyDNNstyleWizardModalWrapper .standardScrollbar > .scrollbar > .track {
+  position: relative;
+  left: -5px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: block;
+  width: 10px;
+  height: 100%;
+  background: none;
+}
+body #EasyDNNstyleWizard .standardScrollbar > .scrollbar > .track > .thumb,
+body > #EasyDNNstyleWizardModalWrapper .standardScrollbar > .scrollbar > .track > .thumb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: block;
+  width: 10px;
+  height: 100%;
+  background: none;
+}
+body #EasyDNNstyleWizard .standardScrollbar > .scrollbar > .track > .thumb > .end,
+body > #EasyDNNstyleWizardModalWrapper .standardScrollbar > .scrollbar > .track > .thumb > .end {
+  position: relative;
+  top: 0;
+  left: 3px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 2px;
+  display: block;
+  width: 5px;
+  height: 100%;
+  background: #5e5e5e;
+}
+body #EasyDNNstyleWizard .standardScrollbar > .scrollbar > .track > .thumb:hover > .end,
+body > #EasyDNNstyleWizardModalWrapper .standardScrollbar > .scrollbar > .track > .thumb:hover > .end {
+  background: #777;
+}
+body #EasyDNNstyleWizard .standardScrollbar > .scrollbar.disable > .track > .thumb,
+body > #EasyDNNstyleWizardModalWrapper .standardScrollbar > .scrollbar.disable > .track > .thumb {
+  cursor: default;
+}
+body #EasyDNNstyleWizard .standardScrollbar > .scrollbar.disable > .track > .thumb > .end,
+body > #EasyDNNstyleWizardModalWrapper .standardScrollbar > .scrollbar.disable > .track > .thumb > .end {
+  background: #444;
+  border-radius: 0;
+}
+body #EasyDNNstyleWizard .standardScrollbar > .viewport,
+body > #EasyDNNstyleWizardModalWrapper .standardScrollbar > .viewport {
+  position: relative;
+  top: 0;
+  left: 0;
+  height: 100%;
+  padding: 0 10px 0 0;
+  margin: 0;
+  border: 0;
+  display: block;
+  overflow: hidden;
+}
+body #EasyDNNstyleWizard .standardScrollbar > .viewport > .overview,
+body > #EasyDNNstyleWizardModalWrapper .standardScrollbar > .viewport > .overview {
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  display: block;
+  overflow: hidden;
+}
+body #EasyDNNstyleWizard {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: auto;
+  margin: 0;
+  padding: 0;
+  width: 329px;
+  height: auto;
+  background: #252525;
+  overflow: visible;
+  z-index: 10000000;
+  border: 0;
+  border-right: 1px solid #333;
+  font-family: Arial, Helvetica, sans-serif;
+  box-sizing: content-box;
+  transform: translateX(-330px);
+  -ms-transform: translateX(-330px);
+  -webkit-transform: translateX(-330px);
+}
+body #EasyDNNstyleWizard.animateVisibility {
+  transition: transform ease 0.2s, -ms-transform ease 0.2s, -webkit-transform ease 0.2s;
+  -webkit-transition: transform ease 0.2s, -ms-transform ease 0.2s, -webkit-transform ease 0.2s;
+  -o-transition: transform ease 0.2s, -ms-transform ease 0.2s, -webkit-transform ease 0.2s;
+  -moz-transition: transform ease 0.2s, -ms-transform ease 0.2s, -webkit-transform ease 0.2s;
+}
+body #EasyDNNstyleWizard.rightSideInterface {
+  left: auto;
+  right: 0;
+  transform: translateX(330px);
+  -ms-transform: translateX(330px);
+  -webkit-transform: translateX(330px);
+  border: 0;
+  border-left: 1px solid #333;
+}
+body #EasyDNNstyleWizard.showInterface {
+  transform: translateX(0px);
+  -ms-transform: translateX(0px);
+  -webkit-transform: translateX(0px);
+}
+body #EasyDNNstyleWizard * {
+  box-sizing: content-box;
+}
+body #EasyDNNstyleWizard label {
+  margin: 0;
+  max-width: none;
+}
+body #EasyDNNstyleWizard div, body #EasyDNNstyleWizard span, body #EasyDNNstyleWizard label, body #EasyDNNstyleWizard li, body #EasyDNNstyleWizard p {
+  font-family: Arial, Helvetica, sans-serif;
+  color: #fff;
+}
+body #EasyDNNstyleWizard input, body #EasyDNNstyleWizard select {
+  color: #fff;
+  padding: 1px;
+  margin: 0;
+  background: #3E3E3E;
+  text-shadow: none;
+  box-shadow: none;
+  font: 12px/1.3 Arial, Helvetica, sans-serif;
+  text-shadow: 1px 1px 0 #000000;
+  border-radius: 2px;
+  border: 1px solid #5F5E5E;
+}
+body #EasyDNNstyleWizard select {
+  padding: 0;
+}
+body #EasyDNNstyleWizard > .headerWrapper {
+  overflow: hidden;
+  background: #202020;
+  border: 0;
+  border-bottom: 1px solid #313131;
+  margin: 0;
+  padding: 0;
+}
+body #EasyDNNstyleWizard > .headerWrapper > .logos {
+  background: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  height: 72px;
+  width: 100%;
+  position: relative;
+}
+body #EasyDNNstyleWizard > .headerWrapper > .logos > a {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 0;
+  line-height: 0;
+  display: block;
+  position: absolute;
+  right: auto;
+  bottom: auto;
+}
+body #EasyDNNstyleWizard > .headerWrapper > .logos > a.eds {
+  background: url(../images/interface_sprite.png) 0 -52px no-repeat;
+  width: 42px;
+  height: 42px;
+  top: 14px;
+  left: 20px;
+}
+body #EasyDNNstyleWizard > .headerWrapper > .logos > a.styleWizard {
+  background: url(../images/interface_sprite.png) -26px 0 no-repeat;
+  width: 170px;
+  height: 52px;
+  top: 13px;
+  left: 100px;
+}
+body #EasyDNNstyleWizard > .headerWrapper > .actions {
+  padding: 5px;
+  text-align: center;
+}
+body #EasyDNNstyleWizard > .headerWrapper > .actions .save {
+  margin: 0;
+  padding: 1px 10px 2px;
+  border: 1px dashed #000;
+  display: inline-block;
+  background: #fff;
+}
+body #EasyDNNstyleWizard > .headerWrapper > .actions .save span {
+  color: #000;
+  font: 14px Arial;
+}
+body #EasyDNNstyleWizard > .footerWrapper {
+  overflow: hidden;
+  background: #2F2F2F;
+  border: 0;
+  border-radius: 10px 10px 0 0;
+  border-top: 1px solid #414141;
+  margin: 5px 0 0;
+  padding: 0;
+  box-shadow: 0 -2px 7px rgba(0, 0, 0, 0.4);
+}
+body #EasyDNNstyleWizard > .footerWrapper > .actions {
+  padding: 6px;
+  text-align: center;
+}
+body #EasyDNNstyleWizard > .footerWrapper > .actions > .action {
+  padding: 2px 25px 2px;
+  margin: 0;
+  border: 0;
+  display: inline-block;
+  color: #FFFFFF;
+  text-shadow: 1px 0 2px #000000;
+  cursor: pointer;
+  transition: all 200ms ease;
+  -webkit-transition: all 200ms ease;
+  -o-transition: all 200ms ease;
+  -moz-transition: all 200ms ease;
+  background: #A22B00;
+  box-shadow: 1px 1px 0 #141414;
+  font: bold 15px/1.3 Arial;
+  border: 1px solid #985858;
+  border-radius: 3px;
+}
+body #EasyDNNstyleWizard > .footerWrapper > .actions > .action:hover {
+  background: #C54801;
+  color: #fff;
+  border-color: #E15A00;
+}
+body #EasyDNNstyleWizard > .footerWrapper > .actions .collectionSaveSelect {
+  margin: 5px 0 0 10px;
+  display: none;
+  font: 10px/1.3 Arial;
+  vertical-align: top;
+}
+body #EasyDNNstyleWizard > .footerWrapper > .actions .collectionSaveSelect.show {
+  display: inline !important;
+}
+body #EasyDNNstyleWizard > .introContainer {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+body #EasyDNNstyleWizard > .introContainer .intro {
+  background: url(../images/intro.png) no-repeat center bottom;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: block;
+  height: 846px;
+  width: 100%;
+}
+body #EasyDNNstyleWizard > .styleSubjectSelectionWrapper {
+  padding: 5px;
+  text-align: center;
+}
+body #EasyDNNstyleWizard > .styleSubjectSelectionWrapper > select {
+  width: 300px;
+  display: block;
+  font-size: 13px;
+  padding: 3px;
+  margin-left: 7px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  width: 100%;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  position: relative;
+  overflow: hidden;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider {
+  display: block;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  position: absolute;
+  color: #fff;
+  top: 0;
+  bottom: auto;
+  left: 0;
+  right: auto;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div {
+  display: block;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  overflow: hidden;
+  float: left;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection > .viewport > .overview {
+  padding: 3px 0 0;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .styleTypeSelection {
+  margin: 0 10px 0 3px;
+  padding: 0;
+  border: 0;
+  display: block;
+  position: relative;
+  z-index: 1;
+  top: 1px;
+  text-align: center;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .styleTypeSelection > li {
+  list-style: none;
+  display: inline-block;
+  padding: 4px 10px;
+  margin: 0 0 0 10px;
+  border: 1px solid #454545;
+  border-radius: 5px 5px 0 0;
+  cursor: pointer;
+  background: #373737;
+  transition: border-color 200ms ease;
+  -webkit-transition: border-color 200ms ease;
+  -o-transition: border-color 200ms ease;
+  -moz-transition: border-color 200ms ease;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .styleTypeSelection > li > span {
+  text-transform: uppercase;
+  color: #fff;
+  font: 12px Arial;
+  line-height: 14px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .styleTypeSelection > li:hover {
+  border-top: 2px solid #ff6633;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .styleTypeSelection > li.active {
+  background: #202020;
+  border-top: 2px solid #ff6633;
+  border-bottom: 1px solid #202020;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .styleTypes {
+  margin: 0 0 0 3px;
+  padding: 0;
+  border: 1px solid #454545;
+  display: block;
+  background: #202020;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .styleTypes > div {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: block;
+  overflow: hidden;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .styleTypes > div > ol {
+  margin: 15px;
+  padding: 0;
+  border: 0;
+  display: block;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .styleTypes > div > ol > li {
+  display: block;
+  padding: 0;
+  border: 1px solid #3d3d3d;
+  border-radius: 2px;
+  margin: 0 0 2px;
+  overflow: hidden;
+  clear: both;
+  background: #252525;
+  transition: all 200ms ease;
+  -webkit-transition: all 200ms ease;
+  -o-transition: all 200ms ease;
+  -moz-transition: all 200ms ease;
+  position: relative;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .styleTypes > div > ol > li > ol {
+  float: left;
+  padding: 4px 0 4px 4px;
+  border: 0;
+  margin: 0 4px 0 0;
+  background: #252525;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .styleTypes > div > ol > li > ol > li {
+  display: inline-block;
+  padding: 0;
+  border: 0;
+  margin: 0 4px 0 0;
+  width: 30px;
+  height: 15px;
+  float: right;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .styleTypes > div > ol > li > span {
+  display: block;
+  font: 12px Arial;
+  line-height: 14px;
+  margin: 4px 0 0;
+  transition: all 200ms ease;
+  -webkit-transition: all 200ms ease;
+  -o-transition: all 200ms ease;
+  -moz-transition: all 200ms ease;
+  height: 14px;
+  overflow: hidden;
+  cursor: pointer;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .styleTypes > div > ol > li > .overlayWrapper {
+  background: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  position: absolute;
+  top: auto;
+  bottom: 0;
+  left: 0;
+  right: auto;
+  width: 100%;
+  height: 200%;
+  transition: bottom 100ms ease;
+  -webkit-transition: bottom 100ms ease;
+  -o-transition: bottom 100ms ease;
+  -moz-transition: bottom 100ms ease;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .styleTypes > div > ol > li > .overlayWrapper > .actionsOverlay {
+  background: rgba(0, 0, 0, 0.8);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  width: 100%;
+  height: 50%;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .styleTypes > div > ol > li > .overlayWrapper > .actionsOverlay > .action {
+  display: inline-block;
+  vertical-align: top;
+  width: 24px;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  margin: 0 1px 0 0;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  transition: background 200ms ease;
+  -webkit-transition: background 200ms ease;
+  -o-transition: background 200ms ease;
+  -moz-transition: background 200ms ease;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .styleTypes > div > ol > li > .overlayWrapper > .actionsOverlay > .action > span {
+  text-indent: -10000px;
+  display: block;
+  position: relative;
+  bottom: auto;
+  right: auto;
+  font: 12px/1.5 Arial;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .styleTypes > div > ol > li > .overlayWrapper > .actionsOverlay > .action:hover {
+  background: white;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .styleTypes > div > ol > li > .overlayWrapper > .actionsOverlay > .action.close {
+  position: absolute;
+  top: 0;
+  left: auto;
+  bottom: auto;
+  right: 0;
+  margin: 0;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .styleTypes > div > ol > li > .overlayWrapper > .actionsOverlay > .action.close > span {
+  background: url(../images/interface_sprite.png) -86px -69px;
+  width: 14px;
+  height: 14px;
+  top: 4px;
+  left: 6px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .styleTypes > div > ol > li > .overlayWrapper > .actionsOverlay > .action.edit {
+  width: 100px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .styleTypes > div > ol > li > .overlayWrapper > .actionsOverlay > .action.edit > span {
+  text-indent: 0;
+  width: 80px;
+  height: 14px;
+  margin: 5px 0 0 3px;
+  padding-left: 20px;
+  color: #333;
+  line-height: 1;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .styleTypes > div > ol > li > .overlayWrapper > .actionsOverlay > .action.edit > span::before {
+  content: "";
+  background: url(../images/interface_sprite.png) -100px -69px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  position: absolute;
+  width: 18px;
+  height: 14px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .styleTypes > div > ol > li > .overlayWrapper > .actionsOverlay > .action.delete > span {
+  background: url(../images/interface_sprite.png) -74px -69px;
+  width: 12px;
+  height: 17px;
+  top: 3px;
+  left: 6px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .styleTypes > div > ol > li > .overlayWrapper > .standardOverlay {
+  position: relative;
+  background: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  width: 100%;
+  height: 50%;
+  cursor: pointer;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .styleTypes > div > ol > li > .overlayWrapper > .standardOverlay > .openActionsOverlay {
+  display: block;
+  background: rgba(255, 255, 255, 0.5);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  width: 110px;
+  height: 100%;
+  position: absolute;
+  top: auto;
+  left: auto;
+  right: 0;
+  bottom: auto;
+  opacity: 0;
+  transition: opacity 200ms ease, background 200ms ease;
+  -webkit-transition: opacity 200ms ease, background 200ms ease;
+  -o-transition: opacity 200ms ease, background 200ms ease;
+  -moz-transition: opacity 200ms ease, background 200ms ease;
+  overflow: hidden;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .styleTypes > div > ol > li > .overlayWrapper > .standardOverlay > .openActionsOverlay > span {
+  display: block;
+  position: relative;
+  color: #333;
+  font: 12px/1.5 Arial;
+  margin: 3px 0 0 4px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .styleTypes > div > ol > li > .overlayWrapper > .standardOverlay > .openActionsOverlay > span::after {
+  display: inline-block;
+  content: "";
+  background: url(../images/interface_sprite.png) -42px -69px no-repeat;
+  height: 16px;
+  width: 16px;
+  position: absolute;
+  top: 0;
+  right: 4px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .styleTypes > div > ol > li > .overlayWrapper > .standardOverlay > .openActionsOverlay:hover {
+  background: rgba(255, 255, 255, 0.9);
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .styleTypes > div > ol > li > .overlayWrapper:hover > .standardOverlay > .openActionsOverlay {
+  opacity: 1;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .styleTypes > div > ol > li:hover {
+  background: #343434;
+  border-color: #605a50;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .styleTypes > div > ol > li.active {
+  border-color: #fff;
+  background: #C6C6C6;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .styleTypes > div > ol > li.active > span {
+  color: #111111;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .styleTypes > div > ol > li.active > .overlayWrapper > .standardOverlay > .openActionsOverlay {
+  background: rgba(0, 0, 0, 0.2);
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .styleTypes > div > ol > li.active > .overlayWrapper > .standardOverlay > .openActionsOverlay > span {
+  color: #fff;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .styleTypes > div > ol > li.active > .overlayWrapper > .standardOverlay > .openActionsOverlay > span::after {
+  background-position: -58px -69px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .styleTypes > div > ol > li.active > .overlayWrapper > .standardOverlay > .openActionsOverlay:hover {
+  background: rgba(0, 0, 0, 0.4);
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .styleTypes > div > ol > li.actionsOverlayActive > .overlayWrapper {
+  bottom: -100%;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .contentSectionBox {
+  display: block;
+  margin: 10px 0 0;
+  padding: 0;
+  border: 0;
+  width: 100%;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .contentSectionBox > .name {
+  margin: 0 10px 0 3px;
+  padding: 0;
+  border: 0;
+  display: block;
+  position: relative;
+  z-index: 1;
+  top: 1px;
+  text-align: center;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .contentSectionBox > .name > span {
+  list-style: none;
+  display: inline-block;
+  padding: 4px 10px;
+  margin: 0 0 0 10px;
+  border: 1px solid #454545;
+  border-radius: 5px 5px 0 0;
+  border-top: 2px solid #ff6633;
+  border-bottom: 1px solid #202020;
+  background: #202020;
+  text-transform: uppercase;
+  color: #fff;
+  font: 12px/14px Arial;
+  transition: border-color 200ms ease;
+  -webkit-transition: border-color 200ms ease;
+  -o-transition: border-color 200ms ease;
+  -moz-transition: border-color 200ms ease;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .contentSectionBox > .contentWrapper {
+  margin: 0 0 0 3px;
+  padding: 15px;
+  border: 1px solid #454545;
+  display: block;
+  background: #202020;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .additionalResourceSeletion {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  width: 100%;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .additionalResourceSeletion > .contentSectionBox > .contentWrapper {
+  text-align: center;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .additionalResourceSeletion > .contentSectionBox > .contentWrapper > div {
+  background: #403e3e;
+  font: 0/0 Arial;
+  box-shadow: 1px 1px 1px rgba(255, 255, 255, 0.25) inset, 1px 1px 3px rgba(0, 0, 0, 0.7), 0 -33px 30px -30px rgba(0, 0, 0, 0.52) inset;
+  border: 0;
+  border-radius: 5px;
+  margin: 0 0 0 5px;
+  padding: 7px 15px 6px;
+  display: inline-block;
+  cursor: pointer;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .additionalResourceSeletion > .contentSectionBox > .contentWrapper > div > span {
+  font: 12px/1.3 Arial;
+  color: #fff;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .additionalResourceSeletion > .contentSectionBox > .contentWrapper > div:first-child {
+  margin: 0;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .additionalResourceSeletion > .contentSectionBox > .contentWrapper > div:hover > span {
+  color: #ff6633;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .additionalResourceSeletion > .contentSectionBox > .contentWrapper > div.activeOption {
+  background: #2c2c2c;
+  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.7) inset, 1px 1px 0px rgba(255, 255, 255, 0.25), 0 -33px 30px -30px rgba(0, 0, 0, 0.52) inset;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .additionalResourceSeletion > .contentSectionBox > .contentWrapper > div.activeOption > span {
+  color: #ff6633;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .additionalResourceSeletion > .contentSectionBox.section_layout > .contentWrapper > div.optionNone > span,
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .additionalResourceSeletion > .contentSectionBox.section_layout > .contentWrapper > div.optionId_boxed > span {
+  font-size: 0;
+  line-height: 0;
+  background: url(../images/interface_sprite.png) no-repeat;
+  display: block;
+  width: 62px;
+  height: 29px;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .additionalResourceSeletion > .contentSectionBox.section_layout > .contentWrapper > div.optionNone > span {
+  background-position: 0 -94px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .additionalResourceSeletion > .contentSectionBox.section_layout > .contentWrapper > div.optionNone:hover > span, body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .additionalResourceSeletion > .contentSectionBox.section_layout > .contentWrapper > div.optionNone.activeOption > span {
+  background-position: 0px -123px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .additionalResourceSeletion > .contentSectionBox.section_layout > .contentWrapper > div.optionId_boxed > span {
+  background-position: -62px -94px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .additionalResourceSeletion > .contentSectionBox.section_layout > .contentWrapper > div.optionId_boxed:hover > span, body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .additionalResourceSeletion > .contentSectionBox.section_layout > .contentWrapper > div.optionId_boxed.activeOption > span {
+  background-position: -62px -123px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .variableContentSeletion > .contentSectionBox > .contentWrapper {
+  padding-top: 5px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .variableContentSeletion > .contentSectionBox > .contentWrapper > div {
+  display: block;
+  margin: 10px 0 0;
+  padding: 0;
+  border: 0;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.7);
+  opacity: 0.4;
+  transition: all ease 0.3s;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .variableContentSeletion > .contentSectionBox > .contentWrapper > div > img {
+  display: block;
+  margin: 0 auto;
+  padding: 0;
+  border: 0;
+  max-width: 284px;
+  max-height: none;
+  height: 80px;
+  width: 100%;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .variableContentSeletion > .contentSectionBox > .contentWrapper > div > span.name {
+  display: block;
+  margin: 0;
+  padding: 15px 20px;
+  border: 0;
+  height: 100%;
+  width: 100%;
+  box-sizing: padding-box;
+  font: 14px/1.3 Arial, sans-serif;
+  color: #fff;
+  background: #333;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .variableContentSeletion > .contentSectionBox > .contentWrapper > div > span.refreshWarning {
+  display: none;
+  margin: 0;
+  padding: 2px 5px 0;
+  border: 0;
+  border-radius: 5px 0 0;
+  text-align: right;
+  font: 12px/1.3 Arial, sans-serif;
+  color: #fff;
+  text-shadow: 1px 1px 0 #000;
+  position: absolute;
+  top: auto;
+  left: auto;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  transition: opacity ease-in-out 0.3s;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .variableContentSeletion > .contentSectionBox > .contentWrapper > div.activeOption {
+  opacity: 1;
+  box-shadow: 0 0 4px 1px rgba(255, 102, 51, 0.5);
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .variableContentSeletion > .contentSectionBox > .contentWrapper > div:hover {
+  opacity: 1;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .variableContentSeletion > .contentSectionBox > .contentWrapper > div:hover.activeOption {
+  box-shadow: 0 0 3px 1px #f63;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleSelection .variableContentSeletion > .contentSectionBox > .contentWrapper > div.showRefreshWarning > span.refreshWarning {
+  display: inline;
+  opacity: 1;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .header {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  width: 100%;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .header > .back {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: #4D4D4D;
+  height: 23px;
+  width: auto;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  margin: 0 0 0 136px;
+  border-radius: 2px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .header > .back > span.icon {
+  background: url(../images/interface_sprite.png) -42px -52px no-repeat;
+  margin: 0;
+  padding: 0;
+  font-size: 0;
+  border: 0;
+  display: block;
+  width: 35px;
+  height: 17px;
+  position: absolute;
+  top: 3px;
+  left: 7px;
+  right: 0;
+  bottom: 0;
+  transition: background-position 200ms ease;
+  -webkit-transition: background-position 200ms ease;
+  -o-transition: background-position 200ms ease;
+  -moz-transition: background-position 200ms ease;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .header > .back > span.text {
+  margin: 4px 7px 0px 47px;
+  padding: 0;
+  border: 0;
+  display: inline-block;
+  font: 12px/1.3 Arial, ÔÇőHelvetica, ÔÇősans-serif;
+  color: #aaa;
+  transition: color 200ms ease;
+  -webkit-transition: color 200ms ease;
+  -o-transition: color 200ms ease;
+  -moz-transition: color 200ms ease;
+  text-shadow: 0 1px 0 #323232;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .header > .back:hover > span.icon {
+  background-position: -77px -52px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .header > .back:hover > span.text {
+  color: #fff;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .header > .styleNameLabel {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: 12px/1.3 Arial, ÔÇőHelvetica, ÔÇősans-serif;
+  color: #fff;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .header > .styleName {
+  box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  display: block;
+  margin: 0;
+  border: 0;
+  padding: 5px;
+  background: none;
+  width: 100%;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .header > .styleName > label > span {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: bold 12px/1.3 Arial, ÔÇőHelvetica, ÔÇősans-serif;
+  color: #C87203;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .header > .styleName > label > input {
+  box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  width: 314px;
+  font: 19px Arial;
+  line-height: 22px;
+  margin: 0;
+  padding: 2px 6px 3px;
+  background: #3A3A3A;
+  border: 1px solid #6D4202;
+  color: #fff;
+  transition: all 200ms ease;
+  -webkit-transition: all 200ms ease;
+  -o-transition: all 200ms ease;
+  -moz-transition: all 200ms ease;
+  box-shadow: 1px 1px 1px #000000 inset;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .header > .styleName > label > input:hover, body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .header > .styleName > label > input:focus {
+  border-color: #e15d30;
+  color: #fff;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .header > .styleName > label > input:focus {
+  border-color: #8AB531;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer {
+  display: block;
+  margin: 0 0 3px 3px;
+  padding: 0;
+  border: 0;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes > li {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: #181818;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes > li .descendantIndicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: auto;
+  bottom: auto;
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  width: 3px;
+  height: 100%;
+  background: #BE561A;
+  opacity: 0;
+  transition: all 200ms ease;
+  -webkit-transition: all 200ms ease;
+  -o-transition: all 200ms ease;
+  -moz-transition: all 200ms ease;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes > li .descendantIndicator.property {
+  background: #F29B69;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes > li > .toggleContainer {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid #343434;
+  position: relative;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes > li > .toggleContainer > .name {
+  display: block;
+  padding: 4px 10px;
+  margin: 0;
+  border: 0;
+  font: 14px Arial;
+  line-height: 18px;
+  cursor: pointer;
+  color: #fff;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes > li > .toggleContainer:hover ~ .toggleContent > .descendantIndicator.property {
+  opacity: 1;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes > li > .toggleContainer:hover ~ .toggleContent ul.mainCollapsibleBoxes > li .descendantIndicator {
+  opacity: 1;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes > li > .toggleContent {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent {
+  border-bottom: 1px solid #343434;
+  background: #2C2C2C;
+  position: relative;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper {
+  display: block;
+  margin: 0;
+  padding: 10px;
+  border: 0;
+  position: relative;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper input[type="radio"] {
+  position: relative;
+  top: 2px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: block;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div .colorPickerTrigger {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  position: relative;
+  vertical-align: middle;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div .colorPickerTrigger > span.initializer {
+  display: none;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div .collapsableOptionsContainer {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div .collapsableOptionsContainer > div {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div .collapsableOptionsContainer > div.trigger {
+  display: block;
+  border-radius: 2px;
+  padding-left: 5px;
+  background-color: #3D3D3D;
+  border-bottom: 1px solid #585858;
+  transition: all 400ms ease;
+  -webkit-transition: all 400ms ease;
+  -o-transition: all 400ms ease;
+  -moz-transition: all 400ms ease;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div .collapsableOptionsContainer > div.trigger > label {
+  font-size: 14px;
+  line-height: 1.4;
+  font-weight: normal;
+  text-shadow: 1px 0 0 #000;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div .collapsableOptionsContainer > div.trigger > label > input {
+  margin: 0 4px 0 0;
+  padding: 0;
+  position: relative;
+  top: 2px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div .collapsableOptionsContainer > div.contentWrapper {
+  display: none;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div .collapsableOptionsContainer > div.contentWrapper > .content {
+  padding: 0;
+  border: 0;
+  margin: 0;
+  overflow: hidden;
+  display: block;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div .collapsableOptionsContainer.expanded > .trigger {
+  border-radius: 2px;
+  padding-left: 5px;
+  background-color: #3D3D3D;
+  border-bottom: 1px solid #762F00;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div .collapsableOptionsContainer.shadows {
+  margin: 8px 0 2px;
+  padding: 0;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div .collapsableOptionsContainer.shadows > .contentWrapper > .content > span {
+  margin: 5px 5px 0;
+  padding: 3px 8px;
+  border: 0;
+  display: inline-block;
+  float: right;
+  background: #232323;
+  border: 1px solid #3E3E3E;
+  cursor: pointer;
+  border-radius: 2px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div .collapsableOptionsContainer.shadows > .contentWrapper > .content > span:hover {
+  background: #111;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div .collapsableOptionsContainer.shadows > .contentWrapper > .content > p {
+  clear: both;
+  margin: 0;
+  padding: 5px 0;
+  border: 0;
+  color: #808080;
+  font: italic 12px Arial;
+  text-shadow: 0 1px 0 #000;
+  text-align: center;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div .collapsableOptionsContainer.shadows > .contentWrapper > .content > .shadowsList {
+  clear: both;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div .collapsableOptionsContainer.shadows > .contentWrapper > .content > .shadowsList > div {
+  margin: 4px 0 0;
+  padding: 0 4px 4px;
+  border: 0;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid #434343;
+  background-color: #2F2F2F;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div .collapsableOptionsContainer.shadows > .contentWrapper > .content > .shadowsList > div > div {
+  margin: 4px 0 0;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div .collapsableOptionsContainer.shadows > .contentWrapper > .content > .shadowsList > div > div > span.remove {
+  float: right;
+  cursor: pointer;
+  color: #ccc;
+  text-shadow: 0 1px 0 #000;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div .collapsableOptionsContainer.shadows > .contentWrapper > .content > .shadowsList > div > div > span.remove:hover {
+  color: #fff;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div .collapsableOptionsContainer.shadows > .contentWrapper > .content > .shadowsList > div:hover {
+  background: #393939;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div input.numeric {
+  width: 25px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div select.numericUnit {
+  width: 45px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div .propertySubsection {
+  padding: 5px 0 0;
+  margin: 0;
+  border: 0;
+  display: block;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div .propertySubsection.hide {
+  display: none;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div .propertySubsection.shadows {
+  margin-bottom: 6px;
+  font-size: 11px;
+  background-color: #222222;
+  border-bottom: 1px solid #4B2800;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div .propertySubsection.position {
+  border: 1px solid #444444;
+  font-size: 11px;
+  padding: 3px !important;
+  line-height: 1.8;
+  margin-bottom: 2px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div .propertySubsection.repeat {
+  border: 1px solid #444444;
+  font-size: 11px;
+  padding: 3px !important;
+  line-height: 1.8;
+  margin-bottom: 2px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div .propertySubsection.attachment {
+  border: 1px solid #444444;
+  font-size: 11px;
+  padding: 3px !important;
+  line-height: 1.8;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div .propertySubsection.size {
+  margin-bottom: 5px;
+  font-size: 11px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div .propertySubsection.lineHeight {
+  margin-bottom: 5px;
+  font-size: 11px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div .propertySubsection.style {
+  margin-bottom: 5px;
+  font-size: 11px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div .propertySubsection.style > input {
+  margin-right: 3px;
+  position: relative;
+  top: 2px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div .propertySubsection.weight {
+  margin-bottom: 5px;
+  margin-right: 5px;
+  font-size: 11px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div .propertySubsection.fontFamily > select {
+  border: 1px solid #5F5E5E;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div .propertySubsection.decorations {
+  margin-bottom: 6px;
+  font-size: 11px;
+  background-color: #222222;
+  border-bottom: 1px solid #4B2800;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div .propertySubsection.decorations > .contentWrapper {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div .propertySubsection.decorations > .contentWrapper label {
+  margin-left: 5px;
+  margin-right: 3px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div .propertySubsection.transform {
+  margin-bottom: 6px;
+  font-size: 11px;
+  background-color: #222222;
+  border-bottom: 1px solid #4B2800;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div .propertySubsection.transform > .contentWrapper {
+  margin-top: 5px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div .propertySubsection.transform > .contentWrapper label {
+  margin-left: 5px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div > .subsectionsSelectionDropdownWrapper {
+  display: block;
+  margin: -10px -10px 10px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div > .subsectionsSelectionDropdownWrapper > div {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div > .subsectionsSelectionDropdownWrapper > div.trigger {
+  float: right;
+  cursor: pointer;
+  opacity: 0.5;
+  position: relative;
+  height: 14px;
+  line-height: 0;
+  transition: opacity 200ms ease;
+  -webkit-transition: opacity 200ms ease;
+  -o-transition: opacity 200ms ease;
+  -moz-transition: opacity 200ms ease;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div > .subsectionsSelectionDropdownWrapper > div.trigger > span.icon {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  background: #e6592a;
+  position: relative;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div > .subsectionsSelectionDropdownWrapper > div.trigger > span.icon > span {
+  display: inline-block;
+  background: url(../images/interface_sprite.png) -42px -85px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  width: 8px;
+  height: 8px;
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  right: auto;
+  bottom: auto;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div > .subsectionsSelectionDropdownWrapper > div.trigger > span.text {
+  margin: 0 5px 0 0;
+  padding: 0;
+  border: 0;
+  font: 10px/1 Arial;
+  color: #fff;
+  position: relative;
+  top: -4px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div > .subsectionsSelectionDropdownWrapper > div.trigger:hover {
+  opacity: 1;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div > .subsectionsSelectionDropdownWrapper > div.dropdown {
+  background: #555;
+  display: none;
+  margin: 0 14px 0 0;
+  padding: 0;
+  border: 1px solid #626262;
+  border-radius: 0 0 3px 3px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div > .subsectionsSelectionDropdownWrapper > div.dropdown > ol {
+  display: block;
+  margin: 0;
+  padding: 1px 5px;
+  border: 0;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div > .subsectionsSelectionDropdownWrapper > div.dropdown > ol > li {
+  display: inline-block;
+  list-style: none;
+  margin: 0 0 0 5px;
+  padding: 0;
+  border: 0;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div > .subsectionsSelectionDropdownWrapper > div.dropdown > ol > li label {
+  font: 11px/1.3 Arial;
+  color: #fff;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.6);
+  position: relative;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div > .subsectionsSelectionDropdownWrapper > div.dropdown > ol > li label input {
+  margin: 0 2px 0 0;
+  position: relative;
+  top: 2px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div > .subsectionsSelectionDropdownWrapper.expanded > div.dropdown {
+  display: block;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div > .subsectionsSelectionDropdownWrapper.expanded > div.trigger {
+  opacity: 1;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div > .subsectionsSelectionDropdownWrapper.expanded > div.trigger > span.text {
+  display: none;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div > .subsectionsSelectionDropdownWrapper.expanded > div.trigger > span.icon > span {
+  top: 6px;
+  height: 2px;
+  background-position: -42px -88px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div > ul.assignmentStyleSelection {
+  background: none;
+  overflow: hidden;
+  margin: 0 0 7px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div > ul.assignmentStyleSelection > li {
+  display: inline;
+  margin: 0 10px 0 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div > ul.assignmentStyleSelection > li > span {
+  color: #ccc;
+  font: 11px Arial;
+  line-height: 13px;
+  transition: color 200ms ease;
+  -webkit-transition: color 200ms ease;
+  -o-transition: color 200ms ease;
+  -moz-transition: color 200ms ease;
+  text-shadow: 0 1px #141414;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div > ul.assignmentStyleSelection > li:hover > span {
+  color: #fff;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div > ul.assignmentStyleSelection > li.active > span {
+  color: #FF6633;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div > div.borderEditor {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: block;
+  overflow: hidden;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div > div.borderEditor > div {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: block;
+  overflow: hidden;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div > div.borderEditor > div select.style {
+  width: 70px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div > div.borderEditor > div .propertySubsection {
+  display: inline;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div > div.borderEditor > div .propertySubsection.hide {
+  display: none;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div > div.borderEditor > div.eachSide > div {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  display: block;
+  padding: 2px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div > div.borderEditor.radius > div .propertySubsection.cornerSubsectionContainer {
+  display: block;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.text .propertySubsection.fontFamily, body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.text .propertySubsection.color, body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.text .propertySubsection.style, body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.text .propertySubsection.weight {
+  display: inline;
+  padding: 0;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.text .propertySubsection.fontFamily.hide, body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.text .propertySubsection.color.hide, body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.text .propertySubsection.style.hide, body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.text .propertySubsection.weight.hide {
+  display: none;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.text > div {
+  margin: 0 0 2px;
+  padding: 0;
+  border: 0;
+  display: block;
+  overflow: hidden;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.text > div.subsectionsSelectionDropdownWrapper {
+  margin: -10px -10px 5px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.text > div div.fontFamily {
+  margin: 0;
+  float: left;
+  width: 230px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.text > div div.fontFamily > select {
+  width: 225px;
+  display: block;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.text > div div.fontFamily > span {
+  display: inline-block;
+  font: 12px/1.3 Arial, sans-serif;
+  margin: 4px 0 4px 5px;
+  cursor: pointer;
+  transition: color ease-in-out 0.2s;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.text > div div.fontFamily > span:hover {
+  color: #F63;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.text > div select.lineHeightUnit {
+  width: 65px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > .propertySubsection.position > .positionSelection > div {
+  display: none;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer {
+  margin: 8px 0 0;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .imageList {
+  margin: 8px 0 0;
+  padding: 4px 4px 0 0;
+  border: 0;
+  display: none;
+  overflow: hidden;
+  background: #222;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .imageList > li {
+  padding: 0;
+  margin: 0 0 4px 4px;
+  border: 0;
+  float: left;
+  list-style: none;
+  cursor: pointer;
+  position: relative;
+  opacity: 1;
+  transition: opacity 200ms ease;
+  -webkit-transition: opacity 200ms ease;
+  -o-transition: opacity 200ms ease;
+  -moz-transition: opacity 200ms ease;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .imageList > li > .delete,
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .imageList > li > .deleteConfirm {
+  position: absolute;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: none;
+  width: 19px;
+  height: 19px;
+  top: 0;
+  left: 100%;
+  background: #000;
+  opacity: 0.5;
+  transition: opacity 200ms ease;
+  -webkit-transition: opacity 200ms ease;
+  -o-transition: opacity 200ms ease;
+  -moz-transition: opacity 200ms ease;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .imageList > li > .delete > span,
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .imageList > li > .deleteConfirm > span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: auto;
+  bottom: auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: block;
+  background: url(../images/interface_sprite.png) no-repeat;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .imageList > li > .delete:hover,
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .imageList > li > .deleteConfirm:hover {
+  opacity: 1;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .imageList > li > .delete {
+  border-radius: 0 4px 4px 0;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .imageList > li > .delete > span {
+  background-position: -126px -52px;
+  width: 9px;
+  height: 13px;
+  top: 3px;
+  left: 5px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .imageList > li > .deleteConfirm {
+  top: 19px;
+  border-radius: 0 0 4px 0;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .imageList > li > .deleteConfirm > span {
+  background-position: -148px -52px;
+  width: 13px;
+  height: 13px;
+  top: 3px;
+  left: 3px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .imageList > li > div.image {
+  font-size: 0;
+  line-height: 0;
+  width: 48px;
+  height: 48px;
+  overflow: hidden;
+  position: relative;
+  margin: 0;
+  padding: 2px;
+  border: 1px dotted #393939;
+  transition: border-color 100ms ease;
+  -webkit-transition: border-color 100ms ease;
+  -o-transition: border-color 100ms ease;
+  -moz-transition: border-color 100ms ease;
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .imageList > li > div.image > img {
+  max-width: 48px;
+  max-height: 48px;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .imageList > li > div.image > .patternWrapper {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  margin: 0;
+  background: none;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .imageList > li > div.image > div.loading {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: auto;
+  bottom: auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: none;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .imageList > li > div.image > div.loading.delete {
+  background: url(../images/loading_red.gif) center center no-repeat #3D3D3D;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .imageList > li > div.image > div.alert {
+  display: none;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  position: absolute;
+  top: auto;
+  left: auto;
+  right: 4px;
+  bottom: 4px;
+  width: 14px;
+  height: 14px;
+  background: url(../images/interface_sprite.png) -112px -52px no-repeat;
+  opacity: 0.8;
+  transition: opacity 100ms ease;
+  -webkit-transition: opacity 100ms ease;
+  -o-transition: opacity 100ms ease;
+  -moz-transition: opacity 100ms ease;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .imageList > li > div.image > div.alert:hover {
+  opacity: 1;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .imageList > li.showLoading > div.image {
+  display: block;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .imageList > li.showLoading > div.image > div.loading {
+  display: block;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .imageList > li:hover {
+  z-index: 1;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .imageList > li:hover > div.image {
+  border-color: #818181;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .imageList > li:hover > .delete {
+  display: block;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .imageList > li.active > div.image {
+  border-color: #A24D2F;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .imageList > li.confirmDelete > .delete {
+  display: block;
+  border-radius: 0 4px 0 0;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .imageList > li.confirmDelete > .delete > span {
+  background-position: -135px -52px;
+  width: 13px;
+  height: 13px;
+  top: 3px;
+  left: 3px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .imageList > li.confirmDelete > .deleteConfirm {
+  display: block;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .imageList > li.deleting > div.image {
+  border-color: #393939;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .imageList > li.deleting > .delete,
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .imageList > li.deleting > .deleteConfirm {
+  display: none;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .imageList > li:nth-child(5n) > .delete,
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .imageList > li:nth-child(5n) > .deleteConfirm {
+  left: auto;
+  right: 100%;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .imageList > li:nth-child(5n) > .delete {
+  border-radius: 4px 0 0 4px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .imageList > li:nth-child(5n) > .deleteConfirm {
+  border-radius: 0 0 0 4px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .imageList > li:nth-child(5n).confirmDelete > .delete {
+  border-radius: 4px 0 0 0;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .imageList.transparentItems > li {
+  opacity: 0.25;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .imageList.transparentItems > li.confirmDelete {
+  opacity: 1;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .uploadWrapper {
+  margin: 3px 0 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  display: block;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .uploadWrapper > ol {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  display: block;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .uploadWrapper > ol > li {
+  margin: 5px 0 0;
+  padding: 5px;
+  overflow: hidden;
+  border: 0;
+  border-bottom: 1px solid #363636;
+  display: block;
+  list-style: none;
+  background: #181818;
+  position: relative;
+  min-height: 54px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .uploadWrapper > ol > li > .thumbnail {
+  margin: 0 5px 0 0;
+  padding: 2px;
+  overflow: hidden;
+  border: 1px dotted #393939;
+  width: 48px;
+  height: 48px;
+  background: #222;
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .uploadWrapper > ol > li > .thumbnail > img {
+  max-width: 48px;
+  max-height: 48px;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .uploadWrapper > ol > li > .main {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  display: block;
+  float: right;
+  width: 225px;
+  height: 54px;
+  position: relative;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .uploadWrapper > ol > li > .main > p {
+  font: 10px/1.3 Arial;
+  color: #fff;
+  margin: 0 0 3px;
+  padding: 0;
+  border: 0;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .uploadWrapper > ol > li > .main > p.file {
+  font-weight: bold;
+  text-shadow: 1px 1px 0 #000;
+  overflow: hidden;
+  white-space: nowrap;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .uploadWrapper > ol > li > .main > p.uploadInfo {
+  font-style: italic;
+  color: #666;
+  text-shadow: 1px 1px 0 #0E0E0E;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .uploadWrapper > ol > li > .main > .progress {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: none;
+  overflow: hidden;
+  width: 100%;
+  height: 5px;
+  background: #666;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .uploadWrapper > ol > li > .main > .progress > div {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: block;
+  overflow: hidden;
+  width: 0;
+  height: 100%;
+  background: #900;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .uploadWrapper > ol > li > .main > .actions {
+  margin: 0 4px 0 0;
+  padding: 0;
+  border: 0;
+  display: block;
+  text-align: right;
+  position: absolute;
+  top: auto;
+  left: auto;
+  bottom: 0;
+  right: 0;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .uploadWrapper > ol > li > .main > .actions span {
+  font: bold 12px/1.3 Arial;
+  color: #fff;
+  margin: 0 0 0 10px;
+  padding: 0;
+  border: 0;
+  text-shadow: 0 1px 0 black;
+  cursor: pointer;
+  transition: text-shadow 200ms ease;
+  -webkit-transition: text-shadow 200ms ease;
+  -o-transition: text-shadow 200ms ease;
+  -moz-transition: text-shadow 200ms ease;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .uploadWrapper > ol > li > .main > .actions span:hover {
+  text-shadow: 0 0 2px #828282;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .uploadWrapper > ol > li.failed {
+  background: #660000;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .uploadWrapper > ol > li.failed > .thumbnail {
+  background: #360000;
+  border-color: #B3B3B3;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .uploadWrapper > ol > li.failed > .main > p.uploadInfo {
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.14);
+  color: #CB2D2D;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .uploadWrapper > ol > li.failed > .main > p.file {
+  text-shadow: 1px 1px 0 #1F1F1F;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .uploadWrapper > ol > li.failed > .main > .actions span {
+  text-shadow: 0 1px 0 #333;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .uploadWrapper > ol > li.failed > .main > .actions span:hover {
+  text-shadow: 0 0 2px #828282;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .uploadWrapper > .uploader {
+  display: none;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .uploadWrapper > div.actions {
+  line-height: 0;
+  margin: 5px 0 0;
+  padding: 0;
+  border: 0;
+  display: block;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .uploadWrapper > div.actions > .action {
+  margin: 0;
+  padding: 3px 10px;
+  overflow: hidden;
+  border: 0;
+  display: inline-block;
+  position: relative;
+  background: #222;
+  border: 1px solid #454545;
+  border-radius: 3px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .uploadWrapper > div.actions > .action > span {
+  font: 12px/1.25 Arial;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  text-shadow: 1px 1px 0 #111;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .uploadWrapper > div.actions > .action:hover {
+  background: #171717;
+  border-color: #717171;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > .propertyStatesWrapper > div.background > div.collapsableOptionsContainer > .contentWrapper .uploadWrapper > div.actions > .fileSelection > input {
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: auto;
+  bottom: auto;
+  right: 0;
+  font: 118px/1 Arial;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > ol {
+  dispaly: block;
+  margin: 0;
+  padding: 3px 0 0 5px;
+  border: 0;
+  border-bottom: 1px solid #1E1E1E;
+  position: relative;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > ol > li {
+  display: inline-block;
+  margin: 0 0 2px 5px;
+  border: 1px solid #1E1E1E;
+  padding: 3px 7px 2px;
+  background: #2C2C2C;
+  position: relative;
+  top: 3px;
+  height: 15px;
+  transition: border-color 200ms ease;
+  -webkit-transition: border-color 200ms ease;
+  -o-transition: border-color 200ms ease;
+  -moz-transition: border-color 200ms ease;
+  font-size: 0;
+  line-height: 0;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > ol > li > span {
+  display: inline;
+  margin: 0;
+  border: 0;
+  padding: 0;
+  font: 12px Arial;
+  line-height: 14px;
+  color: #888686;
+  transition: all 200ms ease;
+  -webkit-transition: all 200ms ease;
+  -o-transition: all 200ms ease;
+  -moz-transition: all 200ms ease;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > ol > li:hover {
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 #353535;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > ol > li:hover > span {
+  color: #fff;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > ol > li.active {
+  background: #404040;
+  box-shadow: inset 0 1px 0 #353535;
+  border-top-color: #DC4914;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer ul.mainCollapsibleBoxes.properties .toggleContent > ol > li.active > span {
+  color: #fff;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer > ul.mainCollapsibleBoxes > li {
+  border: 0;
+  border-left: 1px solid #343434;
+  border-right: 1px solid #343434;
+  margin-top: 3px;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer > ul.mainCollapsibleBoxes > li > .toggleContainer {
+  border-top: 1px solid #343434;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer > ul.mainCollapsibleBoxes > li > .toggleContainer > .name {
+  font-weight: bold;
+  text-shadow: 1px 1px 1px #000;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer > ul.mainCollapsibleBoxes > li > .toggleContent > ul.mainCollapsibleBoxes > li {
+  background: #252525;
+}
+body #EasyDNNstyleWizard > .styleSubjectsWrapper > div > .edStyleWizard_slider > div.styleEditor > .editor .styleEditorSpacer > ul.mainCollapsibleBoxes > li > .toggleContent > ul.mainCollapsibleBoxes > li > .toggleContent > ul.mainCollapsibleBoxes > li {
+  background: #2c2c2c;
+}
+body #EasyDNNstyleWizard .styleWizardPicker.sp-replacer {
+  background: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #B8B8B8;
+  border-radius: 1px;
+  box-shadow: 1px 1px 0 #000000;
+}
+body #EasyDNNstyleWizard .styleWizardPicker.sp-replacer > .sp-preview {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  height: 18px;
+  width: 24px;
+  box-shadow: 1px 1px 1px #000000;
+}
+body #EasyDNNstyleWizard .styleWizardPicker.sp-replacer > .sp-preview > .sp-preview-inner {
+  box-shadow: 1px 1px 0 #2B2B2B inset;
+  background: url(../images/interface_sprite.png) no-repeat -118px -69px;
+}
+body #EasyDNNstyleWizard .styleWizardPicker.sp-replacer > .sp-dd {
+  display: none;
+}
+body > #EasyDNNstyleWizardModalWrapper {
+  position: fixed;
+  display: block;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 999999999;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  bottom: auto;
+  left: 0;
+  right: auto;
+  box-sizing: content-box;
+}
+body > #EasyDNNstyleWizardModalWrapper * {
+  box-sizing: content-box;
+}
+body > #EasyDNNstyleWizardModalWrapper a {
+  color: #428BCA;
+  text-decoration: none;
+}
+body > #EasyDNNstyleWizardModalWrapper a:hover {
+  text-decoration: underline;
+  color: #028BFF;
+}
+body > #EasyDNNstyleWizardModalWrapper a:visited {
+  color: #6D18B1;
+}
+body > #EasyDNNstyleWizardModalWrapper > div {
+  position: absolute;
+  top: 50%;
+  bottom: auto;
+  left: 50%;
+  right: auto;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 3px;
+  background: #fff;
+  overflow: hidden;
+  box-shadow: 0 0 4px #000;
+}
+body > #EasyDNNstyleWizardModalWrapper > div > .actions {
+  position: absolute;
+  bottom: 0;
+  top: auto;
+  left: 0;
+  right: auto;
+  width: 100%;
+  height: 25px;
+  text-align: center;
+}
+body > #EasyDNNstyleWizardModalWrapper > div > .actions > span {
+  margin: 0 15px 0 0;
+  cursor: pointer;
+}
+body > #EasyDNNstyleWizardModalWrapper > div > .actions > span:hover {
+  text-decoration: underline;
+}
+body > #EasyDNNstyleWizardModalWrapper.imageDeleteConfirmation > div {
+  width: 300px;
+  height: 200px;
+  margin: -100px 0 0 -150px;
+}
+body > #EasyDNNstyleWizardModalWrapper.imageDeleteConfirmation > div > .content {
+  padding: 10px 10px 0;
+  margin: 0 0 10px;
+  border: 0;
+  overflow: hidden;
+  position: relative;
+  height: 155px;
+  overflow-y: scroll;
+}
+body > #EasyDNNstyleWizardModalWrapper.imageDeleteConfirmation > div > .content > p {
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+body > #EasyDNNstyleWizardModalWrapper.imageDeleteConfirmation > div > .actions > span.delete {
+  color: #f00;
+}
+body > #EasyDNNstyleWizardModalWrapper.save {
+  opacity: 0;
+}
+body > #EasyDNNstyleWizardModalWrapper.save > div {
+  width: 600px;
+  height: 80px;
+  margin: -40px 0 0 -300px;
+  background: none;
+  box-shadow: none;
+}
+body > #EasyDNNstyleWizardModalWrapper.save > div > .mainMessage {
+  color: #fff;
+  font: 20px/1.3 Arial;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  text-align: center;
+  text-shadow: 0 0 4px #000000;
+  transition: color 200ms ease;
+  -webkit-transition: color 200ms ease;
+  -o-transition: color 200ms ease;
+  -moz-transition: color 200ms ease;
+}
+body > #EasyDNNstyleWizardModalWrapper.save > div > .mainMessage.success {
+  color: #71E851;
+}
+body > #EasyDNNstyleWizardModalWrapper.save > div > .mainMessage.error {
+  color: #D22A2A;
+}
+body > #EasyDNNstyleWizardModalWrapper.save > div > .actions {
+  height: 30px;
+}
+body > #EasyDNNstyleWizardModalWrapper.save > div > .actions > span {
+  background: #A22B00;
+  border: 1px solid #985858;
+  border-radius: 3px;
+  box-shadow: 0 0 3px #141414;
+  color: #FFFFFF;
+  cursor: pointer;
+  display: inline-block;
+  font: bold 15px/1.3 Arial;
+  margin: 0;
+  padding: 2px 25px 1px;
+  text-shadow: 1px 0 2px #000000;
+  transition: all 200ms ease 0s;
+  text-decoration: none;
+}
+body > #EasyDNNstyleWizardModalWrapper.save > div > .actions > span:hover {
+  background: #C54801;
+  border-color: #E15A00;
+}
+body > #EasyDNNstyleWizardModalWrapper.deleteStyle > div.loading {
+  color: #fff;
+  font: 20px/1.3 Arial;
+  width: 300px;
+  height: 30px;
+  margin: -15px 0 0 -150px;
+  padding: 0;
+  border: 0;
+  text-align: center;
+  text-shadow: 0 0 4px #000;
+  background: none;
+  box-shadow: none;
+  overflow: hidden;
+}
+body > #EasyDNNstyleWizardModalWrapper.deleteStyle > div.loading.positive {
+  color: #71E851;
+  width: 400px;
+  margin-left: -200px;
+}
+body > #EasyDNNstyleWizardModalWrapper.deleteStyle > div.main {
+  display: none;
+  width: 400px;
+  margin: 0 0 0 -200px;
+  left: 50%;
+  overflow: hidden;
+}
+body > #EasyDNNstyleWizardModalWrapper.deleteStyle > div.main > .content {
+  margin: 0 0 25px;
+  overflow: hidden;
+  padding: 10px 10px 0;
+}
+body > #EasyDNNstyleWizardModalWrapper.deleteStyle > div.main > .content p {
+  margin: 0 0 10px;
+  font: 14px/1.3 Arial;
+  color: #333;
+}
+body > #EasyDNNstyleWizardModalWrapper.deleteStyle > div.main > .content p.error {
+  color: #D22A2A;
+  text-align: center;
+}
+body > #EasyDNNstyleWizardModalWrapper.deleteStyle > div.main > .content .usedWith {
+  margin: 0 0 10px;
+  padding: 0 0 0 20px;
+}
+body > #EasyDNNstyleWizardModalWrapper.deleteStyle > div.main > .content .usedWith li {
+  font: 14px/1.3 Arial;
+  list-style-type: disc;
+  color: #333;
+}
+body > #EasyDNNstyleWizardModalWrapper.deleteStyle > div.main > .actions {
+  height: 25px;
+}
+body > #EasyDNNstyleWizardModalWrapper.deleteStyle > div.main > .actions > span {
+  font: 14px/1.3 Arial;
+  color: #333;
+}
+body > #EasyDNNstyleWizardModalWrapper.deleteStyle > div.main.show {
+  display: block;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div {
+  width: 800px;
+  height: 440px;
+  overflow: visible;
+  margin: -220px 0 0 -400px;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > .modalTitle {
+  position: absolute;
+  top: auto;
+  left: 0;
+  right: auto;
+  bottom: 100%;
+  font: 20px/1.3 Arial, sans-serif;
+  color: #fff;
+  margin: 0 0 4px 15px;
+  padding: 0;
+  border: 0;
+  text-shadow: 0 1px 0 #000;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  top: 0;
+  bottom: auto;
+  left: auto;
+  right: auto;
+  overflow: hidden;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  width: 200%;
+  height: 100%;
+  position: relative;
+  top: 0;
+  bottom: auto;
+  left: 0;
+  right: auto;
+  transition: left ease-in-out 0.25s;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div.addForm {
+  left: -100%;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div {
+  display: inline-block;
+  margin: 0;
+  padding: 0 0 40px;
+  border: 0;
+  width: 50%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  box-sizing: border-box;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div > .sectionTitle, body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div .userMsg {
+  font: 14px/1.3 Arial, sans-serif;
+  margin: 11px 15px 5px;
+  padding: 0;
+  border: 0;
+  color: #333;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div > .sectionTitle {
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div .actionsBar {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  display: block;
+  text-align: center;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div .actionsBar > span {
+  display: inline-block;
+  padding: 3px 13px 2px;
+  margin: 6px 0 0 10px;
+  border: 1px solid #B6B6B6;
+  border-radius: 4px;
+  background: #E6E6E6;
+  font: bold 15px/1.3 Arial, sans-serif;
+  color: #333;
+  box-shadow: 0 0 3px rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  transition: all ease-in-out 0.13s;
+  text-shadow: 0 1px 0 #fff;
+  opacity: 1;
+  float: none;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div .actionsBar > span:hover {
+  background: #fff;
+  box-shadow: 0px 0px 3px rgba(255, 255, 255, 0.4), 0px -27px 20px -30px #000 inset;
+  border-color: #B6B6B6;
+  color: #000;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div .actionsBar > span:hover.red {
+  color: #CF0000;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div .actionsBar > span:first-child {
+  margin-left: 0;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div > .actionsBar {
+  background: #333;
+  height: 39px;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  border-top: 1px solid #E6592A;
+  box-shadow: 0px 20px 15px 21px #000, 0 18px 23px -18px rgba(0, 0, 0, 0.65) inset;
+  position: absolute;
+  top: auto;
+  left: auto;
+  right: auto;
+  bottom: 0;
+  text-align: center;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div.fontList > .userMsg {
+  height: 100px;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div.fontList > .standardScrollbar {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  height: 275px;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div.fontList > .standardScrollbar ol.fonts {
+  margin: 0 5px 0 15px;
+  padding: 0;
+  border: 0;
+  display: block;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div.fontList > .standardScrollbar ol.fonts > li {
+  list-style: none;
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  height: 45px;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div.fontList > .standardScrollbar ol.fonts > li:nth-child(odd) > .info {
+  background: #ececec;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div.fontList > .standardScrollbar ol.fonts > li > .info {
+  width: 100%;
+  display: block;
+  overflow: hidden;
+  height: 100%;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div.fontList > .standardScrollbar ol.fonts > li > .info p {
+  padding: 0;
+  margin: 3px 7px 3px;
+  border: 0;
+  font: 14px/1.3 Arial, sans-serif;
+  color: #333;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div.fontList > .standardScrollbar ol.fonts > li > .info p.url {
+  color: #666;
+  font-size: 12px;
+  margin: 0 10px 0;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div.fontList > .standardScrollbar ol.fonts > li > span {
+  float: right;
+  width: 10%;
+  height: 100%;
+  clear: right;
+  text-align: center;
+  background: transparent;
+  font: bold 12px/1.3 Arial, sans-serif;
+  color: #545454;
+  margin: 0;
+  padding: 16px 0 0;
+  border: 0;
+  transition: all ease-in-out 0.15s;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div.fontList > .standardScrollbar ol.fonts > li > span:hover {
+  background: #B10000;
+  color: #fff;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div.fontList > .standardScrollbar ol.fonts > li.userDefined > .info {
+  width: 90%;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div.fontList > .standardScrollbar .noFonts {
+  display: none;
+  margin: 100px 0 0;
+  padding: 0;
+  border: 0;
+  font: bold 14px/1.3 Arial, sans-serif;
+  color: #666;
+  text-align: center;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div.fontList > .overlay {
+  display: block;
+  position: absolute;
+  top: 100%;
+  bottom: auto;
+  left: 0;
+  right: auto;
+  margin: 0;
+  padding: 120px 20px 20px;
+  border: 0;
+  background: rgba(0, 0, 0, 0.9);
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity ease-in-out 0.2s;
+  box-sizing: border-box;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div.fontList > .overlay.show {
+  top: 0;
+  opacity: 1;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div.fontList > .overlay p {
+  display: block;
+  margin: 10px 0 0;
+  padding: 0;
+  border: 0;
+  color: #fff;
+  font: 15px/1.3 Arial, sans-serif;
+  text-align: center;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div.fontList > .overlay > .actionsBar {
+  margin-top: 20px;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div.fontList > .overlay.fontSwap p label {
+  display: inline-block;
+  margin: 0 10px 0 0;
+  padding: 0;
+  border: 0;
+  color: #fff;
+  font: 15px/1.3 Arial, sans-serif;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div.fontList > .overlay.fontSwap p select {
+  max-width: 200px;
+  color: #333;
+  font: 14px/1.3 Arial, sans-serif;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div.addFont > div.field {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div.addFont > div.field > span.label {
+  display: inline-block;
+  margin: 0;
+  padding: 0 10px 0 0;
+  border: 0;
+  width: 200px;
+  text-align: right;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div.addFont > div.field > span.label > label {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  color: #333;
+  font: bold 16px/1.3 Arial, sans-serif;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div.addFont > div.field input.textInput,
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div.addFont > div.field label.textInput {
+  display: inline-block;
+  margin: 0;
+  padding: 2px 5px 3px;
+  border: 1px solid #CFCFCF;
+  border-radius: 4px;
+  outline: none !important;
+  font: 0/0 Arial, sans-serif;
+  cursor: text;
+  transition: all ease-in-out 0.2s;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div.addFont > div.field input.textInput:hover,
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div.addFont > div.field label.textInput:hover {
+  border-color: #aaa;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div.addFont > div.field input.textInput:focus, body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div.addFont > div.field input.textInput.focus,
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div.addFont > div.field label.textInput:focus,
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div.addFont > div.field label.textInput.focus {
+  border-color: #fff;
+  box-shadow: 0 0 3px #000, 0 9px 12px -9px rgba(0, 0, 0, 0.3) inset;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div.addFont > div.field input.textInput > .urlStart,
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div.addFont > div.field label.textInput > .urlStart {
+  display: inline-block;
+  margin: 0 1px 0 0;
+  padding: 0;
+  border: 0;
+  color: #A5A5A5;
+  font: 18px/1.3 Arial, sans-serif;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div.addFont > div.field input.textInput > input,
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div.addFont > div.field label.textInput > input {
+  display: inline-block;
+  font: 18px/1.3 Arial, sans-serif;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  outline: none !important;
+  width: 400px;
+  color: #333;
+  background: transparent;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div.addFont > div.field input.textInput {
+  font: 18px/1.3 Arial, sans-serif;
+  padding: 2px 5px 3px;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div.addFont > div.field.name {
+  margin-top: 90px;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div.addFont > div.field.url {
+  margin-top: 10px;
+}
+body > #EasyDNNstyleWizardModalWrapper.fontManager > div > div.wrapper > div > div.addFont > div.field.url > input {
+  width: 400px;
+}

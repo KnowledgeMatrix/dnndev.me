@@ -1,0 +1,487 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+SET XACT_ABORT ON
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+
+	-- Add Status to SalesOrderDetail
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrderDetail ADD Status int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrderDetail_Status DEFAULT 2
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrderDetail DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrderDetail_Status
+
+	-- Add SalesType
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant ADD SalesType int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ProductVariant_SalesType DEFAULT 1
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ProductVariant_SalesType
+
+	-- Add quote email and print templates
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		CommunicationSalesOrderQuoteEmailActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CommunicationSalesOrderQuoteEmailActive DEFAULT 1,
+		CommunicationSalesOrderQuoteEmailTemplate xml NULL,
+		CommunicationSalesOrderQuotePrintTemplate xml NULL
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CommunicationSalesOrderQuoteEmailActive
+
+	-- Add order update email template
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		CommunicationSalesOrderUpdateEmailActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CommunicationSalesOrderUpdateEmailActive DEFAULT 1,
+		CommunicationSalesOrderUpdateEmailTemplate xml NULL
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CommunicationSalesOrderUpdateEmailActive
+
+	-- Add GeneralCountryAllowed and GeneralCountryDefault columns
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD GeneralCountryAllowed varchar(1000) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_GeneralCountryAllowed DEFAULT 'AD|AE|AF|AG|AI|AL|AM|AN|AO|AQ|AR|AS|AT|AU|AW|AX|AZ|BA|BB|BD|BE|BF|BG|BH|BI|BJ|BL|BM|BN|BO|BR|BS|BT|BV|BW|BY|BZ|CA|CC|CD|CF|CG|CH|CI|CK|CL|CM|CN|CO|CR|CU|CV|CX|CY|CZ|DE|DJ|DK|DM|DO|DZ|EC|EE|EG|EH|ER|ES|ET|FI|FJ|FK|FM|FO|FR|GA|GB|GD|GE|GF|GG|GH|GI|GL|GM|GN|GP|GQ|GR|GS|GT|GU|GW|GY|HK|HM|HN|HR|HT|HU|ID|IE|IL|IM|IN|IO|IQ|IR|IS|IT|JE|JM|JO|JP|KE|KG|KH|KI|KM|KN|KP|KR|KW|KY|KZ|LA|LB|LC|LI|LK|LR|LS|LT|LU|LV|LY|MA|MC|MD|ME|MF|MG|MH|MK|ML|MM|MN|MO|MP|MQ|MR|MS|MT|MU|MV|MW|MX|MY|MZ|NA|NC|NE|NF|NG|NI|NL|NO|NP|NR|NU|NZ|OM|PA|PE|PF|PG|PH|PK|PL|PM|PN|PR|PS|PT|PW|PY|QA|RE|RO|RS|RU|RW|SA|SB|SC|SD|SE|SG|SH|SI|SJ|SK|SL|SM|SN|SO|SR|ST|SV|SY|SZ|TC|TD|TF|TG|TH|TJ|TK|TL|TM|TN|TO|TR|TT|TV|TW|TZ|UA|UG|UM|US|UY|UZ|VA|VC|VE|VG|VI|VN|VU|WF|WS|YE|YT|ZA|ZM|ZW|'
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_GeneralCountryAllowed
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD GeneralCountryDefault varchar(2) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_GeneralCountryDefault DEFAULT ''
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_GeneralCountryDefault
+
+	-- Add AdminNotes to RecurringSalesOrder table
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_RecurringSalesOrder ADD	AdminNotes nvarchar(4000) NULL
+
+	-- Add AdminNotes to SalesOrderDetail table
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrderDetail ADD AdminNotes nvarchar(4000) NULL
+
+	-- Add ProductBookingActive to Configuration table
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD ProductBookingActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductBookingActive DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductBookingActive
+
+	-- Add InventoryUnitType to ProductVariant table
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant ADD InventoryUnitType int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ProductVariant_InventoryUnitType DEFAULT 1
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ProductVariant_InventoryUnitType
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant ADD
+		MinOrderUnit int NULL,
+		MaxOrderUnit int NULL,
+		BookingRule xml NULL,
+		MinBookingDate datetime NULL,
+		MaxBookingDate datetime NULL,
+		MinBookingTime time(7) NULL,
+		MaxBookingTime time(7) NULL
+
+	-- Add booking dates to SalesOrderDetail table
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrderDetail ADD
+		BookingStartDate datetime NULL,
+		BookingStopDate datetime NULL
+
+	-- Add ProductVariantID index to SalesOrderDetail
+	CREATE NONCLUSTERED INDEX IX_{objectQualifier}Revindex_Storefront_SalesOrderDetail_2 ON {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrderDetail (ProductVariantID)
+	
+	-- Add DefaultCategory to ProductCategory table
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductCategory ADD	DefaultCategory bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ProductCategory_DefaultCategory DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductCategory DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ProductCategory_DefaultCategory
+
+	-- Support enabling custom report for non-host user
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD SecurityReportCustomActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_SecurityReportCustomActive DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_SecurityReportCustomActive
+
+	-- Support cart session logout option
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD CartSessionLogout bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CartSessionLogout DEFAULT 1
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CartSessionLogout
+
+COMMIT TRANSACTION
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+
+		-- Upgrade default Cart template to "Standard13"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CartDisplayTemplate = 'Standard13' WHERE CartDisplayTemplate LIKE 'Standard%'
+
+		-- Upgrade default CartSummary template to "Standard5"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CartSummaryDisplayTemplate = 'Standard5' WHERE CartSummaryDisplayTemplate LIKE 'Standard%'
+
+		-- Upgrade default Checkout template to "Standard22"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CheckoutDisplayTemplate = 'Standard22' WHERE CheckoutDisplayTemplate LIKE 'Standard%'
+
+		-- Upgrade default Confirmation template to "Standard13"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ConfirmationDisplayTemplate = 'Standard13' WHERE ConfirmationDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default ProductDetail template to "Standard17"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductDetailDisplayTemplate = 'Standard17' WHERE ProductDetailDisplayTemplate LIKE 'Standard%'
+
+		-- Upgrade default ProductList template to "Standard10"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductListDisplayTemplate = 'Standard10' WHERE ProductListDisplayTemplate LIKE 'Standard%'
+
+		-- Upgrade default ProductShowcase template to "Standard7"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductShowcaseDisplayTemplate = 'Standard7' WHERE ProductShowcaseDisplayTemplate LIKE 'Standard%'
+
+		-- Upgrade default QuickOrder template to "Standard4"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET QuickOrderDisplayTemplate = 'Standard4' WHERE QuickOrderDisplayTemplate LIKE 'Standard%'
+
+		-- Upgrade default WishList template to "Standard4"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET WishListDisplayTemplate = 'Standard4' WHERE WishListDisplayTemplate LIKE 'Standard%'
+
+		-- Set new email template for quotes
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CommunicationSalesOrderQuoteEmailTemplate = '<locale en-US="&lt;rule version=&quot;1.0&quot; type=&quot;data&quot;&gt;&amp;lt;data method=&quot;BasicSalesOrderQuoteEmail&quot; version=&quot;1.0&quot;&amp;gt;&#xD;&#xA;  &amp;lt;mailFrom&amp;gt;&amp;lt;/mailFrom&amp;gt;&#xD;&#xA;  &amp;lt;mailTo&amp;gt;&amp;lt;/mailTo&amp;gt;&#xD;&#xA;  &amp;lt;mailBcc&amp;gt;&amp;lt;/mailBcc&amp;gt;&#xD;&#xA;  &amp;lt;subject&amp;gt;[[xsl:value-of select=&quot;in/configuration/generalStoreName&quot; /]] Quote [[[xsl:value-of select=&quot;in/user/username&quot; /]] - Order #[[xsl:value-of select=&quot;in/salesOrder/salesOrderNumber&quot; /]]]&amp;lt;/subject&amp;gt;&#xD;&#xA;  &amp;lt;htmlBody&amp;gt;&amp;amp;lt;table border=&quot;0&quot; cellpadding=&quot;3&quot; cellspacing=&quot;0&quot; style=&quot;width: 100%&quot;&amp;amp;gt;&#xD;&#xA; &amp;amp;lt;tbody&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;tr&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td style=&quot;font-size: large;&quot;&amp;amp;gt;[[xsl:value-of select=&amp;amp;amp;quot;in/configuration/generalStoreName&amp;amp;amp;quot; /]] Quote&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;/tr&amp;amp;gt;&#xD;&#xA; &amp;amp;lt;/tbody&amp;amp;gt;&#xD;&#xA;&amp;amp;lt;/table&amp;amp;gt;&#xD;&#xA;&amp;amp;lt;br /&amp;amp;gt;&#xD;&#xA;Thank you for requesting a quote. We&amp;amp;amp;#39;ll contact you back as soon as we have reviewed your request. If you have any questions or need assistance, please do not hesitate to contact us.&amp;amp;lt;br /&amp;amp;gt;&#xD;&#xA;&amp;amp;amp;nbsp;&#xD;&#xA;&amp;amp;lt;table border=&quot;0&quot; cellpadding=&quot;0&quot; cellspacing=&quot;3&quot; style=&quot;width: 100%&quot;&amp;amp;gt;&#xD;&#xA; &amp;amp;lt;tbody&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;tr&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td&amp;amp;gt;&amp;amp;lt;strong&amp;amp;gt;Quote Number:&amp;amp;lt;/strong&amp;amp;gt;&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td&amp;amp;gt;[[xsl:value-of select=&amp;amp;amp;quot;in/salesOrder/salesOrderNumber&amp;amp;amp;quot; /]]&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;/tr&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;tr&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td&amp;amp;gt;&amp;amp;lt;strong&amp;amp;gt;Order Date:&amp;amp;lt;/strong&amp;amp;gt;&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td&amp;amp;gt;[[xsl:value-of select=&amp;amp;amp;quot;format-dateTime(in/salesOrder/orderDate, &amp;amp;amp;#39;[Y]-[M01]-[D01] [H01]:[m01]&amp;amp;amp;#39;)&amp;amp;amp;quot;/]]&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;/tr&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;tr&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td style=&quot;vertical-align: top;&quot;&amp;amp;gt;&amp;amp;lt;strong&amp;amp;gt;Bill To:&amp;amp;lt;/strong&amp;amp;gt;&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td&amp;amp;gt;[[xsl:value-of select=&amp;amp;amp;quot;in/salesOrder/billingCompany&amp;amp;amp;quot; /]]&amp;amp;lt;br /&amp;amp;gt;&#xD;&#xA;   [[xsl:value-of select=&amp;amp;amp;quot;in/salesOrder/billingFirstName&amp;amp;amp;quot; /]] [[xsl:value-of select=&amp;amp;amp;quot;in/salesOrder/billingLastName&amp;amp;amp;quot; /]]&amp;amp;lt;br /&amp;amp;gt;&#xD;&#xA;   [[xsl:value-of select=&amp;amp;amp;quot;in/salesOrder/billingStreet&amp;amp;amp;quot; /]], [[xsl:value-of select=&amp;amp;amp;quot;in/salesOrder/billingCity&amp;amp;amp;quot; /]], [[xsl:value-of select=&amp;amp;amp;quot;in/salesOrder/billingSubdivisionName&amp;amp;amp;quot; /]], [[xsl:value-of select=&amp;amp;amp;quot;in/salesOrder/billingPostalCode&amp;amp;amp;quot; /]], [[xsl:value-of select=&amp;amp;amp;quot;in/salesOrder/billingCountryName&amp;amp;amp;quot; /]]&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;/tr&amp;amp;gt;&#xD;&#xA; &amp;amp;lt;/tbody&amp;amp;gt;&#xD;&#xA;&amp;amp;lt;/table&amp;amp;gt;&#xD;&#xA;&amp;amp;amp;nbsp;&#xD;&#xA;&#xD;&#xA;&amp;amp;lt;table border=&quot;1&quot; cellpadding=&quot;3&quot; cellspacing=&quot;0&quot; style=&quot;width: 100%&quot;&amp;amp;gt;&#xD;&#xA; &amp;amp;lt;tbody&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;tr&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td style=&quot;width: 60%;&quot;&amp;amp;gt;&amp;amp;lt;strong&amp;amp;gt;Item&amp;amp;lt;/strong&amp;amp;gt;&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td style=&quot;width: 15%;&quot;&amp;amp;gt;&amp;amp;lt;strong&amp;amp;gt;Quantity&amp;amp;lt;/strong&amp;amp;gt;&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;/tr&amp;amp;gt;&#xD;&#xA; &amp;amp;lt;/tbody&amp;amp;gt;&#xD;&#xA;&amp;amp;lt;/table&amp;amp;gt;&#xD;&#xA;[[xsl:for-each select=&amp;amp;amp;quot;in/salesOrder/salesOrderDetails/salesOrderDetail[parentSalesOrderDetailID=&amp;amp;amp;#39;&amp;amp;amp;#39;]&amp;amp;amp;quot;]]&#xD;&#xA;&#xD;&#xA;&amp;amp;lt;table border=&quot;1&quot; cellpadding=&quot;3&quot; cellspacing=&quot;0&quot; style=&quot;width: 100%&quot;&amp;amp;gt;&#xD;&#xA; &amp;amp;lt;tbody&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;tr&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td style=&quot;width: 60%;&quot;&amp;amp;gt;[[xsl:value-of select=&amp;amp;amp;quot;productName&amp;amp;amp;quot; /]] - [[xsl:value-of select=&amp;amp;amp;quot;productVariantName&amp;amp;amp;quot; /]]&amp;amp;lt;br /&amp;amp;gt;&#xD;&#xA;   [[xsl:for-each select=&amp;amp;amp;quot;salesOrderDetails/salesOrderDetail&amp;amp;amp;quot;]]&amp;amp;amp;nbsp;&amp;amp;amp;nbsp;&amp;amp;amp;nbsp;&amp;amp;amp;nbsp;[[xsl:value-of select=&amp;amp;amp;quot;productName&amp;amp;amp;quot; /]] - [[xsl:value-of select=&amp;amp;amp;quot;productVariantName&amp;amp;amp;quot; /]]: [[xsl:value-of select=&amp;amp;amp;quot;quantity&amp;amp;amp;quot; /]]&amp;amp;lt;br /&amp;amp;gt;&#xD;&#xA;   [[/xsl:for-each]] [[xsl:for-each select=&amp;amp;amp;quot;dynamicFormResult/fields/field&amp;amp;amp;quot;]][[xsl:value-of select=&amp;amp;amp;quot;@id&amp;amp;amp;quot; /]]: [[xsl:value-of select=&amp;amp;amp;quot;.&amp;amp;amp;quot; /]], [[/xsl:for-each]]&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td style=&quot;width: 15%;&quot;&amp;amp;gt;[[xsl:value-of select=&amp;amp;amp;quot;quantity&amp;amp;amp;quot; /]]&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;/tr&amp;amp;gt;&#xD;&#xA; &amp;amp;lt;/tbody&amp;amp;gt;&#xD;&#xA;&amp;amp;lt;/table&amp;amp;gt;&#xD;&#xA;[[/xsl:for-each]]&#xD;&#xA;&#xD;&#xA;&amp;amp;lt;p&amp;amp;gt;[[xsl:for-each select=&amp;amp;amp;quot;in/salesOrder/dynamicFormResult/fields/field&amp;amp;amp;quot;]][[xsl:value-of select=&amp;amp;amp;quot;@id&amp;amp;amp;quot; /]]: [[xsl:value-of select=&amp;amp;amp;quot;.&amp;amp;amp;quot; /]], [[/xsl:for-each]]&amp;amp;amp;nbsp;&amp;amp;lt;/p&amp;amp;gt;&#xD;&#xA;&amp;lt;/htmlBody&amp;gt;&#xD;&#xA;&amp;lt;/data&amp;gt;&lt;/rule&gt;" />'
+
+		-- Set new print template for quotes
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CommunicationSalesOrderQuotePrintTemplate = '<locale en-US="&lt;rule version=&quot;1.0&quot; type=&quot;data&quot;&gt;&amp;lt;data method=&quot;BasicSalesOrderQuotePrint&quot; version=&quot;1.0&quot;&amp;gt;&#xD;&#xA;  &amp;lt;title&amp;gt;[[xsl:value-of select=&quot;in/configuration/generalStoreName&quot; /]] Quote [[[xsl:value-of select=&quot;in/user/username&quot; /]] - Order #[[xsl:value-of select=&quot;in/salesOrder/salesOrderNumber&quot; /]]]&amp;lt;/title&amp;gt;&#xD;&#xA;  &amp;lt;htmlBody&amp;gt;&amp;amp;lt;table border=&quot;0&quot; cellpadding=&quot;3&quot; cellspacing=&quot;0&quot; style=&quot;width: 100%&quot;&amp;amp;gt;&#xD;&#xA; &amp;amp;lt;tbody&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;tr&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td style=&quot;font-size: large;&quot;&amp;amp;gt;[[xsl:value-of select=&amp;amp;amp;quot;in/configuration/generalStoreName&amp;amp;amp;quot; /]] Quote&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;/tr&amp;amp;gt;&#xD;&#xA; &amp;amp;lt;/tbody&amp;amp;gt;&#xD;&#xA;&amp;amp;lt;/table&amp;amp;gt;&#xD;&#xA;&amp;amp;lt;br /&amp;amp;gt;&#xD;&#xA;Thank you for requesting a quote. We&amp;amp;amp;#39;ll contact you back as soon we have reviewed your request. If you have any questions or need assistance, please do not hesitate to contact us.&amp;amp;lt;br /&amp;amp;gt;&#xD;&#xA;&amp;amp;amp;nbsp;&#xD;&#xA;&amp;amp;lt;table border=&quot;0&quot; cellpadding=&quot;0&quot; cellspacing=&quot;3&quot; style=&quot;width: 100%&quot;&amp;amp;gt;&#xD;&#xA; &amp;amp;lt;tbody&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;tr&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td&amp;amp;gt;&amp;amp;lt;strong&amp;amp;gt;Quote Number:&amp;amp;lt;/strong&amp;amp;gt;&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td&amp;amp;gt;[[xsl:value-of select=&amp;amp;amp;quot;in/salesOrder/salesOrderNumber&amp;amp;amp;quot; /]]&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;/tr&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;tr&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td&amp;amp;gt;&amp;amp;lt;strong&amp;amp;gt;Order Date:&amp;amp;lt;/strong&amp;amp;gt;&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td&amp;amp;gt;[[xsl:value-of select=&amp;amp;amp;quot;format-dateTime(in/salesOrder/orderDate, &amp;amp;amp;#39;[Y]-[M01]-[D01] [H01]:[m01]&amp;amp;amp;#39;)&amp;amp;amp;quot;/]]&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;/tr&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;tr&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td style=&quot;vertical-align: top;&quot;&amp;amp;gt;&amp;amp;lt;strong&amp;amp;gt;Bill To:&amp;amp;lt;/strong&amp;amp;gt;&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td&amp;amp;gt;[[xsl:value-of select=&amp;amp;amp;quot;in/salesOrder/billingCompany&amp;amp;amp;quot; /]]&amp;amp;lt;br /&amp;amp;gt;&#xD;&#xA;   [[xsl:value-of select=&amp;amp;amp;quot;in/salesOrder/billingFirstName&amp;amp;amp;quot; /]] [[xsl:value-of select=&amp;amp;amp;quot;in/salesOrder/billingLastName&amp;amp;amp;quot; /]]&amp;amp;lt;br /&amp;amp;gt;&#xD;&#xA;   [[xsl:value-of select=&amp;amp;amp;quot;in/salesOrder/billingStreet&amp;amp;amp;quot; /]], [[xsl:value-of select=&amp;amp;amp;quot;in/salesOrder/billingCity&amp;amp;amp;quot; /]], [[xsl:value-of select=&amp;amp;amp;quot;in/salesOrder/billingSubdivisionName&amp;amp;amp;quot; /]], [[xsl:value-of select=&amp;amp;amp;quot;in/salesOrder/billingPostalCode&amp;amp;amp;quot; /]], [[xsl:value-of select=&amp;amp;amp;quot;in/salesOrder/billingCountryName&amp;amp;amp;quot; /]]&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;/tr&amp;amp;gt;&#xD;&#xA; &amp;amp;lt;/tbody&amp;amp;gt;&#xD;&#xA;&amp;amp;lt;/table&amp;amp;gt;&#xD;&#xA;&amp;amp;amp;nbsp;&#xD;&#xA;&#xD;&#xA;&amp;amp;lt;table border=&quot;1&quot; cellpadding=&quot;3&quot; cellspacing=&quot;0&quot; style=&quot;width: 100%&quot;&amp;amp;gt;&#xD;&#xA; &amp;amp;lt;tbody&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;tr&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td style=&quot;width: 60%;&quot;&amp;amp;gt;&amp;amp;lt;strong&amp;amp;gt;Item&amp;amp;lt;/strong&amp;amp;gt;&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td style=&quot;width: 15%;&quot;&amp;amp;gt;&amp;amp;lt;strong&amp;amp;gt;Quantity&amp;amp;lt;/strong&amp;amp;gt;&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;/tr&amp;amp;gt;&#xD;&#xA; &amp;amp;lt;/tbody&amp;amp;gt;&#xD;&#xA;&amp;amp;lt;/table&amp;amp;gt;&#xD;&#xA;[[xsl:for-each select=&amp;amp;amp;quot;in/salesOrder/salesOrderDetails/salesOrderDetail[parentSalesOrderDetailID=&amp;amp;amp;#39;&amp;amp;amp;#39;]&amp;amp;amp;quot;]]&#xD;&#xA;&#xD;&#xA;&amp;amp;lt;table border=&quot;1&quot; cellpadding=&quot;3&quot; cellspacing=&quot;0&quot; style=&quot;width: 100%&quot;&amp;amp;gt;&#xD;&#xA; &amp;amp;lt;tbody&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;tr&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td style=&quot;width: 60%;&quot;&amp;amp;gt;[[xsl:value-of select=&amp;amp;amp;quot;productName&amp;amp;amp;quot; /]] - [[xsl:value-of select=&amp;amp;amp;quot;productVariantName&amp;amp;amp;quot; /]]&amp;amp;lt;br /&amp;amp;gt;&#xD;&#xA;   [[xsl:for-each select=&amp;amp;amp;quot;salesOrderDetails/salesOrderDetail&amp;amp;amp;quot;]]&amp;amp;amp;nbsp;&amp;amp;amp;nbsp;&amp;amp;amp;nbsp;&amp;amp;amp;nbsp;[[xsl:value-of select=&amp;amp;amp;quot;productName&amp;amp;amp;quot; /]] - [[xsl:value-of select=&amp;amp;amp;quot;productVariantName&amp;amp;amp;quot; /]]: [[xsl:value-of select=&amp;amp;amp;quot;quantity&amp;amp;amp;quot; /]]&amp;amp;lt;br /&amp;amp;gt;&#xD;&#xA;   [[/xsl:for-each]] [[xsl:for-each select=&amp;amp;amp;quot;dynamicFormResult/fields/field&amp;amp;amp;quot;]][[xsl:value-of select=&amp;amp;amp;quot;@id&amp;amp;amp;quot; /]]: [[xsl:value-of select=&amp;amp;amp;quot;.&amp;amp;amp;quot; /]], [[/xsl:for-each]]&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td style=&quot;width: 15%;&quot;&amp;amp;gt;[[xsl:value-of select=&amp;amp;amp;quot;quantity&amp;amp;amp;quot; /]]&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;/tr&amp;amp;gt;&#xD;&#xA; &amp;amp;lt;/tbody&amp;amp;gt;&#xD;&#xA;&amp;amp;lt;/table&amp;amp;gt;&#xD;&#xA;[[/xsl:for-each]]&#xD;&#xA;&#xD;&#xA;&amp;amp;lt;p&amp;amp;gt;[[xsl:for-each select=&amp;amp;amp;quot;in/salesOrder/dynamicFormResult/fields/field&amp;amp;amp;quot;]][[xsl:value-of select=&amp;amp;amp;quot;@id&amp;amp;amp;quot; /]]: [[xsl:value-of select=&amp;amp;amp;quot;.&amp;amp;amp;quot; /]], [[/xsl:for-each]]&amp;amp;amp;nbsp;&amp;amp;lt;/p&amp;amp;gt;&#xD;&#xA;&amp;lt;/htmlBody&amp;gt;&#xD;&#xA;&amp;lt;/data&amp;gt;&lt;/rule&gt;" />'
+
+		-- Set new email template for updates
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CommunicationSalesOrderUpdateEmailTemplate = '<locale en-US="&lt;rule version=&quot;1.0&quot; type=&quot;data&quot;&gt;&amp;lt;data method=&quot;BasicSalesOrderUpdateEmail&quot; version=&quot;1.0&quot;&amp;gt;&#xD;&#xA;  &amp;lt;mailFrom&amp;gt;&amp;lt;/mailFrom&amp;gt;&#xD;&#xA;  &amp;lt;mailTo&amp;gt;[[xsl:if test=&quot;in/salesOrder/shippingStatus = 3 and in/salesOrder/previousShippingStatus != in/salesOrder/shippingStatus&quot; ]][[xsl:value-of select=&quot;in/user/email&quot; /]][[/xsl:if]]&amp;lt;/mailTo&amp;gt;&#xD;&#xA;  &amp;lt;mailBcc&amp;gt;&amp;lt;/mailBcc&amp;gt;&#xD;&#xA;  &amp;lt;subject&amp;gt;[[xsl:value-of select=&quot;in/configuration/generalStoreName&quot; /]] Update [[[xsl:value-of select=&quot;in/user/username&quot; /]] - Order #[[xsl:value-of select=&quot;in/salesOrder/salesOrderNumber&quot; /]]]&amp;lt;/subject&amp;gt;&#xD;&#xA;  &amp;lt;htmlBody&amp;gt;Hi [[xsl:if test=&amp;amp;amp;quot;in/user/profile/profileProperties/FirstName&amp;amp;amp;quot; ]] [[xsl:value-of select=&amp;amp;amp;quot;in/user/profile/profileProperties/FirstName&amp;amp;amp;quot; /]]&amp;amp;amp;nbsp;[[xsl:value-of select=&amp;amp;amp;quot;in/user/profile/profileProperties/LastName&amp;amp;amp;quot; /]][[/xsl:if]],&#xD;&#xA;&amp;amp;lt;p&amp;amp;gt;&amp;amp;lt;br /&amp;amp;gt;&#xD;&#xA;We&amp;amp;amp;#39;re happy to inform that your recent order has shipped and is on its way to you. Please [[xsl:variable name=&amp;amp;amp;quot;ManageOrderUrl&amp;amp;amp;quot; select=&amp;amp;amp;quot;concat(&amp;amp;amp;#39;http://&amp;amp;amp;#39;, in/portal/portalAliases/portalAlias[isPrimary=&amp;amp;amp;#39;true&amp;amp;amp;#39;][1]/httpAlias, &amp;amp;amp;#39;?tabid=&amp;amp;amp;#39;, in/portal/manageOrderTabs/tab[1]/tabID, &amp;amp;amp;#39;&amp;amp;amp;amp;rvdsfsoguid=&amp;amp;amp;#39;, in/salesOrder/salesOrderGUID)&amp;amp;amp;quot; /]] &amp;amp;lt;a href=&quot;[[xsl:value-of select=''$ManageOrderUrl'' /]]&quot;&amp;amp;gt;click here&amp;amp;lt;/a&amp;amp;gt;&amp;amp;amp;nbsp;to monitor up-to-date progress of your order. If you have any questions or need assistance, please do not hesitate to contact us.&amp;amp;lt;/p&amp;amp;gt;&#xD;&#xA;&#xD;&#xA;&amp;amp;lt;p&amp;amp;gt;[[xsl:if test=&amp;amp;amp;quot;in/salesOrder/shippingTrackingCode&amp;amp;amp;quot; ]]Please use this&amp;amp;amp;nbsp;tracking code to follow the progress of your shipping with your selected shipping provider:&amp;amp;amp;nbsp;&amp;amp;lt;strong&amp;amp;gt;[[xsl:value-of select=&amp;amp;amp;quot;in/salesOrder/shippingTrackingCode&amp;amp;amp;quot; /]]&amp;amp;lt;/strong&amp;amp;gt;[[/xsl:if]]&amp;amp;lt;/p&amp;amp;gt;&#xD;&#xA;&#xD;&#xA;&amp;amp;lt;table border=&quot;0&quot; cellpadding=&quot;0&quot; cellspacing=&quot;3&quot; style=&quot;width: 100%&quot;&amp;amp;gt;&#xD;&#xA; &amp;amp;lt;tbody&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;tr&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td&amp;amp;gt;&amp;amp;lt;strong&amp;amp;gt;Order Number:&amp;amp;lt;/strong&amp;amp;gt;&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td&amp;amp;gt;[[xsl:value-of select=&amp;amp;amp;quot;in/salesOrder/salesOrderNumber&amp;amp;amp;quot; /]]&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;/tr&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;tr&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td&amp;amp;gt;&amp;amp;lt;strong&amp;amp;gt;Order Date:&amp;amp;lt;/strong&amp;amp;gt;&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td&amp;amp;gt;[[xsl:value-of select=&amp;amp;amp;quot;format-dateTime(in/salesOrder/orderDate, &amp;amp;amp;#39;[Y]-[M01]-[D01] [H01]:[m01]&amp;amp;amp;#39;)&amp;amp;amp;quot;/]]&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;/tr&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;tr&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td style=&quot;vertical-align: top;&quot;&amp;amp;gt;&amp;amp;lt;strong&amp;amp;gt;Bill To:&amp;amp;lt;/strong&amp;amp;gt;&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td&amp;amp;gt;[[xsl:value-of select=&amp;amp;amp;quot;in/salesOrder/billingCompany&amp;amp;amp;quot; /]]&amp;amp;lt;br /&amp;amp;gt;&#xD;&#xA;   [[xsl:value-of select=&amp;amp;amp;quot;in/salesOrder/billingFirstName&amp;amp;amp;quot; /]] [[xsl:value-of select=&amp;amp;amp;quot;in/salesOrder/billingLastName&amp;amp;amp;quot; /]]&amp;amp;lt;br /&amp;amp;gt;&#xD;&#xA;   [[xsl:value-of select=&amp;amp;amp;quot;in/salesOrder/billingStreet&amp;amp;amp;quot; /]], [[xsl:value-of select=&amp;amp;amp;quot;in/salesOrder/billingCity&amp;amp;amp;quot; /]], [[xsl:value-of select=&amp;amp;amp;quot;in/salesOrder/billingSubdivisionName&amp;amp;amp;quot; /]], [[xsl:value-of select=&amp;amp;amp;quot;in/salesOrder/billingPostalCode&amp;amp;amp;quot; /]], [[xsl:value-of select=&amp;amp;amp;quot;in/salesOrder/billingCountryName&amp;amp;amp;quot; /]]&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;/tr&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;tr&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td style=&quot;vertical-align: top;&quot;&amp;amp;gt;&amp;amp;lt;strong&amp;amp;gt;Ship To:&amp;amp;lt;/strong&amp;amp;gt;&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td&amp;amp;gt;[[xsl:value-of select=&amp;amp;amp;quot;in/salesOrder/shippingCompany&amp;amp;amp;quot; /]]&amp;amp;lt;br /&amp;amp;gt;&#xD;&#xA;   [[xsl:value-of select=&amp;amp;amp;quot;in/salesOrder/shippingFirstName&amp;amp;amp;quot; /]] [[xsl:value-of select=&amp;amp;amp;quot;in/salesOrder/shippingLastName&amp;amp;amp;quot; /]]&amp;amp;lt;br /&amp;amp;gt;&#xD;&#xA;   [[xsl:value-of select=&amp;amp;amp;quot;in/salesOrder/shippingStreet&amp;amp;amp;quot; /]], [[xsl:value-of select=&amp;amp;amp;quot;in/salesOrder/shippingCity&amp;amp;amp;quot; /]], [[xsl:value-of select=&amp;amp;amp;quot;in/salesOrder/shippingSubdivisionName&amp;amp;amp;quot; /]], [[xsl:value-of select=&amp;amp;amp;quot;in/salesOrder/shippingPostalCode&amp;amp;amp;quot; /]], [[xsl:value-of select=&amp;amp;amp;quot;in/salesOrder/shippingCountryName&amp;amp;amp;quot; /]]&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;/tr&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;tr&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td style=&quot;vertical-align: top;&quot;&amp;amp;gt;&amp;amp;lt;strong&amp;amp;gt;Shipping:&amp;amp;lt;/strong&amp;amp;gt;&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td&amp;amp;gt;[[xsl:value-of select=&amp;amp;amp;quot;in/salesOrder/shippingMethod/name&amp;amp;amp;quot; /]]&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;/tr&amp;amp;gt;&#xD;&#xA; &amp;amp;lt;/tbody&amp;amp;gt;&#xD;&#xA;&amp;amp;lt;/table&amp;amp;gt;&#xD;&#xA;&amp;amp;amp;nbsp;&#xD;&#xA;&#xD;&#xA;&amp;amp;lt;table border=&quot;1&quot; cellpadding=&quot;3&quot; cellspacing=&quot;0&quot; style=&quot;width: 100%&quot;&amp;amp;gt;&#xD;&#xA; &amp;amp;lt;tbody&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;tr&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td style=&quot;width: 60%;&quot;&amp;amp;gt;&amp;amp;lt;strong&amp;amp;gt;Item&amp;amp;lt;/strong&amp;amp;gt;&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td style=&quot;width: 15%;&quot;&amp;amp;gt;&amp;amp;lt;strong&amp;amp;gt;Quantity&amp;amp;lt;/strong&amp;amp;gt;&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;/tr&amp;amp;gt;&#xD;&#xA; &amp;amp;lt;/tbody&amp;amp;gt;&#xD;&#xA;&amp;amp;lt;/table&amp;amp;gt;&#xD;&#xA;[[xsl:for-each select=&amp;amp;amp;quot;in/salesOrder/salesOrderDetails/salesOrderDetail[parentSalesOrderDetailID=&amp;amp;amp;#39;&amp;amp;amp;#39;]&amp;amp;amp;quot;]]&#xD;&#xA;&#xD;&#xA;&amp;amp;lt;table border=&quot;1&quot; cellpadding=&quot;3&quot; cellspacing=&quot;0&quot; style=&quot;width: 100%&quot;&amp;amp;gt;&#xD;&#xA; &amp;amp;lt;tbody&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;tr&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td style=&quot;width: 60%;&quot;&amp;amp;gt;[[xsl:value-of select=&amp;amp;amp;quot;productName&amp;amp;amp;quot; /]] - [[xsl:value-of select=&amp;amp;amp;quot;productVariantName&amp;amp;amp;quot; /]]&amp;amp;lt;br /&amp;amp;gt;&#xD;&#xA;   [[xsl:for-each select=&amp;amp;amp;quot;salesOrderDetails/salesOrderDetail&amp;amp;amp;quot;]]&amp;amp;amp;nbsp;&amp;amp;amp;nbsp;&amp;amp;amp;nbsp;&amp;amp;amp;nbsp;[[xsl:value-of select=&amp;amp;amp;quot;productName&amp;amp;amp;quot; /]] - [[xsl:value-of select=&amp;amp;amp;quot;productVariantName&amp;amp;amp;quot; /]]: [[xsl:value-of select=&amp;amp;amp;quot;quantity&amp;amp;amp;quot; /]]&amp;amp;lt;br /&amp;amp;gt;&#xD;&#xA;   [[/xsl:for-each]] [[xsl:for-each select=&amp;amp;amp;quot;dynamicFormResult/fields/field&amp;amp;amp;quot;]][[xsl:value-of select=&amp;amp;amp;quot;@id&amp;amp;amp;quot; /]]: [[xsl:value-of select=&amp;amp;amp;quot;.&amp;amp;amp;quot; /]], [[/xsl:for-each]]&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td style=&quot;width: 15%;&quot;&amp;amp;gt;[[xsl:value-of select=&amp;amp;amp;quot;quantity&amp;amp;amp;quot; /]]&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;/tr&amp;amp;gt;&#xD;&#xA; &amp;amp;lt;/tbody&amp;amp;gt;&#xD;&#xA;&amp;amp;lt;/table&amp;amp;gt;&#xD;&#xA;[[/xsl:for-each]]&#xD;&#xA;&#xD;&#xA;&amp;amp;lt;p&amp;amp;gt;[[xsl:for-each select=&amp;amp;amp;quot;in/salesOrder/dynamicFormResult/fields/field&amp;amp;amp;quot;]][[xsl:value-of select=&amp;amp;amp;quot;@id&amp;amp;amp;quot; /]]: [[xsl:value-of select=&amp;amp;amp;quot;.&amp;amp;amp;quot; /]], [[/xsl:for-each]]&amp;amp;amp;nbsp;&amp;amp;lt;/p&amp;amp;gt;&#xD;&#xA;&amp;amp;amp;nbsp;&amp;lt;/htmlBody&amp;gt;&#xD;&#xA;&amp;lt;/data&amp;gt;&lt;/rule&gt;" />'
+
+		-- Update globalization regions to match new
+		-- DNN and ISO region codes
+		CREATE TABLE #Subdvisions
+		(
+		  OldCode VARCHAR(6), 
+		  NewCode VARCHAR(6)
+		)
+
+		INSERT INTO #Subdvisions VALUES ('AG-X2', 'AG-11')
+		INSERT INTO #Subdvisions VALUES ('BI-BJ', 'BI-BM')
+		INSERT INTO #Subdvisions VALUES ('BY-X1', '')
+		INSERT INTO #Subdvisions VALUES ('CN-71', '')
+		INSERT INTO #Subdvisions VALUES ('CV-CS', '')
+		INSERT INTO #Subdvisions VALUES ('CV-SN', '')
+		INSERT INTO #Subdvisions VALUES ('DK-015', '')
+		INSERT INTO #Subdvisions VALUES ('DK-020', '')
+		INSERT INTO #Subdvisions VALUES ('DK-025', '')
+		INSERT INTO #Subdvisions VALUES ('DK-030', '')
+		INSERT INTO #Subdvisions VALUES ('DK-035', '')
+		INSERT INTO #Subdvisions VALUES ('DK-040', '')
+		INSERT INTO #Subdvisions VALUES ('DK-042', '')
+		INSERT INTO #Subdvisions VALUES ('DK-050', '')
+		INSERT INTO #Subdvisions VALUES ('DK-055', '')
+		INSERT INTO #Subdvisions VALUES ('DK-060', '')
+		INSERT INTO #Subdvisions VALUES ('DK-065', '')
+		INSERT INTO #Subdvisions VALUES ('DK-070', '')
+		INSERT INTO #Subdvisions VALUES ('DK-076', '')
+		INSERT INTO #Subdvisions VALUES ('DK-080', 'DK-81')
+		INSERT INTO #Subdvisions VALUES ('DK-101', '')
+		INSERT INTO #Subdvisions VALUES ('DK-147', '')
+		INSERT INTO #Subdvisions VALUES ('EC-X1', 'EC-SE')
+		INSERT INTO #Subdvisions VALUES ('EC-X2', 'EC-SD')
+		INSERT INTO #Subdvisions VALUES ('GB-CHS', 'GB-CHE')
+		INSERT INTO #Subdvisions VALUES ('GB-IOS', '')
+		INSERT INTO #Subdvisions VALUES ('HU-X1', '')
+		INSERT INTO #Subdvisions VALUES ('ID-X1', 'ID-PA')
+		INSERT INTO #Subdvisions VALUES ('IS-0', '')
+		INSERT INTO #Subdvisions VALUES ('IT-FO', 'IT-FC')
+		INSERT INTO #Subdvisions VALUES ('IT-MA', 'IT-VS')
+		INSERT INTO #Subdvisions VALUES ('IT-OL', 'IT-OT')
+		INSERT INTO #Subdvisions VALUES ('IT-PS', 'IT-PU')
+		INSERT INTO #Subdvisions VALUES ('KP-X1', 'KP-NAJ')
+		INSERT INTO #Subdvisions VALUES ('KZ-BAY', '')
+		INSERT INTO #Subdvisions VALUES ('LR-X1', 'LR-GP')
+		INSERT INTO #Subdvisions VALUES ('LR-X2', 'LR-RG')
+		INSERT INTO #Subdvisions VALUES ('LY-AJ', '')
+		INSERT INTO #Subdvisions VALUES ('LY-BW', '')
+		INSERT INTO #Subdvisions VALUES ('LY-GD', '')
+		INSERT INTO #Subdvisions VALUES ('LY-GR', '')
+		INSERT INTO #Subdvisions VALUES ('LY-HZ', '')
+		INSERT INTO #Subdvisions VALUES ('LY-JB', '')
+		INSERT INTO #Subdvisions VALUES ('LY-MZ', '')
+		INSERT INTO #Subdvisions VALUES ('LY-QB', '')
+		INSERT INTO #Subdvisions VALUES ('LY-QT', '')
+		INSERT INTO #Subdvisions VALUES ('LY-SH', '')
+		INSERT INTO #Subdvisions VALUES ('LY-SS', '')
+		INSERT INTO #Subdvisions VALUES ('LY-TM', '')
+		INSERT INTO #Subdvisions VALUES ('LY-TN', '')
+		INSERT INTO #Subdvisions VALUES ('LY-YJ', '')
+		INSERT INTO #Subdvisions VALUES ('MA-BAH', 'MA-CHT')
+		INSERT INTO #Subdvisions VALUES ('MA-MAR', 'MA-MMD')
+		INSERT INTO #Subdvisions VALUES ('MA-MEL', 'MA-INE')
+		INSERT INTO #Subdvisions VALUES ('MA-RBA', 'MA-RAB')
+		INSERT INTO #Subdvisions VALUES ('MA-X1', 'MA-LAA')
+		INSERT INTO #Subdvisions VALUES ('MD-CH', 'MD-CU')
+		INSERT INTO #Subdvisions VALUES ('MD-LA', '')
+		INSERT INTO #Subdvisions VALUES ('MD-SN', '')
+		INSERT INTO #Subdvisions VALUES ('MD-TI', '')
+		INSERT INTO #Subdvisions VALUES ('MK-X1', '')
+		INSERT INTO #Subdvisions VALUES ('MV-X1', '')
+		INSERT INTO #Subdvisions VALUES ('MZ-MPM', 'MZ-L')
+		INSERT INTO #Subdvisions VALUES ('NZ-X1', '')
+		INSERT INTO #Subdvisions VALUES ('OM-JA', 'OM-ZU')
+		INSERT INTO #Subdvisions VALUES ('OM-X1', 'OM-BU')
+		INSERT INTO #Subdvisions VALUES ('PA-0', '')
+		INSERT INTO #Subdvisions VALUES ('PE-X1', 'PE-LIM')
+		INSERT INTO #Subdvisions VALUES ('PH-MNL', 'PH-RIZ')
+		INSERT INTO #Subdvisions VALUES ('PH-X1', 'PH-DIN')
+		INSERT INTO #Subdvisions VALUES ('PH-X2', '')
+		INSERT INTO #Subdvisions VALUES ('QA-X1', '')
+		INSERT INTO #Subdvisions VALUES ('RU-AGB', '')
+		INSERT INTO #Subdvisions VALUES ('RU-CHI', '')
+		INSERT INTO #Subdvisions VALUES ('RU-EVE', '')
+		INSERT INTO #Subdvisions VALUES ('RU-KOR', '')
+		INSERT INTO #Subdvisions VALUES ('RU-TAY', '')
+		INSERT INTO #Subdvisions VALUES ('RU-UOB', '')
+		INSERT INTO #Subdvisions VALUES ('RU-X1', 'RU-KO')
+		INSERT INTO #Subdvisions VALUES ('SH-SH', 'SH-HL')
+		INSERT INTO #Subdvisions VALUES ('TD-BET', 'TD-BO')
+		INSERT INTO #Subdvisions VALUES ('TF-X1', '')
+		INSERT INTO #Subdvisions VALUES ('TF-X2', '')
+		INSERT INTO #Subdvisions VALUES ('TF-X3', '')
+		INSERT INTO #Subdvisions VALUES ('TF-X4', '')
+		INSERT INTO #Subdvisions VALUES ('TJ-X1', '')
+		INSERT INTO #Subdvisions VALUES ('TM-X', '')
+		INSERT INTO #Subdvisions VALUES ('UY-X1', '')
+		INSERT INTO #Subdvisions VALUES ('UY-X2', '')
+		INSERT INTO #Subdvisions VALUES ('UY-X3', '')
+
+		UPDATE src SET src.GeneralStoreSubdivisionCode = sub.NewCode
+		FROM #Subdvisions AS sub
+		JOIN {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration src
+		ON sub.OldCode COLLATE DATABASE_DEFAULT = src.GeneralStoreSubdivisionCode COLLATE DATABASE_DEFAULT
+
+		UPDATE src SET src.ShippingSubdivisionCode = sub.NewCode
+		FROM #Subdvisions AS sub
+		JOIN {databaseOwner}{objectQualifier}Revindex_Storefront_RecurringSalesOrder src
+		ON sub.OldCode COLLATE DATABASE_DEFAULT = src.ShippingSubdivisionCode COLLATE DATABASE_DEFAULT
+
+		UPDATE src SET src.BillingSubdivisionCode = sub.NewCode
+		FROM #Subdvisions AS sub
+		JOIN {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder src
+		ON sub.OldCode COLLATE DATABASE_DEFAULT = src.BillingSubdivisionCode COLLATE DATABASE_DEFAULT
+
+		UPDATE src SET src.ShippingSubdivisionCode = sub.NewCode
+		FROM #Subdvisions AS sub
+		JOIN {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder src
+		ON sub.OldCode COLLATE DATABASE_DEFAULT = src.ShippingSubdivisionCode COLLATE DATABASE_DEFAULT
+
+		UPDATE src SET src.SubdivisionCode = sub.NewCode
+		FROM #Subdvisions AS sub
+		JOIN {databaseOwner}{objectQualifier}Revindex_Storefront_SalesPayment src
+		ON sub.OldCode COLLATE DATABASE_DEFAULT = src.SubdivisionCode COLLATE DATABASE_DEFAULT
+
+		UPDATE src SET src.SubdivisionCode = sub.NewCode
+		FROM #Subdvisions AS sub
+		JOIN {databaseOwner}{objectQualifier}Revindex_Storefront_Seller src
+		ON sub.OldCode COLLATE DATABASE_DEFAULT = src.SubdivisionCode COLLATE DATABASE_DEFAULT
+
+		UPDATE src SET src.SubdivisionCode = sub.NewCode
+		FROM #Subdvisions AS sub
+		JOIN {databaseOwner}{objectQualifier}Revindex_Storefront_UserAddress src
+		ON sub.OldCode COLLATE DATABASE_DEFAULT = src.SubdivisionCode COLLATE DATABASE_DEFAULT
+
+		UPDATE src SET src.SubdivisionCode = sub.NewCode
+		FROM #Subdvisions AS sub
+		JOIN {databaseOwner}{objectQualifier}Revindex_Storefront_UserPayment src
+		ON sub.OldCode COLLATE DATABASE_DEFAULT = src.SubdivisionCode COLLATE DATABASE_DEFAULT
+
+		UPDATE src SET src.SubdivisionCode = sub.NewCode
+		FROM #Subdvisions AS sub
+		JOIN {databaseOwner}{objectQualifier}Revindex_Storefront_Warehouse src
+		ON sub.OldCode COLLATE DATABASE_DEFAULT = src.SubdivisionCode COLLATE DATABASE_DEFAULT
+
+		UPDATE src SET src.EventSubdivisionCode = sub.NewCode
+		FROM #Subdvisions AS sub
+		JOIN {databaseOwner}{objectQualifier}Revindex_Storefront_WishList src
+		ON sub.OldCode COLLATE DATABASE_DEFAULT = src.EventSubdivisionCode COLLATE DATABASE_DEFAULT
+
+		UPDATE src SET src.ShippingSubdivisionCode = sub.NewCode
+		FROM #Subdvisions AS sub
+		JOIN {databaseOwner}{objectQualifier}Revindex_Storefront_WishList src
+		ON sub.OldCode COLLATE DATABASE_DEFAULT = src.ShippingSubdivisionCode COLLATE DATABASE_DEFAULT
+
+		DROP TABLE #Subdvisions
+
+		-- Update Sales orders by date report
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ReportDefinition
+		SET DefinitionRule = N'<rule version="1.0" type="data">&lt;data method="ReportDefinition" version="1.0"&gt;
+  &lt;dataSources&gt;
+    &lt;sqlDataSource&gt;
+      &lt;query&gt;SELECT 
+			so.OrderDate,
+			so.SalesOrderID,
+			CASE so.Status
+				WHEN 1 THEN ''Pending''
+				WHEN 2 THEN ''Ordered''
+				WHEN 3 THEN ''Processing''
+				WHEN 4 THEN ''Completed''
+				WHEN 5 THEN ''Cancelled''
+				WHEN 6 THEN ''Declined''
+				WHEN 7 THEN ''Incomplete''
+				WHEN 8 THEN ''Preordered''
+				WHEN 9 THEN ''Quoted''
+				ELSE ''Unknown''
+			END AS [Status],
+			CASE so.SalesPaymentStatus
+				WHEN 1 THEN ''Pending''
+				WHEN 2 THEN ''Paid''
+				WHEN 3 THEN ''Cancelled''
+				WHEN 4 THEN ''Refunded''
+				WHEN 5 THEN ''Declined''
+				WHEN 6 THEN ''Incomplete''
+				ELSE ''Unknown''
+			END AS [SalesPaymentStatus],
+			CASE so.ShippingStatus
+				WHEN 1 THEN ''Not required''
+				WHEN 2 THEN ''Not shipped''
+				WHEN 3 THEN ''Shipped''
+				WHEN 4 THEN ''Undeliverable''
+				WHEN 5 THEN ''Packing''
+				WHEN 6 THEN ''Packed''
+				WHEN 7 THEN ''Dispatching''
+				ELSE ''Unknown''
+			END AS [ShippingStatus],
+			so.SubTotalAmount, 
+			so.ShippingAmount + so.ShippingDiscountAmount AS ShippingAmount, 
+			so.HandlingAmount + so.HandlingDiscountAmount AS HandlingAmount, 
+			so.TaxAmount1 + so.TaxAmount2 + so.TaxAmount3 + so.TaxAmount3 + so.TaxAmount4 + so.TaxAmount5 + so.TaxDiscountAmount AS TaxAmount, 
+			so.TotalAmount
+		FROM {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder so
+		WHERE PortalID = @PortalID AND OrderDate BETWEEN @StartDate AND @StopDate
+		ORDER BY so.OrderDate&lt;/query&gt;
+      &lt;parameters&gt;
+        &lt;controlParameter&gt;
+          &lt;name&gt;@StartDate&lt;/name&gt;
+          &lt;dataType&gt;6&lt;/dataType&gt;
+          &lt;field&gt;
+            &lt;datePicker&gt;
+              &lt;id&gt;StartDateDatePicker&lt;/id&gt;
+              &lt;inputControlHeight&gt;&lt;/inputControlHeight&gt;
+              &lt;inputControlWidth&gt;&lt;/inputControlWidth&gt;
+              &lt;label&gt;
+                &lt;locale en-US="Start date:" /&gt;
+              &lt;/label&gt;
+              &lt;required&gt;True&lt;/required&gt;
+              &lt;selectedDates /&gt;
+              &lt;validatorText&gt;
+                &lt;locale en-US="Start date is required." /&gt;
+              &lt;/validatorText&gt;
+            &lt;/datePicker&gt;
+          &lt;/field&gt;
+        &lt;/controlParameter&gt;
+        &lt;controlParameter&gt;
+          &lt;name&gt;@StopDate&lt;/name&gt;
+          &lt;dataType&gt;6&lt;/dataType&gt;
+          &lt;field&gt;
+            &lt;datePicker&gt;
+              &lt;id&gt;StopDateDatePicker&lt;/id&gt;
+              &lt;inputControlHeight&gt;&lt;/inputControlHeight&gt;
+              &lt;inputControlWidth&gt;&lt;/inputControlWidth&gt;
+              &lt;label&gt;
+                &lt;locale en-US="Stop date:" /&gt;
+              &lt;/label&gt;
+              &lt;required&gt;True&lt;/required&gt;
+              &lt;selectedDates /&gt;
+              &lt;validatorText&gt;
+                &lt;locale en-US="Stop date is required." /&gt;
+              &lt;/validatorText&gt;
+            &lt;/datePicker&gt;
+          &lt;/field&gt;
+        &lt;/controlParameter&gt;
+        &lt;variableParameter&gt;
+          &lt;name&gt;@PortalID&lt;/name&gt;
+          &lt;dataType&gt;11&lt;/dataType&gt;
+          &lt;variableName&gt;Portal:PortalID&lt;/variableName&gt;
+        &lt;/variableParameter&gt;
+      &lt;/parameters&gt;
+    &lt;/sqlDataSource&gt;
+  &lt;/dataSources&gt;
+  &lt;visualizers&gt;
+    &lt;htmlVisualizer&gt;
+      &lt;html&gt;&amp;lt;table bgcolor="#eeeeee" cellpadding="3" cellspacing="0" style="width: 100%; border-top: 1px solid #cccccc; border-left: 1px solid #cccccc; border-right: 1px solid #cccccc;"&amp;gt;
+ &amp;lt;colgroup&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+ &amp;lt;/colgroup&amp;gt;
+ &amp;lt;tbody&amp;gt;
+  &amp;lt;tr&amp;gt;
+   &amp;lt;td style="width: 10%;"&amp;gt;&amp;lt;strong&amp;gt;Date&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 10%;"&amp;gt;&amp;lt;strong&amp;gt;Order ID&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 10%;"&amp;gt;&amp;lt;strong&amp;gt;Status&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 10%;"&amp;gt;&amp;lt;strong&amp;gt;Payment status&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 10%;"&amp;gt;&amp;lt;strong&amp;gt;Shipping status &amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 10%;"&amp;gt;&amp;lt;strong&amp;gt;Sub-total amount&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 10%;"&amp;gt;&amp;lt;strong&amp;gt;Shipping amount&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 10%;"&amp;gt;&amp;lt;strong&amp;gt;Handling amount&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 10%;"&amp;gt;&amp;lt;strong&amp;gt;Tax amount&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 10%;"&amp;gt;&amp;lt;strong&amp;gt;Total amount &amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+  &amp;lt;/tr&amp;gt;
+ &amp;lt;/tbody&amp;gt;
+&amp;lt;/table&amp;gt;
+[[xsl:for-each select=&amp;amp;quot;/in/dataSet/dataTable/dataRow&amp;amp;quot; ]]
+
+&amp;lt;table cellpadding="3" cellspacing="0" style="width: 100%;"&amp;gt;
+ &amp;lt;colgroup&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+ &amp;lt;/colgroup&amp;gt;
+ &amp;lt;tbody&amp;gt;
+  &amp;lt;tr&amp;gt;
+   &amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select=&amp;amp;quot;substring(OrderDate,1,10)&amp;amp;quot; /]]&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select=&amp;amp;quot;SalesOrderID&amp;amp;quot; /]]&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select=&amp;amp;quot;Status&amp;amp;quot; /]]&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select=&amp;amp;quot;SalesPaymentStatus&amp;amp;quot; /]]&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select=&amp;amp;quot;ShippingStatus&amp;amp;quot; /]]&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select=&amp;amp;quot;format-number(SubTotalAmount, &amp;amp;#39;#,##0.00&amp;amp;#39;)&amp;amp;quot; /]]&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select=&amp;amp;quot;format-number(ShippingAmount, &amp;amp;#39;#,##0.00&amp;amp;#39;)&amp;amp;quot; /]]&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select=&amp;amp;quot;format-number(HandlingAmount, &amp;amp;#39;#,##0.00&amp;amp;#39;)&amp;amp;quot; /]]&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select=&amp;amp;quot;format-number(TaxAmount, &amp;amp;#39;#,##0.00&amp;amp;#39;)&amp;amp;quot; /]]&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select=&amp;amp;quot;format-number(TotalAmount, &amp;amp;#39;#,##0.00&amp;amp;#39;)&amp;amp;quot; /]]&amp;lt;/td&amp;gt;
+  &amp;lt;/tr&amp;gt;
+ &amp;lt;/tbody&amp;gt;
+&amp;lt;/table&amp;gt;
+[[/xsl:for-each]]
+
+&amp;lt;table cellpadding="3" cellspacing="0" style="width: 100%; border-top: 4px double black;"&amp;gt;
+ &amp;lt;colgroup&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+ &amp;lt;/colgroup&amp;gt;
+ &amp;lt;tbody&amp;gt;
+  &amp;lt;tr&amp;gt;
+   &amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;&amp;amp;nbsp;&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;&amp;amp;nbsp;&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;&amp;amp;nbsp;&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;&amp;amp;nbsp;&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;&amp;amp;nbsp;&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select=&amp;amp;quot;format-number(sum(/in/dataSet/dataTable/dataRow/SubTotalAmount), &amp;amp;#39;#,##0.00&amp;amp;#39;)&amp;amp;quot; /]]&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select=&amp;amp;quot;format-number(sum(/in/dataSet/dataTable/dataRow/ShippingAmount), &amp;amp;#39;#,##0.00&amp;amp;#39;)&amp;amp;quot; /]]&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select=&amp;amp;quot;format-number(sum(/in/dataSet/dataTable/dataRow/HandlingAmount), &amp;amp;#39;#,##0.00&amp;amp;#39;)&amp;amp;quot; /]]&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select=&amp;amp;quot;format-number(sum(/in/dataSet/dataTable/dataRow/TaxAmount), &amp;amp;#39;#,##0.00&amp;amp;#39;)&amp;amp;quot; /]]&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select=&amp;amp;quot;format-number(sum(/in/dataSet/dataTable/dataRow/TotalAmount), &amp;amp;#39;#,##0.00&amp;amp;#39;)&amp;amp;quot; /]]&amp;lt;/td&amp;gt;
+  &amp;lt;/tr&amp;gt;
+ &amp;lt;/tbody&amp;gt;
+&amp;lt;/table&amp;gt;
+&lt;/html&gt;
+    &lt;/htmlVisualizer&gt;
+  &lt;/visualizers&gt;
+&lt;/data&gt;</rule>'
+		WHERE ReportDefinitionGUID = '476BC7CB-7A24-4875-8C0F-C812CBB10566'
+
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

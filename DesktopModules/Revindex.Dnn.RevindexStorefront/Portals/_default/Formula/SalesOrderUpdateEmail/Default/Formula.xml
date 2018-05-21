@@ -1,0 +1,72 @@
+﻿<data method="BasicSalesOrderUpdateEmail" version="1.0">
+  <mailTo>{xsl:if test="in/salesOrder/shippingStatus = 3 and in/salesOrder/previousShippingStatus != in/salesOrder/shippingStatus" }{xsl:value-of select="in/user/email" /}{/xsl:if}</mailTo>
+  <mailFrom></mailFrom>
+  <subject>{xsl:value-of select="in/configuration/generalStoreName" /} Update [{xsl:value-of select="in/user/username" /} - Order #{xsl:value-of select="in/salesOrder/salesOrderNumber" /}]</subject>
+  <htmlBody>
+    Hi {xsl:value-of select=&amp;quot;concat(in/user/firstName, &amp;#39; &amp;#39;, in/user/lastName)&amp;quot; /}
+    &lt;p&gt;&lt;br /&gt;
+    We&amp;#39;re happy to inform that your recent order has shipped and is on its way to you. Please &lt;a href="{xsl:value-of select='in/manageOrder/tabUrl' /}"&gt;click here&lt;/a&gt;&amp;nbsp;to monitor up-to-date progress of your order. If you have any questions or need assistance, please do not hesitate to contact us.&lt;/p&gt;
+
+    &lt;p&gt;{xsl:if test=&amp;quot;in/salesOrder/shippingTrackingCode&amp;quot; }Please use this&amp;nbsp;tracking code to follow the progress of your shipping with your selected shipping provider:&amp;nbsp;&lt;strong&gt;{xsl:value-of select=&amp;quot;in/salesOrder/shippingTrackingCode&amp;quot; /}&lt;/strong&gt;{/xsl:if}&lt;/p&gt;
+
+    &lt;table border="0" cellpadding="0" cellspacing="3" style="width: 100%"&gt;
+    &lt;tbody&gt;
+    &lt;tr&gt;
+    &lt;td&gt;&lt;strong&gt;Order Number:&lt;/strong&gt;&lt;/td&gt;
+    &lt;td&gt;{xsl:value-of select=&amp;quot;in/salesOrder/salesOrderNumber&amp;quot; /}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+    &lt;td&gt;&lt;strong&gt;Order Date:&lt;/strong&gt;&lt;/td&gt;
+    &lt;td&gt;{xsl:value-of select=&amp;quot;format-dateTime(in/salesOrder/orderDate, &amp;#39;[Y]-[M01]-[D01] [H01]:[m01]&amp;#39;)&amp;quot;/}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+    &lt;td style="vertical-align: top;"&gt;&lt;strong&gt;Bill To:&lt;/strong&gt;&lt;/td&gt;
+    &lt;td&gt;{xsl:value-of select=&amp;quot;in/salesOrder/billingCompany&amp;quot; /}&lt;br /&gt;
+    {xsl:value-of select=&amp;quot;concat(in/salesOrder/billingFirstName, &amp;#39; &amp;#39;, in/salesOrder/billingLastName)&amp;quot; /}&lt;br /&gt;
+    {xsl:value-of select=&amp;quot;in/salesOrder/billingStreet&amp;quot; /}, {xsl:value-of select=&amp;quot;in/salesOrder/billingCity&amp;quot; /}, {xsl:value-of select=&amp;quot;in/salesOrder/billingSubdivisionName&amp;quot; /}, {xsl:value-of select=&amp;quot;in/salesOrder/billingPostalCode&amp;quot; /}, {xsl:value-of select=&amp;quot;in/salesOrder/billingCountryName&amp;quot; /}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+    &lt;td style="vertical-align: top;"&gt;&lt;strong&gt;Ship To:&lt;/strong&gt;&lt;/td&gt;
+    &lt;td&gt;{xsl:value-of select=&amp;quot;in/salesOrder/shippingCompany&amp;quot; /}&lt;br /&gt;
+    {xsl:value-of select=&amp;quot;concat(in/salesOrder/shippingFirstName, &amp;#39; &amp;#39;, in/salesOrder/shippingLastName)&amp;quot; /}&lt;br /&gt;
+    {xsl:value-of select=&amp;quot;in/salesOrder/shippingStreet&amp;quot; /}, {xsl:value-of select=&amp;quot;in/salesOrder/shippingCity&amp;quot; /}, {xsl:value-of select=&amp;quot;in/salesOrder/shippingSubdivisionName&amp;quot; /}, {xsl:value-of select=&amp;quot;in/salesOrder/shippingPostalCode&amp;quot; /}, {xsl:value-of select=&amp;quot;in/salesOrder/shippingCountryName&amp;quot; /}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+    &lt;td style="vertical-align: top;"&gt;&lt;strong&gt;Shipping:&lt;/strong&gt;&lt;/td&gt;
+    &lt;td&gt;{xsl:value-of select=&amp;quot;in/salesOrder/shippingMethod/name&amp;quot; /}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;/tbody&gt;
+    &lt;/table&gt;
+    &amp;nbsp;
+
+    &lt;table border="1" cellpadding="3" cellspacing="0" style="width: 100%; table-layout: fixed; word-wrap: break-word; background-color: #ccc; border-collapse: collapse;"&gt;
+    &lt;tbody&gt;
+    &lt;tr&gt;
+    &lt;td style="width: 60%;"&gt;&lt;strong&gt;Item&lt;/strong&gt;&lt;/td&gt;
+    &lt;td style="width: 15%;"&gt;&lt;strong&gt;Qty&lt;/strong&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;/tbody&gt;
+    &lt;/table&gt;
+    {xsl:for-each select=&amp;quot;in/salesOrder/salesOrderDetails/salesOrderDetail[parentSalesOrderDetailID=&amp;#39;&amp;#39;]&amp;quot;}
+
+    &lt;table border="1" cellpadding="3" cellspacing="0" style="width: 100%; table-layout: fixed; word-wrap: border-collapse: collapse;"&gt;
+    &lt;tbody&gt;
+    &lt;tr&gt;
+    &lt;td style="width: 60%;"&gt;{xsl:value-of select=&amp;quot;productName&amp;quot; /}&lt;br /&gt;
+    {xsl:value-of select=&amp;quot;productVariantName&amp;quot; /}{xsl:for-each select=&amp;quot;salesOrderDetails/salesOrderDetail&amp;quot;}&lt;br /&gt;
+    {xsl:value-of select=&amp;quot;productName&amp;quot; /} - {xsl:value-of select=&amp;quot;productVariantName&amp;quot; /}: {xsl:value-of select=&amp;quot;quantity&amp;quot; /}&lt;br /&gt;
+    {/xsl:for-each}{xsl:if test=&amp;quot;bookingStartDate != &amp;#39;&amp;#39;&amp;quot;}From: {xsl:value-of select=&amp;quot;format-dateTime(bookingStartDate, &amp;#39;[Y]-[M01]-[D01] [H01]:[m01]&amp;#39;)&amp;quot;/}&lt;br /&gt;
+    Until: {xsl:value-of select=&amp;quot;format-dateTime(bookingStopDate, &amp;#39;[Y]-[M01]-[D01] [H01]:[m01]&amp;#39;)&amp;quot;/}&lt;br /&gt;
+    {/xsl:if}{xsl:for-each select=&amp;quot;dynamicFormResult/fields/field&amp;quot;}&lt;br /&gt;
+    {xsl:value-of select=&amp;quot;replace(@id, &amp;#39;_&amp;#39;, &amp;#39; &amp;#39;)&amp;quot; /}: {xsl:value-of select=&amp;quot;.&amp;quot; /}&lt;br /&gt;
+    {/xsl:for-each}&lt;/td&gt;
+    &lt;td style="width: 15%;"&gt;{xsl:value-of select=&amp;quot;quantity&amp;quot; /}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;/tbody&gt;
+    &lt;/table&gt;
+    {/xsl:for-each}
+
+    &lt;p&gt;{xsl:for-each select=&amp;quot;in/salesOrder/dynamicFormResult/fields/field&amp;quot;}{xsl:value-of select=&amp;quot;replace(@id, &amp;#39;_&amp;#39;, &amp;#39; &amp;#39;)&amp;quot; /}: {xsl:value-of select=&amp;quot;.&amp;quot; /}&lt;br /&gt;
+    {/xsl:for-each}&amp;nbsp;&lt;/p&gt;
+  </htmlBody>
+</data>

@@ -1,0 +1,172 @@
+﻿IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_Bookmark_Update') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_Bookmark_Update
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'PK_{objectQualifier}Social_Bookmark') and OBJECTPROPERTY(id, N'IsConstraint') = 1)
+	ALTER TABLE {databaseOwner}{objectQualifier}Social_Bookmark DROP CONSTRAINT PK_{objectQualifier}Social_Bookmark
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_Bookmark') and OBJECTPROPERTY(id, N'IsTable') = 1)
+	DROP TABLE {databaseOwner}{objectQualifier}Social_Bookmark
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_GetRelatedJournalId') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_GetRelatedJournalId
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'PK_{objectQualifier}Social_Rating') and OBJECTPROPERTY(id, N'IsConstraint') = 1)
+	ALTER TABLE {databaseOwner}{objectQualifier}Social_Rating DROP CONSTRAINT PK_{objectQualifier}Social_Rating
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_Rating') and OBJECTPROPERTY(id, N'IsTable') = 1)
+	DROP TABLE {databaseOwner}{objectQualifier}Social_Rating
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_Tracking') and OBJECTPROPERTY(id, N'IsTable') = 1)
+	DROP TABLE {databaseOwner}{objectQualifier}Social_Tracking
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_TrackingClicks') and OBJECTPROPERTY(id, N'IsTable') = 1)
+	DROP TABLE {databaseOwner}{objectQualifier}Social_TrackingClicks
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_IsTermMatch'))
+	DROP FUNCTION {databaseOwner}{objectQualifier}Social_IsTermMatch
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_GetUserLikes') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_GetUserLikes
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_Bookmark_GetUserByPortal') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_Bookmark_GetUserByPortal
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_Bookmark_GetUserByType') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_Bookmark_GetUserByType
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_Bookmark_Get') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_Bookmark_Get
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_Bookmark_Update') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_Bookmark_Update
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_Bookmark_IsBookmarked') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_Bookmark_IsBookmarked
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_Bookmark_Delete') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_Bookmark_Delete
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_Rating_GetUserByPortal') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_Rating_GetUserByPortal
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_Rating_Rate') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_Rating_Rate
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_Rating_Unrate') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_Rating_Unrate
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_Rating_Get') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_Rating_Get
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_Rating_GetUserRating') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_Rating_GetUserRating
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_GetRelatedJournalId') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_GetRelatedJournalId
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_IsTermMatch'))
+	DROP FUNCTION {databaseOwner}{objectQualifier}Social_IsTermMatch
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_IsRelatedSearchMatch'))
+	DROP FUNCTION {databaseOwner}{objectQualifier}Social_IsRelatedSearchMatch
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_SearchRelated') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_SearchRelated
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_GetUserLikes') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_GetUserLikes
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_GetUserFriendCount') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_GetUserFriendCount
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_LikeList]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Social_LikeList]
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_Bookmark_GetUserCount]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Social_Bookmark_GetUserCount]
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_JournalLikes_UpdateNameByUserId]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Social_JournalLikes_UpdateNameByUserId]
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_JournalLikes_RemoveByUserId]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Social_JournalLikes_RemoveByUserId]
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_CommentLikes_UpdateNameByUserId]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Social_CommentLikes_UpdateNameByUserId]
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_CommentLikes_RemoveByUserId]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Social_CommentLikes_RemoveByUserId]
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_Comments_GetByUserId]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Social_Comments_GetByUserId]
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_GetJournalById]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Social_GetJournalById]
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Social_GetUserEvents') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_GetUserEvents
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Social_GetUserRegistrations') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_GetUserRegistrations
+GO
+
+DELETE FROM {databaseOwner}{objectQualifier}Schedule
+WHERE 
+	TypeFullName = 'DotNetNuke.SocialLibrary.Components.Tasks.UserProfileActions, DotNetNuke.SocialLibrary'
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_ListComments') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_ListComments
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_ListCommentsByJournalIds') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_ListCommentsByJournalIds
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_JournalLikeList]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_JournalLikeList
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_CommentLikeList]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_CommentLikeList
+GO
+
+IF object_id(N'{databaseOwner}{objectQualifier}Social_UpdateNotificationAuthor', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_UpdateNotificationAuthor
+GO

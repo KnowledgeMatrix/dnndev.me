@@ -1,0 +1,258 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+SET XACT_ABORT ON
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+	
+	IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeGroup]') AND type in (N'U'))
+	BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeGroup](
+		[ProductAttributeGroupID] [int] IDENTITY(1,1) NOT NULL,
+		[PortalID] [int] NOT NULL,
+		[Name] [xml] NULL,
+		[Description] [xml] NULL,
+		[DisplayOrder] [int] NOT NULL,
+		[CreateDate] [datetime] NOT NULL,
+		[UpdateDate] [datetime] NOT NULL,
+		[RowVersion] [timestamp] NOT NULL,
+	 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_ProductAttributeGroup] PRIMARY KEY CLUSTERED 
+	(
+		[ProductAttributeGroupID] ASC
+	) 
+	) 
+	END
+	
+
+
+	IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeGroup]') AND name = N'IX_Revindex_Storefront_ProductAttributeGroup')
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_ProductAttributeGroup] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeGroup] 
+	(
+		[PortalID] ASC
+	) 
+
+
+	IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeGroup]') AND name = N'IX_Revindex_Storefront_ProductAttributeGroup_1')
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_ProductAttributeGroup_1] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeGroup] 
+	(
+		[DisplayOrder] ASC
+	) 
+
+	IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_ProductAttributeGroup_Portals]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeGroup]'))
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeGroup]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductAttributeGroup_Portals] FOREIGN KEY([PortalID])
+	REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID])
+	ON DELETE CASCADE
+
+	IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_ProductAttributeGroup_Portals]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeGroup]'))
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeGroup] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductAttributeGroup_Portals]
+
+	
+	
+	IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeDefinition]') AND type in (N'U'))
+	BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeDefinition](
+		[ProductAttributeDefinitionID] [int] IDENTITY(1,1) NOT NULL,
+		[PortalID] [int] NOT NULL,
+		[Name] [xml] NULL,
+		[Description] [xml] NULL,
+		[HelpText] [xml] NULL,
+		[ProductAttributeType] [int] NOT NULL,
+		[Filterable] [bit] NOT NULL,
+		[Published] [bit] NOT NULL,
+		[Comparable] [bit] NOT NULL,
+		[ProductAttributeGroupID] [int] NULL,
+		[DisplayOrder] [int] NOT NULL,
+		[CreateDate] [datetime] NOT NULL,
+		[UpdateDate] [datetime] NOT NULL,
+		[RowVersion] [timestamp] NOT NULL,
+	 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_ProductAttributeDefinition] PRIMARY KEY CLUSTERED 
+	(
+		[ProductAttributeDefinitionID] ASC
+	) 
+	) 
+	END
+
+
+	IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeDefinition]') AND name = N'IX_Revindex_Storefront_ProductAttributeDefinition_1')
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_ProductAttributeDefinition_1] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeDefinition] 
+	(
+		[DisplayOrder] ASC
+	) 
+
+	IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_ProductAttributeDefinition_Portals]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeDefinition]'))
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeDefinition]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductAttributeDefinition_Portals] FOREIGN KEY([PortalID])
+	REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID])
+	ON DELETE CASCADE
+
+	IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_ProductAttributeDefinition_Portals]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeDefinition]'))
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeDefinition] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductAttributeDefinition_Portals]
+
+	IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_ProductAttributeDefinition_Revindex_Storefront_ProductAttributeGroup]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeDefinition]'))
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeDefinition]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductAttributeDefinition_Revindex_Storefront_ProductAttributeGroup] FOREIGN KEY([ProductAttributeGroupID])
+	REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeGroup] ([ProductAttributeGroupID])
+
+	IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_ProductAttributeDefinition_Revindex_Storefront_ProductAttributeGroup]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeDefinition]'))
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeDefinition] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductAttributeDefinition_Revindex_Storefront_ProductAttributeGroup]
+	
+	
+	
+	IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeDefinitionSelection]') AND type in (N'U'))
+	BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeDefinitionSelection](
+		[ProductAttributeDefinitionSelectionID] [int] IDENTITY(1,1) NOT NULL,
+		[ProductAttributeDefinitionID] [int] NOT NULL,
+		[Text] [xml] NULL,
+		[DisplayOrder] [int] NOT NULL,
+		[CreateDate] [datetime] NOT NULL,
+		[UpdateDate] [datetime] NOT NULL,
+		[RowVersion] [timestamp] NOT NULL,
+	 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_ProductAttributeDefinitionSelection] PRIMARY KEY CLUSTERED 
+	(
+		[ProductAttributeDefinitionSelectionID] ASC
+	) 
+	) 
+	END
+
+
+	IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeDefinitionSelection]') AND name = N'IX_Revindex_Storefront_ProductAttributeDefinitionSelection')
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_ProductAttributeDefinitionSelection] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeDefinitionSelection] 
+	(
+		[ProductAttributeDefinitionID] ASC
+	) 
+
+	IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_ProductAttributeDefinitionSelection_Revindex_Storefront_ProductAttributeDefinition]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeDefinitionSelection]'))
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeDefinitionSelection]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductAttributeDefinitionSelection_Revindex_Storefront_ProductAttributeDefinition] FOREIGN KEY([ProductAttributeDefinitionID])
+	REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeDefinition] ([ProductAttributeDefinitionID])
+	ON DELETE CASCADE
+
+	IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_ProductAttributeDefinitionSelection_Revindex_Storefront_ProductAttributeDefinition]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeDefinitionSelection]'))
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeDefinitionSelection] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductAttributeDefinitionSelection_Revindex_Storefront_ProductAttributeDefinition]
+	
+	
+	IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttribute]') AND type in (N'U'))
+	BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttribute](
+		[ProductAttributeID] [int] IDENTITY(1,1) NOT NULL,
+		[ProductID] [int] NULL,
+		[ProductVariantID] [int] NULL,
+		[ProductAttributeDefinitionID] [int] NOT NULL,
+		[IntegerValue] [int] NULL,
+		[DecimalValue] [decimal](19, 4) NULL,
+		[StringValue] [xml] NULL,
+		[BooleanValue] [bit] NULL,
+		[SelectionValue] [varchar](max) NULL,
+		[CreateDate] [datetime] NOT NULL,
+		[UpdateDate] [datetime] NOT NULL,
+		[RowVersion] [timestamp] NOT NULL,
+	 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_ProductAttribute] PRIMARY KEY CLUSTERED 
+	(
+		[ProductAttributeID] ASC
+	) 
+	) 
+	END
+
+
+	IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttribute]') AND name = N'IX_Revindex_Storefront_ProductAttribute')
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_ProductAttribute] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttribute] 
+	(
+		[ProductID] ASC
+	) 
+
+
+	IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttribute]') AND name = N'IX_Revindex_Storefront_ProductAttribute_1')
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_ProductAttribute_1] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttribute] 
+	(
+		[ProductVariantID] ASC
+	) 
+
+
+
+	IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttribute]') AND name = N'IX_Revindex_Storefront_ProductAttribute_2')
+	CREATE UNIQUE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_ProductAttribute_2] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttribute] 
+	(
+		[ProductAttributeDefinitionID] ASC,
+		[ProductID] ASC,
+		[ProductVariantID] ASC
+	) 
+
+	IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_ProductAttribute_Revindex_Storefront_Product]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttribute]'))
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttribute]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductAttribute_Revindex_Storefront_Product] FOREIGN KEY([ProductID])
+	REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_Product] ([ProductID])
+
+	IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_ProductAttribute_Revindex_Storefront_Product]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttribute]'))
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttribute] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductAttribute_Revindex_Storefront_Product]
+
+	IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_ProductAttribute_Revindex_Storefront_ProductAttributeDefinition]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttribute]'))
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttribute]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductAttribute_Revindex_Storefront_ProductAttributeDefinition] FOREIGN KEY([ProductAttributeDefinitionID])
+	REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeDefinition] ([ProductAttributeDefinitionID])
+	ON DELETE CASCADE
+
+	IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_ProductAttribute_Revindex_Storefront_ProductAttributeDefinition]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttribute]'))
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttribute] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductAttribute_Revindex_Storefront_ProductAttributeDefinition]
+
+	IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_ProductAttribute_Revindex_Storefront_ProductVariant]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttribute]'))
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttribute]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductAttribute_Revindex_Storefront_ProductVariant] FOREIGN KEY([ProductVariantID])
+	REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant] ([ProductVariantID])
+
+	IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_ProductAttribute_Revindex_Storefront_ProductVariant]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttribute]'))
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttribute] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductAttribute_Revindex_Storefront_ProductVariant]
+
+	-- Add support for ProductComparison
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD ProductComparisonDisplayTemplate varchar(255) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductComparisonDisplayTemplate DEFAULT 'Standard1'
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductComparisonDisplayTemplate
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD ProductComparisonMaxProducts int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductComparisonMaxProducts DEFAULT 4
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductComparisonMaxProducts
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD ProductComparisonSkuShow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductComparisonSkuShow DEFAULT 1
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductComparisonSkuShow
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant ADD AllowProductComparison bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ProductVariant_AllowProductComparison DEFAULT 1
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ProductVariant_AllowProductComparison
+	
+	-- Add unique identifier for SalesPayment
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesPayment ADD SalesPaymentGUID uniqueidentifier NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesPayment_SalesPaymentGUID DEFAULT newid()
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesPayment DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesPayment_SalesPaymentGUID
+	CREATE UNIQUE NONCLUSTERED INDEX IX_{objectQualifier}Revindex_Storefront_SalesPayment_1 ON {databaseOwner}{objectQualifier}Revindex_Storefront_SalesPayment
+	(SalesPaymentGUID) 
+
+	-- Add support for Sage Pay payment gateway
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysSagePayDirectVendorName varchar(255) NULL
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysSagePayDirectTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysSagePayTestMode DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysSagePayTestMode
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysSagePayDirectSimulationMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysSagePaySimulationMode DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysSagePaySimulationMode
+	
+COMMIT TRANSACTION
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+		
+		-- Upgrade default ProductDetail template to "Standard6"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductDetailDisplayTemplate = 'Standard6' WHERE ProductDetailDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default ProductList template to "Standard3"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductListDisplayTemplate = 'Standard3' WHERE ProductListDisplayTemplate LIKE 'Standard%'
+		
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

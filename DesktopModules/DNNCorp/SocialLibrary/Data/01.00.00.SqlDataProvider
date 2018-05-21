@@ -1,0 +1,495 @@
+﻿IF NOT EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_Bookmark') and OBJECTPROPERTY(id, N'IsTable') = 1)
+BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}Social_Bookmark](
+		[BookmarkId] [int] IDENTITY(1,1) NOT NULL,
+		[PortalId] [int] NOT NULL,
+		[UserId] [int] NOT NULL,
+		[ContentItemId] [int] NOT NULL,
+		[UserTitle] [nvarchar](255) NULL,
+		[CreatedOnDate] [datetime] NOT NULL,
+		[LastModifiedOnDate] [datetime] NULL)
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Social_Bookmark WITH NOCHECK ADD CONSTRAINT PK_{objectQualifier}Social_Bookmark PRIMARY KEY CLUSTERED ([BookmarkId])
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_Rating') and OBJECTPROPERTY(id, N'IsTable') = 1)
+BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}Social_Rating](
+		[RatingId] [int] IDENTITY(1,1) NOT NULL,
+		[PortalId] [int] NOT NULL,
+		[UserId] [int] NOT NULL,
+		[ContentItemId] [int] NOT NULL,
+		[Value] [decimal](6, 3) NOT NULL,
+		[CreatedOnDate] [datetime] NOT NULL,
+		[LastModifiedOnDate] [datetime] NULL)
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Social_Rating WITH NOCHECK ADD CONSTRAINT PK_{objectQualifier}Social_Rating PRIMARY KEY CLUSTERED ([RatingId])
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_Bookmark_GetUserByPortal') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_Bookmark_GetUserByPortal
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_Bookmark_GetUserByPortal]
+	@PortalId INT,
+	@UserId INT
+AS 
+BEGIN
+	SELECT
+		F.[BookmarkId],
+		F.[UserTitle],
+		F.[ContentItemId],
+		F.[UserId],
+		F.[CreatedOnDate],
+		F.[PortalId],
+		CI.[TabId],
+		CI.[ModuleId],
+		CI.[ContentKey]
+	FROM
+		{databaseOwner}[{objectQualifier}Social_Bookmark] F
+	INNER JOIN {databaseOwner}[{objectQualifier}ContentItems] CI ON F.[ContentItemId] = CI.[ContentItemId]
+	WHERE F.[UserId] = @UserId AND F.[PortalId] = @PortalId
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_Bookmark_GetUserByType') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_Bookmark_GetUserByType
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_Bookmark_GetUserByType]
+	@PortalId INT,
+	@UserId INT,
+	@ContentTypeId INT
+AS 
+BEGIN
+	SELECT
+		F.[BookmarkId],
+		F.[UserTitle],
+		F.[ContentItemId],
+		F.[UserId],
+		F.[CreatedOnDate],
+		F.[PortalId],
+		CI.[TabId],
+		CI.[ModuleId],
+		CI.[ContentKey]
+	FROM
+		{databaseOwner}[{objectQualifier}Social_Bookmark] F
+	INNER JOIN {databaseOwner}[{objectQualifier}ContentItems] CI ON F.[ContentItemId] = CI.[ContentItemId]
+	WHERE F.[UserId] = @UserId AND F.[PortalId] = @PortalId AND CI.[ContentTypeId] = @ContentTypeId
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_Bookmark_Get') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_Bookmark_Get
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_Bookmark_Get]
+	@PortalId INT,
+	@BookmarkId INT
+AS 
+BEGIN
+	SELECT
+		F.[BookmarkId],
+		F.[UserTitle],
+		F.[ContentItemId],
+		F.[UserId],
+		F.[CreatedOnDate],
+		F.[PortalId],
+		CI.[TabId],
+		CI.[ModuleId],
+		CI.[ContentKey]
+	FROM
+		{databaseOwner}[{objectQualifier}Social_Bookmark] F
+	INNER JOIN {databaseOwner}[{objectQualifier}ContentItems] CI ON F.[ContentItemId] = CI.[ContentItemId]
+	WHERE F.[PortalId] = @PortalId AND F.[BookmarkId] = @BookmarkId
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_Bookmark_Update') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_Bookmark_Update
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_Bookmark_Update]
+	@PortalId INT,
+	@UserId INT,
+	@ContentItemId INT,
+	@UserTitle NVARCHAR(255)
+AS 
+BEGIN
+	DECLARE @BookmarkId INT
+
+	SELECT
+		@BookmarkId = [BookmarkId]
+	FROM
+		{databaseOwner}[{objectQualifier}Social_Bookmark]
+	WHERE [PortalId] = @PortalId AND [UserId] = @UserId AND [ContentItemId] = @ContentItemId
+
+	IF @BookmarkId IS NOT NULL
+	BEGIN
+		UPDATE {databaseOwner}[{objectQualifier}Social_Bookmark]
+			SET
+				[UserTitle] = @UserTitle,
+				[LastModifiedOnDate] = getutcdate()
+			WHERE
+				[PortalId] = @PortalId AND [UserId] = @UserId AND [ContentItemId] = @ContentItemId
+	END
+	ELSE
+	BEGIN
+		INSERT INTO {databaseOwner}[{objectQualifier}Social_Bookmark]
+				([PortalId], [UserId], [ContentItemId], [UserTitle], [CreatedOnDate], [LastModifiedOnDate])
+			VALUES
+				(@PortalId, @UserId, @ContentItemId, @UserTitle, getutcdate(), getutcdate())
+
+		SELECT @BookmarkId = SCOPE_IDENTITY()
+	END
+
+	EXEC {databaseOwner}[{objectQualifier}Social_Bookmark_Get] @PortalId = @PortalId, @BookmarkId = @BookmarkId
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_Bookmark_IsBookmarked') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_Bookmark_IsBookmarked
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_Bookmark_IsBookmarked]
+	@PortalId INT,
+	@UserId INT,
+	@ContentItemId INT
+AS
+BEGIN
+	DECLARE @Count INT
+
+	SELECT
+		@Count = COUNT(*)
+	FROM
+		{databaseOwner}[{objectQualifier}Social_Bookmark]
+	WHERE [PortalId] = @PortalId AND [UserId] = @UserId AND [ContentItemId] = @ContentItemId
+
+	IF @Count > 0
+		SELECT CAST(1 AS BIT) AS [Result]
+	ELSE
+		SELECT CAST(0 AS BIT) AS [Result]
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_Bookmark_Delete') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_Bookmark_Delete
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_Bookmark_Delete]
+	@PortalId INT,
+	@BookmarkId INT
+AS
+BEGIN
+	DELETE FROM {databaseOwner}[{objectQualifier}Social_Bookmark] WHERE [PortalId] = @PortalId AND [BookmarkId] = @BookmarkId
+
+	IF @@ROWCOUNT <> 0
+		SELECT 0 AS [Result]
+	ELSE
+		SELECT -1 AS [Result]
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_Rating_GetUserByPortal') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_Rating_GetUserByPortal
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_Rating_GetUserByPortal]
+	@PortalId INT,
+	@UserId INT
+AS
+BEGIN
+	SELECT
+		R.[RatingId],
+		R.[PortalId],
+		R.[ContentItemId],
+		R.[UserId],
+		R.[CreatedOnDate],
+		R.[LastModifiedOnDate],
+		R.[Value],
+		CI.[TabId],
+		CI.[ModuleId],
+		CI.[ContentKey]
+	FROM
+		{databaseOwner}[{objectQualifier}Social_Rating] R
+	INNER JOIN {databaseOwner}[{objectQualifier}ContentItems] CI ON R.[ContentItemId] = CI.[ContentItemId]
+	WHERE R.[UserId] = @UserId AND R.[PortalId] = @PortalId
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_Rating_Rate') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_Rating_Rate
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_Rating_Rate]
+	@PortalId INT,
+	@UserId INT,
+	@ContentItemId INT,
+	@RatingValue DECIMAL
+AS
+BEGIN
+	DECLARE @RatingId INT
+	
+	SELECT
+		@RatingId = [RatingId]
+	FROM
+		{databaseOwner}[{objectQualifier}Social_Rating]
+	WHERE [PortalId] = @PortalId AND [UserId] = @UserId AND [ContentItemId] = @ContentItemId
+
+	IF @RatingId IS NOT NULL
+	BEGIN
+		UPDATE {databaseOwner}[{objectQualifier}Social_Rating]
+			SET
+				[Value] = @RatingValue,
+				[LastModifiedOnDate] = getutcdate()
+			WHERE
+				[PortalId] = @PortalId AND [UserId] = @UserId AND [ContentItemId] = @ContentItemId
+	END
+	ELSE
+	BEGIN
+		INSERT INTO {databaseOwner}[{objectQualifier}Social_Rating]
+			([PortalId], [UserId], [ContentItemId], [Value], [CreatedOnDate], [LastModifiedOnDate])
+		VALUES
+			(@PortalId, @UserId, @ContentItemId, @RatingValue, getutcdate(), getutcdate())
+
+		SELECT @RatingId = SCOPE_IDENTITY()
+	END
+
+	EXEC {databaseOwner}[{objectQualifier}Social_Rating_Get] @PortalId = @PortalId, @RatingId = @RatingId
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_Rating_Unrate') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_Rating_Unrate
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_Rating_Unrate]
+	@PortalId INT,
+	@UserId INT,
+	@ContentItemId INT
+AS
+BEGIN
+	DELETE FROM {databaseOwner}[{objectQualifier}Social_Rating]
+		WHERE [PortalId] = @PortalId AND [UserId] = @UserId AND [ContentItemId] = @ContentItemId
+
+	IF @@ROWCOUNT <> 0
+		SELECT 0 AS [Result]
+	ELSE
+		SELECT -1 AS [Result]
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_Rating_Get') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_Rating_Get
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_Rating_Get]
+	@PortalId INT,
+	@RatingId INT
+AS
+BEGIN
+	SELECT
+		R.[RatingId],
+		R.[PortalId],
+		R.[ContentItemId],
+		R.[UserId],
+		R.[CreatedOnDate],
+		R.[LastModifiedOnDate],
+		R.[Value],
+		CI.[TabId],
+		CI.[ModuleId],
+		CI.[ContentKey]
+	FROM
+		{databaseOwner}[{objectQualifier}Social_Rating] R
+	INNER JOIN {databaseOwner}[{objectQualifier}ContentItems] CI ON R.[ContentItemId] = CI.[ContentItemId]
+	WHERE
+		R.[PortalId] = @PortalId AND R.[RatingId] = @RatingId
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_Rating_GetUserRating') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_Rating_GetUserRating
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_Rating_GetUserRating]
+	@PortalId INT,
+	@UserId INT,
+	@ContentItemId INT
+AS
+BEGIN
+	SELECT
+		R.[RatingId],
+		R.[PortalId],
+		R.[ContentItemId],
+		R.[UserId],
+		R.[CreatedOnDate],
+		R.[LastModifiedOnDate],
+		R.[Value],
+		CI.[TabId],
+		CI.[ModuleId],
+		CI.[ContentKey]
+	FROM
+		{databaseOwner}[{objectQualifier}Social_Rating] R
+	INNER JOIN {databaseOwner}[{objectQualifier}ContentItems] CI ON R.[ContentItemId] = CI.[ContentItemId]
+	WHERE
+		R.[PortalId] = @PortalId AND R.[UserId] = @UserId AND R.[ContentItemId] = @ContentItemId
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_GetRelatedJournalId') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_GetRelatedJournalId
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_GetRelatedJournalId]
+	@ContentItemId INT,
+	@ObjectKey VARCHAR(1024)
+AS
+BEGIN
+	SELECT JournalId FROM {databaseOwner}{objectQualifier}Journal WHERE ContentItemId = @ContentItemId
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_IsTermMatch'))
+	DROP FUNCTION {databaseOwner}{objectQualifier}Social_IsTermMatch
+GO
+
+CREATE FUNCTION {databaseOwner}[{objectQualifier}Social_IsTermMatch](@ContentItemId INT, @Terms NVARCHAR(1024))
+RETURNS BIT
+AS
+BEGIN
+    IF LEN(@Terms) > 0
+    BEGIN
+	    IF (
+		        SELECT COUNT(*)
+		        FROM {databaseOwner}{objectQualifier}ContentItems_Tags CIT
+		        INNER JOIN {databaseOwner}{objectQualifier}Taxonomy_Terms TT ON CIT.TermID = TT.TermID
+		        INNER JOIN {databaseOwner}{objectQualifier}ConvertListToTable(',', @Terms) T ON TT.Name = T.RowValue
+		        WHERE CIT.ContentItemID = @ContentItemID) != (SELECT LEN(@Terms) - LEN(REPLACE(@Terms, ',', '')) + 1)
+		    RETURN 0
+    END
+	RETURN 1
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_IsRelatedSearchMatch'))
+	DROP FUNCTION {databaseOwner}{objectQualifier}Social_IsRelatedSearchMatch
+GO
+
+CREATE FUNCTION {databaseOwner}[{objectQualifier}Social_IsRelatedSearchMatch]
+    (@ContentItemId INT, @SearchWords NVARCHAR(1024))
+RETURNS BIT
+AS
+BEGIN
+    DECLARE @Title NVARCHAR(1024)
+    DECLARE @Word NVARCHAR(255)
+    DECLARE @MatchAll BIT
+    
+    SELECT
+        @Title = CIMD.MetaDataValue
+    FROM {databaseOwner}[{objectQualifier}ContentItems] CI
+    LEFT OUTER JOIN {databaseOwner}[{objectQualifier}ContentItems_MetaData] CIMD ON CIMD.ContentItemID = CI.ContentItemID
+        AND MetaDataID = (SELECT MetaDataID FROM {databaseOwner}[{objectQualifier}MetaData] WHERE MetaDataName = 'Title')
+    WHERE CI.ContentItemID = @ContentItemId
+
+    IF @Title IS NULL OR LEN(@Title) = 0
+        RETURN 0
+
+    DECLARE WordCursor CURSOR FAST_FORWARD FOR SELECT RowValue FROM {databaseOwner}{objectQualifier}ConvertListToTable(',', @SearchWords)
+    OPEN WordCursor
+    FETCH NEXT FROM WordCursor INTO @Word
+
+    SET @MatchAll = 1
+    
+    WHILE @@FETCH_STATUS = 0
+    BEGIN
+        IF @Word IS NOT NULL AND LEN(@Word) > 0
+        BEGIN
+		    IF NOT (@Title LIKE '%' + @Word + '%' OR
+						EXISTS(
+							SELECT * FROM {databaseOwner}{objectQualifier}ContentItems_Tags T
+							RIGHT JOIN {databaseOwner}{objectQualifier}Taxonomy_Terms TT ON T.TermID = TT.TermID
+							WHERE TT.Name = @Word))
+			BEGIN
+                SET @MatchAll = 0
+                BREAK
+            END
+        END
+    
+        FETCH NEXT FROM WordCursor INTO @Word
+    END
+    
+    CLOSE WordCursor
+    DEALLOCATE WordCursor
+    
+    RETURN @MatchAll
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_SearchRelated') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_SearchRelated
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_SearchRelated]
+    @QueryWords NVARCHAR(1024) ,
+    @MaximumRecords INT,
+    @ContentTypeId INT,
+    @ModuleId INT
+AS 
+    BEGIN
+        SELECT  COUNT(*) AS [TotalRecords]
+        FROM    {databaseOwner}{objectQualifier}ContentItems CI
+        WHERE   CI.ContentTypeId = @ContentTypeId AND {databaseOwner}{objectQualifier}Social_IsRelatedSearchMatch(ContentItemId, @QueryWords) = 1 AND CI.ModuleID = @ModuleId
+    
+        SELECT  CI.ContentItemId
+        FROM    {databaseOwner}{objectQualifier}ContentItems CI
+		WHERE	CI.ContentTypeId = @ContentTypeId AND {databaseOwner}{objectQualifier}Social_IsRelatedSearchMatch(CI.ContentItemId, @QueryWords) = 1 AND CI.ModuleID = @ModuleId
+    END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_GetUserLikes') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_GetUserLikes
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_GetUserLikes]
+    @PortalId INT,
+	@UserId INT
+AS
+BEGIN
+	SELECT ContentItemId FROM {databaseOwner}{objectQualifier}Journal_Data jd
+	INNER JOIN {databaseOwner}{objectQualifier}Journal j ON j.JournalId = jd.JournalId
+	WHERE JournalXML.exist('//likes/u[@uid = sql:variable("@UserId")]') = 1
+	  AND j.PortalId = @PortalId
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_GetUserFriendCount') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_GetUserFriendCount
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_GetUserFriendCount]
+	@UserId INT,
+	@SearchText NVARCHAR(255) = ''
+AS
+BEGIN
+	DECLARE @Count INT
+
+	;WITH friendList AS (
+		SELECT	DISTINCT
+					CASE
+						WHEN ur.[UserID] = @UserId THEN ur.[RelatedUserID]
+						ELSE ur.[UserID]
+					END AS [UserId]
+		FROM			{databaseOwner}[{objectQualifier}UserRelationships] ur
+		INNER JOIN		{databaseOwner}[{objectQualifier}Relationships] r ON r.RelationshipID = ur.RelationshipID
+		LEFT OUTER JOIN {databaseOwner}[{objectQualifier}Users] u ON u.UserID = CASE WHEN ur.[UserID] = @UserId THEN ur.[RelatedUserID] ELSE ur.[UserID] END
+		WHERE			(@SearchText IS NULL OR LEN(@SearchText) = 0 OR u.DisplayName LIKE '%' + @SearchText + '%')
+		AND				(ur.UserID = @UserId OR ur.RelatedUserID = @UserId)
+		AND				r.Name = 'Friends'
+		AND				ur.Status = 2) -- Accepted
+	SELECT @Count = COUNT(*) FROM friendList
+
+	SELECT @Count AS [FriendCount]
+END
+GO

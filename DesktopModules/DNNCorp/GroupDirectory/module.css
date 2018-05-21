@@ -1,0 +1,548 @@
+﻿.groupStatusLabel,
+.groupStatusLabel:hover {
+    cursor: default;
+    display: inline-block;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1;
+    text-align: center;
+    color: #666;
+    padding: 10px;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    text-shadow: 0px 1px 1px #ffffff;
+    min-width: 80px;
+}
+
+.dnnFilterSet table div.txtWrapper + a.createGroupButton {
+    font-size: 12px;
+    margin: 12px 0 0 0;
+}
+
+a.view-mode-thumbnail {
+    background-image: url("images/thumbnail.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 20px;
+    height: 32px;
+    display: inline-block;
+}
+
+a.view-mode-list {
+    background-image: url("images/list.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 20px;
+    height: 32px;
+    display: inline-block;
+}
+
+.group-list-container {
+    padding: 20px 0px 20px 0px;
+    text-align: left;
+}
+
+a.group-avatar em img {
+	display: table-cell; /* vertical centering hack */
+	width: 40px;
+	height: 40px; /* same as thumbnail dimensions */
+	vertical-align: middle; /* vertical centering hack */
+}
+		
+
+/***** Group Tool Tip *****/
+.groupToolTip {
+    display: none;
+    height: auto;
+    width: 275px;
+    z-index: 1000;
+    position: absolute;
+    top: 50px;
+    left: 205px;
+    padding: 20px;
+    border-radius: 3px;
+    background-color: white;
+    text-align: left;
+    bottom: 100%;
+    max-height: 430px;
+    -moz-box-shadow: 0 0 6px 6px rgba(197, 197, 197, 0.6);
+    -webkit-box-shadow: 0 0 6px 6px rgba(197, 197, 197, 0.6);
+    box-shadow: 0 0 6px 6px rgba(197, 197, 197, 0.6);
+}
+
+    .groupToolTip.listViewGroupToolTip {
+        left: 150px;
+        top: 5px;
+    }
+
+    .groupToolTip:before {
+        content: '';
+        display: block;
+        width: 0px;
+        height: 0px;
+        border: 10px solid;
+        border-color: transparent rgba(197, 197, 197, 0.6) transparent transparent;
+        position: absolute;
+        top: 8px;
+        left: -20px;
+    }
+
+    .groupToolTip:after {
+        content: '';
+        display: block;
+        width: 0px;
+        height: 0px;
+        border: 10px solid;
+        border-color: transparent white transparent transparent;
+        position: absolute;
+        left: -18px;
+        top: 8px;
+    }
+
+.groupToolTip-close {
+    background-image: url('../SocialLibrary/Images/hoverCardClose.png');
+    display: inline-block;
+    float: right;
+    width: 15px;
+    height: 15px;
+}
+
+.groupToolTip hr {
+    clear: both;
+    height: 0;
+    border: solid #e8e8e8;
+    border-width: 1px 0 0;
+    margin: 10px 15px 10px 0;
+}
+
+.groupToolTip-description {
+    width: 90%;
+    height: initial;
+    max-height: 90px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    margin-bottom: 15px;
+    float: left;
+}
+
+.groupToolTip-stat {
+    display: inline-block;
+}
+
+.groupToolTip-stat-bold {
+    color: #666;
+    font-weight: bold;
+}
+
+.groupToolTip-stat-med {
+    color: #888;
+}
+
+.groupToolTip-stat-light {
+    color: #cfcfcf;
+}
+
+.groupToolTip-stat-tags {
+    color: #fb4563;
+    max-width: 240px;
+    overflow: hidden;
+    display: inline-block;
+    text-overflow: ellipsis;
+    vertical-align: bottom;
+}
+
+.groupToolTip-stat-div {
+    width: 85px;
+    display: inline-block;
+    float: left;
+}
+
+.groupToolTip-recentParticpants {
+    display: block;
+    height: 45px;
+}
+
+.groupToolTip-avatar-list {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.groupToolTip-avatar {
+    display: inline-block;
+    float: left;
+    margin-right: 5px;
+    width: 32px;
+    height: 32px;
+    border: 2px solid #edeae9;
+    background-color: #ddd;
+    text-decoration: none;
+    overflow: hidden;
+}
+
+    .groupToolTip-avatar em {
+        display: table-cell;
+        width: 32px;
+        height: 32px;
+        vertical-align: middle;
+    }
+
+        .groupToolTip-avatar em img {
+            display: inline-block;
+            border: none;
+            width: 100%;
+        }
+
+.groupToolTip-recentActivity-list {
+    height: initial;
+    display: none;
+}
+
+    .groupToolTip-recentActivity-list .groupToolTip-recentActivity {
+        display: block;
+        min-height: 35px;
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+        .groupToolTip-recentActivity-list .groupToolTip-recentActivity .groupToolTip-activity {
+            display: block;
+            width: auto;
+            height: auto;
+            max-height: 70px;
+            overflow: hidden;
+            padding: 0 15px 0 15px;
+        }
+
+.groupToolTip-link {
+    display: block;
+    color: #FB4563;
+    font-weight: bolder;
+    text-align: right;
+    padding-right: 20px;
+}
+
+/***** Tile View *****/
+div.group-tiles {
+    width: 230px;
+    height: 340px;
+    display: inline-block;
+    margin: 0px 5px 20px 0px;
+    -moz-box-shadow: 0 0 7px #d4cfce;
+    -webkit-box-shadow: 0 0 7px #d4cfce;
+    box-shadow: 0 0 7px #d4cfce;
+}
+
+    div.group-tiles .group-image {
+        width: 230px;
+        height: 230px;
+        background-color: #eee;
+        display: block;
+    }
+
+        div.group-tiles .group-image .image-span {
+            display: inline-block;
+            border: transparent;
+            text-decoration: none;
+            height: 230px;
+            width: 230px;
+            overflow: hidden;
+        }
+
+            div.group-tiles .group-image .image-span em {
+                display: table-cell;
+                width: 230px;
+                height: 230px;
+                vertical-align: middle;
+            }
+
+                div.group-tiles .group-image .image-span em img {
+                    display: inline-block;
+                    border: none;
+                    width: 100%;
+                }
+
+    div.group-tiles div.group-rating {
+        width: 37px;
+        height: 36px;
+        position: absolute;
+        margin: 10px;
+        filter: alpha(opacity=50);
+        opacity: 0.5;
+    }
+
+        div.group-tiles div.group-rating.hot {
+            background-image: url(Images/hot.png);
+        }
+
+    div.group-tiles div.group-info {
+        height: 110px;
+        background: #fff;
+    }
+
+        div.group-tiles div.group-info div.group-info-primary {
+            padding: 15px 8px 15px 8px;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        div.group-tiles div.group-info a.group-info-name {
+            display: table;
+            font-size: 14px;
+            font-weight: bold;
+            color: #339795;
+            overflow: hidden;
+        }
+
+            div.group-tiles div.group-info a.group-info-name > span {
+                display: block;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                width: 214px;
+                max-height: 40px;
+            }
+
+        div.group-tiles div.group-info div.group-info-secondary {
+            padding: 8px 8px 0 8px;
+            vertical-align: top;
+            overflow: hidden;
+            height: 60px;
+        }
+
+        div.group-tiles div.group-info div.group-info-membership {
+            float: left;
+        }
+
+            div.group-tiles div.group-info div.group-info-membership div.group-info-memberCount {
+                height: 25px;
+                vertical-align: -webkit-baseline-middle;
+                overflow: hidden;
+            }
+
+                div.group-tiles div.group-info div.group-info-membership div.group-info-memberCount span.memberCount {
+                    font-size: 20px;
+                    font-weight: bold;
+                    display: inline;
+                }
+
+        div.group-tiles div.group-info div.group-info-memberLabel {
+            margin-right: 5px;
+            vertical-align: top;
+            height: 35px;
+            overflow: hidden;
+            color: #cfcfcf;
+        }
+
+            div.group-tiles div.group-info div.group-info-memberlabel span.memberLabel {
+                display: inline;
+            }
+
+        div.group-tiles div.group-info .group-info-actions {
+            height: 50px;
+            display: inline;
+            float: right;
+        }
+
+        div.group-tiles div.group-info div.group-info-actions-hide {
+            display: none;
+        }
+
+        div.group-tiles div.group-info div.group-info-actions .group-join {
+            float: right;
+            padding-right: 15px;
+        }
+
+        div.group-tiles div.group-info div.group-edit {
+            float: right;
+            padding-right: 10px;
+            margin-top: -85px;
+        }
+
+/***** List View *****/
+div.group-listing {
+    border-bottom: 1px solid #edeae9;
+}
+
+    div.group-listing div.group-info-primary {
+        float: left;
+        width: 120px;
+        margin: 20px 0 20px 20px;
+    }
+
+    div.group-listing a.group-list-image {
+        width: 120px;
+        height: 120px;
+        background-color: #eee;
+        display: block;
+    }
+
+        div.group-listing a.group-list-image .image-span {
+            display: inline-block;
+            border: transparent;
+            text-decoration: none;
+            height: 120px;
+            width: 120px;
+            overflow: hidden;
+        }
+
+            div.group-listing a.group-list-image .image-span em {
+                display: table-cell;
+                width: 120px;
+                height: 120px;
+                vertical-align: middle;
+            }
+
+                div.group-listing a.group-list-image .image-span em img {
+                    display: inline-block;
+                    border: none;
+                    width: 100%;
+                }
+
+    div.group-listing div.group-info-secondary {
+        margin: 0 60px 0 15px;
+        float: left;
+    }
+
+        div.group-listing div.group-info-secondary div.group-info-name {
+            padding: 20px 0 10px 0;
+            display: block;
+            overflow: hidden;
+        }
+
+            div.group-listing div.group-info-secondary div.group-info-name span {
+                font-size: 14px;
+                font-weight: bold;
+                color: #339795;
+            }
+
+        div.group-listing div.group-info-secondary div.group-info-description {
+            overflow: hidden;
+            height: 4.5em;
+            line-height: 1.5em;
+            color: #999;
+        }
+
+        div.group-listing div.group-info-secondary div.group-info-stats {
+            padding-top: 10px;
+        }
+
+            div.group-listing div.group-info-secondary div.group-info-stats .divider {
+                display: inline-block;
+                height: 10px;
+                border-right: 1px solid #999;
+            }
+
+            div.group-listing div.group-info-secondary div.group-info-stats .label {
+                font-size: 12px;
+                font-weight: bold;
+                display: inline-block;
+                margin: 0 0 0 5px;
+            }
+
+            div.group-listing div.group-info-secondary div.group-info-stats .stat {
+                font-size: 12px;
+                font-weight: bold;
+                color: #999;
+                display: inline-block;
+                margin: 0 5px 0 5px;
+            }
+
+            div.group-listing div.group-info-secondary div.group-info-stats div.created {
+                display: inline-block;
+            }
+
+    div.group-listing div.group-edit {
+        float: right;
+        margin: 20px 20px 0 0;
+    }
+
+/***** Create Wizard *****/
+.checkboxlist {
+    width: 57%;
+    background-color: #eee;
+    margin: 0 0 20px 0;
+    float: left;
+}
+
+/***** Active Groups *****/
+.active-groups-containter {
+    text-align: left;
+    background-color: #fff;
+    padding: 20px;
+}
+
+    .active-groups-containter table {
+        width: 100%;
+    }
+
+        .active-groups-containter table tr {
+            border-bottom: 1px solid #eee;
+        }
+
+            .active-groups-containter table tr:last-child {
+                border: none;
+            }
+
+        .active-groups-containter table td {
+            padding: 10px;
+            vertical-align: middle;
+        }
+
+            .active-groups-containter table td.group-name {
+                padding-left: 0;
+                width: 100%;
+            }
+
+                .active-groups-containter table td.group-name > a {
+                    display: block;
+                    max-width: 150px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+
+/***** Top Group Tags *****/
+.tags-container {
+    text-align: left;
+    background-color: #fff;
+    padding: 20px;
+}
+
+#tagsContainer ul.tagCollections {
+    list-style-type: none;
+    margin: 15px 0 10px 0;
+}
+
+    #tagsContainer ul.tagCollections li {
+        list-style-type: none;
+        margin: 0;
+        padding: 5px;
+    }
+
+        #tagsContainer ul.tagCollections li a {
+            display: block;
+            margin-right: 35px;
+            font-weight: bold;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        #tagsContainer ul.tagCollections li span {
+            display: block;
+            float: right;
+            padding: 2px 4px 2px 4px;
+            background-color: #ccc;
+            font-size: 10px;
+            border-radius: 6px;
+            min-width: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+.list-tbl-container.thumbview {
+    background-color: transparent;
+    padding: 20px 0 20px 5px;
+}

@@ -1,0 +1,477 @@
+﻿-- =========================================================
+-- BEGIN ** Adding Primary Keys to Analytice table **
+-- =========================================================
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'PK_{objectQualifier}Analytics_Activities') and OBJECTPROPERTY(id, N'IsPrimaryKey') = 1)
+BEGIN
+	ALTER TABLE {databaseOwner}{objectQualifier}Analytics_Activities ADD CONSTRAINT [PK_{objectQualifier}Analytics_Activities] PRIMARY KEY (SampleId)
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'PK_{objectQualifier}Analytics_Answers') and OBJECTPROPERTY(id, N'IsPrimaryKey') = 1)
+BEGIN
+	ALTER TABLE {databaseOwner}{objectQualifier}Analytics_Answers ADD CONSTRAINT [PK_{objectQualifier}Analytics_Answers] PRIMARY KEY (SampleId)
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'PK_{objectQualifier}Analytics_Blogs') and OBJECTPROPERTY(id, N'IsPrimaryKey') = 1)
+BEGIN
+	ALTER TABLE {databaseOwner}{objectQualifier}Analytics_Blogs ADD CONSTRAINT [PK_{objectQualifier}Analytics_Blogs] PRIMARY KEY (SampleId)
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'PK_{objectQualifier}Analytics_ContentDistribution') and OBJECTPROPERTY(id, N'IsPrimaryKey') = 1)
+BEGIN
+	ALTER TABLE {databaseOwner}{objectQualifier}Analytics_ContentDistribution ADD CONSTRAINT [PK_{objectQualifier}Analytics_ContentDistribution] PRIMARY KEY (SampleId)
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'PK_{objectQualifier}Analytics_Creation') and OBJECTPROPERTY(id, N'IsPrimaryKey') = 1)
+BEGIN
+	ALTER TABLE {databaseOwner}{objectQualifier}Analytics_Creation ADD CONSTRAINT [PK_{objectQualifier}Analytics_Creation] PRIMARY KEY (SampleId)
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'PK_{objectQualifier}Analytics_Discussions') and OBJECTPROPERTY(id, N'IsPrimaryKey') = 1)
+BEGIN
+	ALTER TABLE {databaseOwner}{objectQualifier}Analytics_Discussions ADD CONSTRAINT [PK_{objectQualifier}Analytics_Discussions] PRIMARY KEY (SampleId)
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'PK_{objectQualifier}Analytics_Ideas') and OBJECTPROPERTY(id, N'IsPrimaryKey') = 1)
+BEGIN
+	ALTER TABLE {databaseOwner}{objectQualifier}Analytics_Ideas ADD CONSTRAINT [PK_{objectQualifier}Analytics_Ideas] PRIMARY KEY (SampleId)
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'PK_{objectQualifier}Analytics_PageTime') and OBJECTPROPERTY(id, N'IsPrimaryKey') = 1)
+BEGIN
+	ALTER TABLE {databaseOwner}{objectQualifier}Analytics_PageTime ADD CONSTRAINT [PK_{objectQualifier}Analytics_PageTime] PRIMARY KEY (PageTimeId)
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'PK_{objectQualifier}Analytics_PageTime_Aggregate') and OBJECTPROPERTY(id, N'IsPrimaryKey') = 1)
+BEGIN
+	ALTER TABLE {databaseOwner}{objectQualifier}Analytics_PageTime_Aggregate ADD CONSTRAINT [PK_{objectQualifier}Analytics_PageTime_Aggregate] PRIMARY KEY (SampleId)
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'PK_{objectQualifier}Analytics_Participation') and OBJECTPROPERTY(id, N'IsPrimaryKey') = 1)
+BEGIN
+	ALTER TABLE {databaseOwner}{objectQualifier}Analytics_Participation ADD CONSTRAINT [PK_{objectQualifier}Analytics_Participation] PRIMARY KEY (SampleId)
+END
+GO
+
+-- =========================================================
+-- END ** Adding Primary Keys to Analytice table **
+-- =========================================================
+
+-- =========================================================
+-- BEGIN ** SOCIAL-1427 bug fix **
+-- =========================================================
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Reschedule_User]
+	@PortalId int,
+	@UserId int
+AS
+BEGIN
+	IF NOT EXISTS(
+			SELECT	*
+			FROM	{databaseOwner}[{objectQualifier}Analytics_Users] WITH (NOLOCK)
+			WHERE	[PortalId] = @PortalId AND [UserId] = @UserId)
+		INSERT INTO {databaseOwner}[{objectQualifier}Analytics_Users]
+			([PortalId],
+			 [UserId],
+			 [ProcessDate],
+			 [TotalSeconds])
+		VALUES
+			(@PortalId,
+			 @UserId,
+			 dateadd(MINUTE, 5, getutcdate()),
+			 0)
+	ELSE
+	BEGIN
+		IF (SELECT [ProcessDate] FROM {databaseOwner}[{objectQualifier}Analytics_Users] WITH (NOLOCK) WHERE [PortalId] = @PortalId AND [UserId] = @UserId) = NULL
+		BEGIN
+			UPDATE	{databaseOwner}[{objectQualifier}Analytics_Users]
+			SET		[ProcessDate] = dateadd(MINUTE, 5, getutcdate())
+			WHERE	[PortalId] = @PortalId AND [UserId] = @UserId
+		END
+	END
+END
+GO
+-- =========================================================
+-- END ** SOCIAL-1427 bug fix **
+-- =========================================================
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{objectQualifier}Analytics_GetActiveTimeBoundariesFromReferencePoint'))
+	DROP FUNCTION {databaseOwner}[{objectQualifier}Analytics_GetActiveTimeBoundariesFromReferencePoint]
+GO
+
+CREATE FUNCTION {databaseOwner}[{objectQualifier}Analytics_GetActiveTimeBoundariesFromReferencePoint](@ReferencePoint smalldatetime)
+	RETURNS @Table TABLE ([LowerBound] datetime, [UpperBound] datetime)
+AS
+BEGIN
+	INSERT INTO @Table SELECT dateadd(hour, datediff(hour, 0, @ReferencePoint) - 1, 0), dateadd(hour, datediff(hour, 0, @ReferencePoint), 0) -- prev hour
+	INSERT INTO @Table SELECT dateadd(hour, datediff(hour, 0, @ReferencePoint), 0), dateadd(hour, datediff(hour, 0, @ReferencePoint) + 1, 0) -- hour
+	INSERT INTO @Table SELECT CAST(@ReferencePoint AS DATE), CAST(dateadd(day, 1, @ReferencePoint) AS DATE) -- day boundary
+	INSERT INTO @Table SELECT dateadd(week, datediff(week, 0, @ReferencePoint), 0), dateadd(week, datediff(week, 0, @ReferencePoint) + 1, 0) -- week
+	INSERT INTO @Table SELECT dateadd(month, datediff(month, 0, @ReferencePoint), 0), dateadd(month, datediff(month, 0, @ReferencePoint) + 1, 0) -- month
+	INSERT INTO @Table SELECT dateadd(year, datediff(year, 0, @ReferencePoint), 0), dateadd(year, datediff(year, 0, @ReferencePoint) + 1, 0) -- year
+	RETURN
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_GetActiveTimeBoundaries'))
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_GetActiveTimeBoundaries
+GO
+
+-- Get all the current time windows we need to be collecting stats for
+CREATE FUNCTION {databaseOwner}[{objectQualifier}Analytics_GetActiveTimeBoundaries]()
+	RETURNS @Table TABLE ([LowerBound] datetime, [UpperBound] datetime)
+AS
+BEGIN
+	INSERT INTO @Table SELECT dateadd(hour, datediff(hour, 0, getutcdate()) - 1, 0), dateadd(hour, datediff(hour, 0, getutcdate()), 0) -- prev hour
+	INSERT INTO @Table SELECT dateadd(hour, datediff(hour, 0, getutcdate()), 0), dateadd(hour, datediff(hour, 0, getutcdate()) + 1, 0) -- hour
+	INSERT INTO @Table SELECT CAST(getutcdate() AS DATE), CAST(dateadd(day, 1, getutcdate()) AS DATE) -- day boundary
+	INSERT INTO @Table SELECT dateadd(week, datediff(week, 0, getutcdate()), 0), dateadd(week, datediff(week, 0, getutcdate()) + 1, 0) -- week
+	INSERT INTO @Table SELECT dateadd(month, datediff(month, 0, getutcdate()), 0), dateadd(month, datediff(month, 0, getutcdate()) + 1, 0) -- month
+	INSERT INTO @Table SELECT dateadd(year, datediff(year, 0, getutcdate()), 0), dateadd(year, datediff(year, 0, getutcdate()) + 1, 0) -- year
+	RETURN
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{objectQualifier}Analytics_GetActiveBoundariesFromReferencePointWithContentTypes'))
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_GetActiveBoundariesFromReferencePointWithContentTypes
+GO
+
+CREATE FUNCTION {databaseOwner}{objectQualifier}Analytics_GetActiveBoundariesFromReferencePointWithContentTypes(@PortalId int, @ReferencePoint smalldatetime)
+	RETURNS @Table TABLE ([LowerBound] datetime, [UpperBound] datetime, [ContentTypeId] INT)
+AS
+BEGIN
+	INSERT INTO @Table
+	SELECT
+		[LowerBound],
+		[UpperBound],
+		-1 AS [ContentTypeId]
+	FROM {databaseOwner}{objectQualifier}Analytics_GetActiveTimeBoundariesFromReferencePoint(@ReferencePoint)
+
+	INSERT INTO @Table
+	SELECT
+		[LowerBound],
+		[UpperBound],
+		ct.[ContentTypeID] AS [ContentTypeId]
+	FROM {databaseOwner}{objectQualifier}Analytics_GetActiveTimeBoundariesFromReferencePoint(@ReferencePoint)
+	LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentTypes ct ON {databaseOwner}{objectQualifier}Analytics_ContentTypeIsInList(@PortalId, [ContentTypeID]) = 1
+
+	RETURN
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{objectQualifier}Analytics_Recalculate_Period'))
+	DROP PROCEDURE {objectQualifier}Analytics_Recalculate_Period
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Recalculate_Period
+	@PortalId int,
+	@ReferenceDate smalldatetime
+AS
+BEGIN
+	DECLARE TimeCursor CURSOR FOR SELECT * FROM {databaseOwner}{objectQualifier}Analytics_GetActiveTimeBoundariesFromReferencePoint(@ReferenceDate)
+		
+	DECLARE @CursorLower smalldatetime
+	DECLARE @CursorUpper smalldatetime
+	DECLARE @ContentType int
+
+	OPEN TimeCursor
+	FETCH NEXT FROM TimeCursor INTO @CursorLower, @CursorUpper
+
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		EXEC {databaseOwner}{objectQualifier}Analytics_Calculate_Aggregate_Participation @PortalId, @CursorLower, @CursorUpper
+		EXEC {databaseOwner}{objectQualifier}Analytics_Calculate_Aggregate_Answers @PortalId, @CursorLower, @CursorUpper
+		EXEC {databaseOwner}{objectQualifier}Analytics_Calculate_Aggregate_Blogs @PortalId, @CursorLower, @CursorUpper
+		EXEC {databaseOwner}{objectQualifier}Analytics_Calculate_Aggregate_Discussions @PortalId, @CursorLower, @CursorUpper
+		EXEC {databaseOwner}{objectQualifier}Analytics_Calculate_Aggregate_Ideas @PortalId, @CursorLower, @CursorUpper
+		EXEC {databaseOwner}{objectQualifier}Analytics_Calculate_Aggregate_Participation @PortalId, @CursorLower, @CursorUpper
+		EXEC {databaseOwner}{objectQualifier}Analytics_Calculate_ContentDistribution @PortalId, @CursorLower, @CursorUpper
+		EXEC {databaseOwner}{objectQualifier}Analytics_Calculate_PageTime @PortalId, @CursorLower, @CursorUpper
+
+		FETCH NEXT FROM TimeCursor INTO @CursorLower, @CursorUpper
+	END
+
+	DEALLOCATE TimeCursor
+
+	DECLARE TimeCursor CURSOR FOR SELECT * FROM {databaseOwner}{objectQualifier}Analytics_GetActiveBoundariesFromReferencePointWithContentTypes(@PortalId, @ReferenceDate)
+		
+	OPEN TimeCursor
+	FETCH NEXT FROM TimeCursor INTO @CursorLower, @CursorUpper, @ContentType
+
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		EXEC {databaseOwner}[{objectQualifier}Analytics_Calculate_Aggregate_Activities]
+			@PortalId = @PortalId,
+			@LowerBound = @CursorLower,
+			@UpperBound = @CursorUpper,
+			@ContentTypeId = @ContentType
+
+		EXEC {databaseOwner}[{objectQualifier}Analytics_Calculate_Aggregate_Creation]
+			@PortalId = @PortalId,
+			@LowerBound = @CursorLower,
+			@UpperBound = @CursorUpper,
+			@ContentTypeId = @ContentType
+
+		FETCH NEXT FROM TimeCursor INTO @CursorLower, @CursorUpper, @ContentType
+	END
+
+	DEALLOCATE TimeCursor		
+END
+GO
+
+-- =========================================================
+-- BEGIN ** SOCIAL-1491 bug fix **
+-- =========================================================
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Get_TopContent') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_TopContent
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Get_TopContent]
+	@PortalId int,
+	@PageIndex int,
+	@PageSize int,
+	@ContentTypeId int,
+	@LowerBound datetime,
+	@UpperBound datetime
+AS
+BEGIN
+	SELECT	COUNT(*) AS [TotalResults]
+	FROM	{databaseOwner}[{objectQualifier}ContentItems] ci WITH (NOLOCK)
+	INNER JOIN {databaseOwner}[{objectQualifier}Modules] m ON ci.[ModuleID] = m.[ModuleID]
+	WHERE	m.[PortalID] = @PortalId
+	AND	    ((@ContentTypeId < 0 AND {databaseOwner}{objectQualifier}Analytics_ContentTypeIsInList(@PortalId, ci.[ContentTypeID]) = 1) OR ci.[ContentTypeId] = @ContentTypeId)
+	AND		ci.[CreatedOnDate] >= @LowerBound
+	AND		ci.[CreatedOnDate] <= @UpperBound
+
+	;WITH pagedContent AS (
+			SELECT
+				ci.[ContentItemID],
+				(SELECT	COUNT(*)
+				 FROM	{databaseOwner}[{objectQualifier}Mechanics_UserScoringLog] WITH (NOLOCK)
+				 WHERE	[ContentItemId] = ci.[ContentItemID])
+				AS [LoggedActions]
+			FROM	{databaseOwner}[{objectQualifier}ContentItems] ci WITH (NOLOCK)
+			INNER JOIN {databaseOwner}[{objectQualifier}Modules] m ON ci.[ModuleID] = m.[ModuleID]
+			WHERE	m.[PortalID] = @PortalId
+			AND		ci.[CreatedOnDate] >= @LowerBound
+			AND		ci.[CreatedOnDate] <= @UpperBound
+			AND		((@ContentTypeId < 0 AND {databaseOwner}{objectQualifier}Analytics_ContentTypeIsInList(@PortalId, ci.[ContentTypeID]) = 1) OR ci.[ContentTypeID] = @ContentTypeId)),
+	innerPagedContent AS (
+			SELECT	[ContentItemID],
+					ROW_NUMBER() OVER(ORDER BY [LoggedActions] DESC) AS [RowNumber]
+			FROM	pagedContent)
+	SELECT	TOP (@PageSize) [ContentItemID]
+	FROM	innerPagedContent
+	WHERE	[RowNumber] > (@PageIndex * @PageSize) AND [RowNumber] <= ((@PageIndex + 1) * @PageSize)
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Get_NewContent') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_NewContent
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Get_NewContent]
+	@PortalId int,
+	@PageIndex int,
+	@PageSize int,
+	@ContentTypeId int,
+	@LowerBound datetime,
+	@UpperBound datetime
+AS
+BEGIN
+	SELECT	COUNT(*) AS [TotalResults]
+	FROM	{databaseOwner}[{objectQualifier}ContentItems] ci WITH (NOLOCK)
+	INNER JOIN {databaseOwner}[{objectQualifier}Modules] m ON ci.[ModuleID] = m.[ModuleID]
+	WHERE	m.[PortalID] = @PortalId
+	AND		((@ContentTypeId < 0 AND {databaseOwner}{objectQualifier}Analytics_ContentTypeIsInList(@PortalId, ci.[ContentTypeID]) = 1) OR ci.[ContentTypeId] = @ContentTypeId)
+	AND		ci.[CreatedOnDate] >= @LowerBound
+	AND		ci.[CreatedOnDate] <= @UpperBound
+
+	;WITH pagedContent AS (
+			SELECT	ci.[ContentItemID],
+					ROW_NUMBER() OVER(ORDER BY ci.[CreatedOnDate] DESC) AS [RowNumber]
+			FROM	{databaseOwner}[{objectQualifier}ContentItems] ci WITH (NOLOCK)
+			INNER JOIN {databaseOwner}[{objectQualifier}Modules] m ON ci.[ModuleID] = m.[ModuleID]
+			WHERE	m.[PortalID] = @PortalId
+			AND		ci.[CreatedOnDate] >= @LowerBound
+			AND		ci.[CreatedOnDate] <= @UpperBound
+			AND		((@ContentTypeId < 0 AND {databaseOwner}{objectQualifier}Analytics_ContentTypeIsInList(@PortalId, ci.[ContentTypeID]) = 1) OR ci.[ContentTypeID] = @ContentTypeId))
+	SELECT	TOP (@PageSize) [ContentItemID]
+	FROM	pagedContent
+	WHERE	[RowNumber] > (@PageIndex * @PageSize) AND [RowNumber] <= ((@PageIndex + 1) * @PageSize)
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Get_FlaggedContent') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_FlaggedContent
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Get_FlaggedContent]
+	@PortalId int,
+	@PageIndex int,
+	@PageSize int,
+	@ContentTypeId int,
+	@LowerBound datetime,
+	@UpperBound datetime
+AS
+BEGIN
+	;WITH pagerCount AS (
+		SELECT			DISTINCT musl.[ContentItemId]
+		FROM			{databaseOwner}[{objectQualifier}Mechanics_UserScoringLog] musl WITH (NOLOCK)
+		LEFT OUTER JOIN {databaseOwner}[{objectQualifier}ContentItems] ci WITH (NOLOCK) ON ci.[ContentItemID] = musl.[ContentItemId]
+		WHERE			musl.[PortalId] = @PortalId
+		AND				musl.[CreatedOnDate] >= @LowerBound AND musl.[CreatedOnDate] <= @UpperBound
+		AND				((@ContentTypeId < 0 AND {databaseOwner}{objectQualifier}Analytics_ContentTypeIsInList(@PortalId, ci.ContentTypeID) = 1) OR ci.[ContentTypeID] = @ContentTypeId)
+		AND				{databaseOwner}{objectQualifier}Mechanics_ScoringActionIsOfActionType(musl.[ScoringActionDefId], 5) = 1)
+	SELECT COUNT(*) AS [TotalResults] FROM pagerCount
+
+	;WITH pagedContent AS (
+			SELECT	DISTINCT musl.[ContentItemId],
+					ROW_NUMBER() OVER(ORDER BY musl.[CreatedOnDate] DESC) AS [RowNumber]
+			FROM	{databaseOwner}[{objectQualifier}Mechanics_UserScoringLog] musl WITH (NOLOCK)
+			LEFT OUTER JOIN {databaseOwner}[{objectQualifier}ContentItems] ci WITH (NOLOCK) ON ci.[ContentItemID] = musl.[ContentItemId]
+			WHERE	musl.[PortalId] = @PortalId
+			AND		musl.[CreatedOnDate] >= @LowerBound
+			AND		musl.[CreatedOnDate] <= @UpperBound
+			AND		((@ContentTypeId < 0 AND {databaseOwner}{objectQualifier}Analytics_ContentTypeIsInList(@PortalId, ci.[ContentTypeID]) = 1) OR ci.[ContentTypeID] = @ContentTypeId)
+			AND		{databaseOwner}{objectQualifier}Mechanics_ScoringActionIsOfActionType(musl.[ScoringActionDefId], 5) = 1)
+	SELECT	TOP (@PageSize) [ContentItemId]
+	FROM	pagedContent
+	WHERE	[RowNumber] > (@PageIndex * @PageSize) AND [RowNumber] <= ((@PageIndex + 1) * @PageSize)
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Get_NewUsers') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_NewUsers
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Get_NewUsers]
+	@PortalId int,
+	@PageIndex int,
+	@PageSize int,
+	@LowerBound smalldatetime,
+	@UpperBound smalldatetime
+AS
+BEGIN
+	SELECT	COUNT(*) AS [TotalResults]
+	FROM	{databaseOwner}[{objectQualifier}Users] u WITH (NOLOCK)
+	INNER JOIN {databaseOwner}[{objectQualifier}UserPortals] up ON u.UserId = up.UserId
+	WHERE	up.[PortalId] = @PortalId
+	AND		u.[CreatedOnDate] >= @LowerBound AND u.[CreatedOnDate] <= @UpperBound
+
+	;WITH pagedUsers AS (
+			SELECT
+				@PortalId AS [PortalId],
+				u.[UserID],
+				ROW_NUMBER() OVER(ORDER BY u.[CreatedOnDate] DESC) AS [RowNumber]
+			FROM
+				{databaseOwner}[{objectQualifier}Users] u WITH (NOLOCK)
+				INNER JOIN {databaseOwner}[{objectQualifier}UserPortals] up ON u.UserId = up.UserId
+			WHERE	up.[PortalId] = @PortalId
+			AND		u.[CreatedOnDate] >= @LowerBound AND u.[CreatedOnDate] <= @UpperBound)
+	SELECT	TOP (@PageSize) [PortalId], [UserID]
+	FROM	pagedUsers
+	WHERE	[RowNumber] > (@PageIndex * @PageSize) AND [RowNumber] <= ((@PageIndex + 1) * @PageSize)
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Get_TopActiveUsers') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_TopActiveUsers
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Get_TopActiveUsers]
+	@PortalId int,
+	@PageIndex int,
+	@PageSize int,
+	@LowerBound smalldatetime,
+	@UpperBound smalldatetime
+AS
+BEGIN
+	SELECT	COUNT(*) AS [TotalResults]
+	FROM	{databaseOwner}[{objectQualifier}Mechanics_UserScoring] WITH (NOLOCK)
+	WHERE	[PortalId] = @PortalId
+
+	;WITH pagedUsers AS (
+			SELECT	[PortalId],
+					[UserId],
+					ROW_NUMBER() OVER(ORDER BY [TopReputationPoints] DESC) AS [RowNumber]
+			FROM	{databaseOwner}[{objectQualifier}Mechanics_UserScoring] WITH (NOLOCK)
+			WHERE	[PortalId] = @PortalId)
+	SELECT	TOP (@PageSize) [PortalId], [UserID]
+	FROM	pagedUsers
+	WHERE	[RowNumber] > (@PageIndex * @PageSize) AND [RowNumber] <= ((@PageIndex + 1) * @PageSize)
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Get_TopFlaggedUsers') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_TopFlaggedUsers
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Get_TopFlaggedUsers]
+	@PortalId int,
+	@PageIndex int,
+	@PageSize int,
+	@LowerBound smalldatetime,
+	@UpperBound smalldatetime
+AS
+BEGIN
+	SELECT	COUNT(*) AS [TotalResults]
+	FROM	{databaseOwner}[{objectQualifier}Mechanics_UserScoring] WITH (NOLOCK)
+	WHERE	[PortalId] = @PortalId
+	AND		[ContentFlaggedCount] > 0 AND [CreatedOnDate] >= @LowerBound AND [CreatedOnDate] <= @UpperBound
+
+	;WITH pagedUsers AS (
+			SELECT	[PortalId],
+					[UserId],
+					ROW_NUMBER() OVER(ORDER BY [ContentFlaggedCount] DESC) AS [RowNumber]
+			FROM	{databaseOwner}[{objectQualifier}Mechanics_UserScoring] WITH (NOLOCK)
+			WHERE	[PortalId] = @PortalId
+			AND		[ContentFlaggedCount] > 0 AND [CreatedOnDate] >= @LowerBound AND [CreatedOnDate] <= @UpperBound)
+	SELECT	TOP (@PageSize) [PortalId], [UserID]
+	FROM	pagedUsers
+	WHERE	[RowNumber] > (@PageIndex * @PageSize) AND [RowNumber] <= ((@PageIndex + 1) * @PageSize)
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Get_TopContentCreators') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_TopContentCreators
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Get_TopContentCreators]
+	@PortalId int,
+	@PageIndex int,
+	@PageSize int,
+	@LowerBound smalldatetime,
+	@UpperBound smalldatetime
+AS
+BEGIN
+	SELECT	COUNT(*) AS [TotalResults]
+	FROM	{databaseOwner}[{objectQualifier}Mechanics_UserScoring] WITH (NOLOCK)
+	WHERE	[PortalId] = @PortalId
+	AND		[ContentCreatedCount] > 0 AND [CreatedOnDate] >= @LowerBound AND [CreatedOnDate] <= @UpperBound
+
+	;WITH pagedUsers AS (
+			SELECT	[PortalId],
+					[UserId],
+					ROW_NUMBER() OVER(ORDER BY [ContentCreatedCount] DESC) AS [RowNumber]
+			FROM	{databaseOwner}[{objectQualifier}Mechanics_UserScoring] WITH (NOLOCK)
+			WHERE	[PortalId] = @PortalId
+			AND		[ContentCreatedCount] > 0)
+	SELECT	TOP (@PageSize) [PortalId], [UserID]
+	FROM	pagedUsers
+	WHERE	[RowNumber] > (@PageIndex * @PageSize) AND [RowNumber] <= ((@PageIndex + 1) * @PageSize)
+END
+GO
+
+-- =========================================================
+-- END ** SOCIAL-1491 bug fix **
+-- =========================================================

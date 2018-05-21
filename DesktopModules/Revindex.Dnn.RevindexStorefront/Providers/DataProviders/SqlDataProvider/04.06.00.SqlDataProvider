@@ -1,0 +1,1290 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+SET XACT_ABORT ON
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+	
+	-- Allow SQL query in action rules
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD SecurityActionSqlActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_SecurityActionSqlActive DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_SecurityActionSqlActive
+
+	-- Allow description name overrides
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Product ADD	OverviewName xml NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Product ADD	SpecificationsName xml NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Product ADD	TermsName xml NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Product ADD	FAQName xml NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Product ADD	BuyingGuideName xml NULL
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant ADD OverviewName xml NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant ADD SpecificationsName xml NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant ADD TermsName xml NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant ADD FAQName xml NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant ADD BuyingGuideName xml NULL
+	
+	-- Add support for InstitutionNumber in SalesPayment and UserPayment tables
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesPayment ADD InstitutionNumber varchar(100) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_UserPayment ADD	InstitutionNumber varchar(100) NULL
+	
+	-- Mollie payment gateway
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentMethodsMollieActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsMollieActive DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsMollieActive
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentMethodsMollieAvailabilityRule xml NULL
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysMolliePartnerID varchar(255) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysMollieTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysMollieTestMode DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysMollieTestMode
+
+	-- Suomen Verkkomaksut payment gateway
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysSuomenVerkkomaksutMerchantID varchar(255) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysSuomenVerkkomaksutSecretCode varchar(255) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysSuomenVerkkomaksutTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysSuomenVerkkomaksutTestMode DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysSuomenVerkkomaksutTestMode
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentMethodsSuomenVerkkomaksutActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsSuomenVerkkomaksutActive DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsSuomenVerkkomaksutActive
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentMethodsSuomenVerkkomaksutAvailabilityRule xml NULL
+
+	-- Make product list show or hide configurable
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD ProductListSubCategoryShow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductListSubCategoryShow DEFAULT 1
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductListSubCategoryShow
+
+	-- Support reports
+	CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ReportDefinition](
+		[ReportDefinitionID] [int] IDENTITY(1,1) NOT NULL,
+		[ReportDefinitionGUID] [uniqueidentifier] NOT NULL,
+		[PortalID] [int] NULL,
+		[Name] [nvarchar](200) NULL,
+		[Description] [nvarchar](max) NULL,
+		[Active] [bit] NOT NULL,
+		[DefinitionRule] [xml] NULL,
+		[Standard] [bit] NOT NULL,
+		[ReportGroup] [int] NOT NULL,
+		[RowVersion] [timestamp] NOT NULL,
+		[CreateDate] [datetime] NOT NULL,
+		[UpdateDate] [datetime] NOT NULL,
+	 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_ReportDefinition] PRIMARY KEY CLUSTERED 
+	(
+		[ReportDefinitionID] ASC
+	) 
+	) 
+
+	CREATE UNIQUE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_ReportDefinition] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_ReportDefinition] 
+	(
+		[ReportDefinitionGUID] ASC
+	) 
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ReportDefinition]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ReportDefinition_Portals] FOREIGN KEY([PortalID])
+	REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID])
+	ON DELETE CASCADE
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ReportDefinition] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ReportDefinition_Portals]
+
+COMMIT TRANSACTION
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+	
+		-- Upgrade default Checkout template to "Standard11"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CheckoutDisplayTemplate = 'Standard11' WHERE CheckoutDisplayTemplate LIKE 'Standard%'
+		
+		-- Insert standard reports
+		INSERT {databaseOwner}[{objectQualifier}Revindex_Storefront_ReportDefinition] ([ReportDefinitionGUID], [PortalID], [Name], [Description], [Active], [DefinitionRule], [Standard], [ReportGroup], [CreateDate], [UpdateDate]) VALUES (N'78d2d6cb-738c-4bb9-8c8e-962f47965549', NULL, N'Top paying customers by sales orders', N'Show top paying customers by total amount purchased.', 1, N'<rule version="1.0" type="data">&lt;data method="ReportDefinition" version="1.0"&gt;
+		  &lt;dataSources&gt;
+			&lt;sqlDataSource&gt;
+			  &lt;query&gt;SELECT TOP (@Top)
+			u.UserID, 
+			u.Username, 
+			u.FirstName, 
+			u.LastName, 
+			COUNT(*) AS NumberOfOrders, 
+			SUM(so.TotalAmount) AS TotalAmount
+		FROM Users u
+		JOIN {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder so
+			ON so.UserID = u.UserID
+		WHERE so.Status = 4 AND so.PortalID = @PortalID
+		GROUP BY u.UserID, u.Username, u.FirstName, u.LastName
+		ORDER BY SUM(so.TotalAmount) DESC&lt;/query&gt;
+			  &lt;parameters&gt;
+				&lt;controlParameter&gt;
+				  &lt;name&gt;@Top&lt;/name&gt;
+				  &lt;dataType&gt;11&lt;/dataType&gt;
+				  &lt;field&gt;
+					&lt;dropDownList&gt;
+					  &lt;id&gt;TopParamDropDownList&lt;/id&gt;
+					  &lt;inputControlHeight&gt;&lt;/inputControlHeight&gt;
+					  &lt;inputControlWidth&gt;&lt;/inputControlWidth&gt;
+					  &lt;label&gt;
+						&lt;locale en-US="Max records:" /&gt;
+					  &lt;/label&gt;
+					  &lt;listItems&gt;
+						&lt;listItem&gt;
+						  &lt;name&gt;
+							&lt;locale en-US="10" /&gt;
+						  &lt;/name&gt;
+						  &lt;value&gt;10&lt;/value&gt;
+						  &lt;selected&gt;False&lt;/selected&gt;
+						&lt;/listItem&gt;
+						&lt;listItem&gt;
+						  &lt;name&gt;
+							&lt;locale en-US="50" /&gt;
+						  &lt;/name&gt;
+						  &lt;value&gt;50&lt;/value&gt;
+						  &lt;selected&gt;False&lt;/selected&gt;
+						&lt;/listItem&gt;
+						&lt;listItem&gt;
+						  &lt;name&gt;
+							&lt;locale en-US="100" /&gt;
+						  &lt;/name&gt;
+						  &lt;value&gt;100&lt;/value&gt;
+						  &lt;selected&gt;False&lt;/selected&gt;
+						&lt;/listItem&gt;
+					  &lt;/listItems&gt;
+					  &lt;required&gt;True&lt;/required&gt;
+					  &lt;validatorText&gt;
+						&lt;locale en-US="Max records is required." /&gt;
+					  &lt;/validatorText&gt;
+					&lt;/dropDownList&gt;
+				  &lt;/field&gt;
+				&lt;/controlParameter&gt;
+				&lt;variableParameter&gt;
+				  &lt;name&gt;@PortalID&lt;/name&gt;
+				  &lt;dataType&gt;11&lt;/dataType&gt;
+				  &lt;variableName&gt;Portal:PortalID&lt;/variableName&gt;
+				&lt;/variableParameter&gt;
+			  &lt;/parameters&gt;
+			&lt;/sqlDataSource&gt;
+		  &lt;/dataSources&gt;
+		  &lt;visualizers&gt;
+			&lt;htmlVisualizer&gt;
+			  &lt;html&gt;&amp;lt;table cellspacing="0" cellpadding="3" bgcolor="#eeeeee" style="width: 100%; border-top: 1px solid #cccccc; border-left: 1px solid #cccccc; border-right: 1px solid #cccccc;"&amp;gt;
+			&amp;lt;colgroup&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;/colgroup&amp;gt;
+			&amp;lt;tbody&amp;gt;
+				&amp;lt;tr&amp;gt;
+					&amp;lt;td style="width: 5%;"&amp;gt;&amp;lt;strong&amp;gt;User ID&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 30%;"&amp;gt;&amp;lt;strong&amp;gt;Username&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 20%;"&amp;gt;&amp;lt;strong&amp;gt;First name&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 20%;"&amp;gt;&amp;lt;strong&amp;gt;Last name&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%;"&amp;gt;&amp;lt;strong&amp;gt;Num orders&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 15%;"&amp;gt;&amp;lt;strong&amp;gt;Total amount&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+				&amp;lt;/tr&amp;gt;
+			&amp;lt;/tbody&amp;gt;
+		&amp;lt;/table&amp;gt;
+		[[xsl:for-each select="/in/dataSet/dataTable/dataRow" ]]
+		&amp;lt;table cellspacing="0" cellpadding="3" style="width: 100%;"&amp;gt;
+			&amp;lt;colgroup&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;/colgroup&amp;gt;
+			&amp;lt;tbody&amp;gt;
+				&amp;lt;tr&amp;gt;
+					&amp;lt;td style="width: 5%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="UserID" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 30%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="Username" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 20%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="FirstName" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 20%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="LastName" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="NumberOfOrders" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 15%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="TotalAmount" /]]&amp;lt;/td&amp;gt;
+				&amp;lt;/tr&amp;gt;
+			&amp;lt;/tbody&amp;gt;
+		&amp;lt;/table&amp;gt;
+		[[/xsl:for-each]]&lt;/html&gt;
+			&lt;/htmlVisualizer&gt;
+		  &lt;/visualizers&gt;
+		&lt;/data&gt;</rule>', 1, 2, GETDATE(), GETDATE())
+		
+		
+		INSERT {databaseOwner}[{objectQualifier}Revindex_Storefront_ReportDefinition] ([ReportDefinitionGUID], [PortalID], [Name], [Description], [Active], [DefinitionRule], [Standard], [ReportGroup], [CreateDate], [UpdateDate]) VALUES (N'ba9c15d6-e5a5-470f-96b9-29b0de7bcf09', NULL, N'Top selling products', N'Top selling products by completed sales order.', 1, N'<rule version="1.0" type="data">&lt;data method="ReportDefinition" version="1.0"&gt;
+		  &lt;dataSources&gt;
+			&lt;sqlDataSource&gt;
+			  &lt;query&gt;SELECT TOP (@Top) 
+			agg.ProductID, 
+			p2.Name.value(N''(/locale/@en-US)[1]'', ''nvarchar(MAX)'') AS Name, 
+			agg.TotalQuantity, 
+			agg.SubTotalAmount
+		FROM {databaseOwner}{objectQualifier}Revindex_Storefront_Product p2
+		JOIN
+		(
+			SELECT p.ProductID, SUM(sod.Quantity) AS TotalQuantity, SUM(sod.Price * sod.Quantity) AS SubTotalAmount
+			FROM {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder so
+			JOIN {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrderDetail sod
+				ON sod.SalesOrderID = so.SalesOrderID
+			JOIN {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant pv
+				ON pv.ProductVariantID = sod.ProductVariantID
+			JOIN {databaseOwner}{objectQualifier}Revindex_Storefront_Product p
+				ON p.ProductID = pv.ProductID
+			WHERE so.Status = 4 AND p.PortalID = @PortalID
+			GROUP BY p.ProductID
+		) AS agg
+			ON agg.ProductID = p2.ProductID
+		ORDER BY agg.TotalQuantity DESC&lt;/query&gt;
+			  &lt;parameters&gt;
+				&lt;controlParameter&gt;
+				  &lt;name&gt;@Top&lt;/name&gt;
+				  &lt;dataType&gt;11&lt;/dataType&gt;
+				  &lt;field&gt;
+					&lt;dropDownList&gt;
+					  &lt;id&gt;TopParamDropDownList&lt;/id&gt;
+					  &lt;inputControlHeight&gt;&lt;/inputControlHeight&gt;
+					  &lt;inputControlWidth&gt;&lt;/inputControlWidth&gt;
+					  &lt;label&gt;
+						&lt;locale en-US="Max records:" /&gt;
+					  &lt;/label&gt;
+					  &lt;listItems&gt;
+						&lt;listItem&gt;
+						  &lt;name&gt;
+							&lt;locale en-US="10" /&gt;
+						  &lt;/name&gt;
+						  &lt;value&gt;10&lt;/value&gt;
+						  &lt;selected&gt;False&lt;/selected&gt;
+						&lt;/listItem&gt;
+						&lt;listItem&gt;
+						  &lt;name&gt;
+							&lt;locale en-US="50" /&gt;
+						  &lt;/name&gt;
+						  &lt;value&gt;50&lt;/value&gt;
+						  &lt;selected&gt;False&lt;/selected&gt;
+						&lt;/listItem&gt;
+						&lt;listItem&gt;
+						  &lt;name&gt;
+							&lt;locale en-US="100" /&gt;
+						  &lt;/name&gt;
+						  &lt;value&gt;100&lt;/value&gt;
+						  &lt;selected&gt;False&lt;/selected&gt;
+						&lt;/listItem&gt;
+					  &lt;/listItems&gt;
+					  &lt;required&gt;True&lt;/required&gt;
+					  &lt;validatorText&gt;
+						&lt;locale en-US="Max records is required." /&gt;
+					  &lt;/validatorText&gt;
+					&lt;/dropDownList&gt;
+				  &lt;/field&gt;
+				&lt;/controlParameter&gt;
+				&lt;variableParameter&gt;
+				  &lt;name&gt;@PortalID&lt;/name&gt;
+				  &lt;dataType&gt;11&lt;/dataType&gt;
+				  &lt;variableName&gt;Portal:PortalID&lt;/variableName&gt;
+				&lt;/variableParameter&gt;
+			  &lt;/parameters&gt;
+			&lt;/sqlDataSource&gt;
+		  &lt;/dataSources&gt;
+		  &lt;visualizers&gt;
+			&lt;htmlVisualizer&gt;
+			  &lt;html&gt;&amp;lt;div id="chart_div" style="width: 600px; height: 300px; margin: 10px auto; border: 1px solid #cccccc;"&amp;gt;&amp;lt;/div&amp;gt;
+		&amp;lt;script type="text/javascript" src="https://www.google.com/jsapi"&amp;gt;&amp;lt;/script&amp;gt;
+		&amp;lt;script type="text/javascript"&amp;gt;
+		// The graphic uses Google Chart. Please refer to Google Chart docs for more information on customizing chart data and style
+		// https://developers.google.com/chart/
+
+		google.load("visualization", "1.0", {packages:["corechart"]});
+		google.setOnLoadCallback(drawChart);
+		function drawChart() 
+		{
+			var data = google.visualization.arrayToDataTable([
+				[''Products'', ''Qty'', ''Amount''],
+		[[xsl:for-each select="/in/dataSet/dataTable/dataRow" ]]
+				["[[xsl:value-of select="Name" /]]", [[xsl:value-of select="TotalQuantity" /]], [[xsl:value-of select="format-number(SubTotalAmount, ''0.00'')" /]]],
+		[[/xsl:for-each]]
+			]);
+
+			var options = {
+				title: ''Top selling products'',
+				hAxis: {title: ''Products''}
+			};
+
+			var chart = new google.visualization.ColumnChart(document.getElementById(''chart_div''));
+			chart.draw(data, options);
+		}
+		&amp;lt;/script&amp;gt;
+		&amp;lt;table cellspacing="0" cellpadding="3" bgcolor="#eeeeee" style="width: 100%; border-top: 1px solid #cccccc; border-left: 1px solid #cccccc; border-right: 1px solid #cccccc;"&amp;gt;
+			&amp;lt;colgroup&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;/colgroup&amp;gt;
+			&amp;lt;tbody&amp;gt;
+				&amp;lt;tr&amp;gt;
+					&amp;lt;td style="width: 10%;"&amp;gt;&amp;lt;strong&amp;gt;Product ID&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 30%;"&amp;gt;&amp;lt;strong&amp;gt;Product name&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 30%;"&amp;gt;&amp;lt;strong&amp;gt;Total quantity sold&amp;lt;br /&amp;gt;
+					&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 30%;"&amp;gt;&amp;lt;strong&amp;gt;Total amount&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+				&amp;lt;/tr&amp;gt;
+			&amp;lt;/tbody&amp;gt;
+		&amp;lt;/table&amp;gt;
+		[[xsl:for-each select="/in/dataSet/dataTable/dataRow" ]]
+		&amp;lt;table cellspacing="0" cellpadding="3" style="width: 100%;"&amp;gt;
+			&amp;lt;colgroup&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;/colgroup&amp;gt;
+			&amp;lt;tbody&amp;gt;
+				&amp;lt;tr&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="ProductID" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 30%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="Name" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 30%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="TotalQuantity" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 30%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(SubTotalAmount, ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+				&amp;lt;/tr&amp;gt;
+			&amp;lt;/tbody&amp;gt;
+		&amp;lt;/table&amp;gt;
+		[[/xsl:for-each]]&lt;/html&gt;
+			&lt;/htmlVisualizer&gt;
+		  &lt;/visualizers&gt;
+		&lt;/data&gt;</rule>', 1, 1, GETDATE(), GETDATE())
+		
+		
+		INSERT {databaseOwner}[{objectQualifier}Revindex_Storefront_ReportDefinition] ([ReportDefinitionGUID], [PortalID], [Name], [Description], [Active], [DefinitionRule], [Standard], [ReportGroup], [CreateDate], [UpdateDate]) VALUES (N'476bc7cb-7a24-4875-8c0f-c812cbb10566', NULL, N'Sales orders by date', N'List the sales orders by date.', 1, N'<rule version="1.0" type="data">&lt;data method="ReportDefinition" version="1.0"&gt;
+		  &lt;dataSources&gt;
+			&lt;sqlDataSource&gt;
+			  &lt;query&gt;SELECT 
+			so.OrderDate,
+			so.SalesOrderID,
+			CASE so.Status
+				WHEN 1 THEN ''Pending''
+				WHEN 2 THEN ''Ordered''
+				WHEN 3 THEN ''Processing''
+				WHEN 4 THEN ''Completed''
+				WHEN 5 THEN ''Cancelled''
+				WHEN 6 THEN ''Declined''
+				ELSE ''Unknown''
+			END AS [Status],
+			CASE so.SalesPaymentStatus
+				WHEN 1 THEN ''Pending''
+				WHEN 2 THEN ''Paid''
+				WHEN 3 THEN ''Cancelled''
+				WHEN 4 THEN ''Refunded''
+				ELSE ''Unknown''
+			END AS [SalesPaymentStatus],
+			CASE so.ShippingStatus
+				WHEN 1 THEN ''Not required''
+				WHEN 2 THEN ''Not shipped''
+				WHEN 3 THEN ''Shipped''
+				WHEN 4 THEN ''Undeliverable''
+				ELSE ''Unknown''
+			END AS [ShippingStatus],
+			so.SubTotalAmount, 
+			so.ShippingAmount + so.ShippingDiscountAmount AS ShippingAmount, 
+			so.HandlingAmount + so.HandlingDiscountAmount AS HandlingAmount, 
+			so.TaxAmount1 + so.TaxAmount2 + so.TaxAmount3 + so.TaxAmount3 + so.TaxAmount4 + so.TaxAmount5 + so.TaxDiscountAmount AS TaxAmount, 
+			so.TotalAmount
+		FROM {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder so
+		WHERE PortalID = @PortalID AND OrderDate BETWEEN @StartDate AND @StopDate
+		ORDER BY so.OrderDate&lt;/query&gt;
+			  &lt;parameters&gt;
+				&lt;controlParameter&gt;
+				  &lt;name&gt;@StartDate&lt;/name&gt;
+				  &lt;dataType&gt;6&lt;/dataType&gt;
+				  &lt;field&gt;
+					&lt;datePicker&gt;
+					  &lt;id&gt;StartDateDatePicker&lt;/id&gt;
+					  &lt;inputControlHeight&gt;&lt;/inputControlHeight&gt;
+					  &lt;inputControlWidth&gt;&lt;/inputControlWidth&gt;
+					  &lt;label&gt;
+						&lt;locale en-US="Start date:" /&gt;
+					  &lt;/label&gt;
+					  &lt;required&gt;True&lt;/required&gt;
+					  &lt;selectedDates /&gt;
+					  &lt;validatorText&gt;
+						&lt;locale en-US="Start date is required." /&gt;
+					  &lt;/validatorText&gt;
+					&lt;/datePicker&gt;
+				  &lt;/field&gt;
+				&lt;/controlParameter&gt;
+				&lt;controlParameter&gt;
+				  &lt;name&gt;@StopDate&lt;/name&gt;
+				  &lt;dataType&gt;6&lt;/dataType&gt;
+				  &lt;field&gt;
+					&lt;datePicker&gt;
+					  &lt;id&gt;StopDateDatePicker&lt;/id&gt;
+					  &lt;inputControlHeight&gt;&lt;/inputControlHeight&gt;
+					  &lt;inputControlWidth&gt;&lt;/inputControlWidth&gt;
+					  &lt;label&gt;
+						&lt;locale en-US="Stop date:" /&gt;
+					  &lt;/label&gt;
+					  &lt;required&gt;True&lt;/required&gt;
+					  &lt;selectedDates /&gt;
+					  &lt;validatorText&gt;
+						&lt;locale en-US="Stop date is required." /&gt;
+					  &lt;/validatorText&gt;
+					&lt;/datePicker&gt;
+				  &lt;/field&gt;
+				&lt;/controlParameter&gt;
+				&lt;variableParameter&gt;
+				  &lt;name&gt;@PortalID&lt;/name&gt;
+				  &lt;dataType&gt;11&lt;/dataType&gt;
+				  &lt;variableName&gt;Portal:PortalID&lt;/variableName&gt;
+				&lt;/variableParameter&gt;
+			  &lt;/parameters&gt;
+			&lt;/sqlDataSource&gt;
+		  &lt;/dataSources&gt;
+		  &lt;visualizers&gt;
+			&lt;htmlVisualizer&gt;
+			  &lt;html&gt;&amp;lt;table cellspacing="0" cellpadding="3" bgcolor="#eeeeee" style="width: 100%; border-top: 1px solid #cccccc; border-left: 1px solid #cccccc; border-right: 1px solid #cccccc;"&amp;gt;
+			&amp;lt;colgroup&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;/colgroup&amp;gt;
+			&amp;lt;tbody&amp;gt;
+				&amp;lt;tr&amp;gt;
+					&amp;lt;td style="width: 10%;"&amp;gt;&amp;lt;strong&amp;gt;Date&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%;"&amp;gt;&amp;lt;strong&amp;gt;Order ID&amp;lt;br /&amp;gt;
+					&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%;"&amp;gt;&amp;lt;strong&amp;gt;Status&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%;"&amp;gt;&amp;lt;strong&amp;gt;Payment status&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%;"&amp;gt;&amp;lt;strong&amp;gt;Shipping status &amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%;"&amp;gt;&amp;lt;strong&amp;gt;Sub-total amount&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%;"&amp;gt;&amp;lt;strong&amp;gt;Shipping amount&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%;"&amp;gt;&amp;lt;strong&amp;gt;Handling amount&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%;"&amp;gt;&amp;lt;strong&amp;gt;Tax amount&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%;"&amp;gt;&amp;lt;strong&amp;gt;Total amount &amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+				&amp;lt;/tr&amp;gt;
+			&amp;lt;/tbody&amp;gt;
+		&amp;lt;/table&amp;gt;
+		[[xsl:for-each select="/in/dataSet/dataTable/dataRow" ]]
+		&amp;lt;table cellspacing="0" cellpadding="3" style="width: 100%;"&amp;gt;
+			&amp;lt;colgroup&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;/colgroup&amp;gt;
+			&amp;lt;tbody&amp;gt;
+				&amp;lt;tr&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="substring(OrderDate,1,10)" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="SalesOrderID" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="Status" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="SalesPaymentStatus" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="ShippingStatus" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(SubTotalAmount, ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(ShippingAmount, ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(HandlingAmount, ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(TaxAmount, ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(TotalAmount, ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+				&amp;lt;/tr&amp;gt;
+			&amp;lt;/tbody&amp;gt;
+		&amp;lt;/table&amp;gt;
+		[[/xsl:for-each]]
+		&amp;lt;table cellspacing="0" cellpadding="3" style="width: 100%; border-top: 4px double black;"&amp;gt;
+			&amp;lt;colgroup&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;/colgroup&amp;gt;
+			&amp;lt;tbody&amp;gt;
+				&amp;lt;tr&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt; &amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt; &amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt; &amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt; &amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt; &amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(sum(/in/dataSet/dataTable/dataRow/SubTotalAmount), ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(sum(/in/dataSet/dataTable/dataRow/ShippingAmount), ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(sum(/in/dataSet/dataTable/dataRow/HandlingAmount), ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(sum(/in/dataSet/dataTable/dataRow/TaxAmount), ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(sum(/in/dataSet/dataTable/dataRow/TotalAmount), ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+				&amp;lt;/tr&amp;gt;
+			&amp;lt;/tbody&amp;gt;
+		&amp;lt;/table&amp;gt;&lt;/html&gt;
+			&lt;/htmlVisualizer&gt;
+		  &lt;/visualizers&gt;
+		&lt;/data&gt;</rule>', 1, 2, GETDATE(), GETDATE())
+		
+		
+		INSERT {databaseOwner}[{objectQualifier}Revindex_Storefront_ReportDefinition] ([ReportDefinitionGUID], [PortalID], [Name], [Description], [Active], [DefinitionRule], [Standard], [ReportGroup], [CreateDate], [UpdateDate]) VALUES (N'8acda957-4621-4a72-9f06-d434ece87412', NULL, N'Daily sales order activity', N'List the daily completed sales orders.', 1, N'<rule version="1.0" type="data">&lt;data method="ReportDefinition" version="1.0"&gt;
+		  &lt;dataSources&gt;
+			&lt;sqlDataSource&gt;
+			  &lt;query&gt;SELECT 
+			DATEADD(dd, 0, DATEDIFF(dd, 0, so.OrderDate)) AS OrderDate, 
+			COUNT(*) AS TotalOrders, 
+			SUM(so.SubTotalAmount) AS SubTotalAmount, 
+			SUM(so.TotalAmount) AS TotalAmount
+		FROM {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder so
+		WHERE so.Status = 4 AND so.PortalID = @PortalID AND so.OrderDate BETWEEN @StartDate AND @StopDate
+		GROUP BY DATEADD(dd, 0, DATEDIFF(dd, 0, so.OrderDate))&lt;/query&gt;
+			  &lt;parameters&gt;
+				&lt;controlParameter&gt;
+				  &lt;name&gt;@StartDate&lt;/name&gt;
+				  &lt;dataType&gt;6&lt;/dataType&gt;
+				  &lt;field&gt;
+					&lt;datePicker&gt;
+					  &lt;id&gt;StartDateDatePicker&lt;/id&gt;
+					  &lt;inputControlHeight&gt;&lt;/inputControlHeight&gt;
+					  &lt;inputControlWidth&gt;&lt;/inputControlWidth&gt;
+					  &lt;label&gt;
+						&lt;locale en-US="Start date:" /&gt;
+					  &lt;/label&gt;
+					  &lt;required&gt;True&lt;/required&gt;
+					  &lt;selectedDates /&gt;
+					  &lt;validatorText&gt;
+						&lt;locale en-US="Start date is required." /&gt;
+					  &lt;/validatorText&gt;
+					&lt;/datePicker&gt;
+				  &lt;/field&gt;
+				&lt;/controlParameter&gt;
+				&lt;controlParameter&gt;
+				  &lt;name&gt;@StopDate&lt;/name&gt;
+				  &lt;dataType&gt;6&lt;/dataType&gt;
+				  &lt;field&gt;
+					&lt;datePicker&gt;
+					  &lt;id&gt;StopDateDatePicker&lt;/id&gt;
+					  &lt;inputControlHeight&gt;&lt;/inputControlHeight&gt;
+					  &lt;inputControlWidth&gt;&lt;/inputControlWidth&gt;
+					  &lt;label&gt;
+						&lt;locale en-US="Stop date:" /&gt;
+					  &lt;/label&gt;
+					  &lt;required&gt;True&lt;/required&gt;
+					  &lt;selectedDates /&gt;
+					  &lt;validatorText&gt;
+						&lt;locale en-US="Stop date is required." /&gt;
+					  &lt;/validatorText&gt;
+					&lt;/datePicker&gt;
+				  &lt;/field&gt;
+				&lt;/controlParameter&gt;
+				&lt;variableParameter&gt;
+				  &lt;name&gt;@PortalID&lt;/name&gt;
+				  &lt;dataType&gt;11&lt;/dataType&gt;
+				  &lt;variableName&gt;Portal:PortalID&lt;/variableName&gt;
+				&lt;/variableParameter&gt;
+			  &lt;/parameters&gt;
+			&lt;/sqlDataSource&gt;
+		  &lt;/dataSources&gt;
+		  &lt;visualizers&gt;
+			&lt;htmlVisualizer&gt;
+			  &lt;html&gt;&amp;lt;div style="width: 600px; height: 300px; margin: 10px auto; border: 1px solid #cccccc;" id="chart_div"&amp;gt;&amp;lt;/div&amp;gt;
+		&amp;lt;script type="text/javascript" src="https://www.google.com/jsapi"&amp;gt;&amp;lt;/script&amp;gt;
+		&amp;lt;script type="text/javascript"&amp;gt;
+		// The graphic uses Google Chart. Please refer to Google Chart docs for more information on customizing chart data and style
+		// https://developers.google.com/chart/
+
+		google.load("visualization", "1.0", {packages:["corechart"]});
+		google.setOnLoadCallback(drawChart);
+		function drawChart() 
+		{
+			var data = google.visualization.arrayToDataTable([
+				[''Date'', ''Total orders'', ''Total Amount''],
+		[[xsl:for-each select="/in/dataSet/dataTable/dataRow" ]]
+				["[[xsl:value-of select="substring(OrderDate, 1, 10)" /]]", [[xsl:value-of select="TotalOrders" /]], [[xsl:value-of select="format-number(TotalAmount, ''0.00'')" /]]],
+		[[/xsl:for-each]]
+			]);
+
+			var options = {
+				title: ''Daily sales order activity'',
+				hAxis: {title: ''Date''}
+			};
+
+			var chart = new google.visualization.ColumnChart(document.getElementById(''chart_div''));
+			chart.draw(data, options);
+		}
+		&amp;lt;/script&amp;gt;
+		&amp;lt;table cellspacing="0" cellpadding="3" bgcolor="#eeeeee" style="width: 100%; border-top: 1px solid #cccccc; border-left: 1px solid #cccccc; border-right: 1px solid #cccccc;"&amp;gt;
+			&amp;lt;colgroup&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;/colgroup&amp;gt;
+			&amp;lt;tbody&amp;gt;
+				&amp;lt;tr&amp;gt;
+					&amp;lt;td style="width: 15%;"&amp;gt;&amp;lt;strong&amp;gt;Date&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 25%;"&amp;gt;&amp;lt;strong&amp;gt;Total orders&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 30%;"&amp;gt;&amp;lt;strong&amp;gt;Sub-total amount&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 30%;"&amp;gt;&amp;lt;strong&amp;gt;Total amount &amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+				&amp;lt;/tr&amp;gt;
+			&amp;lt;/tbody&amp;gt;
+		&amp;lt;/table&amp;gt;
+		[[xsl:for-each select="/in/dataSet/dataTable/dataRow" ]]
+		&amp;lt;table cellspacing="0" cellpadding="3" style="width: 100%;"&amp;gt;
+			&amp;lt;colgroup&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;/colgroup&amp;gt;
+			&amp;lt;tbody&amp;gt;
+				&amp;lt;tr&amp;gt;
+					&amp;lt;td style="width: 15%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="substring(OrderDate, 1, 10)" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 25%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="TotalOrders" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 30%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(SubTotalAmount, ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 30%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(TotalAmount, ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+				&amp;lt;/tr&amp;gt;
+			&amp;lt;/tbody&amp;gt;
+		&amp;lt;/table&amp;gt;
+		[[/xsl:for-each]]
+		&amp;lt;table cellspacing="0" cellpadding="3" style="width: 100%; border-top: 4px double black;"&amp;gt;
+			&amp;lt;colgroup&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;/colgroup&amp;gt;
+			&amp;lt;tbody&amp;gt;
+				&amp;lt;tr&amp;gt;
+					&amp;lt;td style="width: 15%; border: 1px solid #cccccc;"&amp;gt; &amp;lt;br /&amp;gt;
+					&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 25%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="sum(/in/dataSet/dataTable/dataRow/TotalOrders)" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 30%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(sum(/in/dataSet/dataTable/dataRow/SubTotalAmount), ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 30%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(sum(/in/dataSet/dataTable/dataRow/TotalAmount), ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+				&amp;lt;/tr&amp;gt;
+			&amp;lt;/tbody&amp;gt;
+		&amp;lt;/table&amp;gt;&lt;/html&gt;
+			&lt;/htmlVisualizer&gt;
+		  &lt;/visualizers&gt;
+		&lt;/data&gt;</rule>', 1, 2, GETDATE(), GETDATE())
+		
+		
+		INSERT {databaseOwner}[{objectQualifier}Revindex_Storefront_ReportDefinition] ([ReportDefinitionGUID], [PortalID], [Name], [Description], [Active], [DefinitionRule], [Standard], [ReportGroup], [CreateDate], [UpdateDate]) VALUES (N'f0be969e-3700-4273-8226-ddbc9481dba3', NULL, N'Daily sales order detail activity', N'List the daily completed sales order details.', 1, N'<rule version="1.0" type="data">&lt;data method="ReportDefinition" version="1.0"&gt;
+		  &lt;dataSources&gt;
+			&lt;sqlDataSource&gt;
+			  &lt;query&gt;SELECT 
+			DATEADD(dd, 0, DATEDIFF(dd, 0, so.OrderDate)) AS [OrderDate], 
+			SUM(sod.Quantity) AS TotalQuantity, 
+			SUM(sod.Price * sod.Quantity) AS SubTotalAmount
+		FROM {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder so
+		JOIN {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrderDetail sod
+		ON sod.SalesOrderID = so.SalesOrderID
+		WHERE so.Status = 4 AND so.PortalID = @PortalID AND so.OrderDate BETWEEN @StartDate AND @StopDate
+		GROUP BY DATEADD(dd, 0, DATEDIFF(dd, 0, so.OrderDate))&lt;/query&gt;
+			  &lt;parameters&gt;
+				&lt;controlParameter&gt;
+				  &lt;name&gt;@StartDate&lt;/name&gt;
+				  &lt;dataType&gt;6&lt;/dataType&gt;
+				  &lt;field&gt;
+					&lt;datePicker&gt;
+					  &lt;id&gt;StartDateDatePicker&lt;/id&gt;
+					  &lt;inputControlHeight&gt;&lt;/inputControlHeight&gt;
+					  &lt;inputControlWidth&gt;&lt;/inputControlWidth&gt;
+					  &lt;label&gt;
+						&lt;locale en-US="Start date:" /&gt;
+					  &lt;/label&gt;
+					  &lt;required&gt;True&lt;/required&gt;
+					  &lt;selectedDates /&gt;
+					  &lt;validatorText&gt;
+						&lt;locale en-US="Start date is required." /&gt;
+					  &lt;/validatorText&gt;
+					&lt;/datePicker&gt;
+				  &lt;/field&gt;
+				&lt;/controlParameter&gt;
+				&lt;controlParameter&gt;
+				  &lt;name&gt;@StopDate&lt;/name&gt;
+				  &lt;dataType&gt;6&lt;/dataType&gt;
+				  &lt;field&gt;
+					&lt;datePicker&gt;
+					  &lt;id&gt;StopDateDatePicker&lt;/id&gt;
+					  &lt;inputControlHeight&gt;&lt;/inputControlHeight&gt;
+					  &lt;inputControlWidth&gt;&lt;/inputControlWidth&gt;
+					  &lt;label&gt;
+						&lt;locale en-US="Stop date:" /&gt;
+					  &lt;/label&gt;
+					  &lt;required&gt;True&lt;/required&gt;
+					  &lt;selectedDates /&gt;
+					  &lt;validatorText&gt;
+						&lt;locale en-US="Stop date is required." /&gt;
+					  &lt;/validatorText&gt;
+					&lt;/datePicker&gt;
+				  &lt;/field&gt;
+				&lt;/controlParameter&gt;
+				&lt;variableParameter&gt;
+				  &lt;name&gt;@PortalID&lt;/name&gt;
+				  &lt;dataType&gt;11&lt;/dataType&gt;
+				  &lt;variableName&gt;Portal:PortalID&lt;/variableName&gt;
+				&lt;/variableParameter&gt;
+			  &lt;/parameters&gt;
+			&lt;/sqlDataSource&gt;
+		  &lt;/dataSources&gt;
+		  &lt;visualizers&gt;
+			&lt;htmlVisualizer&gt;
+			  &lt;html&gt;&amp;lt;div id="chart_div" style="width: 600px; height: 300px; margin: 10px auto; border: 1px solid #cccccc;"&amp;gt;&amp;lt;/div&amp;gt;
+		&amp;lt;script type="text/javascript" src="https://www.google.com/jsapi"&amp;gt;&amp;lt;/script&amp;gt;
+		&amp;lt;script type="text/javascript"&amp;gt;
+		// The graphic uses Google Chart. Please refer to Google Chart docs for more information on customizing chart data and style
+		// https://developers.google.com/chart/
+
+		google.load("visualization", "1.0", {packages:["corechart"]});
+		google.setOnLoadCallback(drawChart);
+		function drawChart() 
+		{
+			var data = google.visualization.arrayToDataTable([
+				[''Date'', ''Total Quantity''],
+		[[xsl:for-each select="/in/dataSet/dataTable/dataRow" ]]
+				["[[xsl:value-of select="substring(OrderDate, 1, 10)" /]]", [[xsl:value-of select="TotalQuantity" /]]],
+		[[/xsl:for-each]]
+			]);
+
+			var options = {
+				title: ''Daily sales order detail activity'',
+				hAxis: {title: ''Date''}
+			};
+
+			var chart = new google.visualization.ColumnChart(document.getElementById(''chart_div''));
+			chart.draw(data, options);
+		}
+		&amp;lt;/script&amp;gt;
+		&amp;lt;table cellspacing="0" cellpadding="3" bgcolor="#eeeeee" style="width: 100%; border-top: 1px solid #cccccc; border-left: 1px solid #cccccc; border-right: 1px solid #cccccc;"&amp;gt;
+			&amp;lt;colgroup&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;/colgroup&amp;gt;
+			&amp;lt;tbody&amp;gt;
+				&amp;lt;tr&amp;gt;
+					&amp;lt;td style="width: 20%;"&amp;gt;&amp;lt;strong&amp;gt;Date&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 40%;"&amp;gt;&amp;lt;strong&amp;gt;Total quantity&amp;lt;br /&amp;gt;
+					&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 40%;"&amp;gt;&amp;lt;strong&amp;gt;Sub-total amount &amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+				&amp;lt;/tr&amp;gt;
+			&amp;lt;/tbody&amp;gt;
+		&amp;lt;/table&amp;gt;
+		[[xsl:for-each select="/in/dataSet/dataTable/dataRow" ]]
+		&amp;lt;table cellspacing="0" cellpadding="3" style="width: 100%;"&amp;gt;
+			&amp;lt;colgroup&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;/colgroup&amp;gt;
+			&amp;lt;tbody&amp;gt;
+				&amp;lt;tr&amp;gt;
+					&amp;lt;td style="width: 20%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="substring(OrderDate, 1, 10)" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 40%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="TotalQuantity" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 40%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(SubTotalAmount, ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+				&amp;lt;/tr&amp;gt;
+			&amp;lt;/tbody&amp;gt;
+		&amp;lt;/table&amp;gt;
+		[[/xsl:for-each]]
+		&amp;lt;table cellspacing="0" cellpadding="3" style="width: 100%; border-top: 4px double black;"&amp;gt;
+			&amp;lt;colgroup&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;/colgroup&amp;gt;
+			&amp;lt;tbody&amp;gt;
+				&amp;lt;tr&amp;gt;
+					&amp;lt;td style="width: 20%; border: 1px solid #cccccc;"&amp;gt; &amp;lt;br /&amp;gt;
+					&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 40%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="sum(/in/dataSet/dataTable/dataRow/TotalQuantity)" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 40%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(sum(/in/dataSet/dataTable/dataRow/SubTotalAmount), ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+				&amp;lt;/tr&amp;gt;
+			&amp;lt;/tbody&amp;gt;
+		&amp;lt;/table&amp;gt;&lt;/html&gt;
+			&lt;/htmlVisualizer&gt;
+		  &lt;/visualizers&gt;
+		&lt;/data&gt;</rule>', 1, 2, GETDATE(), GETDATE())
+		INSERT {databaseOwner}[{objectQualifier}Revindex_Storefront_ReportDefinition] ([ReportDefinitionGUID], [PortalID], [Name], [Description], [Active], [DefinitionRule], [Standard], [ReportGroup], [CreateDate], [UpdateDate]) VALUES (N'1f098732-5dec-47c6-868f-609693425f16', NULL, N'Monthly sales order activity', N'List the monthly completed sales orders.', 1, N'<rule version="1.0" type="data">&lt;data method="ReportDefinition" version="1.0"&gt;
+		  &lt;dataSources&gt;
+			&lt;sqlDataSource&gt;
+			  &lt;query&gt;SELECT 
+			DATEADD(month, DATEDIFF(m, 0, so.OrderDate), 0) AS OrderDate, 
+			COUNT(*) AS TotalOrders, SUM(so.SubTotalAmount) AS SubTotalAmount, 
+			SUM(so.TotalAmount) AS TotalAmount
+		FROM {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder so
+		WHERE so.Status = 4 AND so.PortalID = @PortalID AND so.OrderDate BETWEEN @StartDate AND @StopDate
+		GROUP BY DATEADD(month, DATEDIFF(m, 0, so.OrderDate), 0)&lt;/query&gt;
+			  &lt;parameters&gt;
+				&lt;controlParameter&gt;
+				  &lt;name&gt;@StartDate&lt;/name&gt;
+				  &lt;dataType&gt;6&lt;/dataType&gt;
+				  &lt;field&gt;
+					&lt;datePicker&gt;
+					  &lt;id&gt;StartDateDatePicker&lt;/id&gt;
+					  &lt;inputControlHeight&gt;&lt;/inputControlHeight&gt;
+					  &lt;inputControlWidth&gt;&lt;/inputControlWidth&gt;
+					  &lt;label&gt;
+						&lt;locale en-US="Start date:" /&gt;
+					  &lt;/label&gt;
+					  &lt;required&gt;True&lt;/required&gt;
+					  &lt;selectedDates /&gt;
+					  &lt;validatorText&gt;
+						&lt;locale en-US="Start date is required." /&gt;
+					  &lt;/validatorText&gt;
+					&lt;/datePicker&gt;
+				  &lt;/field&gt;
+				&lt;/controlParameter&gt;
+				&lt;controlParameter&gt;
+				  &lt;name&gt;@StopDate&lt;/name&gt;
+				  &lt;dataType&gt;6&lt;/dataType&gt;
+				  &lt;field&gt;
+					&lt;datePicker&gt;
+					  &lt;id&gt;StopDateDatePicker&lt;/id&gt;
+					  &lt;inputControlHeight&gt;&lt;/inputControlHeight&gt;
+					  &lt;inputControlWidth&gt;&lt;/inputControlWidth&gt;
+					  &lt;label&gt;
+						&lt;locale en-US="Stop date:" /&gt;
+					  &lt;/label&gt;
+					  &lt;required&gt;True&lt;/required&gt;
+					  &lt;selectedDates /&gt;
+					  &lt;validatorText&gt;
+						&lt;locale en-US="Stop date is required." /&gt;
+					  &lt;/validatorText&gt;
+					&lt;/datePicker&gt;
+				  &lt;/field&gt;
+				&lt;/controlParameter&gt;
+				&lt;variableParameter&gt;
+				  &lt;name&gt;@PortalID&lt;/name&gt;
+				  &lt;dataType&gt;11&lt;/dataType&gt;
+				  &lt;variableName&gt;Portal:PortalID&lt;/variableName&gt;
+				&lt;/variableParameter&gt;
+			  &lt;/parameters&gt;
+			&lt;/sqlDataSource&gt;
+		  &lt;/dataSources&gt;
+		  &lt;visualizers&gt;
+			&lt;htmlVisualizer&gt;
+			  &lt;html&gt;&amp;lt;div style="width: 600px; height: 300px; margin: 10px auto; border: 1px solid #cccccc;" id="chart_div"&amp;gt;&amp;lt;/div&amp;gt;
+		&amp;lt;script type="text/javascript" src="https://www.google.com/jsapi"&amp;gt;&amp;lt;/script&amp;gt;
+		&amp;lt;script type="text/javascript"&amp;gt;
+		// The graphic uses Google Chart. Please refer to Google Chart docs for more information on customizing chart data and style
+		// https://developers.google.com/chart/
+
+		google.load("visualization", "1.0", {packages:["corechart"]});
+		google.setOnLoadCallback(drawChart);
+		function drawChart() 
+		{
+			var data = google.visualization.arrayToDataTable([
+				[''Date'', ''Total Amount''],
+		[[xsl:for-each select="/in/dataSet/dataTable/dataRow" ]]
+				["[[xsl:value-of select="substring(OrderDate, 1, 10)" /]]", [[xsl:value-of select="format-number(TotalAmount, ''0.00'')" /]]],
+		[[/xsl:for-each]]
+			]);
+
+			var options = {
+				title: ''Monthly sales order activity'',
+				hAxis: {title: ''Date''}
+			};
+
+			var chart = new google.visualization.ColumnChart(document.getElementById(''chart_div''));
+			chart.draw(data, options);
+		}
+		&amp;lt;/script&amp;gt;
+		&amp;lt;table cellspacing="0" cellpadding="3" bgcolor="#eeeeee" style="width: 100%; border-top: 1px solid #cccccc; border-left: 1px solid #cccccc; border-right: 1px solid #cccccc;"&amp;gt;
+			&amp;lt;colgroup&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;/colgroup&amp;gt;
+			&amp;lt;tbody&amp;gt;
+				&amp;lt;tr&amp;gt;
+					&amp;lt;td style="width: 20%;"&amp;gt;&amp;lt;strong&amp;gt;Date&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 40%;"&amp;gt;&amp;lt;strong&amp;gt;Sub-total amount&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 40%;"&amp;gt;&amp;lt;strong&amp;gt;Total amount &amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+				&amp;lt;/tr&amp;gt;
+			&amp;lt;/tbody&amp;gt;
+		&amp;lt;/table&amp;gt;
+		[[xsl:for-each select="/in/dataSet/dataTable/dataRow" ]]
+		&amp;lt;table cellspacing="0" cellpadding="3" style="width: 100%;"&amp;gt;
+			&amp;lt;colgroup&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;/colgroup&amp;gt;
+			&amp;lt;tbody&amp;gt;
+				&amp;lt;tr&amp;gt;
+					&amp;lt;td style="width: 20%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="substring(OrderDate, 1, 10)" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 40%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(SubTotalAmount, ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 40%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(TotalAmount, ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+				&amp;lt;/tr&amp;gt;
+			&amp;lt;/tbody&amp;gt;
+		&amp;lt;/table&amp;gt;
+		[[/xsl:for-each]]
+		&amp;lt;table cellspacing="0" cellpadding="3" style="width: 100%; border-top: 4px double black;"&amp;gt;
+			&amp;lt;colgroup&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;/colgroup&amp;gt;
+			&amp;lt;tbody&amp;gt;
+				&amp;lt;tr&amp;gt;
+					&amp;lt;td style="width: 20%; border: 1px solid #cccccc;"&amp;gt; &amp;lt;br /&amp;gt;
+					&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 40%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(sum(/in/dataSet/dataTable/dataRow/SubTotalAmount), ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 40%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(sum(/in/dataSet/dataTable/dataRow/TotalAmount), ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+				&amp;lt;/tr&amp;gt;
+			&amp;lt;/tbody&amp;gt;
+		&amp;lt;/table&amp;gt;&lt;/html&gt;
+			&lt;/htmlVisualizer&gt;
+		  &lt;/visualizers&gt;
+		&lt;/data&gt;</rule>', 1, 2, GETDATE(), GETDATE())
+		
+		
+		INSERT {databaseOwner}[{objectQualifier}Revindex_Storefront_ReportDefinition] ([ReportDefinitionGUID], [PortalID], [Name], [Description], [Active], [DefinitionRule], [Standard], [ReportGroup], [CreateDate], [UpdateDate]) VALUES (N'179bdd8d-bd30-416f-8c55-ccc2f6cd94c9', NULL, N'Monthly sales order detail activity', N'List the monthly completed sales order details.', 1, N'<rule version="1.0" type="data">&lt;data method="ReportDefinition" version="1.0"&gt;
+		  &lt;dataSources&gt;
+			&lt;sqlDataSource&gt;
+			  &lt;query&gt;SELECT 
+			DATEADD(month, DATEDIFF(m, 0, so.OrderDate), 0) AS OrderDate, 
+			SUM(sod.Quantity) AS TotalQuantity, 
+			SUM(sod.Price * sod.Quantity) AS SubTotalAmount
+		FROM {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder so
+		JOIN {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrderDetail sod
+		ON sod.SalesOrderID = so.SalesOrderID
+		WHERE so.Status = 4 AND so.PortalID = @PortalID AND so.OrderDate BETWEEN @StartDate AND @StopDate
+		GROUP BY DATEADD(month, DATEDIFF(m, 0, so.OrderDate), 0)&lt;/query&gt;
+			  &lt;parameters&gt;
+				&lt;controlParameter&gt;
+				  &lt;name&gt;@StartDate&lt;/name&gt;
+				  &lt;dataType&gt;6&lt;/dataType&gt;
+				  &lt;field&gt;
+					&lt;datePicker&gt;
+					  &lt;id&gt;StartDateDatePicker&lt;/id&gt;
+					  &lt;inputControlHeight&gt;&lt;/inputControlHeight&gt;
+					  &lt;inputControlWidth&gt;&lt;/inputControlWidth&gt;
+					  &lt;label&gt;
+						&lt;locale en-US="Start date:" /&gt;
+					  &lt;/label&gt;
+					  &lt;required&gt;True&lt;/required&gt;
+					  &lt;selectedDates /&gt;
+					  &lt;validatorText&gt;
+						&lt;locale en-US="Start date is required." /&gt;
+					  &lt;/validatorText&gt;
+					&lt;/datePicker&gt;
+				  &lt;/field&gt;
+				&lt;/controlParameter&gt;
+				&lt;controlParameter&gt;
+				  &lt;name&gt;@StopDate&lt;/name&gt;
+				  &lt;dataType&gt;6&lt;/dataType&gt;
+				  &lt;field&gt;
+					&lt;datePicker&gt;
+					  &lt;id&gt;StopDateDatePicker&lt;/id&gt;
+					  &lt;inputControlHeight&gt;&lt;/inputControlHeight&gt;
+					  &lt;inputControlWidth&gt;&lt;/inputControlWidth&gt;
+					  &lt;label&gt;
+						&lt;locale en-US="Stop date:" /&gt;
+					  &lt;/label&gt;
+					  &lt;required&gt;True&lt;/required&gt;
+					  &lt;selectedDates /&gt;
+					  &lt;validatorText&gt;
+						&lt;locale en-US="Stop date is required." /&gt;
+					  &lt;/validatorText&gt;
+					&lt;/datePicker&gt;
+				  &lt;/field&gt;
+				&lt;/controlParameter&gt;
+				&lt;variableParameter&gt;
+				  &lt;name&gt;@PortalID&lt;/name&gt;
+				  &lt;dataType&gt;11&lt;/dataType&gt;
+				  &lt;variableName&gt;Portal:PortalID&lt;/variableName&gt;
+				&lt;/variableParameter&gt;
+			  &lt;/parameters&gt;
+			&lt;/sqlDataSource&gt;
+		  &lt;/dataSources&gt;
+		  &lt;visualizers&gt;
+			&lt;htmlVisualizer&gt;
+			  &lt;html&gt;&amp;lt;div id="chart_div" style="width: 600px; height: 300px; margin: 10px auto; border: 1px solid #cccccc;"&amp;gt;&amp;lt;/div&amp;gt;
+		&amp;lt;script type="text/javascript" src="https://www.google.com/jsapi"&amp;gt;&amp;lt;/script&amp;gt;
+		&amp;lt;script type="text/javascript"&amp;gt;
+		// The graphic uses Google Chart. Please refer to Google Chart docs for more information on customizing chart data and style
+		// https://developers.google.com/chart/
+
+		google.load("visualization", "1.0", {packages:["corechart"]});
+		google.setOnLoadCallback(drawChart);
+		function drawChart() 
+		{
+			var data = google.visualization.arrayToDataTable([
+				[''Date'', ''Total Quantity''],
+		[[xsl:for-each select="/in/dataSet/dataTable/dataRow" ]]
+				["[[xsl:value-of select="substring(OrderDate, 1, 10)" /]]", [[xsl:value-of select="TotalQuantity" /]]],
+		[[/xsl:for-each]]
+			]);
+
+			var options = {
+				title: ''Monthly sales order detail activity'',
+				hAxis: {title: ''Date''}
+			};
+
+			var chart = new google.visualization.ColumnChart(document.getElementById(''chart_div''));
+			chart.draw(data, options);
+		}
+		&amp;lt;/script&amp;gt;
+		&amp;lt;table cellspacing="0" cellpadding="3" bgcolor="#eeeeee" style="width: 100%; border-top: 1px solid #cccccc; border-left: 1px solid #cccccc; border-right: 1px solid #cccccc;"&amp;gt;
+			&amp;lt;colgroup&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;/colgroup&amp;gt;
+			&amp;lt;tbody&amp;gt;
+				&amp;lt;tr&amp;gt;
+					&amp;lt;td style="width: 20%;"&amp;gt;&amp;lt;strong&amp;gt;Date&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 40%;"&amp;gt;&amp;lt;strong&amp;gt;Total quantity&amp;lt;br /&amp;gt;
+					&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 40%;"&amp;gt;&amp;lt;strong&amp;gt;Sub-total amount &amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+				&amp;lt;/tr&amp;gt;
+			&amp;lt;/tbody&amp;gt;
+		&amp;lt;/table&amp;gt;
+		[[xsl:for-each select="/in/dataSet/dataTable/dataRow" ]]
+		&amp;lt;table cellspacing="0" cellpadding="3" style="width: 100%;"&amp;gt;
+			&amp;lt;colgroup&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;/colgroup&amp;gt;
+			&amp;lt;tbody&amp;gt;
+				&amp;lt;tr&amp;gt;
+					&amp;lt;td style="width: 20%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="substring(OrderDate, 1, 10)" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 40%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="TotalQuantity" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 40%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(SubTotalAmount, ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+				&amp;lt;/tr&amp;gt;
+			&amp;lt;/tbody&amp;gt;
+		&amp;lt;/table&amp;gt;
+		[[/xsl:for-each]]
+		&amp;lt;table cellspacing="0" cellpadding="3" style="width: 100%; border-top: 4px double black;"&amp;gt;
+			&amp;lt;colgroup&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;/colgroup&amp;gt;
+			&amp;lt;tbody&amp;gt;
+				&amp;lt;tr&amp;gt;
+					&amp;lt;td style="width: 20%; border: 1px solid #cccccc;"&amp;gt; &amp;lt;br /&amp;gt;
+					&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 40%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="sum(/in/dataSet/dataTable/dataRow/TotalQuantity)" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 40%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(sum(/in/dataSet/dataTable/dataRow/SubTotalAmount), ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+				&amp;lt;/tr&amp;gt;
+			&amp;lt;/tbody&amp;gt;
+		&amp;lt;/table&amp;gt;&lt;/html&gt;
+			&lt;/htmlVisualizer&gt;
+		  &lt;/visualizers&gt;
+		&lt;/data&gt;</rule>', 1, 2, GETDATE(), GETDATE())
+		INSERT {databaseOwner}[{objectQualifier}Revindex_Storefront_ReportDefinition] ([ReportDefinitionGUID], [PortalID], [Name], [Description], [Active], [DefinitionRule], [Standard], [ReportGroup], [CreateDate], [UpdateDate]) VALUES (N'f8e08995-f083-4e9f-8d55-ce9a257a6718', NULL, N'Top coupon usage', N'Show coupons used.', 1, N'<rule version="1.0" type="data">&lt;data method="ReportDefinition" version="1.0"&gt;
+		  &lt;dataSources&gt;
+			&lt;sqlDataSource&gt;
+			  &lt;query&gt;SELECT TOP (@Top)
+		   c.Code AS Code, 
+		   COUNT(*) AS TotalOrders 
+		FROM {databaseOwner}{objectQualifier}Revindex_Storefront_Coupon c
+		JOIN {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder so
+		ON so.CouponCodes LIKE ''%'' + c.Code + ''%''
+		WHERE so.PortalID = @PortalID
+		GROUP BY c.Code&lt;/query&gt;
+			  &lt;parameters&gt;
+				&lt;controlParameter&gt;
+				  &lt;name&gt;@Top&lt;/name&gt;
+				  &lt;dataType&gt;11&lt;/dataType&gt;
+				  &lt;field&gt;
+					&lt;dropDownList&gt;
+					  &lt;id&gt;TopParamDropDownList&lt;/id&gt;
+					  &lt;inputControlHeight&gt;&lt;/inputControlHeight&gt;
+					  &lt;inputControlWidth&gt;&lt;/inputControlWidth&gt;
+					  &lt;label&gt;
+						&lt;locale en-US="Max records:" /&gt;
+					  &lt;/label&gt;
+					  &lt;listItems&gt;
+						&lt;listItem&gt;
+						  &lt;name&gt;
+							&lt;locale en-US="10" /&gt;
+						  &lt;/name&gt;
+						  &lt;value&gt;10&lt;/value&gt;
+						  &lt;selected&gt;False&lt;/selected&gt;
+						&lt;/listItem&gt;
+						&lt;listItem&gt;
+						  &lt;name&gt;
+							&lt;locale en-US="50" /&gt;
+						  &lt;/name&gt;
+						  &lt;value&gt;50&lt;/value&gt;
+						  &lt;selected&gt;False&lt;/selected&gt;
+						&lt;/listItem&gt;
+						&lt;listItem&gt;
+						  &lt;name&gt;
+							&lt;locale en-US="100" /&gt;
+						  &lt;/name&gt;
+						  &lt;value&gt;100&lt;/value&gt;
+						  &lt;selected&gt;False&lt;/selected&gt;
+						&lt;/listItem&gt;
+					  &lt;/listItems&gt;
+					  &lt;required&gt;True&lt;/required&gt;
+					  &lt;validatorText&gt;
+						&lt;locale en-US="Max records is required." /&gt;
+					  &lt;/validatorText&gt;
+					&lt;/dropDownList&gt;
+				  &lt;/field&gt;
+				&lt;/controlParameter&gt;
+				&lt;variableParameter&gt;
+				  &lt;name&gt;@PortalID&lt;/name&gt;
+				  &lt;dataType&gt;11&lt;/dataType&gt;
+				  &lt;variableName&gt;Portal:PortalID&lt;/variableName&gt;
+				&lt;/variableParameter&gt;
+			  &lt;/parameters&gt;
+			&lt;/sqlDataSource&gt;
+		  &lt;/dataSources&gt;
+		  &lt;visualizers&gt;
+			&lt;htmlVisualizer&gt;
+			  &lt;html&gt;&amp;lt;div id="chart_div" style="width: 600px; height: 300px; margin: 10px auto; border: 1px solid #cccccc;"&amp;gt;&amp;lt;/div&amp;gt;
+		&amp;lt;script type="text/javascript" src="https://www.google.com/jsapi"&amp;gt;&amp;lt;/script&amp;gt;
+		&amp;lt;script type="text/javascript"&amp;gt;
+		// The graphic uses Google Chart. Please refer to Google Chart docs for more information on customizing chart data and style
+		// https://developers.google.com/chart/
+
+		google.load("visualization", "1.0", {packages:["corechart"]});
+		google.setOnLoadCallback(drawChart);
+		function drawChart() 
+		{
+			var data = google.visualization.arrayToDataTable([
+				[''Code'', ''Total orders''],
+		[[xsl:for-each select="/in/dataSet/dataTable/dataRow" ]]
+				["[[xsl:value-of select="Code" /]]", [[xsl:value-of select="TotalOrders" /]]],
+		[[/xsl:for-each]]
+			]);
+
+			var options = {
+				title: ''Top coupon usage'',
+				hAxis: {title: ''Code''}
+			};
+
+			var chart = new google.visualization.ColumnChart(document.getElementById(''chart_div''));
+			chart.draw(data, options);
+		}
+		&amp;lt;/script&amp;gt;
+		&amp;lt;table cellspacing="0" cellpadding="3" bgcolor="#eeeeee" style="width: 100%; border-top: 1px solid #cccccc; border-left: 1px solid #cccccc; border-right: 1px solid #cccccc;"&amp;gt;
+			&amp;lt;colgroup&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;/colgroup&amp;gt;
+			&amp;lt;tbody&amp;gt;
+				&amp;lt;tr&amp;gt;
+					&amp;lt;td style="width: 70%;"&amp;gt;&amp;lt;strong&amp;gt;Code&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 30%;"&amp;gt;&amp;lt;strong&amp;gt;Total orders&amp;lt;br /&amp;gt;
+					&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+				&amp;lt;/tr&amp;gt;
+			&amp;lt;/tbody&amp;gt;
+		&amp;lt;/table&amp;gt;
+		[[xsl:for-each select="/in/dataSet/dataTable/dataRow" ]]
+		&amp;lt;table cellspacing="0" cellpadding="3" style="width: 100%;"&amp;gt;
+			&amp;lt;colgroup&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;/colgroup&amp;gt;
+			&amp;lt;tbody&amp;gt;
+				&amp;lt;tr&amp;gt;
+					&amp;lt;td style="width: 70%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="Code" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 30%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="TotalOrders" /]]&amp;lt;/td&amp;gt;
+				&amp;lt;/tr&amp;gt;
+			&amp;lt;/tbody&amp;gt;
+		&amp;lt;/table&amp;gt;
+		[[/xsl:for-each]]&lt;/html&gt;
+			&lt;/htmlVisualizer&gt;
+		  &lt;/visualizers&gt;
+		&lt;/data&gt;</rule>', 1, 3, GETDATE(), GETDATE())
+		
+		
+		INSERT {databaseOwner}[{objectQualifier}Revindex_Storefront_ReportDefinition] ([ReportDefinitionGUID], [PortalID], [Name], [Description], [Active], [DefinitionRule], [Standard], [ReportGroup], [CreateDate], [UpdateDate]) VALUES (N'e9186684-51f4-4b99-ac49-27b43b286b0b', NULL, N'Sales payments reconciliation by date', N'Show sales payments collected for orders.', 1, N'<rule version="1.0" type="data">&lt;data method="ReportDefinition" version="1.0"&gt;
+		  &lt;dataSources&gt;
+			&lt;sqlDataSource&gt;
+			  &lt;query&gt;SELECT
+			so.SalesOrderID, 
+			so.TotalAmount AS TotalAmount,
+			COALESCE(SUM(sp.Amount), 0) AS TotalPayments
+		FROM {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder so
+		LEFT JOIN {databaseOwner}{objectQualifier}Revindex_Storefront_SalesPayment sp 
+		ON sp.SalesOrderID = so.SalesOrderID
+		WHERE so.PortalID = @PortalID 
+			AND (so.OrderDate BETWEEN @StartDate AND @StopDate)
+			AND ((sp.PaymentGateway IS NULL OR sp.PaymentGateway = '''') OR (sp.PaymentGatewayResponseCode = 1))
+		GROUP BY so.SalesOrderID, so.TotalAmount
+		ORDER BY so.SalesOrderID&lt;/query&gt;
+			  &lt;parameters&gt;
+				&lt;controlParameter&gt;
+				  &lt;name&gt;@StartDate&lt;/name&gt;
+				  &lt;dataType&gt;6&lt;/dataType&gt;
+				  &lt;field&gt;
+					&lt;datePicker&gt;
+					  &lt;id&gt;StartDateDatePicker&lt;/id&gt;
+					  &lt;inputControlHeight&gt;&lt;/inputControlHeight&gt;
+					  &lt;inputControlWidth&gt;&lt;/inputControlWidth&gt;
+					  &lt;label&gt;
+						&lt;locale en-US="Start date:" /&gt;
+					  &lt;/label&gt;
+					  &lt;required&gt;True&lt;/required&gt;
+					  &lt;selectedDates /&gt;
+					  &lt;validatorText&gt;
+						&lt;locale en-US="Start date is required." /&gt;
+					  &lt;/validatorText&gt;
+					&lt;/datePicker&gt;
+				  &lt;/field&gt;
+				&lt;/controlParameter&gt;
+				&lt;controlParameter&gt;
+				  &lt;name&gt;@StopDate&lt;/name&gt;
+				  &lt;dataType&gt;6&lt;/dataType&gt;
+				  &lt;field&gt;
+					&lt;datePicker&gt;
+					  &lt;id&gt;StopDateDatePicker&lt;/id&gt;
+					  &lt;inputControlHeight&gt;&lt;/inputControlHeight&gt;
+					  &lt;inputControlWidth&gt;&lt;/inputControlWidth&gt;
+					  &lt;label&gt;
+						&lt;locale en-US="Stop date:" /&gt;
+					  &lt;/label&gt;
+					  &lt;required&gt;True&lt;/required&gt;
+					  &lt;selectedDates /&gt;
+					  &lt;validatorText&gt;
+						&lt;locale en-US="Stop date is required." /&gt;
+					  &lt;/validatorText&gt;
+					&lt;/datePicker&gt;
+				  &lt;/field&gt;
+				&lt;/controlParameter&gt;
+				&lt;variableParameter&gt;
+				  &lt;name&gt;@PortalID&lt;/name&gt;
+				  &lt;dataType&gt;11&lt;/dataType&gt;
+				  &lt;variableName&gt;Portal:PortalID&lt;/variableName&gt;
+				&lt;/variableParameter&gt;
+			  &lt;/parameters&gt;
+			&lt;/sqlDataSource&gt;
+		  &lt;/dataSources&gt;
+		  &lt;visualizers&gt;
+			&lt;htmlVisualizer&gt;
+			  &lt;html&gt;&amp;lt;table cellspacing="0" cellpadding="3" bgcolor="#eeeeee" style="width: 100%; border-top: 1px solid #cccccc; border-left: 1px solid #cccccc; border-right: 1px solid #cccccc;"&amp;gt;
+			&amp;lt;colgroup&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;/colgroup&amp;gt;
+			&amp;lt;tbody&amp;gt;
+				&amp;lt;tr&amp;gt;
+					&amp;lt;td style="width: 20%;"&amp;gt;&amp;lt;strong&amp;gt;Order ID&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 40%;"&amp;gt;&amp;lt;strong&amp;gt;Total amount&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 40%;"&amp;gt;&amp;lt;strong&amp;gt;Total payments&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+				&amp;lt;/tr&amp;gt;
+			&amp;lt;/tbody&amp;gt;
+		&amp;lt;/table&amp;gt;
+		[[xsl:for-each select="/in/dataSet/dataTable/dataRow" ]]
+		&amp;lt;table cellspacing="0" cellpadding="3" style="width: 100%;"&amp;gt;
+			&amp;lt;colgroup&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;/colgroup&amp;gt;
+			&amp;lt;tbody&amp;gt;
+				&amp;lt;tr&amp;gt;
+					&amp;lt;td style="width: 20%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="SalesOrderID" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 40%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(TotalAmount, ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 40%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(TotalPayments, ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+				&amp;lt;/tr&amp;gt;
+			&amp;lt;/tbody&amp;gt;
+		&amp;lt;/table&amp;gt;
+		[[/xsl:for-each]]
+		&amp;lt;table cellspacing="0" cellpadding="3" style="width: 100%; border-top: 4px double black;"&amp;gt;
+			&amp;lt;colgroup&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;/colgroup&amp;gt;
+			&amp;lt;tbody&amp;gt;
+				&amp;lt;tr&amp;gt;
+					&amp;lt;td style="width: 20%; border: 1px solid #cccccc;"&amp;gt; &amp;lt;br /&amp;gt;
+					&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 40%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(sum(/in/dataSet/dataTable/dataRow/TotalAmount), ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 40%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(sum(/in/dataSet/dataTable/dataRow/TotalPayments), ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+				&amp;lt;/tr&amp;gt;
+			&amp;lt;/tbody&amp;gt;
+		&amp;lt;/table&amp;gt;&lt;/html&gt;
+			&lt;/htmlVisualizer&gt;
+		  &lt;/visualizers&gt;
+		&lt;/data&gt;</rule>', 1, 2, GETDATE(), GETDATE())
+		
+		
+		INSERT {databaseOwner}[{objectQualifier}Revindex_Storefront_ReportDefinition] ([ReportDefinitionGUID], [PortalID], [Name], [Description], [Active], [DefinitionRule], [Standard], [ReportGroup], [CreateDate], [UpdateDate]) VALUES (N'8f140306-176c-4867-bd4b-1233bf26bd2a', NULL, N'Low product inventory', N'Show products where inventory is below threshold.', 1, N'<rule version="1.0" type="data">&lt;data method="ReportDefinition" version="1.0"&gt;
+		  &lt;dataSources&gt;
+			&lt;sqlDataSource&gt;
+			  &lt;query&gt;SELECT 
+		   p.ProductID,
+		   pv.ProductVariantID,
+		   pv.SKU AS SKU,
+		   COALESCE(p.Name.value(N''(/locale/@en-US)[1]'', ''nvarchar(MAX)''), '''') + '' - '' + COALESCE(pv.Name.value(N''(/locale/@en-US)[1]'', ''nvarchar(MAX)''), '''') AS ProductName,
+		   pv.Inventory
+		FROM {databaseOwner}{objectQualifier}Revindex_Storefront_Product p
+		JOIN {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant pv
+			ON p.ProductID = pv.ProductID
+		WHERE p.PortalID = @PortalID 
+			AND pv.Deleted = 0 
+			AND p.Deleted = 0 
+			AND pv.Inventory IS NOT NULL 
+			AND pv.Inventory &amp;lt;= @Threshold
+		ORDER BY COALESCE(p.Name.value(N''(/locale/@en-US)[1]'', ''nvarchar(MAX)''), '''')&lt;/query&gt;
+			  &lt;parameters&gt;
+				&lt;controlParameter&gt;
+				  &lt;name&gt;@Threshold&lt;/name&gt;
+				  &lt;dataType&gt;11&lt;/dataType&gt;
+				  &lt;field&gt;
+					&lt;textBox&gt;
+					  &lt;dataType&gt;Integer&lt;/dataType&gt;
+					  &lt;id&gt;ThresholdTextBox&lt;/id&gt;
+					  &lt;inputControlHeight&gt;&lt;/inputControlHeight&gt;
+					  &lt;inputControlWidth&gt;&lt;/inputControlWidth&gt;
+					  &lt;label&gt;
+						&lt;locale en-US="Threshold:" /&gt;
+					  &lt;/label&gt;
+					  &lt;maxLength&gt;&lt;/maxLength&gt;
+					  &lt;maxValue&gt;10000000&lt;/maxValue&gt;
+					  &lt;minValue&gt;0&lt;/minValue&gt;
+					  &lt;required&gt;True&lt;/required&gt;
+					  &lt;text&gt;
+						&lt;locale en-US="0" /&gt;
+					  &lt;/text&gt;
+					  &lt;textMode&gt;SingleLine&lt;/textMode&gt;
+					  &lt;validatorText&gt;
+						&lt;locale en-US="Threshold is required." /&gt;
+					  &lt;/validatorText&gt;
+					  &lt;wrap&gt;True&lt;/wrap&gt;
+					&lt;/textBox&gt;
+				  &lt;/field&gt;
+				&lt;/controlParameter&gt;
+				&lt;variableParameter&gt;
+				  &lt;name&gt;@PortalID&lt;/name&gt;
+				  &lt;dataType&gt;11&lt;/dataType&gt;
+				  &lt;variableName&gt;Portal:PortalID&lt;/variableName&gt;
+				&lt;/variableParameter&gt;
+			  &lt;/parameters&gt;
+			&lt;/sqlDataSource&gt;
+		  &lt;/dataSources&gt;
+		  &lt;visualizers&gt;
+			&lt;htmlVisualizer&gt;
+			  &lt;html&gt;&amp;lt;table cellspacing="0" cellpadding="3" bgcolor="#eeeeee" style="width: 100%; border-top: 1px solid #cccccc; border-left: 1px solid #cccccc; border-right: 1px solid #cccccc;"&amp;gt;
+			&amp;lt;colgroup&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;/colgroup&amp;gt;
+			&amp;lt;tbody&amp;gt;
+				&amp;lt;tr&amp;gt;
+					&amp;lt;td style="width: 10%;"&amp;gt;&amp;lt;strong&amp;gt;Product ID&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%;"&amp;gt;&amp;lt;strong&amp;gt;Variant ID&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 20%;"&amp;gt;&amp;lt;strong&amp;gt;SKU&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 50%;"&amp;gt;&amp;lt;strong&amp;gt;Product name&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%;"&amp;gt;&amp;lt;strong&amp;gt;Inventory&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+				&amp;lt;/tr&amp;gt;
+			&amp;lt;/tbody&amp;gt;
+		&amp;lt;/table&amp;gt;
+		[[xsl:for-each select="/in/dataSet/dataTable/dataRow" ]]
+		&amp;lt;table cellspacing="0" cellpadding="3" style="width: 100%;"&amp;gt;
+			&amp;lt;colgroup&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;/colgroup&amp;gt;
+			&amp;lt;tbody&amp;gt;
+				&amp;lt;tr&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="ProductID" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="ProductVariantID" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 20%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="SKU" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 50%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="ProductName" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="Inventory" /]]&amp;lt;/td&amp;gt;
+				&amp;lt;/tr&amp;gt;
+			&amp;lt;/tbody&amp;gt;
+		&amp;lt;/table&amp;gt;
+		[[/xsl:for-each]]&lt;/html&gt;
+			&lt;/htmlVisualizer&gt;
+		  &lt;/visualizers&gt;
+		&lt;/data&gt;</rule>', 1, 1, GETDATE(), GETDATE())
+		
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

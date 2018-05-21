@@ -1,0 +1,369 @@
+﻿IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
+   WHERE TABLE_NAME = '{objectQualifier}StructuredContent_Visualizers' 
+   AND COLUMN_NAME = 'Version')
+BEGIN
+    ALTER TABLE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers] 
+    ADD Version int NOT NULL DEFAULT (1)
+
+    DROP INDEX IX_{objectQualifier}StructuredContent_Visualizers_ItemId_ModuleId
+        ON {databaseOwner}[{objectQualifier}StructuredContent_Visualizers]
+    
+    CREATE UNIQUE INDEX IX_{objectQualifier}StructuredContent_Visualizers_ItemId_ModuleId_Version
+        ON {databaseOwner}[{objectQualifier}StructuredContent_Visualizers] ([ItemId], [ModuleId], [Version])
+
+    CREATE UNIQUE INDEX IX_{objectQualifier}StructuredContent_Visualizers_ModuleId_Version_ItemId
+        ON {databaseOwner}[{objectQualifier}StructuredContent_Visualizers] ([ModuleId], [Version], [ItemId])
+END
+GO
+
+
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
+   WHERE TABLE_NAME = '{objectQualifier}StructuredContent_Visualizers_RenderResult' 
+   AND COLUMN_NAME = 'Version')
+BEGIN
+
+    ALTER TABLE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_RenderResult] 
+    ADD Version int NOT NULL DEFAULT (1)
+
+    DROP INDEX IX_{objectQualifier}StructuredContent_Visualizers_RenderResult_ModuleId_ContentItemId
+    ON {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_RenderResult]
+
+    CREATE INDEX IX_{objectQualifier}StructuredContent_Visualizers_RenderResult_ModuleId_Version_ContentItemId
+        ON {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_RenderResult] ([ModuleId], [Version], [ContentItemId])
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}StructuredContent_Visualizers_Versions]') AND type in (N'U'))
+BEGIN   
+    CREATE TABLE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_Versions]
+    (
+        [Id] int IDENTITY(1,1) NOT NULL,		
+        [ModuleId] int NOT NULL,
+        [Version] int NOT NULL DEFAULT (1),
+        [IsPublished] bit NOT NULL DEFAULT (1),
+        [Settings] nvarchar(max) NOT NULL,		
+        [CreationUtcDateTime] datetime NOT NULL,
+        [LastUpdateUtcDateTime] datetime NOT NULL,
+        CONSTRAINT [PK_{objectQualifier}StructuredContent_Visualizer_Versions] PRIMARY KEY CLUSTERED ([Id] ASC)
+    ) ON [PRIMARY]
+    
+    CREATE UNIQUE INDEX IX_{objectQualifier}StructuredContent_Visualizers_Versions_ModuleId_Version
+        ON {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_Versions] ([ModuleId], [Version])
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StructuredContent_Visualizers_GetLatestVersion]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_GetLatestVersion]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_GetLatestVersion]
+    @ModuleId int
+AS
+    SELECT ISNULL(MAX(Version), 1)
+    FROM {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_Versions]
+    WHERE ModuleId=@ModuleId 
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StructuredContent_Visualizers_GetPublishedVersion]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_GetPublishedVersion]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_GetPublishedVersion]
+    @ModuleId int
+AS
+	DECLARE @NumVersions INT = (SELECT COUNT(*)
+								FROM {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_Versions]
+								WHERE ModuleId=@ModuleId )
+
+	IF @NumVersions = 0
+	BEGIN
+		SELECT 1 
+	END
+	ELSE
+	BEGIN
+		SELECT ISNULL(MAX(Version), -1)
+		FROM {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_Versions]
+		WHERE ModuleId=@ModuleId 
+		  AND IsPublished = 1
+	END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StructuredContent_Visualizers_Add]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_Add]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_Add]
+    @ItemId uniqueidentifier,
+    @Type nvarchar(100),
+    @VisualizerInstanceType nvarchar(100),
+    @ModuleId int,
+    @Version int
+AS 	
+    DECLARE @Id INT
+
+    SELECT @Id = Id FROM {databaseOwner}[{objectQualifier}StructuredContent_Visualizers]
+    WHERE [ItemId] = @ItemId AND [ModuleId] = @ModuleId AND [Version] = @Version
+
+    IF @Id IS NULL 
+        BEGIN
+            INSERT INTO {databaseOwner}[{objectQualifier}StructuredContent_Visualizers]
+                    ([ItemId], [ModuleId], [Version], [Type], [VisualizerInstanceType], [CreationUtcDateTime], [LastUpdateUtcDateTime])
+            VALUES  (@ItemId, @ModuleId, @Version, @Type, @VisualizerInstanceType, GETUTCDATE(), GETUTCDATE())
+        END
+    ELSE
+        BEGIN
+            UPDATE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers]
+            SET 
+                [Type] = @Type, 
+                [VisualizerInstanceType] = @VisualizerInstanceType, 
+                LastUpdateUtcDateTime = GETUTCDATE()
+            WHERE [Id] = @Id
+        END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StructuredContent_Visualizers_DeleteByModuleIdVersion]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_DeleteByModuleIdVersion]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_DeleteByModuleIdVersion]
+    @ModuleId int,
+    @Version int
+AS 
+    DELETE FROM {databaseOwner}[{objectQualifier}StructuredContent_Visualizers]
+    WHERE ModuleId = @ModuleId
+      AND Version = @Version
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StructuredContent_Visualizers_Versions_AddOrUpdate]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_Versions_AddOrUpdate]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_Versions_AddOrUpdate]
+    @ModuleId int,
+    @Version int,
+    @IsPublished bit,
+    @Settings nvarchar(max)
+AS 	
+    DECLARE @Id INT
+
+    SELECT @Id = Id FROM {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_Versions]
+    WHERE [ModuleId] = @ModuleId AND [Version] = @Version
+
+    IF @Id IS NULL 
+        BEGIN
+            INSERT INTO {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_Versions]
+                    ([ModuleId], [Version], [IsPublished], [Settings], [CreationUtcDateTime], [LastUpdateUtcDateTime])
+            VALUES  (@ModuleId, @Version, @IsPublished, @Settings, GETUTCDATE(), GETUTCDATE())
+        END
+    ELSE
+        BEGIN
+            UPDATE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_Versions]
+            SET 
+                [IsPublished] = @IsPublished, 
+                [Settings] = @Settings, 
+                LastUpdateUtcDateTime = GETUTCDATE()
+            WHERE [Id] = @Id
+        END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StructuredContent_Visualizers_Versions_GetSettings]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_Versions_GetSettings]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_Versions_GetSettings]
+    @ModuleId int,
+    @Version int
+AS 	    
+    SELECT Settings FROM {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_Versions]
+    WHERE [ModuleId] = @ModuleId AND [Version] = @Version
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StructuredContent_Visualizers_Versions_Delete_ByModuleIdVersion]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_Versions_Delete_ByModuleIdVersion]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_Versions_Delete_ByModuleIdVersion]
+    @ModuleId int,
+    @Version int
+AS 	    
+    DELETE FROM {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_Versions]
+    WHERE [ModuleId] = @ModuleId AND [Version] = @Version
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StructuredContent_Visualizers_Versions_Delete_ByModuleId]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_Versions_Delete_ByModuleId]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_Versions_Delete_ByModuleId]
+    @ModuleId int
+AS 	    
+    DELETE FROM {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_Versions]
+    WHERE [ModuleId] = @ModuleId
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StructuredContent_Visualizers_GetItemsByModuleIdVersion]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_GetItemsByModuleIdVersion]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_GetItemsByModuleIdVersion]
+    @ModuleId int,
+    @Version int
+AS 
+    SELECT [ItemId], [Type]
+    FROM    {databaseOwner}[{objectQualifier}StructuredContent_Visualizers]
+    WHERE   ModuleId = @ModuleId AND Version = @Version
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StructuredContent_Visualizers_RenderResult_Add]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_RenderResult_Add]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_RenderResult_Add]
+	@ModuleId INT,
+	@Version INT,
+	@Key [nvarchar](450),
+	@ContentItemId uniqueidentifier,
+	@RenderResult VARCHAR(MAX)
+AS 
+	INSERT INTO {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_RenderResult]
+			([ModuleId], [Version], [CacheKey], [ContentItemId], [RenderResult], [CreationUtcDateTime], [LastUpdateUtcDateTime])
+	VALUES  (@ModuleId, @Version, @Key, @ContentItemId, @RenderResult, GetUtcDate(), GetUtcDate())
+
+	SELECT  SCOPE_IDENTITY()
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StructuredContent_Visualizers_RenderResult_InvalidateAllByModuleId]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}StructuredContent_Visualizers_RenderResult_InvalidateAllByModuleId
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StructuredContent_Visualizers_RenderResult_InvalidateAllByModuleIdVersion]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}StructuredContent_Visualizers_RenderResult_InvalidateAllByModuleIdVersion
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_RenderResult_InvalidateAllByModuleIdVersion]
+    @ModuleId INT,
+    @Version INT
+AS 
+    UPDATE {databaseOwner}{objectQualifier}StructuredContent_Visualizers_RenderResult
+    SET Valid = 0
+    WHERE ModuleId = @ModuleId AND Version = @Version
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StructuredContent_Visualizers_RenderResult_DeleteByModuleIdVersion]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_RenderResult_DeleteByModuleIdVersion]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_RenderResult_DeleteByModuleIdVersion]
+    @ModuleId INT,
+	@Version INT
+AS 
+    DELETE FROM {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_RenderResult]	
+    WHERE ModuleId = @ModuleId AND Version = @Version 
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StructuredContent_Visualizers_GetRelationshipsByItemId]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_GetRelationshipsByItemId]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_GetRelationshipsByItemId]
+	@ItemId uniqueidentifier
+AS 
+	SELECT [ModuleId], [Version], [Type], [ItemId], [VisualizerInstanceType]
+	FROM    {databaseOwner}[{objectQualifier}StructuredContent_Visualizers]
+	WHERE   ItemId = @ItemId
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StructuredContent_Visualizers_RenderResult_InvalidateListsByModuleId]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}StructuredContent_Visualizers_RenderResult_InvalidateListsByModuleId
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StructuredContent_Visualizers_RenderResult_InvalidateListsByModuleIdVersion]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}StructuredContent_Visualizers_RenderResult_InvalidateListsByModuleIdVersion
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_RenderResult_InvalidateListsByModuleIdVersion]
+	@ModuleId INT,
+	@Version INT
+AS 
+	UPDATE {databaseOwner}{objectQualifier}StructuredContent_Visualizers_RenderResult
+	SET Valid = 0
+	WHERE ModuleId = @ModuleId AND Version = @Version AND ContentItemId IS NULL
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StructuredContent_Visualizers_RenderResult_InvalidateDetailsByModuleId]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}StructuredContent_Visualizers_RenderResult_InvalidateDetailsByModuleId
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StructuredContent_Visualizers_RenderResult_InvalidateDetailsByModuleIdVersion]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}StructuredContent_Visualizers_RenderResult_InvalidateDetailsByModuleIdVersion
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_RenderResult_InvalidateDetailsByModuleIdVersion]
+	@ModuleId INT,
+	@Version INT
+AS 
+	UPDATE {databaseOwner}{objectQualifier}StructuredContent_Visualizers_RenderResult
+	SET Valid = 0
+	WHERE ModuleId = @ModuleId AND Version = @Version AND ContentItemId IS NOT NULL
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StructuredContent_Visualizers_RenderResult_InvalidateByModuleIdContentItemId]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}StructuredContent_Visualizers_RenderResult_InvalidateByModuleIdContentItemId
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StructuredContent_Visualizers_RenderResult_InvalidateByModuleIdVersionContentItemId]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}StructuredContent_Visualizers_RenderResult_InvalidateByModuleIdVersionContentItemId
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_RenderResult_InvalidateByModuleIdVersionContentItemId]
+	@ModuleId INT,
+	@Version INT,
+	@ContentItemId uniqueidentifier
+AS 
+	UPDATE {databaseOwner}{objectQualifier}StructuredContent_Visualizers_RenderResult
+	SET Valid = 0
+	WHERE ModuleId = @ModuleId AND Version = @Version AND ContentItemId = @ContentItemId
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StructuredContent_Visualizers_RenderResult_DeleteByModuleIdContentItemId]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_RenderResult_DeleteByModuleIdContentItemId]
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StructuredContent_Visualizers_RenderResult_DeleteByModuleIdVersionContentItemId]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_RenderResult_DeleteByModuleIdVersionContentItemId]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_RenderResult_DeleteByModuleIdVersionContentItemId]
+	@ModuleId INT,
+	@Version INT,
+	@ContentItemId uniqueidentifier
+AS 
+	DELETE FROM {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_RenderResult]
+	WHERE ModuleId = @ModuleId AND Version = @Version AND ContentItemId = @ContentItemId
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StructuredContent_Visualizers_RenderResult_Get_ModifiedDate]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_RenderResult_Get_ModifiedDate]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_RenderResult_Get_ModifiedDate]
+	@ModuleId INT,
+	@Version INT
+AS 
+	SELECT LastUpdateUtcDateTime		   
+	FROM  {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_RenderResult] 
+	WHERE ModuleId = @ModuleId AND Version = @Version AND ContentItemId IS NULL
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StructuredContent_Visualizers_GetRelationshipsByModuleIdVersion]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_GetRelationshipsByModuleIdVersion]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_GetRelationshipsByModuleIdVersion]
+	@ModuleId INT,
+	@Version INT
+AS 
+	SELECT [ModuleId], [Version], [Type], [ItemId], [VisualizerInstanceType]
+	FROM    {databaseOwner}[{objectQualifier}StructuredContent_Visualizers]
+	WHERE   ModuleId = @ModuleId AND Version = @Version
+GO

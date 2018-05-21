@@ -1,0 +1,111 @@
+@using System.Dynamic;
+@using CartViper.Modules.Store.Admin;
+@using CartViper.Modules.Store.WebControls;
+@using CartViper.Modules.Store.Catalog;
+@using CartViper.Modules.Store.Extensions;
+@using CartViper.Modules.Store.Cart;
+@using DotNetNuke.Common;
+
+@inherits DotNetNuke.Web.Razor.DotNetNukeWebPage<dynamic>
+
+@{
+    var checkoutUrl = "";
+
+    CartInfo cartInfo = CurrentCart.GetCurrentCart(Dnn.Portal.PortalId);
+    if (cartInfo != null)
+    {
+        checkoutUrl = Globals.NavigateURL(cartInfo.CartPageID);
+    }
+    
+    
+}
+<script type="text/javascript">
+
+function AddItemFromWishlistToCart(success, data){
+	
+	if(success){
+		DisplayModal('<i class="icon-shopping-cart"></i>', data.message,success);
+	}else{
+		DisplayModal('<i class="icon-exclamation-sign"></i>', data.message,success);
+	}
+}
+
+
+function DisplayAddToWishlistNotification(success, data){
+	
+	if(success){
+		DisplayModal('<i class="icon-shopping-cart"></i>', data.message,success);
+	}else{
+		DisplayModal('<i class="icon-exclamation-sign"></i>', data.message,success);
+	}
+}
+
+//this is the javascript function which will get called when an item
+//is added to the cart. You can customise this code to make a "toast"
+//like notification etc
+function DisplayAddtoCartNotification(success, data){
+
+	if(success){
+		DisplayModal('<i class="icon-shopping-cart"></i>', data.message,success);
+	}else{
+		DisplayModal('<i class="icon-exclamation-sign"></i>', data.message,success);
+	}
+}
+
+function AddBundleToCart(success, data){
+	
+	if(success){
+		DisplayModal('<i class="icon-shopping-cart"></i>', data.message,success);
+	}else{
+		DisplayModal('<i class="icon-exclamation-sign"></i>', data.message,success);
+	}
+}
+
+function AddDonationToCart(success, data){
+	
+	jQuery("#cvThankyouMessage").append(data.message);
+	jQuery("#cvDonationWrapper").fadeOut('slow');
+	jQuery("#cvThankyouMessage").fadeIn('slow');	
+}
+
+function AddProductToComparison(success, data){
+	if(success){
+		DisplayModal('<i class="icon-reorder "></i>', data.message,success);
+	}else{
+		DisplayModal('<i class="icon-exclamation-sign"></i>', data.message,success);
+	}
+}
+
+function DisplayModal(icondata, caption,displayContinueShopping){
+
+	jQuery(".gmnImage").html(icondata);
+	jQuery(".gmnCaption").html(caption);
+
+	if (displayContinueShopping)
+	    jQuery(".pnlContinueShoppingButtons").show();
+	else
+	    jQuery(".pnlContinueShoppingButtons").hide();
+	
+	jQuery().colorbox({ width: "50%", inline: true, title: " ", href: "#genericModalNotification", open: true });
+}
+
+function ContinueShopping() {
+    $.colorbox.close();
+}
+
+</script>
+
+
+<div style="display:none">
+	<div id="genericModalNotification" style='padding:10px; background:#fff; text-align:center'>
+		 <div class="gmnImage"></div>
+		 <div class="gmnCaption"></div>
+        <div class="pnlContinueShoppingButtons">
+            <a href="javascript:ContinueShopping()" class="CvStandardButton"><i class="fa fa-share-alt fa-lg"></i> Continue shopping</a>
+            @if (checkoutUrl != "") 
+            { 
+                @:<a href="@checkoutUrl" class="CvStandardButton"><i class="fa fa-shopping-cart fa-lg"></i> Go To Checkout</a>
+            }
+         </div>
+	</div>
+</div>

@@ -1,0 +1,37 @@
+﻿/********************************************************
+ * SPROC: Answers_Post_GetAnswers
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Answers_Post_GetAnswers]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Answers_Post_GetAnswers] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Answers_Post_GetAnswers]
+	@PostId INT ,
+	@PortalId INT
+AS 
+BEGIN
+	DECLARE @TitleMetaDataId INT = (SELECT MetaDataId FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Title')
+
+	SELECT  vp.*,
+			( SELECT    COUNT(PostId)
+			  FROM      {databaseOwner}{objectQualifier}Answers_Post
+			  WHERE     ( ParentId = vp.PostId )						
+						AND ( Approved = 1 )
+						AND ( Deleted = 0 )
+			) AS TotalAnswers ,
+			( SELECT    COUNT(PostId)
+			  FROM      {databaseOwner}{objectQualifier}Answers_Vote
+			  WHERE     ( PostId = vp.PostId )
+						AND ( vp.ParentID = 0 )
+			) AS QuestionVotes ,
+			( SELECT    @@ROWCOUNT
+			) AS TotalRecords,
+			(cm.MetaDataValue) ContentTitle
+	FROM    {databaseOwner}{objectQualifier}vw_Answers_Posts vp
+		LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData cm 
+			ON cm.ContentItemID = vp.ContentItemId AND cm.MetaDataID = @TitleMetaDataId
+	WHERE   ParentId = @PostId
+			AND PortalId = @PortalId
+			AND Deleted = 0
+END
+GO

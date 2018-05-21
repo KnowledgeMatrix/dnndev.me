@@ -1,0 +1,170 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+/***** Create PendingSubscriptions Table *****/
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FormBuilder_Library_PendingHookSubscriptions]') AND type in (N'U'))
+BEGIN   
+	CREATE TABLE {databaseOwner}[{objectQualifier}FormBuilder_Library_PendingHookSubscriptions]
+	(
+		[Id] [int] IDENTITY(1,1) NOT NULL,
+		[PortalId] [int] NOT NULL,
+		[Subscribed] [bit] NOT NULL,
+		[Locked] [bit] NOT NULL,
+		[Erroneous] [bit] NULL,
+		[ErrorMessage] nvarchar(max) NULL,
+		[ErrorTrace] nvarchar(max) NULL,
+		[NumberOfAttempts] [int] NULL,
+		[Hash] [uniqueidentifier] NULL,
+		[SubscribedOnUtcDateTime] [datetime] NULL,
+		[CreatedOnUtcDateTime] [datetime] NOT NULL,
+		[LastModifiedOnUtcDateTime] [datetime] NULL,
+		CONSTRAINT [PK_{objectQualifier}FormBuilder_Library_PendingHookSubscriptions] PRIMARY KEY CLUSTERED ([Id] ASC)
+	) ON [PRIMARY]
+
+	CREATE INDEX [IX_{objectQualifier}FormBuilder_Library_PendingHookSubscriptions_Subscribed_Locked_Errors_ModificationDate]
+		ON {databaseOwner}[{objectQualifier}FormBuilder_Library_PendingHookSubscriptions] ([Subscribed], [Locked], [NumberOfAttempts], [LastModifiedOnUtcDateTime])
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FormBuilder_Library_HookSubscriptions]') AND type in (N'U'))
+BEGIN   
+	CREATE TABLE {databaseOwner}[{objectQualifier}FormBuilder_Library_HookSubscriptions]
+	(
+		[Id] [int] IDENTITY(1,1) NOT NULL,
+		[PortalId] [int] NOT NULL,
+		[RemoteSubscriptionId] [uniqueidentifier] NULL,
+		[Secret] [nvarchar](max) NULL,
+		[CreatedOnUtcDateTime] [datetime] NOT NULL,
+		[LastModifiedOnUtcDateTime] [datetime] NULL,
+		CONSTRAINT [PK_{objectQualifier}FormBuilder_Library_HookSubscriptions] PRIMARY KEY CLUSTERED ([Id] ASC)
+	) ON [PRIMARY]
+
+	CREATE INDEX [IX_{objectQualifier}FormBuilder_Library_HookSubscriptions_RemoteSubscriptionId]
+		ON {databaseOwner}[{objectQualifier}FormBuilder_Library_HookSubscriptions] ([RemoteSubscriptionId])
+END
+GO
+
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}FormBuilder_Library_AddPendingHookSubscription]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}FormBuilder_Library_AddPendingHookSubscription]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}FormBuilder_Library_AddPendingHookSubscription]
+	@PortalId int
+AS 
+	INSERT INTO {databaseOwner}{objectQualifier}FormBuilder_Library_PendingHookSubscriptions
+			([PortalId], [Subscribed], [Locked], [NumberOfAttempts], [Hash], [CreatedOnUtcDateTime], [LastModifiedOnUtcDateTime])
+	VALUES  (@PortalId, 0, 0, 0, NEWID(), GetUtcDate(), GetUtcDate())
+GO
+
+
+IF object_id(N'{databaseOwner}{objectQualifier}FormBuilder_Library_GetPendingHookSubscriptions', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}FormBuilder_Library_GetPendingHookSubscriptions
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}FormBuilder_Library_GetPendingHookSubscriptions]
+	@MaxNumberOfAttempts int,
+	@MaxTimeOfLooking int
+AS
+BEGIN
+	SELECT *
+	FROM	{databaseOwner}{objectQualifier}FormBuilder_Library_PendingHookSubscriptions AS S
+	WHERE	S.Subscribed = 0 AND (S.Erroneous = 0 OR S.Erroneous IS NULL)
+		AND (S.Locked = 0 OR (S.NumberOfAttempts < @MaxNumberOfAttempts AND S.LastModifiedOnUtcDateTime < dateadd(mi, -1 * @MaxTimeOfLooking, GetUtcDate())));
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}FormBuilder_Library_MarkPendingHookSubscriptionAsDone]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}FormBuilder_Library_MarkPendingHookSubscriptionAsDone]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}FormBuilder_Library_MarkPendingHookSubscriptionAsDone]
+	@Id int
+AS 
+	UPDATE {databaseOwner}[{objectQualifier}FormBuilder_Library_PendingHookSubscriptions]
+		SET     [Subscribed] = 1,
+				[Locked] = 0,
+				[Erroneous] = 0,
+				[ErrorMessage] = NULL,
+				[ErrorTrace] = NULL,
+				[Hash] = NEWID(),
+				[SubscribedOnUtcDateTime] = GetUtcDate(),
+				[LastModifiedOnUtcDateTime] = GetUtcDate()
+		WHERE   Id = @Id
+GO
+
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}FormBuilder_Library_MarkPendingHookSubscriptionAsError]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}FormBuilder_Library_MarkPendingHookSubscriptionAsError]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}FormBuilder_Library_MarkPendingHookSubscriptionAsError]
+	@Id int,
+	@Message nvarchar(MAX),
+	@ExceptionTrace nvarchar(MAX)
+AS 
+	UPDATE {databaseOwner}[{objectQualifier}FormBuilder_Library_PendingHookSubscriptions]
+		SET     [Erroneous] = 1,
+				[ErrorMessage] = @Message,
+				[ErrorTrace] = @ExceptionTrace,
+				[Locked] = 0,
+				[Hash] = NEWID(),
+				[LastModifiedOnUtcDateTime] = GetUtcDate()
+		WHERE   Id = @Id
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}FormBuilder_Library_LockPendingHookSubscription]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}FormBuilder_Library_LockPendingHookSubscription]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}FormBuilder_Library_LockPendingHookSubscription]
+	@Hash uniqueidentifier,
+	@NumberOfAttempts int
+AS 
+	UPDATE {databaseOwner}[{objectQualifier}FormBuilder_Library_PendingHookSubscriptions]
+		SET     [Locked] = 1,
+				[NumberOfAttempts] = @NumberOfAttempts,
+				[Hash] = NEWID(),
+				[LastModifiedOnUtcDateTime] = GetUtcDate()
+		WHERE   Hash = @Hash
+	select @@ROWCOUNT
+GO
+
+IF object_id(N'{databaseOwner}{objectQualifier}FormBuilder_Library_GetSecretFromHookSubscription', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}FormBuilder_Library_GetSecretFromHookSubscription
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}FormBuilder_Library_GetSecretFromHookSubscription]
+	@RemoteSubscriptionId uniqueidentifier
+AS
+BEGIN
+	SELECT S.Secret
+	FROM	{databaseOwner}{objectQualifier}FormBuilder_Library_HookSubscriptions AS S
+	WHERE	S.RemoteSubscriptionId = @RemoteSubscriptionId;
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}FormBuilder_Library_AddHookSubscription]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}FormBuilder_Library_AddHookSubscription]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}FormBuilder_Library_AddHookSubscription]
+	@PortalId int,
+	@RemoteSubscriptionId uniqueidentifier,
+	@Secret [nvarchar](max)
+AS
+	INSERT INTO {databaseOwner}{objectQualifier}FormBuilder_Library_HookSubscriptions
+			([PortalId], [RemoteSubscriptionId], [Secret], [CreatedOnUtcDateTime], [LastModifiedOnUtcDateTime])
+	VALUES  (@PortalId, @RemoteSubscriptionId, @Secret, GetUtcDate(), GetUtcDate())
+GO
+
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/

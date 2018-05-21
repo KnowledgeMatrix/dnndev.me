@@ -1,0 +1,58 @@
+﻿@inherits DotNetNuke.Web.Razor.DotNetNukeWebPage<EasyDNNSolutions.WebApi.EasyDNNsimpleForum.Models.TopicViewMeta>
+@using EasyDNNSolutions.WebApi.EasyDNNsimpleForum.Models;
+<tr class="edsf__topicContainer@(@Model.Topic.PinTopic ? @Html.Raw(" edsf_pinnedTopic") : null)@(@Model.Topic.HasViewPermissions ? (@Model.Topic.ShowAsLockedTopic ? @Html.Raw(" edsf_lockedTopic") : null) : @Html.Raw(" edsf_lockedTopic"))@(@Model.CanEdit ? @Html.Raw(" edsf_canEdit") : null)">
+	<td class="edsf_name edsf_textLeft">
+		@if (@Model.CanEdit)
+		{
+			<a class="edsf_editButton" data-eds_linkinfo="@Model.EditLinkInfo.ToJson()" href="@Model.EditLinkInfo.Url">@Html.GetLocalizedString("editTopic.Text")</a>
+		}
+		<div class="edsf_icons">
+			@if (@Model.Topic.PinTopic)
+			{
+				<span class="edsf_pinTopic">@Html.GetLocalizedString("pinnedTopic.Text")<i class="fa fa-thumb-tack"></i></span>
+			}
+
+			@if (@Model.Topic.HasViewPermissions)
+			{
+				if (@Model.Topic.ShowAsLockedTopic)
+				{
+					<span class="edsf_locked">@Html.GetLocalizedString("unlockedTopic.Text")<i class="fa fa-unlock-alt"></i></span>
+				}
+			}
+			else
+			{
+				<span class="edsf_locked">@Html.GetLocalizedString("lockedTopic.Text")<i class="fa fa-lock"></i></span>
+			}
+		</div>
+		<div class="edsf_titleDescriptionWrapper">
+			<h3 class="edsf_itemTitle">
+				<a data-eds_linkinfo="@Model.ViewLinkInfo.ToJson()" href="@Model.ViewLinkInfo.Url">@Model.Topic.Title</a>
+			</h3>
+		</div>
+		@if (@Model.CategoryViewMeta.Category.HasViewPermissions || @Model.CategoryViewMeta.Category.LockType != LockType.Disabled)
+		{
+			<div class="edsf__topicListCategoryInfo edsf__displayNone edsf_categoryInfoWrapper">
+				<a class="edsf_itemCategoryLink edsf_color_@Model.CategoryLinkInfo.Color" data-eds_linkinfo="@Model.CategoryLinkInfo.ToJson()" href="@Model.CategoryLinkInfo.Url">@Model.CategoryLinkInfo.Name</a>
+			</div>
+		}
+	</td>
+	<td class="edsf_topicsUsers">
+		@Html.Raw(Model.TopicUsersAvatars(3, 30, 30, true, false))
+	</td>
+	<td class="edsf_views">
+		<strong class="edsf_visibleMdInline">@Html.GetLocalizedString("views.Text"): </strong>@Model.Topic.ViewCount
+	</td>
+	<td class="edsf_commentsCount">
+		<strong class="edsf_visibleMdInline">@Html.GetLocalizedString("comments.Text"): </strong>@Model.CommentCount
+	</td>
+	<td class="edsf_activity">
+		@if (@Model.LastComment != null)
+		{
+			<strong class="edsf_visibleMdInline">@Html.GetLocalizedString("activity.Text"): </strong><span data-activityTimestampInfo="@Model.ActivityTimestampInfo.ToJson()"><span>time</span></span>
+		}
+		else
+		{
+			<strong class="edsf_visibleMdInline">@Html.GetLocalizedString("activity.Text"): </strong><span>@Html.GetLocalizedString("noActivity.Text")</span>
+		}
+	</td>
+</tr>

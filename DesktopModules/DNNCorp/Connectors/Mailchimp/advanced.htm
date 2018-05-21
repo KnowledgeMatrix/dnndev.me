@@ -1,0 +1,41 @@
+﻿<div class="conn-mailchimp-advancedSetting">
+    <div class="panel firstPanel">
+        <input type="checkbox" data-bind="checked: registerNewUsers, enable: apiKey() && !apiKeyNotSaved()" aria-label="Register" />
+        <span data-bind="html: resx.AddNewUsersOf"></span>
+        <select data-bind="options: roles, optionsText: 'RoleName', optionsValue: 'RoleId', value: selectedRole, enable: registerNewUsers()" aria-label="Roles"></select>
+        <span data-bind="html: resx.ToMailChimpLists"></span>
+    </div>
+    <div class="dnnFormMessage dnnFormInfo" data-bind="text: resx.Mailchimp_APIKeyRequired, visible: !apiKey()"></div>
+    <div class="dnnFormMessage dnnFormInfo" data-bind="text: resx.Mailchimp_APIKeyNotSaved, visible: apiKeyNotSaved()"></div>
+    <div class="dnnFormMessage dnnFormInfo" data-bind="text: resx.Mailchimp_NoListsSelected, visible: apiKey() && registerNewUsers() && !assignedLists().length"></div>
+    <div class="panel mc-list" data-bind="visible: registerNewUsers() && apiKey() && !apiKeyNotSaved(), css: {'mc-loading': loading}">
+        <div class="title" data-bind="text: resx.MailchimpLists"></div>
+
+        <ul data-bind="foreach: lists">
+            <li>
+                <div>
+
+                    <div class="mc-list-name" data-bind="text: name"></div>
+
+                    <div class="mc-button-group">
+                        <a href="javascript:void(0)" class="mc-plainbtn" data-bind="text: $parent.resx.Assign, visible: !$parent.listIsAssigned(id), click: $parent.assignList"></a>
+                        <a href="javascript:void(0)" class="mc-plainbtn mc-assigned" data-bind="text: $parent.resx.Remove, visible: $parent.listIsAssigned(id), click: $parent.unassignList"></a>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <div class="mc-list-footer">
+            <div class="mc-results" data-bind="visible: areListsLoaded(), html: resx.Showing + ' ' + from() + '-' + to() + ' ' + resx.of + ' ' + totalLists()">
+            </div>
+            <div class="mc-results" data-bind="visible: !areListsLoaded(), html: resx.FetchingLists">
+            </div>
+
+            <a href="javascript:void(0)" id="previousPage" type="button" class="mc-page-button" data-bind="click: previousPage, css: {'mc-disabled': from() <= 1 }" aria-label="Prev"></a>
+            <a href="javascript:void(0)" id="nextPage" type="button" class="mc-page-button" data-bind="click: nextPage, css: {'mc-disabled': to() == totalLists() }" aria-label="Next"></a>
+        </div>
+    </div>
+
+
+    <div class="dnnFormMessage dnnFormSuccess" data-bind="visible: showSuccessMessage(), html: resx.AdvancedSettingsSaved" style="display:none; margin-bottom:0px;"></div>
+    <div class="dnnFormMessage dnnFormError" data-bind="visible: registerNewUsers() && noListsSelectedError(), html: resx.Mailchimp_NoListsSelected" style="display:none; margin-bottom:0px;"></div>
+</div>

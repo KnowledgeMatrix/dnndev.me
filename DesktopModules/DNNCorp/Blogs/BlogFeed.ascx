@@ -1,0 +1,1 @@
+<%@ Control Language="C#" AutoEventWireup="false" Codebehind="BlogFeed.ascx.cs" Inherits="DotNetNuke.Professional.Blogs.BlogFeed" %>

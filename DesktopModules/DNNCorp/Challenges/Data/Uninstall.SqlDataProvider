@@ -1,0 +1,161 @@
+﻿
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Challenges_Challenge_Search') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Challenges_Challenge_Search
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Challenges_Challenge_GetByContentItem') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Challenges_Challenge_GetByContentItem
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Challenges_Challenge_GetSearchable') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Challenges_Challenge_GetSearchable
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Challenges_Challenge_Add') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Challenges_Challenge_Add
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Challenges_Challenge_Update') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Challenges_Challenge_Update
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Challenges_Challenge_Delete') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Challenges_Challenge_Delete
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Challenges_Challenge_GetAccepted') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Challenges_Challenge_GetAccepted
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Challenges_Challenge_GetCompleted') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Challenges_Challenge_GetCompleted
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Challenges_GetActiveChallengesByUser') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Challenges_GetActiveChallengesByUser
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Challenges_IsUserInvited') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Challenges_IsUserInvited
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'FK_{objectQualifier}Challenges_Challenge_{objectQualifier}ContentItems') and OBJECTPROPERTY(id, N'IsConstraint') = 1)
+	ALTER TABLE {databaseOwner}{objectQualifier}Challenges_Challenge DROP CONSTRAINT FK_{objectQualifier}Challenges_Challenge_{objectQualifier}ContentItems
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'FK_{objectQualifier}Challenges_Challenge_{objectQualifier}Portals') and OBJECTPROPERTY(id, N'IsConstraint') = 1)
+	ALTER TABLE {databaseOwner}{objectQualifier}Challenges_Challenge DROP CONSTRAINT FK_{objectQualifier}Challenges_Challenge_{objectQualifier}Portals
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'FK_{objectQualifier}Challenges_Challenge_{objectQualifier}ContentItems') and OBJECTPROPERTY(id, N'IsConstraint') = 1)
+	ALTER TABLE {databaseOwner}{objectQualifier}Challenges_Challenge DROP CONSTRAINT FK_{objectQualifier}Challenges_Challenge_{objectQualifier}ContentItems
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'FK_{objectQualifier}Challenges_Challenge_{objectQualifier}Portals') and OBJECTPROPERTY(id, N'IsConstraint') = 1)
+	ALTER TABLE {databaseOwner}{objectQualifier}Challenges_Challenge DROP CONSTRAINT FK_{objectQualifier}Challenges_Challenge_{objectQualifier}Portals
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Challenges_UserNetwork]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+	DROP TABLE {databaseOwner}[{objectQualifier}Challenges_UserNetwork]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Challenges_UserChallengeNetwork]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+	DROP TABLE {databaseOwner}[{objectQualifier}Challenges_UserChallengeNetwork]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Challenges_Network]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+	DROP TABLE {databaseOwner}[{objectQualifier}Challenges_Network]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Challenges_UserChallenge]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+	DROP TABLE {databaseOwner}[{objectQualifier}Challenges_UserChallenge]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Challenges_ChallengeRoleInvites]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+	DROP TABLE {databaseOwner}[{objectQualifier}Challenges_ChallengeRoleInvites]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Challenges_ChallengeUserInvites]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+	DROP TABLE {databaseOwner}[{objectQualifier}Challenges_ChallengeUserInvites]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Challenges_ChallengeAdopters]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+	DROP TABLE {databaseOwner}[{objectQualifier}Challenges_ChallengeAdopters]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Challenges_Challenge]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+	DROP TABLE {databaseOwner}[{objectQualifier}Challenges_Challenge]
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Challenges_Challenge_GetCompletedUserList') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Challenges_Challenge_GetCompletedUserList
+GO
+
+/* Content Item */
+DECLARE @ContentTypeID INT
+SET @ContentTypeID = ( SELECT   ContentTypeID
+					   FROM     {databaseOwner}{objectQualifier}ContentTypes
+					   WHERE    ContentType = 'DNNCorp_Challenge'
+					 )
+
+DELETE FROM {databaseOwner}{objectQualifier}ContentItems
+	WHERE   ContentTypeID = @ContentTypeID
+
+DELETE FROM  {databaseOwner}{objectQualifier}ContentTypes
+	WHERE ContentTypeID = @ContentTypeID
+GO
+
+/* Notifications */
+DECLARE @NotificationTypeId INT
+
+SET @NotificationTypeId = (SELECT NotificationTypeID from {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] WHERE Name = N'DNNCorp_Challenges_Challenge_Comment_Flagged')
+DELETE FROM  {databaseOwner}[{objectQualifier}CoreMessaging_Messages] 
+	WHERE NotificationTypeId = @NotificationTypeId
+
+DELETE FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] 
+	WHERE NotificationTypeId = @NotificationTypeId
+
+DELETE FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] 
+	WHERE NotificationTypeId = @NotificationTypeId
+
+SET @NotificationTypeId = (SELECT NotificationTypeID from {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] WHERE Name = N'DNNCorp_Challenges_Challenge_Comment_Approval')
+DELETE FROM  {databaseOwner}[{objectQualifier}CoreMessaging_Messages] 
+	WHERE NotificationTypeId = @NotificationTypeId
+
+DELETE FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] 
+	WHERE NotificationTypeId = @NotificationTypeId
+
+DELETE FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] 
+	WHERE NotificationTypeId = @NotificationTypeId
+GO
+
+/* Subscriptions */
+DECLARE @SubscriptionTypeId INT
+SET @SubscriptionTypeId = ( SELECT   SubscriptionTypeId
+					   FROM     {databaseOwner}{objectQualifier}CoreMessaging_SubscriptionTypes
+					   WHERE    SubscriptionName = 'DNNCorp_Challenges_Challenge'
+					 )
+
+DELETE FROM {databaseOwner}{objectQualifier}CoreMessaging_SubscriptionTypes
+	WHERE   SubscriptionTypeId = @SubscriptionTypeId
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Challenges_AcceptedPreviously') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Challenges_AcceptedPreviously
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Challenges_CompletedPreviously') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Challenges_CompletedPreviously
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Challenges_GetAnalytics') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Challenges_GetAnalytics
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Challenges_GetAnalyticsAcceptedCompleted') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Challenges_GetAnalyticsAcceptedCompleted
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetTimeSeriesResolution]') IS NOT NULL
+	DROP FUNCTION {databaseOwner}{objectQualifier}GetTimeSeriesResolution
+GO

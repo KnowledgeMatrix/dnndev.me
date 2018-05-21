@@ -1,0 +1,143 @@
+﻿/* =====================================================================================
+/   TABLE: LiveAccordion
+/  ===================================================================================== */
+
+
+if not exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}LiveAccordion]') and OBJECTPROPERTY(id, N'IsTable') = 1)
+	BEGIN
+
+CREATE TABLE {databaseOwner}[{objectQualifier}LiveAccordion]
+(
+	[modID] [int] NOT NULL,
+	[Data] [ntext] NULL
+)
+	ALTER TABLE {databaseOwner}[{objectQualifier}LiveAccordion] ADD CONSTRAINT [PK_{objectQualifier}LiveAccordion] PRIMARY KEY CLUSTERED  ([modID])
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}LiveAccordion] WITH NOCHECK ADD CONSTRAINT [FK_{objectQualifier}LiveAccordion_{objectQualifier}Modules] FOREIGN KEY ([modID]) REFERENCES {databaseOwner}[{objectQualifier}Modules] ([ModuleID]) ON DELETE CASCADE
+	END
+GO
+
+
+/****** Object:  Stored Procedure {databaseOwner}{objectQualifier}LiveAccordionGet    Script Date: Tuesday, October 10, 2006 ******/
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}LiveAccordionGet') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+drop procedure {databaseOwner}{objectQualifier}LiveAccordionGet
+GO
+
+/****** Object:  Stored Procedure {databaseOwner}{objectQualifier}LiveAccordionAdd    Script Date: Tuesday, October 10, 2006 ******/
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}LiveAccordionAdd') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+drop procedure {databaseOwner}{objectQualifier}LiveAccordionAdd
+GO
+
+/****** Object:  Stored Procedure {databaseOwner}{objectQualifier}LiveAccordionUpdate    Script Date: Tuesday, October 10, 2006 ******/
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}LiveAccordionUpdate') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+drop procedure {databaseOwner}{objectQualifier}LiveAccordionUpdate
+GO
+
+/****** Object:  Stored Procedure {databaseOwner}{objectQualifier}LiveAccordionDelete    Script Date: Tuesday, October 10, 2006 ******/
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}LiveAccordionDelete') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+drop procedure {databaseOwner}{objectQualifier}LiveAccordionDelete
+GO
+
+
+/* -------------------------------------------------------------------------------------
+/   LiveAccordionGet
+/  ------------------------------------------------------------------------------------- */
+SET QUOTED_IDENTIFIER OFF 
+GO
+SET ANSI_NULLS OFF 
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}LiveAccordionGet
+	@modID int
+	
+AS
+
+SELECT
+	[Data]
+FROM {databaseOwner}{objectQualifier}LiveAccordion
+WHERE
+	[modID] = @modID
+	
+GO
+
+SET QUOTED_IDENTIFIER OFF 
+GO
+SET ANSI_NULLS ON 
+GO
+
+/* -------------------------------------------------------------------------------------
+/   LiveAccordionAdd
+/  ------------------------------------------------------------------------------------- */
+SET QUOTED_IDENTIFIER ON 
+GO
+SET ANSI_NULLS OFF 
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}LiveAccordionAdd
+	@modID int,
+	@Data ntext
+AS
+
+INSERT INTO {databaseOwner}{objectQualifier}LiveAccordion (
+	[modID],[Data]
+) VALUES (
+	@modID,@Data
+)
+
+select SCOPE_IDENTITY()
+GO
+
+SET QUOTED_IDENTIFIER OFF 
+GO
+SET ANSI_NULLS ON 
+GO
+
+/* -------------------------------------------------------------------------------------
+/   LiveAccordionUpdate
+/  ------------------------------------------------------------------------------------- */
+SET QUOTED_IDENTIFIER ON 
+GO
+SET ANSI_NULLS OFF 
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}LiveAccordionUpdate
+	@modID int, 
+	@Data ntext 
+AS
+
+UPDATE {databaseOwner}{objectQualifier}LiveAccordion SET
+	[Data] = @Data
+WHERE
+	[modID] = @modID
+GO
+
+SET QUOTED_IDENTIFIER OFF 
+GO
+SET ANSI_NULLS ON 
+GO
+
+/* -------------------------------------------------------------------------------------
+/   LiveAccordionDelete
+/  ------------------------------------------------------------------------------------- */
+SET QUOTED_IDENTIFIER ON 
+GO
+SET ANSI_NULLS OFF 
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}LiveAccordionDelete
+	@modID int
+AS
+
+DELETE FROM {databaseOwner}{objectQualifier}LiveAccordion
+WHERE
+	[modID] = @modID
+GO
+
+SET QUOTED_IDENTIFIER OFF 
+GO
+SET ANSI_NULLS ON 
+GO
+
+
+
+

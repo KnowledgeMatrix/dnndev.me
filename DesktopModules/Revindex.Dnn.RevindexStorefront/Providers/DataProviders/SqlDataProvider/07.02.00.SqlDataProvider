@@ -1,0 +1,196 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+SET XACT_ABORT ON
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+	
+	-- Add SEO fields to product variant
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant ADD
+		UrlName xml NULL,
+		PageTitle xml NULL,
+		MetaKeywords xml NULL,
+		MetaDescription xml NULL
+
+	-- Add CategoryKey
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Category ADD CategoryKey nvarchar(100) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Category_CategoryKey DEFAULT LOWER(NEWID())
+	CREATE UNIQUE NONCLUSTERED INDEX IX_{objectQualifier}Revindex_Storefront_Category_3 ON {databaseOwner}{objectQualifier}Revindex_Storefront_Category (CategoryKey)
+
+	-- Add ProductKey
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Product ADD	ProductKey nvarchar(100) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Product_ProductKey DEFAULT LOWER(NEWID())
+	CREATE UNIQUE NONCLUSTERED INDEX IX_{objectQualifier}Revindex_Storefront_Product_2 ON {databaseOwner}{objectQualifier}Revindex_Storefront_Product (ProductKey) 
+
+	-- Add ProductVariantKey
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant ADD ProductVariantKey nvarchar(100) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ProductVariant_ProductVariantKey DEFAULT LOWER(NEWID())
+	CREATE UNIQUE NONCLUSTERED INDEX IX_{objectQualifier}Revindex_Storefront_ProductVariant_5 ON {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant (ProductVariantKey)
+
+	-- Add DistributorKey
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Distributor ADD	DistributorKey nvarchar(100) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Distributor_DistributorKey DEFAULT LOWER(NEWID())
+	CREATE UNIQUE NONCLUSTERED INDEX IX_{objectQualifier}Revindex_Storefront_Distributor_2 ON {databaseOwner}{objectQualifier}Revindex_Storefront_Distributor (DistributorKey)
+
+	-- Add ManufacturerKey
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Manufacturer ADD ManufacturerKey nvarchar(100) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Manufacturer_ManufacturerKey DEFAULT LOWER(NEWID())
+	CREATE UNIQUE NONCLUSTERED INDEX IX_{objectQualifier}Revindex_Storefront_Manufacturer_2 ON {databaseOwner}{objectQualifier}Revindex_Storefront_Manufacturer (ManufacturerKey)
+
+	-- Add ProductAttributeDefinitionKey
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductAttributeDefinition ADD ProductAttributeDefinitionKey nvarchar(100) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ProductAttributeDefinition_ProductAttributeDefinitionKey DEFAULT LOWER(NEWID())
+	CREATE UNIQUE NONCLUSTERED INDEX IX_{objectQualifier}Revindex_Storefront_ProductAttributeDefinition ON {databaseOwner}{objectQualifier}Revindex_Storefront_ProductAttributeDefinition (ProductAttributeDefinitionKey)
+
+	-- Add WarehouseKey
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Warehouse ADD WarehouseKey nvarchar(100) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Warehouse_WarehouseKey DEFAULT LOWER(NEWID())
+	CREATE UNIQUE NONCLUSTERED INDEX IX_{objectQualifier}Revindex_Storefront_Warehouse_1 ON {databaseOwner}{objectQualifier}Revindex_Storefront_Warehouse (WarehouseKey)
+
+	-- Add ProductVariantGroupKey
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariantGroup ADD	ProductVariantGroupKey nvarchar(100) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ProductVariantGroup_ProductVariantGroupKey DEFAULT LOWER(NEWID())
+	CREATE UNIQUE NONCLUSTERED INDEX IX_{objectQualifier}Revindex_Storefront_ProductVariantGroup_1 ON {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariantGroup (ProductVariantGroupKey) 
+
+	-- Add ProductVariantGroupOptionKey
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariantGroupOption ADD ProductVariantGroupOptionKey nvarchar(100) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ProductVariantGroupOption_ProductVariantGroupOptionKey DEFAULT LOWER(NEWID())
+	CREATE UNIQUE NONCLUSTERED INDEX IX_{objectQualifier}Revindex_Storefront_ProductVariantGroupOption_1 ON {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariantGroupOption (ProductVariantGroupOptionKey)
+
+	-- Support setting start recurring start date per variant
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant ADD
+		StartRecurringDate datetime NULL,
+		StartRecurringInterval int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ProductVariant_StartRecurringInterval DEFAULT 0,
+		StartRecurringIntervalType int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ProductVariant_StartRecurringIntervalType DEFAULT 1
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ProductVariant_StartRecurringInterval
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ProductVariant_StartRecurringIntervalType
+
+	-- Support CyberSource SOAP payment gateway
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		PaymentGatewaysCyberSourceSoapMerchantID varchar(255) NULL,
+		PaymentGatewaysCyberSourceSoapTransactionKey varchar(500) NULL,
+		PaymentGatewaysCyberSourceSoapTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysCyberSourceSoapTestMode DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysCyberSourceSoapTestMode
+
+	-- Support min and max inventory in variants
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant ADD
+		MinInventory int NULL,
+		MaxInventory int NULL
+
+	-- Update low inventory report
+	UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ReportDefinition
+	SET DefinitionRule = N'<rule version="1.0" type="data">&lt;data method="ReportDefinition" version="1.0"&gt;
+	  &lt;dataSources&gt;
+		&lt;sqlDataSource&gt;
+		  &lt;query&gt;SELECT p.ProductID,
+	   pv.ProductVariantID,
+	   pv.SKU AS SKU,
+	   COALESCE(p.Name.value(N''(/locale/@en-US)[1]'', ''nvarchar(MAX)''), '''') + '' - '' + COALESCE(pv.Name.value(N''(/locale/@en-US)[1]'', ''nvarchar(MAX)''), '''') AS ProductName,
+	   pv.Inventory,
+	   pv.MinInventory,
+	   pv.MaxInventory,
+	   pv.MaxInventory - pv.Inventory AS ''Reorder''
+	FROM {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant pv
+	JOIN {databaseOwner}{objectQualifier}Revindex_Storefront_Product p
+	ON pv.ProductID = p.ProductID
+	WHERE p.Deleted = 0
+		AND pv.Deleted = 0
+		AND pv.Inventory IS NOT NULL
+		AND ((pv.Inventory &amp;lt;= 0 AND pv.MinInventory IS NULL) OR (pv.Inventory &amp;lt; pv.MinInventory))
+	ORDER BY COALESCE(p.Name.value(N''(/locale/@en-US)[1]'', ''nvarchar(MAX)''), '''')&lt;/query&gt;
+		  &lt;parameters&gt;
+			&lt;variableParameter&gt;
+			  &lt;name&gt;@PortalID&lt;/name&gt;
+			  &lt;dataType&gt;11&lt;/dataType&gt;
+			  &lt;variableName&gt;Portal:PortalID&lt;/variableName&gt;
+			&lt;/variableParameter&gt;
+		  &lt;/parameters&gt;
+		&lt;/sqlDataSource&gt;
+	  &lt;/dataSources&gt;
+	  &lt;visualizers&gt;
+		&lt;htmlVisualizer&gt;
+		  &lt;html&gt;&amp;lt;table cellspacing="0" cellpadding="3" style="border-top-width: 1px; border-top-style: solid; border-top-color: #cccccc; border-left-width: 1px; border-left-style: solid; border-left-color: #cccccc; border-right-width: 1px; border-right-style: solid; border-right-color: #cccccc; width: 100%;" bgcolor="#eeeeee"&amp;gt;
+		&amp;lt;colgroup&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;/colgroup&amp;gt;
+		&amp;lt;tbody&amp;gt;
+			&amp;lt;tr&amp;gt;
+				&amp;lt;td width="10%"&amp;gt;&amp;lt;strong&amp;gt;Product ID&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+				&amp;lt;td width="10%"&amp;gt;&amp;lt;strong&amp;gt;Variant ID&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+				&amp;lt;td width="15%"&amp;gt;&amp;lt;strong&amp;gt;SKU&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+				&amp;lt;td width="35%"&amp;gt;&amp;lt;strong&amp;gt;Product name&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+				&amp;lt;td width="10%"&amp;gt;&amp;lt;strong&amp;gt;Inventory&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+				&amp;lt;td width="5%"&amp;gt;&amp;lt;strong&amp;gt;Min&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+				&amp;lt;td width="5%"&amp;gt;&amp;lt;strong&amp;gt;Max&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+				&amp;lt;td width="10%"&amp;gt;&amp;lt;strong&amp;gt;Reorder&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+			&amp;lt;/tr&amp;gt;
+		&amp;lt;/tbody&amp;gt;
+	&amp;lt;/table&amp;gt;
+	[[xsl:for-each select="/in/dataSet/dataTable/dataRow" ]]
+	&amp;lt;table cellspacing="0" cellpadding="3" style="width: 100%;"&amp;gt;
+		&amp;lt;colgroup&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;/colgroup&amp;gt;
+		&amp;lt;tbody&amp;gt;
+			&amp;lt;tr&amp;gt;
+				&amp;lt;td style="border: 1px solid #cccccc;" width="10%"&amp;gt;[[xsl:value-of select="ProductID" /]]&amp;lt;/td&amp;gt;
+				&amp;lt;td style="border: 1px solid #cccccc;" width="10%"&amp;gt;[[xsl:value-of select="ProductVariantID" /]]&amp;lt;/td&amp;gt;
+				&amp;lt;td style="border: 1px solid #cccccc;" width="15%"&amp;gt;[[xsl:value-of select="SKU" /]]&amp;lt;/td&amp;gt;
+				&amp;lt;td style="border: 1px solid #cccccc;" width="35%"&amp;gt;[[xsl:value-of select="ProductName" /]]&amp;lt;/td&amp;gt;
+				&amp;lt;td style="border: 1px solid #cccccc;" width="10%"&amp;gt;[[xsl:value-of select="Inventory" /]]&amp;lt;/td&amp;gt;
+				&amp;lt;td style="border: 1px solid #cccccc;" width="5%"&amp;gt;[[xsl:value-of select="MinInventory" /]]&amp;lt;/td&amp;gt;
+				&amp;lt;td style="border: 1px solid #cccccc;" width="5%"&amp;gt;[[xsl:value-of select="MaxInventory" /]]&amp;lt;/td&amp;gt;
+				&amp;lt;td style="border: 1px solid #cccccc;" width="10%"&amp;gt;[[xsl:value-of select="Reorder" /]]&amp;lt;/td&amp;gt;
+			&amp;lt;/tr&amp;gt;
+		&amp;lt;/tbody&amp;gt;
+	&amp;lt;/table&amp;gt;
+	[[/xsl:for-each]]&lt;/html&gt;
+		&lt;/htmlVisualizer&gt;
+	  &lt;/visualizers&gt;
+	&lt;/data&gt;</rule>'
+	WHERE ReportDefinitionGUID = '8f140306-176c-4867-bd4b-1233bf26bd2a'
+
+	-- Support anonymous review and moderation
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD ProductReviewsAnonymousAccountActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductReviewsAnonymousAccountActive DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductReviewsAnonymousAccountActive
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD ProductReviewsModerationActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductReviewsModerationActive DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductReviewsModerationActive
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD ProductReviewsUserMaxReview int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductReviewsUserMaxReview DEFAULT 1
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductReviewsUserMaxReview
+
+	-- Enhance product reviews to support anonymous reviews
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductReview ADD
+		Email nvarchar(256) NULL,
+		FirstName nvarchar(50) NULL,
+		LastName nvarchar(50) NULL,
+		Approved bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ProductReview_Approved DEFAULT 1,
+		UserHostAddress varchar(39) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductReview DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ProductReview_Approved
+
+	-- Drop unique index
+	DROP INDEX IX_{objectQualifier}Revindex_Storefront_ProductReview ON {databaseOwner}{objectQualifier}Revindex_Storefront_ProductReview
+	CREATE NONCLUSTERED INDEX IX_{objectQualifier}Revindex_Storefront_ProductReview ON {databaseOwner}{objectQualifier}Revindex_Storefront_ProductReview (ProductID) 
+
+COMMIT TRANSACTION
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+	
+		-- Fix bug where the UI is incorrectly setting ProductAttributeDefinition.StepSize to zero when the minimum must be 1
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductAttributeDefinition SET StepSize = 1.0 WHERE StepSize = 0
+
+		-- Allow configuring max visible items in product showcase
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD ProductShowcaseVisibleMaxItems int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductShowcaseVisibleMaxItems DEFAULT 6
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductShowcaseVisibleMaxItems
+
+		-- Upgrade default ProductDetail template to "Standard15"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductDetailDisplayTemplate = 'Standard15' WHERE ProductDetailDisplayTemplate LIKE 'Standard%'
+
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

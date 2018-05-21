@@ -1,0 +1,244 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+SET XACT_ABORT ON
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+
+	-- Create ProductComponent table
+	CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductComponent](
+		[ProductComponentID] [int] IDENTITY(1,1) NOT NULL,
+		[ProductVariantID] [int] NOT NULL,
+		[Name] [xml] NULL,
+		[ComponentType] [int] NOT NULL,
+		[DisplayOrder] [int] NOT NULL,
+		[CreateDate] [datetime] NOT NULL,
+		[UpdateDate] [datetime] NOT NULL,
+		[RowVersion] [timestamp] NOT NULL,
+		[ProductComponentKey] [nvarchar](100) NULL,
+		[Deleted] [bit] NOT NULL,
+	 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_ProductComponent] PRIMARY KEY CLUSTERED 
+	(
+		[ProductComponentID] ASC
+	))
+
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_ProductComponent] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductComponent] 
+	(
+		[ProductVariantID] ASC,
+		[Deleted] ASC
+	)
+
+	CREATE UNIQUE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_ProductComponent_1] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductComponent] 
+	(
+		[ProductComponentKey] ASC
+	)
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductComponent]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductComponent_Revindex_Storefront_ProductVariant] FOREIGN KEY([ProductVariantID])
+	REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant] ([ProductVariantID])
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductComponent] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductComponent_Revindex_Storefront_ProductVariant]
+
+	-- Create ProductPart table
+	CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductPart](
+		[ProductPartID] [int] IDENTITY(1,1) NOT NULL,
+		[ProductComponentID] [int] NOT NULL,
+		[ProductVariantID] [int] NOT NULL,
+		[DisplayOrder] [int] NOT NULL,
+		[DefaultQuantity] [int] NOT NULL,
+		[Selected] [bit] NOT NULL,
+		[CreateDate] [datetime] NOT NULL,
+		[UpdateDate] [datetime] NOT NULL,
+		[RowVersion] [timestamp] NOT NULL,
+		[ModifierRule] [xml] NULL,
+		[Deleted] [bit] NOT NULL,
+		[ShowQuantity] [bit] NOT NULL,
+		[MinOrderQuantity] [int] NULL,
+		[MaxOrderQuantity] [int] NULL,
+		[ShowPrice] [bit] NOT NULL,
+	 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_ProductPart] PRIMARY KEY CLUSTERED 
+	(
+		[ProductPartID] ASC
+	))
+
+
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_ProductPart] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductPart] 
+	(
+		[ProductComponentID] ASC,
+		[Deleted] ASC
+	)
+
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_ProductPart_1] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductPart] 
+	(
+		[ProductVariantID] ASC
+	)
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductPart]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductPart_Revindex_Storefront_ProductComponent] FOREIGN KEY([ProductComponentID])
+	REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductComponent] ([ProductComponentID])
+	ON DELETE CASCADE
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductPart] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductPart_Revindex_Storefront_ProductComponent]
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductPart]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductPart_Revindex_Storefront_ProductVariant] FOREIGN KEY([ProductVariantID])
+	REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant] ([ProductVariantID])
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductPart] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductPart_Revindex_Storefront_ProductVariant]
+
+
+	-- Create parent child relationship in SalesOrderDetail table
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrderDetail ADD ParentSalesOrderDetailID int NULL
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrderDetail ADD CONSTRAINT
+		FK_{objectQualifier}Revindex_Storefront_SalesOrderDetail_Revindex_Storefront_SalesOrderDetail FOREIGN KEY
+		(ParentSalesOrderDetailID) REFERENCES {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrderDetail
+		(SalesOrderDetailID) ON UPDATE  NO ACTION ON DELETE  NO ACTION 
+
+	-- Add ProductPartID to SalesOrderDetail table
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrderDetail ADD ProductPartID int NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrderDetail ADD CONSTRAINT FK_{objectQualifier}Revindex_Storefront_SalesOrderDetail_Revindex_Storefront_ProductPart FOREIGN KEY (ProductPartID) REFERENCES {databaseOwner}{objectQualifier}Revindex_Storefront_ProductPart (ProductPartID) ON UPDATE  NO ACTION ON DELETE  NO ACTION 
+
+	-- Add BundledProductActive flag
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD ProductComponentActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductComponentActive DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductComponentActive
+
+	-- Support Unishippers shipping provider
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingProvider ADD
+		UnishippersUsername varchar(255) NULL,
+		UnishippersPassword varchar(255) NULL,
+		UnishippersCustomerNumber varchar(255) NULL,
+		UnishippersUPSAccountNumber varchar(255) NULL
+
+	-- Add RightActive column
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD RightActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_RightActive DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_RightActive
+
+	-- Add RightDefinition table
+	CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RightDefinition](
+		[RightDefinitionID] [int] IDENTITY(1,1) NOT NULL,
+		[PortalID] [int] NOT NULL,
+		[SellerID] [int] NULL,
+		[RightType] [int] NULL,
+		[Name] [xml] NULL,
+		[Description] [xml] NULL,
+		[CreateDate] [datetime] NOT NULL,
+		[UpdateDate] [datetime] NOT NULL,
+		[RowVersion] [timestamp] NOT NULL,
+	 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_RightDefinition] PRIMARY KEY CLUSTERED 
+	(
+		[RightDefinitionID] ASC
+	))
+
+
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_RightDefinition] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_RightDefinition] 
+	(
+		[PortalID] ASC
+	)
+
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_RightDefinition_1] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_RightDefinition] 
+	(
+		[SellerID] ASC
+	)
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RightDefinition]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_RightDefinition_Portals] FOREIGN KEY([PortalID])
+	REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID])
+	ON DELETE CASCADE
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RightDefinition] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_RightDefinition_Portals]
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RightDefinition]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_RightDefinition_Revindex_Storefront_Seller] FOREIGN KEY([SellerID])
+	REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_Seller] ([SellerID])
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RightDefinition] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_RightDefinition_Revindex_Storefront_Seller]
+
+	-- Add Right table
+	CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Right](
+		[RightID] [int] IDENTITY(1,1) NOT NULL,
+		[RightDefinitionID] [int] NOT NULL,
+		[Code] [nvarchar](450) NULL,
+		[CreateDate] [datetime] NOT NULL,
+		[UpdateDate] [datetime] NOT NULL,
+		[RowVersion] [timestamp] NOT NULL,
+		[SalesOrderDetailID] [int] NULL,
+		[IssueDate] datetime NULL,
+		[AdminNotes] [nvarchar](4000) NULL,
+		[AssignedUserID] [int] NULL,
+	 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_Right] PRIMARY KEY CLUSTERED 
+	(
+		[RightID] ASC
+	))
+
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_Right] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_Right] 
+	(
+		[RightDefinitionID] ASC
+	)
+
+	CREATE NONCLUSTERED INDEX IX_{objectQualifier}Revindex_Storefront_Right_1 ON {databaseOwner}[{objectQualifier}Revindex_Storefront_Right]
+	(
+		[Code]
+	)
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Right]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Right_Revindex_Storefront_RightDefinition] FOREIGN KEY([RightDefinitionID])
+	REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_RightDefinition] ([RightDefinitionID])
+	ON DELETE CASCADE
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Right] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Right_Revindex_Storefront_RightDefinition]
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Right]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Right_Revindex_Storefront_SalesOrderDetail] FOREIGN KEY([SalesOrderDetailID])
+	REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrderDetail] ([SalesOrderDetailID])
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Right] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Right_Revindex_Storefront_SalesOrderDetail]
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Right ADD CONSTRAINT FK_{objectQualifier}Revindex_Storefront_Right_Users FOREIGN KEY (AssignedUserID)
+	REFERENCES {databaseOwner}{objectQualifier}Users (UserID) ON UPDATE  NO ACTION ON DELETE  CASCADE 
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Right] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Right_Users]
+
+	-- Add RightDefinitionID in product variant
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant ADD RightDefinitionID int NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant ADD CONSTRAINT FK_{objectQualifier}Revindex_Storefront_ProductVariant_Revindex_Storefront_RightDefinition FOREIGN KEY (RightDefinitionID) REFERENCES {databaseOwner}{objectQualifier}Revindex_Storefront_RightDefinition (RightDefinitionID) ON UPDATE  NO ACTION ON DELETE  NO ACTION 
+
+	-- Add email templates for right
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		CommunicationRightReceiptEmailActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CommunicationRightReceiptEmailActive DEFAULT 1,
+		CommunicationRightReceiptEmailTemplate xml NULL
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CommunicationRightReceiptEmailActive
+
+	-- Support social shares
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD ProductDetailSocialShareShow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductDetailSocialShareShow DEFAULT 1
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductDetailSocialShareShow
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Product ADD	ShowSocialShare bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Product_ShowSocialShare DEFAULT 1
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Product	DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Product_ShowSocialShare
+
+COMMIT TRANSACTION
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+	
+		-- Upgrade default ProductDetail template to "Standard16"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductDetailDisplayTemplate = 'Standard16' WHERE ProductDetailDisplayTemplate LIKE 'Standard%'
+
+		-- Upgrade default Confirmation template to "Standard12"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ConfirmationDisplayTemplate = 'Standard12' WHERE ConfirmationDisplayTemplate LIKE 'Standard%'
+		
+
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

@@ -1,0 +1,876 @@
+/********************************************************
+ * SPROC: Social_Bookmark_GetUserByPortal
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_Bookmark_GetUserByPortal]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_Bookmark_GetUserByPortal] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Social_Bookmark_GetUserByPortal]
+	@PortalId INT,
+	@UserId INT,
+    @PageIndex int = 0,
+    @PageSize int = 10
+AS
+BEGIN
+    ;WITH SelectedRows
+	AS (
+		SELECT	ROW_NUMBER() OVER(ORDER BY BM.CreatedOnDate DESC) AS [RowNumber],
+				BM.[BookmarkId],
+				BM.[UserTitle],
+				BM.[ContentItemId],
+				BM.[UserId],
+				BM.[CreatedOnDate],
+				BM.[PortalId],
+				CI.[TabId],
+				CI.[ModuleId],
+				CI.[ContentKey]
+		FROM	{databaseOwner}[{objectQualifier}Social_Bookmark] BM WITH (NOLOCK)
+					INNER JOIN {databaseOwner}[{objectQualifier}ContentItems] CI WITH (NOLOCK)
+						ON BM.[ContentItemId] = CI.[ContentItemId]
+		WHERE	BM.[UserId] = @UserId AND BM.[PortalId] = @PortalId
+	   )
+	SELECT	TOP (@PageSize) *
+	FROM	SelectedRows
+	WHERE	RowNumber > (@PageIndex * @PageSize)
+END
+GO
+
+/********************************************************
+ * SPROC: Social_Bookmark_GetByUserAndCID
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_Bookmark_GetByUserAndCID]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_Bookmark_GetByUserAndCID] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Social_Bookmark_GetByUserAndCID]
+	@UserId INT,
+    @ContenItemId INT
+AS
+BEGIN
+	SELECT	
+			BM.[BookmarkId],
+			BM.[UserTitle],
+			BM.[ContentItemId],
+			BM.[UserId],
+			BM.[CreatedOnDate],
+			BM.[PortalId],
+			CI.[TabId],
+			CI.[ModuleId],
+			CI.[ContentKey]
+	FROM	{databaseOwner}[{objectQualifier}Social_Bookmark] BM WITH (NOLOCK)
+				INNER JOIN {databaseOwner}[{objectQualifier}ContentItems] CI WITH (NOLOCK)
+					ON BM.[ContentItemId] = CI.[ContentItemId]
+	WHERE	BM.[UserId] = @UserId AND BM.[ContentItemId] = @ContenItemId
+END
+GO
+
+/* SOCIAL-2064: Remove actions w/ -1 DesktopModuleId we installed in 1.0.0 via Mechanics */
+DELETE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	WHERE ActionName = 'AdminEntered' AND DesktopModuleId = -1
+
+DELETE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	WHERE ActionName = 'Commented' AND DesktopModuleId = -1
+
+DELETE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	WHERE ActionName = 'UpVotedComment' AND DesktopModuleId = -1
+
+DELETE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	WHERE ActionName = 'DownVotedComment' AND DesktopModuleId = -1
+
+DELETE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	WHERE ActionName = 'ProvidedFlaggedComment' AND DesktopModuleId = -1
+
+DELETE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	WHERE ActionName = 'ProvidedUpVotedComment' AND DesktopModuleId = -1
+
+DELETE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	WHERE ActionName = 'ProvidedDownVotedComment' AND DesktopModuleId = -1
+
+DELETE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	WHERE ActionName = 'FlaggedComment' AND DesktopModuleId = -1
+
+DELETE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	WHERE ActionName = 'TwitterShare' AND DesktopModuleId = -1
+
+DELETE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	WHERE ActionName = 'FacebookShare' AND DesktopModuleId = -1
+
+DELETE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	WHERE ActionName = 'LinkedInShare' AND DesktopModuleId = -1
+
+DELETE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	WHERE ActionName = 'PlusOneShare' AND DesktopModuleId = -1
+
+DELETE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	WHERE ActionName = 'ApprovedComment' AND DesktopModuleId = -1
+
+DELETE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	WHERE ActionName = 'LikedComment' AND DesktopModuleId = -1
+
+DELETE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	WHERE ActionName = 'RelatedContent' AND DesktopModuleId = -1
+GO
+
+/********************************************************
+ * URL Provider
+ ********************************************************/
+IF NOT EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_Slug') and OBJECTPROPERTY(id, N'IsTable') = 1)
+BEGIN
+
+	CREATE TABLE {databaseOwner}{objectQualifier}Social_Slug (
+		TabId INT NOT NULL,
+		ContentItemId INT NOT NULL,
+		GroupId INT NULL,
+		HttpStatus INT NOT NULL,
+		Slug NVARCHAR(255) NOT NULL,	
+	)
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Social_Slug ADD CONSTRAINT 
+		PK_{objectQualifier}Social_Slug PRIMARY KEY CLUSTERED (TabId, Slug)
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Social_Slug ADD CONSTRAINT 
+		FK_{objectQualifier}Social_Slug_ContentItems FOREIGN KEY (ContentItemId) 
+			REFERENCES {databaseOwner}{objectQualifier}ContentItems (ContentItemId) 
+				ON DELETE CASCADE
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Social_Slug ADD CONSTRAINT 
+		FK_{objectQualifier}Social_Slug_Tabs FOREIGN KEY (TabId) 
+			REFERENCES {databaseOwner}{objectQualifier}Tabs (TabId) 
+
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Social_ResolveSlug') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_ResolveSlug
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Social_ResolveSlug (
+	@TabId INT,
+	@Slug VARCHAR(255)
+) AS
+BEGIN
+	SELECT s.ContentItemId, s.HttpStatus, r.Slug RedirectTo
+	FROM {databaseOwner}{objectQualifier}Social_Slug s WITH (NOLOCK)
+		LEFT JOIN {databaseOwner}{objectQualifier}Social_Slug r 
+			ON s.TabId = r.TabId 
+				AND s.ContentItemId = r.ContentItemId 
+				AND s.HttpStatus = 301 AND r.HttpStatus = 200
+	WHERE s.TabId = @TabId 
+	  AND s.Slug = @Slug
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Social_AddSlugToContentItem') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_AddSlugToContentItem
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Social_AddSlugToContentItem (
+	@TabId INT,
+	@ContentItemId INT,
+	@GroupId INT,
+	@Slug VARCHAR(255),
+	@Separator VARCHAR(1)
+) AS
+BEGIN
+	DECLARE @OrigSlug VARCHAR(255) = @Slug
+
+	DECLARE @i INT = 1
+	WHILE EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}Social_Slug WITH (NOLOCK)
+		WHERE TabId = @TabId
+		  AND ContentItemId <> @ContentItemId
+		  AND Slug = @Slug)
+	BEGIN			     
+		SET @Slug = @OrigSlug + @Separator + CONVERT(VARCHAR(5), @i)
+		SET @i = @i + 1
+	END
+
+	UPDATE {databaseOwner}{objectQualifier}Social_Slug
+	SET HttpStatus = 301
+	WHERE TabId = @TabId AND ContentItemId = @ContentItemId 
+	  AND Slug <> @Slug 
+	  AND HttpStatus = 200
+
+	UPDATE {databaseOwner}{objectQualifier}Social_Slug
+	SET HttpStatus = 200
+	WHERE TabId = @TabId AND ContentItemId = @ContentItemId 
+	  AND Slug = @Slug
+
+	IF @@ROWCOUNT = 0 
+	BEGIN
+		INSERT {databaseOwner}{objectQualifier}Social_Slug(TabId, ContentItemId, GroupId, HttpStatus, Slug)
+		VALUES (@TabId, @ContentItemId, @GroupId, 200, @Slug)
+	END
+
+	SELECT @Slug
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Social_GetSlug') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_GetSlug
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Social_GetSlug (
+	@ContentItemId INT
+) AS
+BEGIN
+	DECLARE @Slug VARCHAR(255)
+
+	SELECT @Slug = Slug
+	FROM {databaseOwner}{objectQualifier}Social_Slug WITH (NOLOCK)
+	WHERE ContentItemId = @ContentItemId
+	  AND HttpStatus = 200
+END
+GO
+
+/********************************************************
+ * SPROC: Social_cmx_GetUserDetail
+ ********************************************************/
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Social_cmx_GetUserDetail') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_cmx_GetUserDetail
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Social_cmx_GetUserDetail (
+	@PortalId INT,
+	@UserId INT
+) AS
+BEGIN
+	--Basic Details
+	SELECT US.PortalID, U.UserID, U.Username, U.DisplayName, US.LastModifiedOnDate,
+	"IsDeleted" = CASE WHEN u.IsDeleted = 1 OR up.IsDeleted = 0 THEN 0 ELSE 1 END,
+	COALESCE(us.ContentCreatedCount, 0) AS [TotalContribution],
+	COALESCE(us.ReputationPoints, 0) AS [Reputation],
+	
+	COALESCE(us.ExperiencePoints, 0) AS [Experience]
+	FROM {databaseOwner}{objectQualifier}Users U WITH (NOLOCK)
+	INNER JOIN {databaseOwner}{objectQualifier}UserPortals UP WITH (NOLOCK)
+		ON U.UserID = UP.UserId
+	LEFT OUTER JOIN {databaseOwner}[{objectQualifier}Mechanics_UserScoring] US 
+		ON US.UserId = U.UserID
+	WHERE UP.PortalId = @PortalId
+		AND US.UserID = @UserID
+		AND US.PortalId = @PortalId
+
+	--Rank
+	DECLARE @RP INT
+	SELECT @RP = US.ReputationPoints
+	FROM {databaseOwner}[{objectQualifier}Mechanics_UserScoring] US WITH (NOLOCK)
+	WHERE US.UserID = @UserID
+	AND US.PortalId = @PortalId
+		
+	IF @RP IS NOT NULL
+	BEGIN
+		SELECT @RP = COUNT(*) + 1 
+		FROM {databaseOwner}[{objectQualifier}Mechanics_UserScoring] US WITH (NOLOCK)
+		WHERE US.PortalId = @PortalId
+			AND US.ReputationPoints > @RP 
+	END
+	SELECT COALESCE(@RP, -1) As Rank
+
+	--Analytics
+	SELECT TOP 1 TotalSeconds, Engagement
+	FROM {databaseOwner}[{objectQualifier}Analytics_Users]
+	WHERE UserID = @UserID
+	AND PortalId = @PortalId
+
+	--Influence
+	DECLARE @AnnualCutOffDate INT
+	SET @AnnualCutOffDate = CAST(convert(varchar, DATEADD(DAY, - 364, GETUTCDATE()), 112) as int)
+	SELECT TOP 1 COALESCE(Influence, 0)
+	FROM {databaseOwner}[{objectQualifier}Analytics_Fact_UserScoringLogRollup]
+	WHERE UserID = @UserID
+	AND PortalId = @PortalId
+	AND Interval = 364 --annual
+	AND DesktopModuleId = -1
+	AND [Date] >= @AnnualCutOffDate
+
+	--User Activity
+	SELECT TOP 5 DM.FriendlyName AS Area, USL.CreatedOnDate, SAD.ScoringActionDefId,
+	"Title" = CASE WHEN CIMD.MetaDataValue <> '' THEN CIMD.MetaDataValue ELSE CI.Content END 
+	FROM {databaseOwner}[{objectQualifier}Mechanics_UserScoringLog] USL WITH (NOLOCK)
+	INNER JOIN {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition] SAD
+		ON USL.ScoringActionDefId = SAD.ScoringActionDefId
+	INNER JOIN {databaseOwner}[{objectQualifier}DesktopModules] DM
+		ON SAD.DesktopModuleID = DM.DesktopModuleID
+	LEFT OUTER JOIN {databaseOwner}[{objectQualifier}ContentItems] CI
+        ON USL.ContentItemId = CI.ContentItemId
+	LEFT OUTER JOIN	{databaseOwner}{objectQualifier}ContentItems_MetaData CIMD WITH (NOLOCK)
+		ON CIMD.ContentItemID = USL.ContentItemId
+		  AND CIMD.MetaDataID = (SELECT MetaDataID FROM {databaseOwner}{objectQualifier}MetaData WITH (NOLOCK) WHERE MetaDataName = 'Title')
+	WHERE USL.UserId =  @UserID
+		AND USL.PortalId = @PortalId
+		AND SAD.ActionType IN(0,2,7,11) -- Interacted = 0, Created = 2, FormedRelationship = 7, Shared = 11
+	ORDER BY USL.UserScoringLogId DESC   
+END
+GO
+
+/********************************************************
+ * SPROC: Social_cmx_GetTasks
+ ********************************************************/
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Social_cmx_GetTasks') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_cmx_GetTasks
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Social_cmx_GetTasks (
+	@PortalId INT,
+	@UserId INT,
+	@PageIndex INT = 0,
+    @PageSize INT = 10,
+	@AfterNotificationId INT = 0
+) AS
+BEGIN
+	;WITH GroupTasksCTE
+	AS
+	(	
+		SELECT M.MessageID AS NotificationId, M.Subject, M.Body, M.NotificationTypeID, 
+		M.SenderUserID, M.CreatedOnDate, U.DisplayName AS SenderDisplayName,
+		COUNT(*) OVER () AS TotalTasks,
+		ROW_NUMBER() OVER (PARTITION BY M.NotificationTypeId, M.Context, M.Subject ORDER BY M.MessageID) AS GroupedRowNumber,
+		ROW_NUMBER() OVER (ORDER BY M.MessageID) AS MainRowNumber,
+		COUNT(*) OVER(PARTITION BY M.NotificationTypeId, M.Context, M.Subject) AS Count
+		FROM {databaseOwner}{objectQualifier}CoreMessaging_Messages M WITH (NOLOCK)
+		INNER JOIN {databaseOwner}{objectQualifier}CoreMessaging_MessageRecipients MR WITH (NOLOCK)
+			ON M.MessageID = MR.MessageID
+		INNER JOIN {databaseOwner}{objectQualifier}CoreMessaging_NotificationTypes NT WITH (NOLOCK)
+			ON M.NotificationTypeId = NT.NotificationTypeId
+		INNER JOIN {databaseOwner}{objectQualifier}Users U WITH (NOLOCK)
+			ON M.SenderUserID = U.UserID
+		WHERE M.NotificationTypeId IS NOT NULL
+			AND NT.DesktopModuleID IS NOT NULL
+			AND MR.UserID = @UserId
+			AND M.PortalID = @PortalId
+			AND M.MessageID > @AfterNotificationId
+			AND (M.[ExpirationDate] IS NULL OR (M.[ExpirationDate] IS NOT NULL AND M.[ExpirationDate] > GETUTCDATE()))
+			AND NT.Name  NOT IN ('DNNCorp_SocialEvents_Invite',
+							 'DNNCorp_Groups_MemberInviteNotification',
+							 'DNNCorp_Groups_MemberPrivateInviteNotification')
+	)
+	SELECT TOP (@PageSize) *,
+	COUNT(*) OVER () AS TotalRollups
+	FROM GroupTasksCTE
+	WHERE  GroupedRowNumber = 1
+	AND MainRowNumber > (@PageIndex * @PageSize)
+	ORDER BY NotificationId;
+END
+GO
+
+/********************************************************
+ * SPROC: Social_cmx_GetTask
+ ********************************************************/
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Social_cmx_GetTask') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_cmx_GetTask
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Social_cmx_GetTask (
+	@PortalId INT,
+	@UserId INT,
+	@NotificationId INT,
+    @IndexId INT
+) AS
+BEGIN
+	DECLARE @Subject nvarchar(400)
+	DECLARE @Context nvarchar(200)
+	DECLARE @NotificationTypeId INT
+
+	SELECT @Subject = Subject, @Context = Context, @NotificationTypeId = NotificationTypeId
+	FROM {databaseOwner}{objectQualifier}CoreMessaging_Messages M WITH (NOLOCK)
+	WHERE M.MessageID = @NotificationId
+
+	;WITH GroupTasksCTE
+	AS
+	(
+		SELECT M.MessageID AS NotificationId, M.Subject, M.Body, M.NotificationTypeID, 
+		M.SenderUserID, M.CreatedOnDate, U.DisplayName AS SenderDisplayName,
+		ROW_NUMBER() OVER (ORDER BY M.MessageID) AS RowNumber
+		FROM {databaseOwner}{objectQualifier}CoreMessaging_Messages M WITH (NOLOCK)
+		INNER JOIN {databaseOwner}{objectQualifier}CoreMessaging_MessageRecipients MR
+			ON M.MessageID = MR.MessageID
+		INNER JOIN {databaseOwner}{objectQualifier}CoreMessaging_NotificationTypes NT
+			ON M.NotificationTypeId = NT.NotificationTypeId
+		INNER JOIN {databaseOwner}{objectQualifier}Users U
+			ON M.SenderUserID = U.UserID
+		WHERE M.NotificationTypeId IS NOT NULL
+			AND NT.DesktopModuleID IS NOT NULL
+			AND MR.UserID = @UserId
+			AND M.PortalID = @PortalId
+			AND (M.[ExpirationDate] IS NULL OR (M.[ExpirationDate] IS NOT NULL AND M.[ExpirationDate] > GETUTCDATE()))
+			AND NT.Name  NOT IN ('DNNCorp_SocialEvents_Invite',
+							 'DNNCorp_Groups_MemberInviteNotification',
+							 'DNNCorp_Groups_MemberPrivateInviteNotification')
+			AND M.Subject = @Subject
+			AND M.Context = @Context
+			AND M.NotificationTypeId = @NotificationTypeId
+	)
+	SELECT TOP 1 * FROM GroupTasksCTE
+	WHERE RowNumber = @IndexId
+	ORDER BY NotificationId;
+END
+GO
+
+/********************************************************
+ * SPROC: Social_cmx_DeleteScoringGoal
+ ********************************************************/
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Social_cmx_DeleteScoringGoal') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_cmx_DeleteScoringGoal
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Social_cmx_DeleteScoringGoal (
+	@PortalId INT,
+	@ScoringGoalId INT
+) AS
+BEGIN
+	DELETE FROM {databaseOwner}{objectQualifier}Analytics_ScoringGoals
+	WHERE PortalId = @PortalID
+	AND   ScoringGoalId = @ScoringGoalId
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Social_cmx_SaveScoringGoal') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_cmx_SaveScoringGoal
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Social_cmx_SaveScoringGoal (
+	@PortalId INT,
+	@ScoringGoalId INT,
+	@GoalList varchar(64),
+	@GoalType varchar(64),
+	@Weight float,
+	@Value float,
+	@MinValue float,
+	@MaxValue float,
+	@UserId int
+) AS
+BEGIN
+	IF @ScoringGoalId  >= 0 
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}Analytics_ScoringGoals
+		SET Weight = @Weight, Value = @Value, MinValue = @MinValue, MaxValue = @MaxValue
+		WHERE PortalId = @PortalId
+		AND ScoringGoalId = @ScoringGoalId
+		AND GoalList = @GoalList
+		SELECT @ScoringGoalId
+	END
+	ELSE
+	BEGIN
+		INSERT INTO {databaseOwner}{objectQualifier}Analytics_ScoringGoals
+	       ([PortalId], [GoalList], [GoalType], [Weight], [Value], [MinValue], [MaxValue], [CreatedByUserId])
+		VALUES (@PortalId, @GoalList, @GoalType, @Weight, @Value, @MinValue, @MaxValue, @UserId)
+		SELECT SCOPE_IDENTITY()
+	END
+END
+GO
+
+/********************************************************
+ * SPROC: Social_JournalLikeList
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_JournalLikeList]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_JournalLikeList] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Social_JournalLikeList]
+	@PortalId int,
+	@CurrentUserId int,
+	@JournalId int,
+	@RowIndex int,
+	@MaxRows int
+AS
+BEGIN
+	IF @RowIndex < 1 BEGIN SET @RowIndex = 1 END
+	DECLARE @EndRow int SET @EndRow = @RowIndex + @MaxRows - 1;
+
+	DECLARE @RegisteredUsersRole int
+	SELECT @RegisteredUsersRole = roleID FROM {databaseOwner}[{objectQualifier}Roles] WITH (NOLOCK) WHERE RoleName = 'Registered Users'
+
+	DECLARE @FriendRelationshipID int
+	SELECT @FriendRelationshipID = RelationshipTypeID FROM {databaseOwner}[{objectQualifier}Relationships] WITH (NOLOCK) WHERE Name = 'Friends'
+
+	DECLARE @xdoc xml
+	SET @xdoc = (SELECT TOP 1 journalxml.query('//likes')
+				 FROM {databaseOwner}[{objectQualifier}Journal_Data] as jd WITH (NOLOCK)
+						INNER JOIN {databaseOwner}[{objectQualifier}Journal] as j WITH (NOLOCK) ON j.JournalId = jd.JournalId
+						INNER JOIN {databaseOwner}[{objectQualifier}Journal_Security] as js WITH (NOLOCK)
+							ON js.JournalId = j.JournalId
+						INNER JOIN {databaseOwner}[{objectQualifier}Journal_User_Permissions](@PortalId,@CurrentUserId,@RegisteredUsersRole) as t
+							ON t.seckey = js.SecurityKey
+				 WHERE j.JournalId = @JournalId AND j.PortalId = @PortalId AND j.IsDeleted = 0)
+
+	CREATE TABLE #tempLikes (UserId INT, LikeSequence INT DEFAULT ((0)))
+
+	INSERT INTO #tempLikes (UserId)
+		SELECT userid = t.p.value('./@uid', 'INT')
+		FROM @xdoc.nodes('/likes/u') t(p)
+
+	DECLARE @SEQ INT = 0
+
+	UPDATE #tempLikes SET @SEQ = LikeSequence = @SEQ + 1
+
+	;With Likes AS
+	(
+		Select	COUNT(*) OVER () AS TotalRecords, u.UserId, u.DisplayName,
+				COALESCE(ur.Status, 0) AS FriendStatus,
+				CASE WHEN u.UserId = @CurrentUserId THEN 1 ELSE 0 END AS You,
+				tl.LikeSequence, up.IsDeleted
+		FROM	#tempLikes as tl
+					INNER JOIN {databaseOwner}[{objectQualifier}Users] as u WITH (NOLOCK) ON u.UserID = tl.UserId
+					INNER JOIN {databaseOwner}[{objectQualifier}UserPortals]up WITH (NOLOCK) ON up.UserId = u.userId
+					LEFT OUTER JOIN {databaseOwner}[{objectQualifier}UserRelationships] ur WITH (NOLOCK)
+						ON (((ur.UserId = u.UserId AND ur.RelatedUserID = @CurrentUserId)
+							OR (ur.RelatedUserID = u.UserId AND ur.UserId = @CurrentUserId))
+							AND ur.RelationshipID = @FriendRelationshipID)
+		WHERE u.IsDeleted = 0 AND up.PortalId = @PortalId
+	),
+	LikesSorted AS
+	(
+		SELECT *, ROW_NUMBER() OVER (ORDER BY You DESC, FriendStatus DESC, LikeSequence DESC) AS RowNumber FROM Likes
+	)
+	SELECT * FROM LikesSorted WHERE RowNumber BETWEEN @RowIndex AND @EndRow
+
+	DROP TABLE #tempLikes;
+END
+GO
+
+/********************************************************
+ * SPROC: Social_CommentLikeList
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_CommentLikeList]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_CommentLikeList] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Social_CommentLikeList]
+	@PortalId int,
+	@CurrentUserId int,
+	@CommentId int,
+	@RowIndex int,
+	@MaxRows int
+AS
+BEGIN
+	IF @RowIndex < 1 BEGIN SET @RowIndex = 1 END
+	DECLARE @EndRow int SET @EndRow = @RowIndex + @MaxRows - 1;
+
+	DECLARE @RegisteredUsersRole int
+	SELECT @RegisteredUsersRole = roleID FROM {databaseOwner}[{objectQualifier}Roles] WITH (NOLOCK) WHERE RoleName = 'Registered Users'
+
+	DECLARE @FriendRelationshipID int
+	SELECT @FriendRelationshipID = RelationshipTypeID FROM {databaseOwner}[{objectQualifier}Relationships] WITH (NOLOCK) WHERE Name = 'Friends'
+
+	DECLARE @xdoc xml
+	SET @xdoc = (SELECT TOP 1 jc.CommentXML.query('//likes')
+				 FROM {databaseOwner}[{objectQualifier}Journal_Comments] as jc WITH (NOLOCK)
+						INNER JOIN {databaseOwner}[{objectQualifier}Journal] as j WITH (NOLOCK) ON j.JournalId = jc.JournalId
+						INNER JOIN {databaseOwner}[{objectQualifier}Journal_Security] as js WITH (NOLOCK) ON js.JournalId = j.JournalId
+						INNER JOIN {databaseOwner}[{objectQualifier}Journal_User_Permissions](@PortalId,@CurrentUserId,@RegisteredUsersRole) as t
+							ON t.seckey = js.SecurityKey
+				 WHERE jc.CommentId = @CommentId AND j.PortalId = @PortalId AND j.IsDeleted = 0)
+
+	CREATE TABLE #tempLikes (UserId INT, LikeSequence INT DEFAULT ((0)))
+
+	INSERT INTO #tempLikes (UserId)
+		SELECT userid = t.p.value('./@uid', 'INT')
+		FROM @xdoc.nodes('/likes/u') t(p)
+
+	DECLARE @SEQ INT = 0
+
+	UPDATE #tempLikes SET @SEQ = LikeSequence = @SEQ + 1
+
+	;With Likes AS
+	(
+		Select	COUNT(*) OVER () AS TotalRecords, u.UserId, u.DisplayName,
+				COALESCE(ur.Status, 0) AS FriendStatus,
+				CASE WHEN u.UserId = @CurrentUserId THEN 1 ELSE 0 END AS You,
+				LikeSequence, up.IsDeleted
+		FROM	#tempLikes as tl
+					INNER JOIN {databaseOwner}[{objectQualifier}Users] as u WITH (NOLOCK) ON u.UserID = tl.UserId
+					INNER JOIN {databaseOwner}[{objectQualifier}UserPortals] up WITH (NOLOCK) ON up.UserId = u.userId
+					LEFT OUTER JOIN {databaseOwner}[{objectQualifier}UserRelationships] ur WITH (NOLOCK)
+						ON (((ur.UserId = u.UserId AND ur.RelatedUserID = @CurrentUserId)
+							OR (ur.RelatedUserID = u.UserId AND ur.UserId = @CurrentUserId))
+							AND ur.RelationshipID = @FriendRelationshipID)
+		WHERE u.IsDeleted = 0 AND up.PortalId = @PortalId
+	),
+	LikesSorted AS
+	(
+		SELECT *, ROW_NUMBER() OVER (ORDER BY You DESC, FriendStatus DESC, LikeSequence DESC) AS RowNumber FROM Likes
+	)
+	SELECT * FROM LikesSorted WHERE RowNumber BETWEEN @RowIndex AND @EndRow
+
+	DROP TABLE #tempLikes;
+END
+GO
+
+
+/********************************************************
+ * SPROC: Social_Group_GetGroup
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_Group_GetGroup]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_Group_GetGroup
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_Group_GetGroup]
+	@PortalId INT,
+	@GroupId INT,
+	@UserId INT	
+AS
+BEGIN
+	DECLARE @AdminRoleId INT
+
+	SELECT @AdminRoleId = roleId FROM {databaseOwner}{objectQualifier}Roles WITH (NOLOCK)
+	WHERE RoleName='Administrators' AND PortalId = @PortalId
+	
+	SELECT	R.PortalID As PortalId,
+			R.RoleID AS GroupId,
+			R.RoleName AS GroupName,
+			R.Description,
+			R.IsPublic,
+			R.IconFile,
+			R.Status,
+			R.SecurityMode,
+			R.IsSystemRole,
+			R.RoleGroupID,
+			R.CreatedByUserID,
+			R.CreatedOnDate,
+			R.LastModifiedOnDate,
+			(SELECT CAST ((SELECT RoleId FROM {databaseOwner}{objectQualifier}UserRoles WITH (NOLOCK) WHERE RoleId = @GroupId AND UserId = @UserId ) AS BIT)) AS IsMember,
+			(SELECT CAST ((SELECT RoleId FROM {databaseOwner}{objectQualifier}UserRoles WITH (NOLOCK) WHERE RoleId = @GroupId AND UserId = @UserId AND Status = -1) AS BIT)) AS MembershipPending,
+			(SELECT CAST ((SELECT SettingValue FROM {databaseOwner}{objectQualifier}RoleSettings WITH (NOLOCK) WHERE RoleId = R.RoleId AND SettingName = 'ReviewMembers') AS BIT)) AS ReviewMembers,
+			(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}UserRoles U WITH (NOLOCK) WHERE U.RoleID = R.RoleID AND U.Status = 1) AS MemberCount
+	FROM    
+			{databaseOwner}{objectQualifier}Roles AS R			
+	WHERE
+			R.RoleId = @GroupId
+			AND
+			R.SecurityMode IN (1, 2)
+			AND (	R.IsPublic = 1
+					OR
+					-- Super User
+					(EXISTS (SELECT UserID FROM {databaseOwner}{objectQualifier}Users WITH (NOLOCK) WHERE @UserId = UserID AND IsSuperUser = 1))
+					OR
+					-- Admin
+					(EXISTS (SELECT UserID FROM {databaseOwner}{objectQualifier}UserRoles WITH (NOLOCK) WHERE @AdminRoleId = RoleID AND @UserId = UserID))
+					OR
+					(IsPublic = 0 AND EXISTS (SELECT RoleID FROM {databaseOwner}{objectQualifier}UserRoles WITH (NOLOCK) WHERE R.RoleID = RoleID AND @UserId = UserID))
+				)
+							
+END
+GO
+
+--
+-- Core Messaging Notification Type
+--
+
+DECLARE @NotificationTypeName VARCHAR(255)
+DECLARE @NotificationTypeDescription NVARCHAR(1024)
+
+SET @NotificationTypeName = 'DigestSubscription'
+SET @NotificationTypeDescription = 'Periodic notifications for Subscriptions to particular content'
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] WHERE [Name] = @NotificationTypeName)
+BEGIN
+	INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes]
+		  ([Name],
+		   [Description],
+		   [TTL],
+		   [DesktopModuleID],
+		   [CreatedByUserID],
+		   [CreatedOnDate],
+		   [LastModifiedByUserID],
+		   [LastModifiedOnDate])
+	  VALUES
+		  (@NotificationTypeName,
+		   @NotificationTypeDescription,
+		   NULL,
+		   NULL,
+		   -1,
+		   getdate(),
+		   -1,
+		   getdate())
+END
+GO
+
+/********************************************************
+ * SPROC: Social_JournalLikes_UpdateNameByUserId
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_JournalLikes_UpdateNameByUserId]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_JournalLikes_UpdateNameByUserId
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_JournalLikes_UpdateNameByUserId]
+	@PortalId INT,
+	@UserId INT,
+	@UserName NVARCHAR(128)
+AS
+BEGIN
+	UPDATE {databaseOwner}{objectQualifier}Journal_Data 
+		SET JournalXML.modify('replace value of (/items/likes/u[@uid=sql:variable("@UserId")]/@un)[1] with sql:variable("@UserName")')
+	WHERE JournalXML.exist(N'/items/likes/u[@uid=sql:variable("@UserId")]') = 1
+END
+GO
+
+/********************************************************
+ * SPROC: Social_JournalLikes_RemoveByUserId
+ ********************************************************/
+ IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_JournalLikes_RemoveByUserId]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_JournalLikes_RemoveByUserId
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_JournalLikes_RemoveByUserId]
+	@PortalId INT,
+	@UserId INT	
+AS
+BEGIN
+	UPDATE {databaseOwner}{objectQualifier}Journal_Data 
+		SET JournalXML.modify('delete /items/likes/u[@uid=sql:variable("@UserId")]')
+	WHERE JournalXML.exist('/items/likes/u[@uid=sql:variable("@UserId")]') = 1
+END
+GO
+
+ /********************************************************
+ * SPROC: Social_CommentLikes_UpdateNameByUserId
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_CommentLikes_UpdateNameByUserId]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_CommentLikes_UpdateNameByUserId
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_CommentLikes_UpdateNameByUserId]
+	@PortalId INT,
+	@UserId INT,
+	@UserName NVARCHAR(128)
+AS
+BEGIN
+	UPDATE {databaseOwner}{objectQualifier}Journal_Comments 
+		SET CommentXML.modify('replace value of (/root/likes/u[@uid=sql:variable("@UserId")]/@un)[1] with sql:variable("@UserName")')
+	WHERE CommentXML.exist(N'/root/likes/u[@uid=sql:variable("@UserId")]') = 1
+END
+GO
+ 
+ /********************************************************
+ * SPROC: Social_CommentLikes_RemoveByUserId
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_CommentLikes_RemoveByUserId]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_CommentLikes_RemoveByUserId
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_CommentLikes_RemoveByUserId]
+	@PortalId INT,
+	@UserId INT	
+AS
+BEGIN
+	UPDATE {databaseOwner}{objectQualifier}Journal_Comments 
+		SET CommentXML.modify('delete /root/likes/u[@uid=sql:variable("@UserId")]')
+	WHERE CommentXML.exist('/root/likes/u[@uid=sql:variable("@UserId")]') = 1
+END
+GO
+
+ /********************************************************
+ * SPROC: CoreMessaging_DeleteNotifications_BySenderUserId
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_DeleteNotifications_BySenderUserId]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}CoreMessaging_DeleteNotifications_BySenderUserId
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_DeleteNotifications_BySenderUserId]
+	@PortalId INT,
+	@UserId INT	
+AS
+BEGIN
+	DELETE {databaseOwner}{objectQualifier}CoreMessaging_Messages 
+	WHERE PortalId = @PortalId AND SenderUserID = @UserId
+END
+GO
+
+ /********************************************************
+ * SPROC: Social_Comments_GetByUserId
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_Comments_GetByUserId]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_Comments_GetByUserId
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_Comments_GetByUserId]
+	@PortalId INT,
+	@UserId INT	
+AS
+BEGIN
+	SELECT J.PortalId, JC.*, U.*
+	FROM {databaseOwner}{objectQualifier}Journal_Comments AS JC WITH (NOLOCK)
+		INNER JOIN {databaseOwner}{objectQualifier}Journal AS J WITH (NOLOCK) ON J.JournalId = JC.JournalId
+		INNER JOIN {databaseOwner}{objectQualifier}Users AS U WITH (NOLOCK) ON JC.UserId = U.UserId
+	WHERE	J.PortalId = @PortalId
+			AND JC.UserId = @UserId
+END
+GO
+
+ /********************************************************
+ * SPROC: Social_Group_RemoveGroupSetting
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_Group_RemoveGroupSetting]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_Group_RemoveGroupSetting
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_Group_RemoveGroupSetting]
+	@GroupId INT,
+	@SettingKey NVARCHAR(50)
+AS
+BEGIN
+	DELETE FROM {databaseOwner}{objectQualifier}RoleSettings
+	WHERE	RoleId = @GroupId AND		
+			SettingName = @SettingKey					
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_ListCommentsByJournalIds') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_ListCommentsByJournalIds
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_ListCommentsByJournalIds]
+	@JounalIds nvarchar(max) = ''
+AS
+BEGIN
+SELECT	jc.CommentId,
+		jc.JournalId,
+		jc.Comment,
+		jc.DateCreated,
+		jc.DateUpdated,
+		jc.CommentXML, 
+		"UserId" = CASE WHEN ISNULL(u.UserId,-1) > 0 AND u.IsDeleted = 0 AND up.IsDeleted = 0 THEN u.UserId ELSE -1 END,
+		u.UserName,
+		u.FirstName, 
+		u.LastName,
+		u.IsSuperUser,
+		u.AffiliateId,
+		u.Email,
+		u.DisplayName,
+		u.UpdatePassword,
+		u.LastIPAddress,
+		u.IsDeleted,
+		u.CreatedByUserID,
+		u.CreatedOnDate,
+		u.LastModifiedByUserID,
+		u.LastModifiedOnDate,
+		u.PasswordResetToken,
+		u.PasswordResetExpiration
+	FROM {databaseOwner}[{objectQualifier}Journal_Comments] as jc 
+	INNER JOIN {databaseOwner}[{objectQualifier}Users] as u ON jc.UserId = u.UserId
+	INNER JOIN {databaseOwner}[{objectQualifier}Journal_Split](@JounalIds,';') as j ON j.id = jc.JournalId
+	LEFT OUTER JOIN {databaseOwner}[{objectQualifier}UserPortals] as up ON up.UserId = u.UserId
+ORDER BY jc.CommentId ASC
+END
+GO
+
+ /********************************************************
+ * SPROC: CoreMessaging_DeleteNotifications_ByContextKey
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_DeleteNotifications_ByContextKey]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}CoreMessaging_DeleteNotifications_ByContextKey
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_DeleteNotifications_ByContextKey]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}CoreMessaging_DeleteNotifications_ByContextKey
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_DeleteNotifications_ByContextKey]
+	@PortalId INT,
+	@ContextKey VARCHAR(200)
+AS
+BEGIN
+	DELETE {databaseOwner}{objectQualifier}CoreMessaging_Messages 
+	WHERE PortalId = @PortalId AND Context = @ContextKey
+END
+GO

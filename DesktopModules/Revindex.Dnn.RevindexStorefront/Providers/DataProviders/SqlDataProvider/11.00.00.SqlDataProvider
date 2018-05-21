@@ -1,0 +1,323 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+SET XACT_ABORT ON
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+
+	-- Support Payment Express PXPay gateway
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		PaymentGatewaysPaymentExpressPXPayUserID varchar(255) NULL,
+		PaymentGatewaysPaymentExpressPXPayKey varchar(255) NULL,
+		PaymentGatewaysPaymentExpressPXPayTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysPaymentExpressPXPayTestMode DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysPaymentExpressPXPayTestMode
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentMethodsPaymentExpressActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsPaymentExpressActive DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsPaymentExpressActive
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentMethodsPaymentExpressAvailabilityRule xml NULL
+
+	-- Support Payment Express PxPost gateway
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+	PaymentGatewaysPaymentExpressPXPostUsername varchar(255) NULL,
+	PaymentGatewaysPaymentExpressPXPostPassword varchar(255) NULL,
+	PaymentGatewaysPaymentExpressPXPostTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysPaymentExpressPXPostTestMode DEFAULT 0
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysPaymentExpressPXPostTestMode
+
+	-- Support Corduro gateway
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		PaymentGatewaysCorduroClientNumber varchar(255) NULL,
+		PaymentGatewaysCorduroUsername varchar(255) NULL,
+		PaymentGatewaysCorduroPassword varchar(255) NULL,
+		PaymentGatewaysCorduroCertificate varchar(8000) NULL,
+		PaymentGatewaysCorduroProcessAccountNumber varchar(255) NULL,
+		PaymentGatewaysCorduroTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysCorduroTestMode DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysCorduroTestMode
+
+	-- Support image swatch
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariantGroupOption ADD ImageFile varchar(50) NULL
+
+	-- Support token replacement and MyTokens
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD GeneralStringTokenizerActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_GeneralTokenReplace DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_GeneralTokenReplace
+
+	-- Restore XML indexes
+	IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Category]') AND name = N'XML_IX_{objectQualifier}Revindex_Storefront_Category')
+	EXEC ('CREATE PRIMARY XML INDEX [XML_IX_{objectQualifier}Revindex_Storefront_Category] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_Category] 
+	(
+	 	[Name]
+	)')
+
+	IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Distributor]') AND name = N'XML_IX_{objectQualifier}Revindex_Storefront_Distributor')
+	EXEC ('CREATE PRIMARY XML INDEX [XML_IX_{objectQualifier}Revindex_Storefront_Distributor] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_Distributor] 
+	(
+		[Name]
+	)')
+
+	IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Manufacturer]') AND name = N'XML_IX_{objectQualifier}Revindex_Storefront_Manufacturer')
+	EXEC ('CREATE PRIMARY XML INDEX [XML_IX_{objectQualifier}Revindex_Storefront_Manufacturer] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_Manufacturer] 
+	(
+		[Name]
+	)')
+
+	IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Product]') AND name = N'XML_IX_{objectQualifier}Revindex_Storefront_Product')
+	EXEC ('CREATE PRIMARY XML INDEX [XML_IX_{objectQualifier}Revindex_Storefront_Product] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_Product] 
+	(
+		[Name]
+	)')
+
+	IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeDefinition]') AND name = N'XML_IX_{objectQualifier}Revindex_Storefront_ProductAttributeDefinition')
+	EXEC ('CREATE PRIMARY XML INDEX [XML_IX_{objectQualifier}Revindex_Storefront_ProductAttributeDefinition] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeDefinition] 
+	(
+	 	[Name]
+	)')
+
+	IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductComponent]') AND name = N'XML_IX_{objectQualifier}Revindex_Storefront_ProductComponent')
+	EXEC ('CREATE PRIMARY XML INDEX [XML_IX_{objectQualifier}Revindex_Storefront_ProductComponent] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductComponent] 
+	(
+	 	[Name]
+	)')
+
+	IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant]') AND name = N'XML_IX_{objectQualifier}Revindex_Storefront_ProductVariant')
+	EXEC ('CREATE PRIMARY XML INDEX [XML_IX_{objectQualifier}Revindex_Storefront_ProductVariant] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant] 
+	(
+	 	[Name]
+	)')
+
+	IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_RightDefinition]') AND name = N'XML_IX_{objectQualifier}Revindex_Storefront_RightDefinition')
+	EXEC ('CREATE PRIMARY XML INDEX [XML_IX_{objectQualifier}Revindex_Storefront_RightDefinition] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_RightDefinition] 
+	(
+	 	[Name]
+	)')
+
+	IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_SalesPromotion]') AND name = N'XML_IX_{objectQualifier}Revindex_Storefront_SalesPromotion')
+	EXEC ('CREATE PRIMARY XML INDEX [XML_IX_{objectQualifier}Revindex_Storefront_SalesPromotion] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesPromotion] 
+	(
+	 	[Name]
+	)')
+
+	IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Seller]') AND name = N'XML_IX_{objectQualifier}Revindex_Storefront_Seller')
+	EXEC ('CREATE PRIMARY XML INDEX [XML_IX_{objectQualifier}Revindex_Storefront_Seller] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_Seller] 
+	(
+	 	[Name]
+	)')
+
+	IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ShippingMethod]') AND name = N'XML_IX_{objectQualifier}Revindex_Storefront_ShippingMethod')
+	EXEC ('CREATE PRIMARY XML INDEX [XML_IX_{objectQualifier}Revindex_Storefront_ShippingMethod] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_ShippingMethod] 
+	(
+	 	[Name]
+	)')
+
+	IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_TaxClass]') AND name = N'XML_IX_{objectQualifier}Revindex_Storefront_TaxClass')
+	EXEC ('CREATE PRIMARY XML INDEX [XML_IX_{objectQualifier}Revindex_Storefront_TaxClass] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_TaxClass] 
+	(
+	 	[Name]
+	)')
+
+	IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_VoucherDefinition]') AND name = N'XML_IX_{objectQualifier}Revindex_Storefront_VoucherDefinition')
+	EXEC ('CREATE PRIMARY XML INDEX [XML_IX_{objectQualifier}Revindex_Storefront_VoucherDefinition] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_VoucherDefinition] 
+	(
+	 	[Name]
+	)')
+
+COMMIT TRANSACTION
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+
+		-- Upgrade default CartSummary template to "StandardPanel"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CartSummaryDisplayTemplate = 'StandardPanel' WHERE CartSummaryDisplayTemplate LIKE 'Standard%'
+
+		-- Upgrade default Category template to "StandardTree"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CategoryDisplayTemplate = 'StandardTree' WHERE CategoryDisplayTemplate LIKE 'Standard%'
+
+		-- Upgrade default Checkout template to "Standard23"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CheckoutDisplayTemplate = 'Standard23' WHERE CheckoutDisplayTemplate LIKE 'Standard%'
+
+		-- Upgrade default Distributor template to "StandardList"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET DistributorDisplayTemplate = 'StandardList' WHERE DistributorDisplayTemplate LIKE 'Standard%'
+
+		-- Upgrade default Manufacturer template to "StandardList"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ManufacturerDisplayTemplate = 'StandardList' WHERE ManufacturerDisplayTemplate LIKE 'Standard%'
+
+		-- Upgrade default ProductComparison template to "StandardTable"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductComparisonDisplayTemplate = 'StandardTable' WHERE ProductComparisonDisplayTemplate LIKE 'Standard%'
+
+		-- Upgrade default ProductDetail template to "Standard19"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductDetailDisplayTemplate = 'Standard19' WHERE ProductDetailDisplayTemplate LIKE 'Standard%'
+
+		-- Upgrade default ProductFilter template to "StandardPanel"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductFilterDisplayTemplate = 'StandardPanel' WHERE ProductFilterDisplayTemplate LIKE 'Standard%'
+
+		-- Upgrade default ProductList template to "StandardGrid"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductListDisplayTemplate = 'StandardGrid' WHERE ProductListDisplayTemplate LIKE 'Standard%'
+
+		-- Upgrade default ProductSearch template to "StandardQuery"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductSearchDisplayTemplate = 'StandardQuery' WHERE ProductSearchDisplayTemplate LIKE 'Standard%'
+
+		-- Upgrade default ProductShowcase template to "StandardCarousel"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductShowcaseDisplayTemplate = 'StandardCarousel' WHERE ProductShowcaseDisplayTemplate LIKE 'Standard%'
+
+		-- Fixed Top Paying Customers report missing object qualifier
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_ReportDefinition] SET DefinitionRule = '<rule version="1.0" type="data">&lt;data method="ReportDefinition" version="1.0"&gt;
+  &lt;dataSources&gt;
+    &lt;sqlDataSource&gt;
+      &lt;query&gt;SELECT TOP (@Top)
+    u.UserID, 
+    u.Username, 
+    u.FirstName, 
+    u.LastName, 
+    COUNT(*) AS NumberOfOrders, 
+    SUM(so.TotalAmount) AS TotalAmount
+FROM {databaseOwner}{objectQualifier}Users u
+JOIN {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder so
+    ON so.UserID = u.UserID
+WHERE so.Status = 4 AND so.PortalID = @PortalID
+GROUP BY u.UserID, u.Username, u.FirstName, u.LastName
+ORDER BY SUM(so.TotalAmount) DESC&lt;/query&gt;
+      &lt;parameters&gt;
+        &lt;controlParameter&gt;
+          &lt;name&gt;@Top&lt;/name&gt;
+          &lt;dataType&gt;11&lt;/dataType&gt;
+          &lt;field&gt;
+            &lt;dropDownList&gt;
+              &lt;id&gt;TopParamDropDownList&lt;/id&gt;
+              &lt;inputControlHeight&gt;&lt;/inputControlHeight&gt;
+              &lt;inputControlWidth&gt;&lt;/inputControlWidth&gt;
+              &lt;label&gt;
+                &lt;locale en-US="Max records:" /&gt;
+              &lt;/label&gt;
+              &lt;listItems&gt;
+                &lt;listItem&gt;
+                  &lt;name&gt;
+                    &lt;locale en-US="10" /&gt;
+                  &lt;/name&gt;
+                  &lt;value&gt;10&lt;/value&gt;
+                  &lt;selected&gt;False&lt;/selected&gt;
+                &lt;/listItem&gt;
+                &lt;listItem&gt;
+                  &lt;name&gt;
+                    &lt;locale en-US="50" /&gt;
+                  &lt;/name&gt;
+                  &lt;value&gt;50&lt;/value&gt;
+                  &lt;selected&gt;False&lt;/selected&gt;
+                &lt;/listItem&gt;
+                &lt;listItem&gt;
+                  &lt;name&gt;
+                    &lt;locale en-US="100" /&gt;
+                  &lt;/name&gt;
+                  &lt;value&gt;100&lt;/value&gt;
+                  &lt;selected&gt;False&lt;/selected&gt;
+                &lt;/listItem&gt;
+              &lt;/listItems&gt;
+              &lt;required&gt;True&lt;/required&gt;
+              &lt;validatorText&gt;
+                &lt;locale en-US="Max records is required." /&gt;
+              &lt;/validatorText&gt;
+            &lt;/dropDownList&gt;
+          &lt;/field&gt;
+        &lt;/controlParameter&gt;
+        &lt;variableParameter&gt;
+          &lt;name&gt;@PortalID&lt;/name&gt;
+          &lt;dataType&gt;11&lt;/dataType&gt;
+          &lt;variableName&gt;Portal:PortalID&lt;/variableName&gt;
+        &lt;/variableParameter&gt;
+      &lt;/parameters&gt;
+    &lt;/sqlDataSource&gt;
+  &lt;/dataSources&gt;
+  &lt;visualizers&gt;
+    &lt;htmlVisualizer&gt;
+      &lt;html&gt;&amp;lt;table bgcolor="#eeeeee" cellpadding="3" cellspacing="0" style="width: 100%; border-top: 1px solid #cccccc; border-left: 1px solid #cccccc; border-right: 1px solid #cccccc;"&amp;gt;
+ &amp;lt;colgroup&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+ &amp;lt;/colgroup&amp;gt;
+ &amp;lt;tbody&amp;gt;
+  &amp;lt;tr&amp;gt;
+   &amp;lt;td style="width: 5%;"&amp;gt;&amp;lt;strong&amp;gt;User ID&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 30%;"&amp;gt;&amp;lt;strong&amp;gt;Username&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 20%;"&amp;gt;&amp;lt;strong&amp;gt;First name&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 20%;"&amp;gt;&amp;lt;strong&amp;gt;Last name&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 10%;"&amp;gt;&amp;lt;strong&amp;gt;Num orders&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 15%;"&amp;gt;&amp;lt;strong&amp;gt;Total amount&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+  &amp;lt;/tr&amp;gt;
+ &amp;lt;/tbody&amp;gt;
+&amp;lt;/table&amp;gt;
+[[xsl:for-each select=&amp;amp;quot;/in/dataSet/dataTable/dataRow&amp;amp;quot; ]]
+
+&amp;lt;table cellpadding="3" cellspacing="0" style="width: 100%;"&amp;gt;
+ &amp;lt;colgroup&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+ &amp;lt;/colgroup&amp;gt;
+ &amp;lt;tbody&amp;gt;
+  &amp;lt;tr&amp;gt;
+   &amp;lt;td style="width: 5%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select=&amp;amp;quot;UserID&amp;amp;quot; /]]&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 30%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select=&amp;amp;quot;Username&amp;amp;quot; /]]&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 20%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select=&amp;amp;quot;FirstName&amp;amp;quot; /]]&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 20%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select=&amp;amp;quot;LastName&amp;amp;quot; /]]&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select=&amp;amp;quot;NumberOfOrders&amp;amp;quot; /]]&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 15%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select=&amp;amp;quot;TotalAmount&amp;amp;quot; /]]&amp;lt;/td&amp;gt;
+  &amp;lt;/tr&amp;gt;
+ &amp;lt;/tbody&amp;gt;
+&amp;lt;/table&amp;gt;
+[[/xsl:for-each]]&lt;/html&gt;
+    &lt;/htmlVisualizer&gt;
+  &lt;/visualizers&gt;
+&lt;/data&gt;</rule>'
+WHERE ReportDefinitionGUID = '78d2d6cb-738c-4bb9-8c8e-962f47965549'
+
+
+		-- Change XSL tokens from [[xsl:]] squary brackets to {xsl:} curly brackets
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration
+		SET 
+			CommunicationSalesOrderReceiptEmailTemplate = REPLACE(REPLACE(REPLACE(REPLACE(CONVERT(NVARCHAR(MAX), CommunicationSalesOrderReceiptEmailTemplate), '[[xsl:', '{xsl:'), '/]]', '/}'), '[[/xsl:', '{/xsl:'), ']]', '}'),
+			CommunicationSalesOrderInvoiceEmailTemplate = REPLACE(REPLACE(REPLACE(REPLACE(CONVERT(NVARCHAR(MAX), CommunicationSalesOrderInvoiceEmailTemplate), '[[xsl:', '{xsl:'), '/]]', '/}'), '[[/xsl:', '{/xsl:'), ']]', '}'),
+			CommunicationSalesOrderAlertEmailTemplate = REPLACE(REPLACE(REPLACE(REPLACE(CONVERT(NVARCHAR(MAX), CommunicationSalesOrderAlertEmailTemplate), '[[xsl:', '{xsl:'), '/]]', '/}'), '[[/xsl:', '{/xsl:'), ']]', '}'),
+			CommunicationCartAbandonEmailTemplate = REPLACE(REPLACE(REPLACE(REPLACE(CONVERT(NVARCHAR(MAX), CommunicationCartAbandonEmailTemplate), '[[xsl:', '{xsl:'), '/]]', '/}'), '[[/xsl:', '{/xsl:'), ']]', '}'),
+			CommunicationVoucherReceiptEmailTemplate = REPLACE(REPLACE(REPLACE(REPLACE(CONVERT(NVARCHAR(MAX), CommunicationVoucherReceiptEmailTemplate), '[[xsl:', '{xsl:'), '/]]', '/}'), '[[/xsl:', '{/xsl:'), ']]', '}'),
+			CommunicationRecurringSalesOrderReminderEmailTemplate = REPLACE(REPLACE(REPLACE(REPLACE(CONVERT(NVARCHAR(MAX), CommunicationRecurringSalesOrderReminderEmailTemplate), '[[xsl:', '{xsl:'), '/]]', '/}'), '[[/xsl:', '{/xsl:'), ']]', '}'),
+			CommunicationSalesOrderReceiptPrintTemplate = REPLACE(REPLACE(REPLACE(REPLACE(CONVERT(NVARCHAR(MAX), CommunicationSalesOrderReceiptPrintTemplate), '[[xsl:', '{xsl:'), '/]]', '/}'), '[[/xsl:', '{/xsl:'), ']]', '}'),
+			CommunicationSalesOrderInvoicePrintTemplate = REPLACE(REPLACE(REPLACE(REPLACE(CONVERT(NVARCHAR(MAX), CommunicationSalesOrderInvoicePrintTemplate), '[[xsl:', '{xsl:'), '/]]', '/}'), '[[/xsl:', '{/xsl:'), ']]', '}'),
+			CommunicationRightReceiptEmailTemplate = REPLACE(REPLACE(REPLACE(REPLACE(CONVERT(NVARCHAR(MAX), CommunicationRightReceiptEmailTemplate), '[[xsl:', '{xsl:'), '/]]', '/}'), '[[/xsl:', '{/xsl:'), ']]', '}'),
+			CommunicationSalesPaymentAlertEmailTemplate = REPLACE(REPLACE(REPLACE(REPLACE(CONVERT(NVARCHAR(MAX), CommunicationSalesPaymentAlertEmailTemplate), '[[xsl:', '{xsl:'), '/]]', '/}'), '[[/xsl:', '{/xsl:'), ']]', '}'),
+			CommunicationRecurringSalesOrderPaymentIncompleteRetryEmailTemplate = REPLACE(REPLACE(REPLACE(REPLACE(CONVERT(NVARCHAR(MAX), CommunicationRecurringSalesOrderPaymentIncompleteRetryEmailTemplate), '[[xsl:', '{xsl:'), '/]]', '/}'), '[[/xsl:', '{/xsl:'), ']]', '}'),
+			CommunicationSalesOrderQuoteEmailTemplate = REPLACE(REPLACE(REPLACE(REPLACE(CONVERT(NVARCHAR(MAX), CommunicationSalesOrderQuoteEmailTemplate), '[[xsl:', '{xsl:'), '/]]', '/}'), '[[/xsl:', '{/xsl:'), ']]', '}'),
+			CommunicationSalesOrderQuotePrintTemplate = REPLACE(REPLACE(REPLACE(REPLACE(CONVERT(NVARCHAR(MAX), CommunicationSalesOrderQuotePrintTemplate), '[[xsl:', '{xsl:'), '/]]', '/}'), '[[/xsl:', '{/xsl:'), ']]', '}'),
+			CommunicationSalesOrderUpdateEmailTemplate = REPLACE(REPLACE(REPLACE(REPLACE(CONVERT(NVARCHAR(MAX), CommunicationSalesOrderUpdateEmailTemplate), '[[xsl:', '{xsl:'), '/]]', '/}'), '[[/xsl:', '{/xsl:'), ']]', '}'),
+			CommunicationPackingSlipPrintTemplate = REPLACE(REPLACE(REPLACE(REPLACE(CONVERT(NVARCHAR(MAX), CommunicationPackingSlipPrintTemplate), '[[xsl:', '{xsl:'), '/]]', '/}'), '[[/xsl:', '{/xsl:'), ']]', '}')
+
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ReportDefinition
+		SET DefinitionRule = REPLACE(REPLACE(REPLACE(REPLACE(CONVERT(NVARCHAR(MAX), DefinitionRule), '[[xsl:', '{xsl:'), '/]]', '/}'), '[[/xsl:', '{/xsl:'), ']]', '}')
+
+		-- Disable Display Template editor by default
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration SET DisplayTemplateActive = 0
+
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

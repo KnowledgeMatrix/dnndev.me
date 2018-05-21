@@ -1,0 +1,98 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****              Drop Functions                      *****/
+/************************************************************/
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_FxSplit') AND type in (N'FN', N'TF'))
+    DROP FUNCTION {databaseOwner}{objectQualifier}RZC_FxSplit
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_FxGetCatIDsBySEOUrlList') AND type in (N'FN', N'TF'))
+    DROP FUNCTION {databaseOwner}{objectQualifier}RZC_FxGetCatIDsBySEOUrlList
+GO
+
+
+
+/************************************************************/
+/*****              Create Functions                    *****/
+/************************************************************/
+CREATE FUNCTION {databaseOwner}{objectQualifier}RZC_FxSplit
+(
+    @String nvarchar(4000),
+    @Delimiter nvarchar(10)
+)
+RETURNS @table TABLE
+(
+    [Value] NVARCHAR(4000)
+)
+BEGIN
+    DECLARE @NextString NVARCHAR(4000)
+    DECLARE @Pos INT, @NextPos INT
+
+    SET @NextString = ''
+    SET @String = @String + @Delimiter
+
+    SET @Pos = CHARINDEX(@Delimiter, @String)
+    SET @NextPos = 1
+    WHILE (@Pos <> 0)
+    BEGIN
+        SET @NextString = SUBSTRING(@String, 1, @Pos - 1)
+
+        INSERT INTO @table
+        (
+            [Value]
+        )
+        SELECT
+        (
+            @NextString
+        )
+		WHERE @NextString <> ''
+
+        SET @String = SUBSTRING(@String, @Pos + LEN(@Delimiter), LEN(@String))
+        SET @NextPos = @Pos
+        SET @Pos = CHARINDEX(@Delimiter, @String)
+    END
+    RETURN
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE FUNCTION {databaseOwner}{objectQualifier}RZC_FxGetCatIDsBySEOUrlList
+(
+	@CatSEOUrlList NVARCHAR(4000) = '',
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+)
+RETURNS VARCHAR(4000)
+AS
+BEGIN
+	DECLARE @CatIDs VARCHAR(4000)
+
+	DECLARE @CatSEOUrlTable TABLE ([Value] VARCHAR(255))
+	IF @CatSEOUrlList <> ''
+		INSERT INTO @CatSEOUrlTable SELECT [Value] FROM {databaseOwner}{objectQualifier}RZC_FxSplit(@CatSEOUrlList, '~')
+
+	SET @CatIDs = (SELECT	STUFF((SELECT ',' + CAST(CategoryID AS VARCHAR)
+					FROM	{databaseOwner}{objectQualifier}Smith_Category
+					WHERE	([StoreID] = @StoreID OR [TabModuleId] = @StoreID OR [Share] = 1)
+							AND [CatSEOURL] IN (SELECT [Value] FROM @CatSEOUrlTable)
+							OR CAST(CategoryID AS VARCHAR) IN (SELECT [Value] FROM @CatSEOUrlTable)
+					FOR XML PATH('')), 1, 1, '')
+				)
+	RETURN @CatIDs
+END
+GO
+
+
+
+/************************************************************/
+/*****               End of Script                      *****/
+/************************************************************/

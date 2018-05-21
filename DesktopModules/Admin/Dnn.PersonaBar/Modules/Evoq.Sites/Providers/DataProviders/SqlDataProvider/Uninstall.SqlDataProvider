@@ -1,0 +1,18 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+UPDATE {databaseOwner}[{objectQualifier}PersonaBarMenu]
+        SET Controller = 'Dnn.PersonaBar.Sites.MenuControllers.AdminMenuController, Dnn.PersonaBar.Sites'
+        WHERE Identifier = 'Dnn.Sites'
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}PersonaBar_GetHomePageUpdatedTime]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE {databaseOwner}[{objectQualifier}PersonaBar_GetHomePageUpdatedTime]
+GO

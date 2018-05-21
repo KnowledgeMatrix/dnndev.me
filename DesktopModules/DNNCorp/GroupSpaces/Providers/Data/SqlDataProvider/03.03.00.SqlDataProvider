@@ -1,0 +1,26 @@
+﻿/*FIX BUG OF LOST GROUPS TAGS WHEN UPGRADING FROM 2.0.1 TO 2.1.0 o 3.0.0*/
+DECLARE @ContentTypeIdGroup INT
+SELECT @ContentTypeIdGroup = ContentTypeId FROM {databaseOwner}[{objectQualifier}ContentTypes] WHERE ContentType = 'Group'
+
+;WITH UpdatedGroupContentItems(ContentItemID,TabID,ModuleID)
+AS
+(
+SELECT ci.ContentItemID, tb.TabID, m.ModuleID
+FROM {databaseOwner}[{objectQualifier}ContentItems] ci	
+	INNER JOIN {databaseOwner}[{objectQualifier}Roles] R ON R.RoleID = CONVERT(INT,REPLACE(ci.ContentKey, 'groupid=',''))
+	INNER JOIN {databaseOwner}[{objectQualifier}ModuleDefinitions] md ON md.[DefinitionName] = 'Group Directory'
+	INNER JOIN {databaseOwner}[{objectQualifier}Modules] m ON m.[ModuleDefID] = md.[ModuleDefID] AND m.PortalID = R.PortalID
+	INNER JOIN {databaseOwner}[{objectQualifier}TabModules] tb ON tb.[ModuleID] = m.ModuleID
+WHERE 
+	ci.[ContentTypeID] = @ContentTypeIdGroup AND ci.TabId = -1 AND ci.ModuleID = -1
+)
+
+UPDATE    {databaseOwner}[{objectQualifier}ContentItems]
+SET    TabId = up.TabId,
+	   ModuleId = up.ModuleId
+FROM    {databaseOwner}[{objectQualifier}ContentItems] ci 
+INNER JOIN    
+	UpdatedGroupContentItems up ON up.ContentItemID = ci.ContentItemID
+WHERE ci.[ContentTypeID] = @ContentTypeIdGroup AND ci.TabId = -1 AND ci.ModuleID = -1
+
+GO

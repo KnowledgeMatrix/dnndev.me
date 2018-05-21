@@ -1,0 +1,19 @@
+[RAZOR:CanonicalUrl.cshtml, CurrentPage, TotalPages]
+
+<div class="StoreListContainer">
+[CATEGORYSORTOPTIONS]
+    <div class="StoreListContainer-CategoryDetails">
+        <p>[TOPLEVELCATEGORIES]</p>
+        <!--<p>[SUBCATEGORYIMAGES]</p>
+        <p>[CATEGORYTITLE]</p>
+        <p>[CATEGORYDESCRIPTION]</p>
+        <p>[CATEGORYIMAGE]</p>
+          -->
+        <p>[CATEGORYYOUTUBEVIDEOS]</p>
+    </div>
+    <div class="StoreListContainer-Content">  
+        [PRODUCTS @RowCssClass=productListRow]
+        <div style="clear:both;"></div>
+    </div>
+    <div class="StoreListContainer-Navigation"><p>[ITEMSCOUNT]</p><p>[PAGEINFO]</p><p>[PAGENAV]</p></div>
+</div>

@@ -1,0 +1,116 @@
+<!--HeaderTemplateBegin-->
+<script>
+	eds1_10(function ($) {
+		$('.edsgg__itemsListContainer')
+			.on('click', '.edsgg__itemContainer .edsgg_moreAction', function () {
+				$(this).parents('.edsgg__itemContainer').eq(0).toggleClass('edsgg_moreActive');
+			})
+	});
+</script>
+[Has:EDG:CommunityMode][EDG:CommunityModeEditMedia][/Has:EDG:CommunityMode]
+[Has:EDG:NewsArticleLink]<a class="edsgg_newsArticleLink" href="[EDG:NewsArticleLink]">[EDG:LocalizedText:BacktoArticle]</a>[/Has:EDG:NewsArticleLink]
+[Has:EDG:BreadCrumbLink]<div class="edsgg_breadcrumbs">[EDG:BreadCrumbLink]</div>[/Has:EDG:BreadCrumbLink]
+[Has:EDG:ItemParentGalleryTitle]<h1 class="edsgg_mainTitle">[EDG:ItemParentGalleryTitle]</h1>[/Has:EDG:ItemParentGalleryTitle]
+[Has:EDG:ItemParentGalleryDescription]<div class="edsgg_ItemParentGalleryDescription">[EDG:ItemParentGalleryDescription]</div>[/Has:EDG:ItemParentGalleryDescription]
+<div class="edsgg_list">
+<!--HeaderTemplateEnd-->
+
+<!--ItemTemplateBegin-->
+	<div class="edsgg_thumbnailWrapper">
+		[Has:EDG:EditPermission][EDG:EditMediaData][/Has:EDG:EditPermission]
+		<div class="edsgg_mediaContainer" style="width: [EDG:ListItemThumbWidth]px;">
+			[EDG:EmbedInPage]
+			<div class="edsgg_imageThumbnail edsgg_mediaType_[EDG:MediaType]">
+				[EDG:EmbedMediaData]
+				<span class="edsgg_numberOfCommentsAndLikes">
+					[Has:EDG:NumberOfLikes]<span class="edsgg_NumberOfLikes">[EDG:NumberOfLikes]</span>[/Has:EDG:NumberOfLikes]
+					[Has:EDG:NumberOfComments]<span class="edsgg_NumberOfComments">[EDG:NumberOfComments]</span>[/Has:EDG:NumberOfComments]
+				</span>
+			</div>
+			[/EDG:EmbedInPage]
+			[EDG:DontEmbedInPage]
+			<a class="edsgg__itemDetailsAndLightboxTrigger" target="[EDG:MediaUrlTarget]" href="[EDG:ItemMediaLink]">
+				<span class="edsgg_imageThumbnail edsgg_mediaType_[EDG:MediaType]">
+					<img src="[EDG:ItemThumbnail]" alt="[EDG:ItemTitle]">
+					[Has:EDG:MediaType]<span class="edsgg_mediaType edsgg_mediaType_[EDG:MediaType]"></span>[/Has:EDG:MediaType]
+					<span class="edsgg_numberOfCommentsAndLikes">
+						[Has:EDG:NumberOfComments]<span class="edsgg_NumberOfComments">[EDG:NumberOfComments]</span>[/Has:EDG:NumberOfComments]
+						[Has:EDG:NumberOfLikes]<span class="edsgg_NumberOfLikes">[EDG:NumberOfLikes]</span>[/Has:EDG:NumberOfLikes]
+					</span>
+				</span>
+			</a>
+			[/EDG:DontEmbedInPage]
+			[EDG:MediaLike]
+		</div>
+		<div class="edsgg_listImageDetails">
+			<span class="edsgg_title">[Has:EDG:ItemTitle][EDG:ItemTitle][/Has:EDG:ItemTitle] </span>
+			[Has:EDG:ItemDescription]<div class="edsgg_description">[EDG:ItemDescription]</div>[/Has:EDG:ItemDescription]
+			<ul class="edsgg_mediaDetails">
+				[Has:EDG:ItemNumberOfViews]
+				<li class="edsgg_numberOfViews"><span>[EDG:ItemNumberOfViews]</span></li>
+				[/Has:EDG:ItemNumberOfViews]
+				<li class="edsgg_mediaRatingAction">
+					[EDG:MediaRatingAction]
+				</li>
+				[Has:EDG:MediaRatingValue]
+				<li>[EDG:MediaRatingValue]</li>
+				[/Has:EDG:MediaRatingValue]
+				[Has:EDG:ItemUploaderInfo]
+				<li class="edsgg_GalleryOwner">
+					<div>
+						<span>[EDG:ItemAuthor]</span>
+						<div>
+							<a class="edsgg_GalleryOwnerAvatar" href="[EDG:ItemAuthorProfileLink]">[EDG:ItemAuthorAvatar]</a>
+							<a class="edsgg_GalleryOwner" href="[EDG:ItemAuthorProfileLink]">[EDG:ItemAuthor]</a>
+						</div>
+					</div>
+				</li>
+				[/Has:EDG:ItemUploaderInfo]
+				[Has:EDG:ItemsSharingButtons]
+				<li class="edsgg_socialSharing">[EDG:ItemsShareButtons]</li>
+				[/Has:EDG:ItemsSharingButtons]
+				<li class="edsgg_more">
+					<div class="edsgg_moreContainer">
+						[Has:EDG:EmailLink]
+						<div class="edsgg_emailLink">
+							<a title="[EDG:LocalizedText:Email]" href="mailto:?to=&amp;subject=[EDG:LocalizedText:EmailSubject]&amp;body=[EDG:LocalizedText:EmailBody][EDG:CurrentMediaURL]"><span>[EDG:LocalizedText:Email]</span></a>
+						</div>
+						[/Has:EDG:EmailLink]
+						[Has:EDG:MediaDownload]
+						<div class="edsgg_mediaDownload">
+							<a href="[EDG:MediaDownloadLink]" >[EDG:LocalizedText:DownloadMedia] <i>.[EDG:DownloadMediaExtension]</i> ([EDG:DownloadMediaSize])</a>
+						</div>
+						[/Has:EDG:MediaDownload]
+						[Has:EDG:ReportMedia]
+						<div class="edsgg_reportMediaItem">
+							[EDG:ReportMedia]
+						</div>
+						[/Has:EDG:ReportMedia]
+						[EDG:MediaTopComments]
+						<span class="edsgg_moreAction"></span>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+<!--ItemTemplateEnd-->
+
+<!--FooterTemplateBegin-->
+</div>
+[EDG:ItemPaging]
+[Has:EDG:ItemListShowRss]<div class="edsgg_listRssWrapper"><a href="[EDG:ItemListRSSURL]" title="[EDG:LocalizedText:RSS]"><span>[EDG:LocalizedText:RSS]</span></a></div>[/Has:EDG:ItemListShowRss]
+<!--FooterTemplateEnd-->
+
+<!--CommentsTemplateBegin-->
+<!--CommentsSectionWrapperHeaderTemplateBegin-->
+<!--CommentsSectionWrapperHeaderTemplateEnd-->
+<!--CommentsListHeaderTemplateBegin-->
+<!--CommentsListHeaderTemplateEnd-->
+<!--SingleCommentInListTemplateBegin-->
+[EDG:CommentersAvatar]<h5 class="edsgg_commentsListCommentersName">[EDG:CommentersName]</h5>[EDG:CommentFormatedText]
+<!--SingleCommentInListTemplateEnd-->
+<!--CommentsListFooterTemplateBegin-->
+<!--CommentsListFooterTemplateEnd-->
+<!--CommentsSectionWrapperFooterTemplateBegin-->
+<!--CommentsSectionWrapperFooterTemplateEnd-->
+<!--CommentsTemplateEnd-->

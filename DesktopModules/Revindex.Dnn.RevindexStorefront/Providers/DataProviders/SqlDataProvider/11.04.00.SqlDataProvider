@@ -1,0 +1,48 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+SET XACT_ABORT ON
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+
+	-- Increase SKU size to 100 characters
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant ALTER COLUMN SKU VARCHAR(100) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant ALTER COLUMN ManufacturerSKU VARCHAR(100) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant ALTER COLUMN DistributorSKU VARCHAR(100) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant ALTER COLUMN UniversalProductCode VARCHAR(100) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrderDetail ALTER COLUMN SKU VARCHAR(100) NULL
+
+COMMIT TRANSACTION
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+
+		-- Force all previous manual payment to approved
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesPayment SET PaymentGatewayResponseCode = 1 WHERE PaymentGatewayResponseCode IS NULL 
+
+		-- Upgrade default ProductDetail template to "StandardRegular"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductDetailDisplayTemplate = 'StandardRegular' WHERE ProductDetailDisplayTemplate LIKE 'Standard%'
+
+		-- Upgrade default Cart template to "Standard14"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CartDisplayTemplate = 'Standard14' WHERE CartDisplayTemplate LIKE 'Standard%'
+		
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

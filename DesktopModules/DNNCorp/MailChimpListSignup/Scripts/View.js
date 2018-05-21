@@ -1,0 +1,22 @@
+﻿
+if(typeof dnn=='undefined')dnn={};if(typeof dnn.MailChimpListSignup=='undefined')dnn.MailChimpListSignup={};(function(dnn,$,ko){var constants={methods:{subscribeMember:'SubscribeMember',subscribeMemberToList:'SubscribeMemberToList',unsubscribeMemberToList:'UnsubscribeMemberToList'},emailRegex:/^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/}
+dnn.MailChimpListSignup.View=function View(moduleId,model){var self=this;var service=$.ServicesFramework(moduleId);var subscribedMessage=model.subscribedMessage;var errorMessage=model.errorMessage;var userEmail=model.userEmail;var userFirstName=model.userFirstName;var userLastName=model.userLastName;var userAuthenticated=model.userAuthenticated;var message=model.message;var collectFirstName=model.collectFirstName;var collectLastName=model.collectLastName;var invalidEmailMessage=model.invalidEmailMessage;var noListsSelectedMessage=model.noListsSelectedMessage;var listsToSubscribe=model.listsToSubscribe;var subscribedLists=model.subscribedLists;var allowListSelection=model.allowListSelection;self.loading=ko.observable(false);self.firstName=ko.observable('');self.lastName=ko.observable('');self.email=ko.observable('');self.message=ko.observable(message);self.showErrors=ko.observable(false);self.errorMessage=ko.observable('');self.collectFirstName=ko.observable(collectFirstName);self.collectLastName=ko.observable(collectLastName);self.listsToSubscribe=ko.observableArray(listsToSubscribe);self.subscribedLists=ko.observableArray(subscribedLists);self.userAuthenticated=ko.observable(userAuthenticated);self.allowListSelection=ko.observable(allowListSelection);if(listsToSubscribe)
+{var selectedListsIds=listsToSubscribe.map(function(lista,index){return lista.id;});self.selectedListsIds=ko.observableArray(selectedListsIds);}
+if(userAuthenticated){self.firstName(userFirstName);self.lastName(userLastName);self.email(userEmail);}
+self.makeRequest=function(options){if(self.loading()){return;}
+self.loading(true);if(options.requiresConfirmation){}
+$.ajax({url:service.getServiceRoot('DNNCorp/MailChimpListSignup')+'View/'+options.endPoint,type:options.type,data:options.data,beforeSend:service.setModuleHeaders,success:options.success,error:options.error,complete:function(xhr,status){self.loading(false);}});}
+self.isValidEmail=ko.computed(function(){var result=constants.emailRegex.test(self.email());return result;});self.errorMessageToShow=ko.computed(function(){if(self.errorMessage()){return self.errorMessage();}
+if(!self.isValidEmail()){return invalidEmailMessage;}
+if(!self.userAuthenticated()&&self.selectedListsIds().length==0){return noListsSelectedMessage;}
+return null;});self.isUserSubscribedInList=function(listId){var result=self.subscribedLists.indexOf(listId)>-1;return result;};self.subscribeToList=function(list){if(!list||!list.id)
+{return;}
+var firstName=self.firstName();var lastName=self.lastName();var email=self.email();var listToSubscribeId=list.id;var options={endPoint:constants.methods.subscribeMemberToList,type:'POST',data:{FirstName:firstName,LastName:lastName,Email:email,ModuleId:moduleId,ListId:listToSubscribeId},success:function(result){self.subscribedLists.push(listToSubscribeId);},error:function(result,data){self.errorMessage(errorMessage);self.showErrors(true);}}
+self.makeRequest(options);}
+self.unsubscribeToList=function(list){if(!list||!list.id){return;}
+var firstName=self.firstName();var lastName=self.lastName();var email=self.email();var listToUnsubscribeId=list.id;var options={endPoint:constants.methods.unsubscribeMemberToList,type:'POST',data:{FirstName:firstName,LastName:lastName,Email:email,ModuleId:moduleId,ListId:listToUnsubscribeId},success:function(result){self.subscribedLists.remove(listToUnsubscribeId);},error:function(result,data){self.errorMessage(errorMessage);self.showErrors(true);}}
+self.makeRequest(options);}
+self.subscribe=function(){var firstName=self.firstName();var lastName=self.lastName();var email=self.email();var selectedListsIds=self.selectedListsIds();if(!self.isValidEmail()||selectedListsIds.length==0)
+{self.showErrors(true);return;}
+var options={endPoint:constants.methods.subscribeMember,type:'POST',data:{FirstName:firstName,LastName:lastName,Email:email,ModuleId:moduleId,SelectedListsIds:selectedListsIds},success:function(result){self.email('');self.message(subscribedMessage);},error:function(result,data){self.errorMessage(errorMessage);self.showErrors(true);}}
+self.makeRequest(options);}};})(window.dnn,window.jQuery,window.ko);

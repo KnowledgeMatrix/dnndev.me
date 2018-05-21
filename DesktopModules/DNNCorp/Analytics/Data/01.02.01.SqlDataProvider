@@ -1,0 +1,51 @@
+﻿IF NOT EXISTS ( SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+				WHERE TABLE_NAME = N'{objectQualifier}Analytics_ScoringGoals'
+					AND COLUMN_NAME = N'MinValue' )
+BEGIN
+	ALTER TABLE {databaseOwner}{objectQualifier}Analytics_ScoringGoals ADD [MinValue] FLOAT NOT NULL DEFAULT (0)
+END
+GO
+
+IF NOT EXISTS ( SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+				WHERE TABLE_NAME = N'{objectQualifier}Analytics_ScoringGoals'
+					AND COLUMN_NAME = N'MaxValue' )
+BEGIN
+	ALTER TABLE {databaseOwner}{objectQualifier}Analytics_ScoringGoals ADD [MaxValue] FLOAT NOT NULL DEFAULT (1000)
+END
+GO
+
+IF EXISTS ( SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+				WHERE TABLE_NAME = N'{objectQualifier}Analytics_ScoringGoals'
+					AND COLUMN_NAME = N'Value' )
+AND EXISTS ( SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+				WHERE TABLE_NAME = N'{objectQualifier}Analytics_ScoringGoals'
+					AND COLUMN_NAME = N'MaxValue' )
+BEGIN
+	UPDATE {databaseOwner}{objectQualifier}Analytics_ScoringGoals
+		SET [MaxValue] = [Value] WHERE [MaxValue] < [Value];
+END
+GO
+
+
+-----------------------------------------------------------------------------------------------------------------------
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Insert_ScoringGoal]', N'P') IS NULL
+  EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Insert_ScoringGoal] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Insert_ScoringGoal]
+	@PortalId int,
+	@GoalList varchar(64),
+	@GoalType varchar(64),
+	@Weight float,
+	@Value float,
+	@MinValue float,
+	@MaxValue float,
+	@UserId int
+AS
+BEGIN
+	INSERT INTO {databaseOwner}[{objectQualifier}Analytics_ScoringGoals]
+	       ([PortalId], [GoalList], [GoalType], [Weight], [Value], [MinValue], [MaxValue], [CreatedByUserId])
+	VALUES (@PortalId, @GoalList, @GoalType, @Weight, @Value, @MinValue, @MaxValue, @UserId)
+END
+GO

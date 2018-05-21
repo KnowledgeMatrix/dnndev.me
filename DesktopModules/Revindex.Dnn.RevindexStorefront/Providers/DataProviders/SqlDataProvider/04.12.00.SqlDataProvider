@@ -1,0 +1,60 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+SET XACT_ABORT ON
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+	
+	-- Support empty product inventory behavior	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant ADD InventoryEmptyBehavior int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ProductVariant_InventoryEmptyBehavior DEFAULT 1
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ProductVariant_InventoryEmptyBehavior
+	
+	-- Support surcharge in shipping method
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod ADD SurchargeRule xml NULL
+	
+	-- Support Zip2Tax tax provider
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD TaxGatewaysZip2TaxUsername varchar(255) NULL, TaxGatewaysZip2TaxPassword varchar(255) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_TaxClass ADD TaxGateway varchar(50) NULL
+	
+COMMIT TRANSACTION
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+		
+		-- Change USPS service names
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'USPS:FIRST-CLASS MAIL&LT;SUP&GT;&AMP;REG;&LT;/SUP&GT; PARCEL' WHERE UniversalServiceName = 'USPS:FIRST CLASS'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'USPS:PRIORITY MAIL&LT;SUP&GT;&AMP;REG;&LT;/SUP&GT;' WHERE UniversalServiceName = 'USPS:PRIORITY'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'USPS:EXPRESS MAIL&LT;SUP&GT;&AMP;REG;&LT;/SUP&GT;' WHERE UniversalServiceName = 'USPS:EXPRESS'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'USPS:STANDARD POST&LT;SUP&GT;&AMP;REG;&LT;/SUP&GT;' WHERE UniversalServiceName = 'USPS:PARCEL'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'USPS:MEDIA MAIL&LT;SUP&GT;&AMP;REG;&LT;/SUP&GT;' WHERE UniversalServiceName = 'USPS:MEDIA'
+		
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder SET ShippingUniversalServiceName = 'USPS:FIRST-CLASS MAIL&LT;SUP&GT;&AMP;REG;&LT;/SUP&GT; PARCEL' WHERE ShippingUniversalServiceName = 'USPS:FIRST CLASS'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder SET ShippingUniversalServiceName = 'USPS:PRIORITY MAIL&LT;SUP&GT;&AMP;REG;&LT;/SUP&GT;' WHERE ShippingUniversalServiceName = 'USPS:PRIORITY'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder SET ShippingUniversalServiceName = 'USPS:EXPRESS MAIL&LT;SUP&GT;&AMP;REG;&LT;/SUP&GT;' WHERE ShippingUniversalServiceName = 'USPS:EXPRESS'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder SET ShippingUniversalServiceName = 'USPS:STANDARD POST&LT;SUP&GT;&AMP;REG;&LT;/SUP&GT;' WHERE ShippingUniversalServiceName = 'USPS:PARCEL'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder SET ShippingUniversalServiceName = 'USPS:MEDIA MAIL&LT;SUP&GT;&AMP;REG;&LT;/SUP&GT;' WHERE ShippingUniversalServiceName = 'USPS:MEDIA'
+		
+		
+		-- Upgrade default Checkout template to "Standard15"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CheckoutDisplayTemplate = 'Standard15' WHERE CheckoutDisplayTemplate LIKE 'Standard%'
+		
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

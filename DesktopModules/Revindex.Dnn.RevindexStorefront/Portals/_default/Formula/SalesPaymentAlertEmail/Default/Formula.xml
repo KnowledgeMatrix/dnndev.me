@@ -1,0 +1,118 @@
+﻿<data method="BasicSalesPaymentAlertEmail" version="1.0">
+  <mailFrom></mailFrom>
+  <mailTo></mailTo>
+  <mailBcc></mailBcc>
+  <subject>{xsl:value-of select="in/configuration/generalStoreName" /} Payment Alert [{xsl:value-of select="in/user/username" /} - Order #{xsl:value-of select="in/salesOrder/salesOrderNumber" /}]</subject>
+  <htmlBody>
+    &lt;h1&gt;{xsl:value-of select=&amp;quot;in/configuration/generalStoreName&amp;quot; /} Payment Alert&lt;/h1&gt;
+
+    &lt;table border="0" cellpadding="0" cellspacing="3" style="width: 100%"&gt;
+    &lt;tbody&gt;
+    &lt;tr&gt;
+    &lt;td&gt;&lt;strong&gt;Order Number:&lt;/strong&gt;&lt;/td&gt;
+    &lt;td&gt;{xsl:value-of select=&amp;quot;in/salesOrder/salesOrderNumber&amp;quot; /}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+    &lt;td&gt;&lt;strong&gt;PO Number:&lt;/strong&gt;&lt;/td&gt;
+    &lt;td&gt;{xsl:value-of select=&amp;quot;in/salesOrder/purchaseOrderNumber&amp;quot; /}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+    &lt;td&gt;&lt;strong&gt;Order Date:&lt;/strong&gt;&lt;br /&gt;
+    &amp;nbsp;&lt;/td&gt;
+    &lt;td&gt;{xsl:value-of select=&amp;quot;format-dateTime(in/salesOrder/orderDate, &amp;#39;[Y]-[M01]-[D01] [H01]:[m01]&amp;#39;)&amp;quot;/}&lt;br /&gt;
+    &amp;nbsp;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+    &lt;td style="vertical-align: top;"&gt;&lt;strong&gt;Bill To:&lt;/strong&gt;&lt;/td&gt;
+    &lt;td&gt;{xsl:value-of select=&amp;quot;in/salesOrder/billingCompany&amp;quot; /}&lt;br /&gt;
+    {xsl:value-of select=&amp;quot;concat(in/salesOrder/billingFirstName, &amp;#39; &amp;#39;, in/salesOrder/billingLastName)&amp;quot; /}&lt;br /&gt;
+    {xsl:value-of select=&amp;quot;in/salesOrder/billingStreet&amp;quot; /}, {xsl:value-of select=&amp;quot;in/salesOrder/billingCity&amp;quot; /}, {xsl:value-of select=&amp;quot;in/salesOrder/billingSubdivisionName&amp;quot; /}, {xsl:value-of select=&amp;quot;in/salesOrder/billingPostalCode&amp;quot; /}, {xsl:value-of select=&amp;quot;in/salesOrder/billingCountryName&amp;quot; /}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+    &lt;td style="vertical-align: top;"&gt;&lt;strong&gt;Ship To:&lt;/strong&gt;&lt;/td&gt;
+    &lt;td&gt;{xsl:value-of select=&amp;quot;in/salesOrder/shippingCompany&amp;quot; /}&lt;br /&gt;
+    {xsl:value-of select=&amp;quot;concat(in/salesOrder/shippingFirstName, &amp;#39; &amp;#39;, in/salesOrder/shippingLastName)&amp;quot; /}&lt;br /&gt;
+    {xsl:value-of select=&amp;quot;in/salesOrder/shippingStreet&amp;quot; /}, {xsl:value-of select=&amp;quot;in/salesOrder/shippingCity&amp;quot; /}, {xsl:value-of select=&amp;quot;in/salesOrder/shippingSubdivisionName&amp;quot; /}, {xsl:value-of select=&amp;quot;in/salesOrder/shippingPostalCode&amp;quot; /}, {xsl:value-of select=&amp;quot;in/salesOrder/shippingCountryName&amp;quot; /}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+    &lt;td style="vertical-align: top;"&gt;&lt;strong&gt;Payment:&lt;/strong&gt;&lt;/td&gt;
+    &lt;td&gt;{xsl:for-each select=&amp;quot;in/salesOrder/salesPayments/salesPayment[transactionType = 1 or transactionType = 2]&amp;quot;} {xsl:value-of select=&amp;quot;paymentMethodName&amp;quot;/}&amp;nbsp;{xsl:value-of select=&amp;quot;creditCardHint&amp;quot;/}{xsl:value-of select=&amp;quot;paymentHint&amp;quot;/}{xsl:value-of select=&amp;quot;voucherHint&amp;quot;/}&amp;nbsp;{xsl:value-of select=&amp;quot;/in/salesOrder/currency/currencySymbol&amp;quot; /}{xsl:value-of select=&amp;quot;format-number(amount * /in/salesOrder/exchangeRate, &amp;#39;#,##0.00&amp;#39;)&amp;quot; /}&lt;br /&gt;
+    {/xsl:for-each}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;/tbody&gt;
+    &lt;/table&gt;
+    &amp;nbsp;
+
+    &lt;table border="1" cellpadding="3" cellspacing="0" style="width: 100%; table-layout: fixed; word-wrap: break-word; background-color: #ccc; border-collapse: collapse;"&gt;
+    &lt;tbody&gt;
+    &lt;tr&gt;
+    &lt;td style="width: 20%;"&gt;&lt;strong&gt;SKU&lt;/strong&gt;&lt;/td&gt;
+    &lt;td style="width: 40%;"&gt;&lt;strong&gt;Item&lt;/strong&gt;&lt;/td&gt;
+    &lt;td style="width: 15%;"&gt;&lt;strong&gt;Qty&lt;/strong&gt;&lt;/td&gt;
+    &lt;td style="width: 25%;"&gt;&lt;strong&gt;Amount&lt;/strong&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;/tbody&gt;
+    &lt;/table&gt;
+    {xsl:for-each select=&amp;quot;in/salesOrder/salesOrderDetails/salesOrderDetail[parentSalesOrderDetailID=&amp;#39;&amp;#39;]&amp;quot;}
+
+    &lt;table border="1" cellpadding="3" cellspacing="0" style="width: 100%; table-layout: fixed; word-wrap: break-word; border-collapse: collapse;"&gt;
+    &lt;tbody&gt;
+    &lt;tr&gt;
+    &lt;td style="width: 20%;"&gt;{xsl:value-of select=&amp;quot;sku&amp;quot; /}&lt;/td&gt;
+    &lt;td style="width: 40%;"&gt;{xsl:value-of select=&amp;quot;productName&amp;quot; /}&lt;br /&gt;
+    {xsl:value-of select=&amp;quot;productVariantName&amp;quot; /}{xsl:for-each select=&amp;quot;salesOrderDetails/salesOrderDetail&amp;quot;}&lt;br /&gt;
+    {xsl:value-of select=&amp;quot;productName&amp;quot; /} - {xsl:value-of select=&amp;quot;productVariantName&amp;quot; /}: {xsl:value-of select=&amp;quot;quantity&amp;quot; /}&lt;br /&gt;
+    {/xsl:for-each}{xsl:if test=&amp;quot;bookingStartDate != &amp;#39;&amp;#39;&amp;quot;}From: {xsl:value-of select=&amp;quot;format-dateTime(bookingStartDate, &amp;#39;[Y]-[M01]-[D01] [H01]:[m01]&amp;#39;)&amp;quot;/}&lt;br /&gt;
+    Until: {xsl:value-of select=&amp;quot;format-dateTime(bookingStopDate, &amp;#39;[Y]-[M01]-[D01] [H01]:[m01]&amp;#39;)&amp;quot;/}&lt;br /&gt;
+    {/xsl:if}{xsl:for-each select=&amp;quot;dynamicFormResult/fields/field&amp;quot;}&lt;br /&gt;
+    {xsl:value-of select=&amp;quot;replace(@id, &amp;#39;_&amp;#39;, &amp;#39; &amp;#39;)&amp;quot; /}: {xsl:value-of select=&amp;quot;.&amp;quot; /}&lt;br /&gt;
+    {/xsl:for-each}&lt;/td&gt;
+    &lt;td style="width: 15%;"&gt;{xsl:value-of select=&amp;quot;quantity&amp;quot; /}&lt;/td&gt;
+    &lt;td style="width: 25%;"&gt;{xsl:value-of select=&amp;quot;formattedCombinedAmount&amp;quot; /}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;/tbody&gt;
+    &lt;/table&gt;
+    {/xsl:for-each}
+
+    &lt;p&gt;{xsl:for-each select=&amp;quot;in/salesOrder/dynamicFormResult/fields/field&amp;quot;}{xsl:value-of select=&amp;quot;replace(@id, &amp;#39;_&amp;#39;, &amp;#39; &amp;#39;)&amp;quot; /}: {xsl:value-of select=&amp;quot;.&amp;quot; /}&lt;br /&gt;
+    {/xsl:for-each}&amp;nbsp;&lt;/p&gt;
+    &amp;nbsp;
+
+    &lt;table border="0" cellpadding="3" cellspacing="0" style="width: 40%"&gt;
+    &lt;tbody&gt;
+    &lt;tr&gt;
+    &lt;td&gt;&lt;strong&gt;Discount:&lt;/strong&gt;&lt;/td&gt;
+    &lt;td&gt;{xsl:value-of select=&amp;quot;in/salesOrder/formattedTotalSalesOrderDetailDiscountAmount&amp;quot; /}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+    &lt;td&gt;&lt;strong&gt;Sub-Total:&lt;/strong&gt;&lt;/td&gt;
+    &lt;td&gt;{xsl:value-of select=&amp;quot;in/salesOrder/formattedSubTotalAmount&amp;quot; /}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+    &lt;td&gt;&lt;strong&gt;Shipping:&lt;/strong&gt;&lt;/td&gt;
+    &lt;td&gt;{xsl:value-of select=&amp;quot;in/salesOrder/formattedTotalShippingAmount&amp;quot; /}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+    &lt;td&gt;&lt;strong&gt;Handling:&lt;/strong&gt;&lt;/td&gt;
+    &lt;td&gt;{xsl:value-of select=&amp;quot;in/salesOrder/formattedTotalHandlingAmount&amp;quot; /}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+    &lt;td&gt;&lt;strong&gt;Taxes:&lt;/strong&gt;&lt;/td&gt;
+    &lt;td&gt;{xsl:value-of select=&amp;quot;in/salesOrder/formattedTotalTaxAmount&amp;quot; /}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+    &lt;td&gt;&lt;strong&gt;Total:&lt;/strong&gt;&lt;/td&gt;
+    &lt;td&gt;{xsl:value-of select=&amp;quot;in/salesOrder/formattedTotalAmount&amp;quot; /}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+    &lt;td&gt;&lt;strong&gt;Total Savings:&lt;/strong&gt;&lt;/td&gt;
+    &lt;td&gt;{xsl:value-of select=&amp;quot;in/salesOrder/formattedTotalSavingsAmount&amp;quot; /}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+    &lt;td&gt;&lt;strong&gt;Points Earned:&lt;/strong&gt;&lt;/td&gt;
+    &lt;td&gt;{xsl:value-of select=&amp;quot;in/salesOrder/rewardsPointsQualified&amp;quot; /}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;/tbody&gt;
+    &lt;/table&gt;
+  </htmlBody>
+</data>

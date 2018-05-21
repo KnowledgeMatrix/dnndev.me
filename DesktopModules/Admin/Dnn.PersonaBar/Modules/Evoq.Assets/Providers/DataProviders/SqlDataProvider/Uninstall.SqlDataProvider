@@ -1,0 +1,31 @@
+﻿IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetFileByContentItemId]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetFileByContentItemId]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetFileTagsOrderedByFolderId]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetFileTagsOrderedByFolderId]
+GO
+
+DELETE FROM {databaseOwner}{objectQualifier}CoreMessaging_NotificationTypes
+    WHERE Name IN ('FileUpdated', 'FolderUpdated')
+GO
+
+DELETE FROM {databaseOwner}{objectQualifier}CoreMessaging_SubscriptionTypes
+    WHERE Name IN ('DNNCorp_File', 'DNNCorp_Folder')
+GO
+
+DELETE FROM {databaseOwner}[{objectQualifier}ContentWorkflowActions]
+	WHERE [ActionSource] = 'Evoq.PersonaBar.Assets.Components.WorkflowActions.WorkflowCompleteFileAction, Evoq.PersonaBar.Assets'
+	
+DELETE FROM {databaseOwner}[{objectQualifier}ContentWorkflowActions]
+	WHERE [ActionSource] = 'Evoq.PersonaBar.Assets.Components.WorkflowActions.WorkflowDiscardFileAction, Evoq.PersonaBar.Assets'
+
+DELETE FROM {databaseOwner}[{objectQualifier}ContentWorkflowActions]
+	WHERE [ActionSource] = 'Evoq.PersonaBar.Assets.Components.WorkflowActions.StateDiscardFileAction, Evoq.PersonaBar.Assets'
+
+DELETE FROM {databaseOwner}[{objectQualifier}ContentWorkflowActions]
+	WHERE [ActionSource] = 'Evoq.PersonaBar.Assets.Components.WorkflowActions.StateCompleteFileAction, Evoq.PersonaBar.Assets'
+
+DELETE FROM {databaseOwner}[{objectQualifier}ContentWorkflowActions]
+	WHERE [ActionSource] = 'Evoq.PersonaBar.Assets.Components.WorkflowActions.WorkflowStartFileAction, Evoq.PersonaBar.Assets'
+GO

@@ -1,0 +1,797 @@
+﻿
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}SocialEvents_Event_Add]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Event_Add]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}SocialEvents_Event_Delete]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Event_Delete]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}SocialEvents_Event_Get]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Event_Get]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}SocialEvents_Event_GetList]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Event_GetList]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}SocialEvents_Event_Update]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Event_Update]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}SocialEvents_Event_GetUsedDates]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Event_GetUsedDates]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}SocialEvents_Guest_GetAttendees]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Guest_GetAttendees]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}SocialEvents_Guest_GetAttendee]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Guest_GetAttendee]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}SocialEvents_Guest_Save]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Guest_Save]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}SocialEvents_Guest_GetAllAttendees]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Guest_GetAllAttendees]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}SocialEvents_Event_GetSearchable]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Event_GetSearchable]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}SocialEvents_Event_GetByContentItem]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Event_GetByContentItem]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}SocialEvents_Event_UpdateViewCount]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Event_UpdateViewCount]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}SocialEvents_Event_Search]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Event_Search]
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}SocialEvents_IsSearchMatch]', N'FN') IS NOT NULL
+	DROP FUNCTION {databaseOwner}[{objectQualifier}SocialEvents_IsSearchMatch]
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'FK_{objectQualifier}SocialEvents_Guest_{objectQualifier}SocialEvents_Event') and OBJECTPROPERTY(id, N'IsConstraint') = 1)
+	ALTER TABLE {databaseOwner}{objectQualifier}SocialEvents_Guest DROP CONSTRAINT FK_{objectQualifier}SocialEvents_Guest_{objectQualifier}SocialEvents_Event
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SocialEvents_Event]') AND type in (N'U'))
+	BEGIN
+		CREATE TABLE {databaseOwner}[{objectQualifier}SocialEvents_Event] (
+			[EventId] [int] IDENTITY(1,1) NOT NULL,
+			[ContentItemId] [int] NOT NULL,
+			[PortalId] [int] NOT NULL,
+			[GroupId] [int] NULL,
+			[UserId] [int] NULL,
+			[StartTime] [datetime] NOT NULL,
+			[EndTime] [datetime] NULL,
+			[Approved] [bit] NOT NULL,
+			[Deleted] [bit] NOT NULL,
+			[ViewCount] [int] NOT NULL,
+			[Street] [nvarchar](255) NULL,
+			[City] [nvarchar](50) NULL,
+			[Region] [nvarchar](50) NULL,
+			[PostalCode] [nvarchar](20) NULL,
+			[Country] [nvarchar](50) NULL,
+			[MaxAttendees] [int] NOT NULL,
+			[InvitationOnly] [bit] NOT NULL,
+			[ShowGuests] [bit] NOT NULL,
+			[Attending] [int] NOT NULL,
+			[NotAttending] [int] NOT NULL,
+			[MayAttend] [int] NOT NULL,
+			[InviteType] [int] NOT NULL
+		)
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}SocialEvents_Event] WITH NOCHECK ADD 
+		CONSTRAINT [PK_{objectQualifier}SocialEvents_Event] PRIMARY KEY CLUSTERED
+		(
+			[EventId] DESC
+		)  ON [PRIMARY]
+	
+	END
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SocialEvents_Guest]') AND type in (N'U'))
+	BEGIN
+		CREATE TABLE {databaseOwner}[{objectQualifier}SocialEvents_Guest] (
+			[GuestId] int IDENTITY ( 1,1 ) NOT NULL,
+			[EventId] int NOT NULL,
+			[UserId] int NULL,
+			[Email] nvarchar(255) NULL,
+			[RsvpStatus] int NULL,
+			[RepliedOnDate] datetime NULL
+		)
+
+		ALTER TABLE {databaseOwner}[{objectQualifier}SocialEvents_Guest] WITH NOCHECK ADD 
+			CONSTRAINT [PK_{objectQualifier}SocialEvents_Guest] PRIMARY KEY CLUSTERED
+			(
+				[GuestId]
+			)  ON [PRIMARY]
+
+		ALTER TABLE {databaseOwner}[{objectQualifier}SocialEvents_Guest]  
+			ADD CONSTRAINT [FK_{objectQualifier}SocialEvents_Guest_{objectQualifier}SocialEvents_Event] FOREIGN KEY([EventId]) REFERENCES {databaseOwner}[{objectQualifier}SocialEvents_Event] ([EventId]) ON DELETE CASCADE	
+	END
+GO
+
+CREATE FUNCTION {databaseOwner}[{objectQualifier}SocialEvents_IsSearchMatch]
+	(
+	  @ContentItemId INT ,
+	  @GroupId INT ,
+	  @CurrentGroup INT ,
+	  @UserId INT ,
+	  @CreatorUserId INT ,
+	  @Filter INT ,
+	  @Keyword NVARCHAR(255) ,
+	  @Approved BIT ,
+	  @Description NVARCHAR(1000) ,
+	  @Tags NVARCHAR(255)
+	)
+RETURNS BIT
+AS 
+	BEGIN
+		IF LEN(@Tags) > 0 
+			BEGIN
+				IF ( SELECT COUNT(*)
+					 FROM   {databaseOwner}{objectQualifier}ContentItems_Tags CIT
+							INNER JOIN {databaseOwner}{objectQualifier}Taxonomy_Terms TT ON CIT.TermID = TT.TermID
+							INNER JOIN {databaseOwner}{objectQualifier}ConvertListToTable(',', @Tags) T ON TT.Name = T.RowValue
+					 WHERE  CIT.ContentItemID = @ContentItemID
+				   ) != ( SELECT    LEN(@Tags) - LEN(REPLACE(@Tags, ',', ''))
+									+ 1
+						) 
+					RETURN 0
+			END
+	-- Category filter
+		IF @Filter > -1 
+			BEGIN
+				IF @Filter = 0 -- all
+					BEGIN 
+						RETURN @Approved
+					END
+				--IF @Filter = 1 -- top/pinned
+				--	BEGIN
+				--		IF ( @IsPinned = 1
+				--			 AND @Approved = 1
+				--		   ) 
+				--			RETURN 1
+				--	END
+				IF @Filter = 2 -- no replies
+					BEGIN
+						IF ( ( SELECT   COUNT(CommentId)
+							   FROM     {databaseOwner}{objectQualifier}Journal_Comments JC
+										INNER JOIN {databaseOwner}{objectQualifier}Journal J ON JC.JournalId = J.JournalId
+							   WHERE    ContentItemId = @ContentItemId
+							 ) < 1
+							 AND @Approved = 1
+						   ) 
+							RETURN 1
+					END
+				IF @Filter = 3 -- my content items
+					BEGIN
+						IF ( @UserId = @CreatorUserId ) 
+							RETURN 1
+					END
+				IF @Filter = 4 -- my comments 
+					BEGIN
+						IF ( ( SELECT   COUNT(CommentId)
+							   FROM     {databaseOwner}{objectQualifier}Journal AS J
+										INNER JOIN {databaseOwner}{objectQualifier}Journal_Comments AS JC ON J.JournalId = JC.JournalId
+							   WHERE    J.ContentItemId = @ContentItemId
+										AND JC.UserId = @UserId
+							 ) > 0
+							 AND @Approved = 1
+						   ) 
+							RETURN 1
+					END
+			END
+		RETURN 0
+	END
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Event_Search]
+	@ModuleId INT ,
+	@GroupId INT ,
+	@PageSize INT ,
+	@PageIndex INT ,
+	@Filter INT ,
+	@SortColumn VARCHAR(32) ,
+	@SortAscending BIT ,
+	@Keyword NVARCHAR(128) ,
+	@UserId INT ,
+	@Tags NVARCHAR(256)
+AS 
+	BEGIN
+		SELECT  COUNT(*) AS TotalResults
+		FROM    {databaseOwner}{objectQualifier}SocialEvents_Event AS E
+				INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI ON CI.ContentItemID = E.ContentItemId
+				LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD ON CIMD.ContentItemID = CI.ContentItemID
+															  AND CIMD.MetaDataID = ( SELECT
+															  MetaDataID
+															  FROM
+															  {databaseOwner}[{objectQualifier}MetaData]
+															  WHERE
+															  MetaDataName = 'Title'
+															  )
+		WHERE   CI.ModuleId = @ModuleId
+				AND Deleted = 0
+				AND ( @GroupId < 1
+					  OR E.GroupId = @GroupId
+					)
+				AND {databaseOwner}{objectQualifier}SocialEvents_IsSearchMatch(E.ContentItemId, @GroupId,
+												   E.GroupId, @UserId,
+												   CI.CreatedByUserID, @Filter,
+												   @Keyword, E.Approved,
+												   CI.Content, @Tags) = 1;
+		WITH    TopicSet
+				  AS ( SELECT   EventId ,
+								E.ContentItemId ,
+								GroupId ,
+								PortalId ,
+								ViewCount ,
+								Approved ,
+								Deleted ,
+								Content ,
+								ContentTypeID ,
+								TabID ,
+								ModuleID ,
+								ContentKey ,
+								Indexed ,
+								[MaxAttendees],
+								[InvitationOnly],
+								[ShowGuests],
+								[Attending],
+								[NotAttending],
+								[MayAttend],
+								[StartTime],
+								[EndTime],
+								[Street],
+								[City],
+								[Region],
+								[PostalCode],
+								[Country],
+								[InviteType],
+								CI.CreatedByUserID ,
+								CI.CreatedOnDate ,
+								CI.LastModifiedByUserID ,
+								CI.LastModifiedOnDate ,
+								CIMD.MetaDataValue AS ContentTitle ,
+								U.DisplayName AS DisplayName
+					   FROM     {databaseOwner}{objectQualifier}SocialEvents_Event AS E
+								INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI ON CI.ContentItemID = E.ContentItemId
+								INNER JOIN {databaseOwner}{objectQualifier}Users U ON U.UserID = CI.CreatedByUserID
+								LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD ON CIMD.ContentItemID = E.ContentItemId
+															  AND CIMD.MetaDataID = ( SELECT
+															  MetaDataID
+															  FROM
+															  {databaseOwner}[{objectQualifier}MetaData]
+															  WHERE
+															  MetaDataName = 'Title'
+															  )
+					   WHERE    CI.ModuleId = @ModuleId
+								AND Deleted = 0
+								AND ( @GroupId < 1
+									  OR E.GroupId = @GroupId
+									)
+								AND {databaseOwner}{objectQualifier}SocialEvents_IsSearchMatch(E.ContentItemId,
+															  @GroupId,
+															  E.GroupId,
+															  @UserId,
+															  CI.CreatedByUserID,
+															  @Filter,
+															  @Keyword,
+															  E.Approved,
+															  CI.Content,
+															  @Tags) = 1
+					 ),
+				TopicSort
+				  AS ( SELECT   ROW_NUMBER() OVER ( ORDER BY CASE
+															  WHEN @SortColumn = 'CreatedDate'
+															  AND @SortAscending = 1
+															  THEN T.CreatedOnDate
+															 END ASC, CASE
+															  WHEN @SortColumn = 'CreatedDate'
+															  AND @SortAscending = 0
+															  THEN T.CreatedOnDate
+															  END DESC, CASE
+															  WHEN @SortColumn = 'LastActive'
+															  AND @SortAscending = 1
+															  THEN T.LastModifiedOnDate
+															  END ASC, CASE
+															  WHEN @SortColumn = 'LastActive'
+															  AND @SortAscending = 0
+															  THEN T.LastModifiedOnDate
+															  END DESC, CASE
+															  WHEN @SortColumn = 'Title'
+															  AND @SortAscending = 1
+															  THEN T.ContentTitle
+															  END ASC, CASE
+															  WHEN @SortColumn = 'Title'
+															  AND @SortAscending = 0
+															  THEN T.ContentTitle
+															  END DESC, CASE
+															  WHEN @SortColumn = 'Author'
+															  AND @SortAscending = 1
+															  THEN T.DisplayName
+															  END ASC, CASE
+															  WHEN @SortColumn = 'Author'
+															  AND @SortAscending = 0
+															  THEN T.DisplayName
+															  END DESC, CASE
+															  WHEN @SortColumn = 'Views'
+															  AND @SortAscending = 0
+															  THEN T.ViewCount
+															  END DESC, CASE
+															  WHEN @SortColumn = 'Views'
+															  AND @SortAscending = 1
+															  THEN T.ViewCount
+															  END ASC, T.CreatedOnDate DESC ) AS RowNumber ,
+								COUNT(*) OVER ( ) AS TotalRecords ,
+								T.*
+					   FROM     TopicSet T
+					 )
+			SELECT  *
+			FROM    TopicSort
+			WHERE   RowNumber BETWEEN ( @PageIndex * @PageSize + 1 )
+							  AND     ( ( @PageIndex + 1 ) * @PageSize )
+	END
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Event_UpdateViewCount]
+	@ContentItemId INT ,
+	@PortalId INT
+AS 
+	UPDATE  {databaseOwner}{objectQualifier}SocialEvents_Event
+	SET     ViewCount = ViewCount + 1
+	WHERE   PortalID = @PortalId
+			AND ContentItemId = @ContentItemId
+			AND Approved = 1
+			AND Deleted = 0
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Event_GetByContentItem]
+	@ContentItemId INT ,
+	@ModuleId INT
+AS 
+	SELECT  EventId ,
+			E.ContentItemId ,
+			GroupId ,
+			PortalId ,
+			UserId ,
+			StartTime ,
+			EndTime ,
+			ViewCount ,
+			Approved ,
+			Deleted ,
+			Street ,
+			City ,
+			Region ,
+			Country ,
+			PostalCode ,
+			MaxAttendees ,
+			InvitationOnly ,
+			ShowGuests ,
+			Attending ,
+			NotAttending ,
+			MayAttend ,
+			InviteType ,
+			Content ,
+			ContentTypeID ,
+			TabID ,
+			ModuleID ,
+			ContentKey ,
+			Indexed ,
+			CreatedByUserId ,
+			CreatedOnDate ,
+			LastModifiedByUserID ,
+			LastModifiedOnDate ,
+			CIMD.MetaDataValue AS ContentTitle ,
+			1 AS TotalRecords
+	FROM   {databaseOwner}{objectQualifier}SocialEvents_Event E
+			INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI ON E.ContentItemId = CI.ContentItemID
+			LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD ON CIMD.ContentItemID = E.ContentItemID
+															  AND CIMD.MetaDataID = ( SELECT
+															  MetaDataID
+															  FROM
+															  {databaseOwner}[{objectQualifier}MetaData]
+															  WHERE
+															  MetaDataName = 'Title'
+															  )
+	WHERE   E.ContentItemID = @ContentItemId
+			AND Deleted = 0
+			AND ModuleID = @ModuleId
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Event_GetSearchable]
+	@StartDate DATETIME ,
+	@ModuleID INT
+AS 
+	SELECT  EventId ,
+			E.ContentItemId ,
+			GroupId ,
+			PortalId ,
+			UserId ,
+			StartTime ,
+			EndTime ,
+			ViewCount ,
+			Approved ,
+			Deleted ,
+			Street ,
+			City ,
+			Region ,
+			Country ,
+			PostalCode ,
+			MaxAttendees ,
+			InvitationOnly ,
+			ShowGuests ,
+			Attending ,
+			NotAttending ,
+			MayAttend ,
+			InviteType ,
+			Content ,
+			ContentTypeID ,
+			TabID ,
+			ModuleID ,
+			ContentKey ,
+			Indexed ,
+			CreatedByUserId ,
+			CreatedOnDate ,
+			LastModifiedByUserID ,
+			LastModifiedOnDate ,
+			CIMD.MetaDataValue AS ContentTitle ,
+			1 AS TotalRecords
+	FROM    {databaseOwner}{objectQualifier}SocialEvents_Event E
+			INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI ON E.ContentItemId = CI.ContentItemID
+			LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD ON CIMD.ContentItemID = E.ContentItemId
+															  AND CIMD.MetaDataID = ( SELECT
+															  MetaDataID
+															  FROM
+															  {databaseOwner}[{objectQualifier}MetaData]
+															  WHERE
+															  MetaDataName = 'Title'
+															  )
+	WHERE   Deleted = 0
+			AND Approved = 1
+			AND ModuleID = @ModuleID
+			AND LastModifiedOnDate > @StartDate
+			AND ( ( GroupId IS NULL )
+				  OR ( GroupId < 1 )
+				)
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Event_Add]
+	@ContentItemId INT ,
+	@GroupId INT ,
+	@PortalId INT ,
+	@Approved BIT ,
+	@StartTime DATETIME ,
+	@EndTime DATETIME ,
+	@Street NVARCHAR(255) ,
+	@City NVARCHAR(50) ,
+	@Region NVARCHAR(50) ,
+	@PostalCode NVARCHAR(20) ,
+	@Country NVARCHAR(50) ,
+	@MaxAttendees INT ,
+	@InvitationOnly BIT ,
+	@ShowGuests BIT ,
+	@InviteType INT
+AS 
+	INSERT  INTO {databaseOwner}{objectQualifier}SocialEvents_Event
+			( [ContentItemId] ,
+			  [GroupId] ,
+			  [PortalId] ,
+			  [StartTime] ,
+			  [EndTime] ,
+			  [Approved] ,
+			  [Deleted] ,
+			  [ViewCount] ,
+			  [Street] ,
+			  [City] ,
+			  [Region] ,
+			  [PostalCode] ,
+			  [Country] ,
+			  [MaxAttendees] ,
+			  [InvitationOnly] ,
+			  [ShowGuests] ,
+			  [UserId] ,
+			  [Attending] ,
+			  [NotAttending] ,
+			  [MayAttend] ,
+			  [InviteType]
+			)
+	VALUES  ( @ContentItemId ,
+			  @GroupId ,
+			  @PortalId ,
+			  @StartTime ,
+			  @EndTime ,
+			  @Approved ,
+			  0 ,
+			  0 ,
+			  @Street ,
+			  @City ,
+			  @Region ,
+			  @PostalCode ,
+			  @Country ,
+			  @MaxAttendees ,
+			  @InvitationOnly ,
+			  @ShowGuests ,
+			  -1 ,
+			  0 ,
+			  0 ,
+			  0 ,
+			  @InviteType
+			)
+	SELECT  @@IDENTITY
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Event_Update]
+	@EventId INT ,
+	@ContentItemId INT ,
+	@GroupId INT ,
+	@PortalId INT ,
+	@Approved BIT ,
+	@StartTime DATETIME ,
+	@EndTime DATETIME ,
+	@Street NVARCHAR(255) ,
+	@City NVARCHAR(50) ,
+	@Region NVARCHAR(50) ,
+	@PostalCode NVARCHAR(20) ,
+	@Country NVARCHAR(50) ,
+	@MaxAttendees INT ,
+	@InvitationOnly BIT ,
+	@ShowGuests BIT ,
+	@InviteType INT
+AS 
+	UPDATE  {databaseOwner}{objectQualifier}SocialEvents_Event
+	SET     GroupId = @GroupId ,
+			StartTime = @StartTime ,
+			EndTime = @EndTime ,
+			Approved = @Approved ,
+			Street = @Street ,
+			City = @City ,
+			Region = @Region ,
+			PostalCode = @PostalCode ,
+			Country = @Country ,
+			MaxAttendees = @MaxAttendees ,
+			InvitationOnly = @InvitationOnly ,
+			ShowGuests = @ShowGuests ,
+			InviteType = @InviteType
+	WHERE   EventId = @EventId
+			AND PortalId = @PortalId
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Event_Delete]
+	(
+	  @EventId INT
+	)
+AS 
+	DELETE  FROM {databaseOwner}{objectQualifier}SocialEvents_Event
+	WHERE   EventId = @EventId
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Event_GetUsedDates]
+	(
+	  @PortalId INT,
+	  @GroupId INT,
+	  @Month INT,
+	  @Year INT
+	)
+AS 
+	SELECT DISTINCT
+			CAST(CONVERT(NVARCHAR, StartTime, 101) AS DATETIME)
+	FROM    {databaseOwner}{objectQualifier}SocialEvents_Event
+	WHERE   MONTH(starttime) = @Month
+			AND YEAR(starttime) = @Year
+			AND PortalId = @PortalId
+			AND ( @GroupId IS NULL
+				  OR GroupId = @GroupId
+				)
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Guest_Save]
+    @EventId INT ,
+    @UserId INT ,
+    @Email NVARCHAR(150) ,
+    @RsvpStatus INT
+AS 
+    DECLARE @GuestId INT
+    SET @GuestId = ( SELECT GuestId
+                     FROM   {databaseOwner}{objectQualifier}SocialEvents_Guest
+                     WHERE  UserId = @UserId
+                            AND EventId = @EventId
+                   )
+	
+    IF @GuestId > 0 
+        BEGIN
+            UPDATE  {databaseOwner}{objectQualifier}SocialEvents_Guest
+            SET     RsvpStatus = @RsvpStatus ,
+                    RepliedOnDate = GETUTCDATE()
+            WHERE   GuestId = @GuestId	
+        END
+    ELSE 
+        INSERT  {databaseOwner}{objectQualifier}SocialEvents_Guest
+                ( EventId ,
+                  UserId ,
+                  Email ,
+                  RsvpStatus ,
+                  RepliedOnDate
+		        )
+        VALUES  ( @EventId ,
+                  @UserId ,
+                  @Email ,
+                  @RsvpStatus ,
+                  GETUTCDATE()
+                )
+                
+    UPDATE  {databaseOwner}{objectQualifier}SocialEvents_Event
+    SET     Attending = ( SELECT    COUNT(EventId)
+                          FROM      {databaseOwner}{objectQualifier}SocialEvents_Guest
+                          WHERE     EventId = @EventId
+                                    AND RsvpStatus = 1
+                        ) ,
+            NotAttending = ( SELECT COUNT(EventId)
+                             FROM   {databaseOwner}{objectQualifier}SocialEvents_Guest
+                             WHERE  EventId = @EventId
+                                    AND RsvpStatus = 2
+                           ) ,
+            MayAttend = ( SELECT    COUNT(EventId)
+                          FROM      {databaseOwner}{objectQualifier}SocialEvents_Guest
+                          WHERE     EventId = @EventId
+                                    AND RsvpStatus = 3
+                        )
+    WHERE   EventId = @EventId 
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Guest_GetAttendees]
+    @ContentItemId INT ,
+    @PortalId INT,
+	@RsvpStatus INT,
+	@pageIndex INT,
+	@pageSize INT
+AS 
+
+    SELECT  Count(*) AS TotalRecords
+    FROM    {databaseOwner}{objectQualifier}SocialEvents_Guest G
+            INNER JOIN {databaseOwner}{objectQualifier}SocialEvents_Event E ON G.EventId = E.EventId
+    WHERE   ContentItemId = @ContentItemId
+            AND PortalId = @PortalId
+			AND RsvpStatus = @RsvpStatus
+
+	-- Set the page bounds
+	DECLARE 
+		@PageLowerBound INT, 
+		@PageUpperBound INT, 
+		@RowsToReturn int
+
+	exec {databaseOwner}{objectQualifier}CalculatePagingInformation @PageIndex, @PageSize, @RowsToReturn output, @PageLowerBound output, @PageUpperBound output
+	
+	IF @PageLowerBound > 0
+		SET @PageLowerBound = @PageLowerBound + 1
+
+	IF @RowsToReturn > @PageSize
+		SET @RowsToReturn = @PageSize
+
+    ;WITH items  AS
+	(
+	SELECT  G.* ,
+            E.PortalId ,
+            U.DisplayName AS GuestDisplayName,
+  			ROW_NUMBER() OVER(ORDER BY [GuestID] DESC) AS RowNumber
+  
+	FROM    {databaseOwner}{objectQualifier}SocialEvents_Guest G
+            INNER JOIN {databaseOwner}{objectQualifier}SocialEvents_Event E ON G.EventId = E.EventId
+            INNER JOIN {databaseOwner}{objectQualifier}Users U ON G.UserId = U.UserID
+    WHERE   ContentItemId = @ContentItemId
+            AND PortalId = @PortalId
+			AND RsvpStatus = @RsvpStatus
+	)
+	SELECT TOP (@RowsToReturn) * FROM items
+	WHERE RowNumber >= @PageLowerBound AND RowNumber <= @PageUpperBound	
+	ORDER BY RowNumber ASC
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Guest_GetAttendee]
+    @UserId INT ,
+	@ContentItemId INT ,
+    @PortalId INT
+AS 
+    SELECT  G.* ,
+            E.PortalId ,
+            U.DisplayName AS GuestDisplayName
+    FROM    {databaseOwner}{objectQualifier}SocialEvents_Guest G
+            INNER JOIN {databaseOwner}{objectQualifier}SocialEvents_Event E ON G.EventId = E.EventId
+            INNER JOIN {databaseOwner}{objectQualifier}Users U ON G.UserId = U.UserID
+    WHERE   ContentItemId = @ContentItemId
+            AND PortalId = @PortalId
+			AND G.UserId = @UserId
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Guest_GetAllAttendees]
+    @EventId INT ,
+    @PortalId INT
+AS 
+    SELECT  G.* ,
+            E.PortalId ,
+            U.DisplayName AS GuestDisplayName
+    FROM    {databaseOwner}{objectQualifier}SocialEvents_Guest G
+            INNER JOIN {databaseOwner}{objectQualifier}SocialEvents_Event E ON G.EventId = E.EventId
+            INNER JOIN {databaseOwner}{objectQualifier}Users U ON G.UserId = U.UserID
+    WHERE   E.EventID = @EventId
+            AND PortalId = @PortalId
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}SocialEvents_Search_Invitees]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Search_Invitees]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Search_Invitees]
+    @UserId INT ,
+    @PortalId INT,
+	@SearchDisplayName [nvarchar](50),
+	@GroupId INT, 
+	@EventId INT, 
+	@PageIndex INT, 
+	@PageSize INT
+AS 
+	DECLARE @RelationshipId INT
+
+	SELECT @RelationshipId = RelationshipId from {databaseOwner}[{objectQualifier}Relationships] where [Name] = 'Friends' AND [PortalID] = @PortalId
+	
+	;WITH UserIDs AS (
+		select [RelatedUserID] as [UserID] from {databaseOwner}[{objectQualifier}UserRelationships]
+		Where (UserID = @UserId)
+		AND RelationshipID = @RelationshipId 
+		AND [Status] = 2 
+
+		UNION 
+
+		select [UserID] from {databaseOwner}[{objectQualifier}UserRelationships]
+		Where (RelatedUserID = @UserId)
+		AND RelationshipID = @RelationshipId 
+		AND [Status] = 2 
+
+		UNION 
+
+		select [UserID] from {databaseOwner}[{objectQualifier}userroles]
+		where RoleID = @GroupId AND @GroupId > 0
+	), UserList AS (
+	SELECT u.UserID, u.DisplayName, COALESCE(sg.[GuestId], 0) AS [IsInvited],
+		   ROW_NUMBER() OVER(ORDER BY sg.[GuestId] desc, DisplayName asc) AS RowNumber  
+	FROM UserIDs ui
+	INNER JOIN {databaseOwner}[{objectQualifier}users] u on u.userid = ui.userid
+	LEFT OUTER JOIN {databaseOwner}[{objectQualifier}SocialEvents_Guest] sg on sg.UserId = u.UserID AND sg.EventId = @EventId
+		WHERE ((@SearchDisplayName IS NOT NULL AND u.DisplayName like '%' + @SearchDisplayName + '%') OR (@SearchDisplayName IS NULL))
+		AND ((sg.EventId IS NOT NULL AND sg.EventId = @EventId AND @EventId > 0) OR (sg.EventId IS NULL)))
+	SELECT * FROM UserList
+		WHERE   RowNumber BETWEEN ( @PageIndex * @PageSize + 1 )
+							AND     ( ( @PageIndex + 1 ) * @PageSize )
+	
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}SocialEvents_Add_Invitee]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Add_Invitee]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Add_Invitee]
+    @EventId  INT,
+    @UserId   INT,
+	@RsvpStatus INT
+AS
+
+IF NOT EXISTS (SELECT EventId FROM {databaseOwner}[{objectQualifier}SocialEvents_Guest] WHERE EventId = @EventId AND UserId = @UserId)
+	BEGIN
+		DECLARE @UserEmail nvarchar(256)
+		SELECT @UserEmail = Email FROM {databaseOwner}[{objectQualifier}users]
+		WHERE UserID = @UserId
+
+		EXEC {databaseOwner}[{objectQualifier}SocialEvents_Guest_Save] @EventId, @UserId, @UserEmail, @RsvpStatus
+	END
+
+GO

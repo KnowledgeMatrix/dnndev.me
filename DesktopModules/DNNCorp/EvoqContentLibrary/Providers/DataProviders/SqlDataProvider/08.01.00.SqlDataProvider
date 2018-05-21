@@ -1,0 +1,671 @@
+/********************************************************
+ * Add Column ContentItemId to Analytics_PageViews Table
+ ********************************************************/
+IF NOT EXISTS ( SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_NAME = N'{objectQualifier}Analytics_PageViews'
+                AND  COLUMN_NAME = N'ContentItemId' )
+    ALTER TABLE {databaseOwner}{objectQualifier}Analytics_PageViews
+        ADD ContentItemId int NOT NULL DEFAULT (-1)
+GO
+
+/********************************************************
+ * Add Column ContentItemReferrerId to Analytics_PageViews Table
+ ********************************************************/
+IF NOT EXISTS ( SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_NAME = N'{objectQualifier}Analytics_PageViews'
+                AND  COLUMN_NAME = N'ContentItemReferrerId' )
+    ALTER TABLE {databaseOwner}{objectQualifier}Analytics_PageViews
+        ADD ContentItemReferrerId int NOT NULL DEFAULT (-1)
+GO
+
+/********************************************************
+ * Add Column CreatedOnDate to Analytics_PageViews Table
+ ********************************************************/
+IF NOT EXISTS ( SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_NAME = N'{objectQualifier}Analytics_PageViews'
+                AND  COLUMN_NAME = N'CreatedOnDate' )
+    ALTER TABLE {databaseOwner}{objectQualifier}Analytics_PageViews
+        ADD CreatedOnDate DateTime NULL
+GO
+
+/********************************************************
+ * Add Column ContentItemId to Analytics_Fact_Referrers Table
+ ********************************************************/
+IF NOT EXISTS ( SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_NAME = N'{objectQualifier}Analytics_Fact_Referrers'
+                AND  COLUMN_NAME = N'ContentItemId' )
+    ALTER TABLE {databaseOwner}{objectQualifier}Analytics_Fact_Referrers
+        ADD ContentItemId int NOT NULL DEFAULT (-1)
+GO
+
+/********************************************************
+ * Add Column ContentItemReferrerId to Analytics_Fact_Referrers Table
+ ********************************************************/
+IF NOT EXISTS ( SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_NAME = N'{objectQualifier}Analytics_Fact_Referrers'
+                AND  COLUMN_NAME = N'ContentItemReferrerId' )
+    ALTER TABLE {databaseOwner}{objectQualifier}Analytics_Fact_Referrers
+        ADD ContentItemReferrerId int NOT NULL DEFAULT (-1)
+GO
+
+/********************************************************
+ * Update Index on Analytics_Fact_Referrers Table
+ ********************************************************/
+IF EXISTS (SELECT * FROM sys.indexes WHERE name = 'IX_{objectQualifier}Analytics_Fact_Referrers')
+	BEGIN
+		DROP INDEX IX_{objectQualifier}Analytics_Fact_Referrers ON {databaseOwner}{objectQualifier}Analytics_Fact_Referrers
+
+		CREATE NONCLUSTERED INDEX IX_{objectQualifier}Analytics_Fact_Referrers ON {databaseOwner}{objectQualifier}Analytics_Fact_Referrers 
+			([DateId], [PageId], [ContentItemId], [PortalId], [Channel], [ReferrerDetail])
+	END
+GO
+
+/********************************************************
+ * Add Column ContentItemId to Analytics_Fact_Devices Table
+ ********************************************************/
+IF NOT EXISTS ( SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_NAME = N'{objectQualifier}Analytics_Fact_Devices'
+                AND  COLUMN_NAME = N'ContentItemId' )
+    ALTER TABLE {databaseOwner}{objectQualifier}Analytics_Fact_Devices
+        ADD ContentItemId int NOT NULL DEFAULT (-1)
+GO
+
+/********************************************************
+ * Update Index on Analytics_Fact_Devices Table
+ ********************************************************/
+IF EXISTS (SELECT * FROM sys.indexes WHERE name = 'IX_{objectQualifier}Analytics_Fact_Devices')
+	BEGIN
+		DROP INDEX IX_{objectQualifier}Analytics_Fact_Devices ON {databaseOwner}{objectQualifier}Analytics_Fact_Devices
+
+		CREATE NONCLUSTERED INDEX IX_{objectQualifier}Analytics_Fact_Devices ON {databaseOwner}{objectQualifier}Analytics_Fact_Devices
+			([DateId], [PageId], [ContentItemId], [PortalId], [Device], [OperatingSystem])
+	END
+GO
+
+
+/********************************************************
+ * Add Column ContentItemId to Analytics_Fact_ExitPages Table
+ ********************************************************/
+IF NOT EXISTS ( SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_NAME = N'{objectQualifier}Analytics_Fact_ExitPages'
+                AND  COLUMN_NAME = N'ContentItemId' )
+    ALTER TABLE {databaseOwner}{objectQualifier}Analytics_Fact_ExitPages
+        ADD ContentItemId int NOT NULL DEFAULT (-1)
+GO
+
+/********************************************************
+ * Add Column ExitPageId to Analytics_Fact_ExitPages Table
+ ********************************************************/
+IF NOT EXISTS ( SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_NAME = N'{objectQualifier}Analytics_Fact_ExitPages'
+                AND  COLUMN_NAME = N'ExitPageId' )
+    ALTER TABLE {databaseOwner}{objectQualifier}Analytics_Fact_ExitPages
+        ADD ExitPageId int NOT NULL DEFAULT (-1)
+GO
+
+/********************************************************
+ * Add Column ExitPageContentItemId to Analytics_Fact_ExitPages Table
+ ********************************************************/
+IF NOT EXISTS ( SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_NAME = N'{objectQualifier}Analytics_Fact_ExitPages'
+                AND  COLUMN_NAME = N'ExitPageContentItemId' )
+    ALTER TABLE {databaseOwner}{objectQualifier}Analytics_Fact_ExitPages
+        ADD ExitPageContentItemId int NOT NULL DEFAULT (-1)
+GO
+
+/********************************************************
+ * Create missing Index on Analytics_Fact_ExitPages Table
+ ********************************************************/
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'IX_{objectQualifier}Analytics_Fact_ExitPages')
+	BEGIN
+		CREATE NONCLUSTERED INDEX IX_{objectQualifier}Analytics_Fact_ExitPages ON {databaseOwner}{objectQualifier}Analytics_Fact_ExitPages 
+			([DateId], [PageId], [ContentItemId], [PortalId])
+	END
+GO
+
+/********************************************************
+ * Add Column ContentItemId to Analytics_Fact_PageViews Table
+ ********************************************************/
+IF NOT EXISTS ( SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_NAME = N'{objectQualifier}Analytics_Fact_PageViews'
+                AND  COLUMN_NAME = N'ContentItemId' )
+    ALTER TABLE {databaseOwner}{objectQualifier}Analytics_Fact_PageViews
+        ADD ContentItemId int NOT NULL DEFAULT (-1)
+GO
+
+/********************************************************
+ * Update Index on Analytics_Fact_PageViews Table
+ ********************************************************/
+IF EXISTS (SELECT * FROM sys.indexes WHERE name = 'IX_{objectQualifier}Analytics_Fact_PageViews')
+	BEGIN
+		DROP INDEX IX_{objectQualifier}Analytics_Fact_PageViews ON {databaseOwner}{objectQualifier}Analytics_Fact_PageViews
+
+		CREATE NONCLUSTERED INDEX IX_{objectQualifier}Analytics_Fact_PageViews ON {databaseOwner}{objectQualifier}Analytics_Fact_PageViews 
+			([DateId], [PageId], [ContentItemId], [PortalId])
+	END
+GO
+
+/********************************************************
+ * Add Column ContentItemId to Analytics_Fact_Sessions Table
+ ********************************************************/
+IF NOT EXISTS ( SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_NAME = N'{objectQualifier}Analytics_Fact_Sessions'
+                AND  COLUMN_NAME = N'ContentItemId' )
+    ALTER TABLE {databaseOwner}{objectQualifier}Analytics_Fact_Sessions
+        ADD ContentItemId int NOT NULL DEFAULT (-1)
+GO
+
+/********************************************************
+ * Update Index on Analytics_Fact_Sessions Table
+ ********************************************************/
+IF EXISTS (SELECT * FROM sys.indexes WHERE name = 'IX_{objectQualifier}Analytics_Fact_Sessions')
+	BEGIN
+		DROP INDEX IX_{objectQualifier}Analytics_Fact_Sessions ON {databaseOwner}{objectQualifier}Analytics_Fact_Sessions
+
+		CREATE NONCLUSTERED INDEX IX_{objectQualifier}Analytics_Fact_Sessions ON {databaseOwner}{objectQualifier}Analytics_Fact_Sessions 
+			([SessionGuid], [DateId], [PageId], [ContentItemId], [PortalId])  
+	END
+GO
+
+/********************************************************
+ * Add Column ContentItemId to Analytics_Fact_Visitors Table
+ ********************************************************/
+IF NOT EXISTS ( SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_NAME = N'{objectQualifier}Analytics_Fact_Visitors'
+                AND  COLUMN_NAME = N'ContentItemId' )
+    ALTER TABLE {databaseOwner}{objectQualifier}Analytics_Fact_Visitors
+        ADD ContentItemId int NOT NULL DEFAULT (-1)
+GO
+
+/********************************************************
+ * Update Index on Analytics_Fact_Visitors Table
+ ********************************************************/
+IF EXISTS (SELECT * FROM sys.indexes WHERE name = 'IX_{objectQualifier}Analytics_Fact_Visitors')
+	BEGIN
+		DROP INDEX IX_{objectQualifier}Analytics_Fact_Visitors ON {databaseOwner}{objectQualifier}Analytics_Fact_Visitors
+
+		CREATE NONCLUSTERED INDEX IX_{objectQualifier}Analytics_Fact_Visitors ON {databaseOwner}{objectQualifier}Analytics_Fact_Visitors 
+			([VisitorGuid], [DateId], [PageId], [ContentItemId], [PortalId]) INCLUDE ([PageViews],[TimeOnPage])  
+	END
+GO
+
+/********************************************************
+ * Add Column ContentItemId to Analytics_Fact_Users Table
+ ********************************************************/
+IF NOT EXISTS ( SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_NAME = N'{objectQualifier}Analytics_Fact_Users'
+                AND  COLUMN_NAME = N'ContentItemId' )
+    ALTER TABLE {databaseOwner}{objectQualifier}Analytics_Fact_Users
+        ADD ContentItemId int NOT NULL DEFAULT (-1)
+GO
+
+/********************************************************
+ * Update Index on Analytics_Fact_Users Table
+ ********************************************************/
+IF EXISTS (SELECT * FROM sys.indexes WHERE name = 'IX_{objectQualifier}Analytics_Fact_Users')
+	BEGIN
+		DROP INDEX IX_{objectQualifier}Analytics_Fact_Users ON {databaseOwner}{objectQualifier}Analytics_Fact_Users
+
+		CREATE NONCLUSTERED INDEX IX_{objectQualifier}Analytics_Fact_Users ON {databaseOwner}{objectQualifier}Analytics_Fact_Users 
+			([UserId], [DateId], [PageId], [ContentItemId], [PortalId]) 
+	END
+GO
+
+/********************************************************
+ * Add Column ContentItemId to Analytics_EventData Table
+ ********************************************************/
+IF NOT EXISTS ( SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_NAME = N'{objectQualifier}Analytics_EventData'
+                AND  COLUMN_NAME = N'ContentItemId' )
+    ALTER TABLE {databaseOwner}{objectQualifier}Analytics_EventData
+        ADD ContentItemId int NOT NULL DEFAULT (-1)
+GO
+
+/********************************************************
+ * Add Column DateId to Analytics_EventData Table
+ ********************************************************/
+IF NOT EXISTS ( SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_NAME = N'{objectQualifier}Analytics_EventData'
+                AND  COLUMN_NAME = N'DateId' )
+    ALTER TABLE {databaseOwner}{objectQualifier}Analytics_EventData
+        ADD DateId int NOT NULL DEFAULT (-1)
+GO
+
+/********************************************************
+ * Add Column ContentItemId to Analytics_Fact_Conversions Table
+ ********************************************************/
+IF NOT EXISTS ( SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_NAME = N'{objectQualifier}Analytics_Fact_Conversions'
+                AND  COLUMN_NAME = N'ContentItemId' )
+    ALTER TABLE {databaseOwner}{objectQualifier}Analytics_Fact_Conversions
+        ADD ContentItemId int NOT NULL DEFAULT (-1)
+GO
+
+/********************************************************
+ * Add Column ContentItemId to Analytics_Fact_LinkClicked Table
+ ********************************************************/
+IF NOT EXISTS ( SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_NAME = N'{objectQualifier}Analytics_Fact_LinkClicked'
+                AND  COLUMN_NAME = N'ContentItemId' )
+    ALTER TABLE {databaseOwner}{objectQualifier}Analytics_Fact_LinkClicked
+        ADD ContentItemId int NOT NULL DEFAULT (-1)
+GO
+
+/********************************************************
+ * Create new Index on Analytics_Fact_Conversions Table
+ ********************************************************/
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'IX_{objectQualifier}Analytics_Fact_Conversions')
+	BEGIN
+		CREATE NONCLUSTERED INDEX IX_{objectQualifier}Analytics_Fact_Conversions ON {databaseOwner}{objectQualifier}Analytics_Fact_Conversions 
+			([DateId], [PageId], [ContentItemId], [PortalId], [EventName], [EventValue])
+	END
+GO
+
+/********************************************************
+ * Create new Index on Analytics_Fact_LinkClicked Table
+ ********************************************************/
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'IX_{objectQualifier}Analytics_Fact_LinkClicked')
+	BEGIN
+		CREATE NONCLUSTERED INDEX IX_{objectQualifier}Analytics_Fact_LinkClicked ON {databaseOwner}{objectQualifier}Analytics_Fact_LinkClicked 
+			([DateId], [PageId], [ContentItemId], [PortalId], [UserId], [VisitorId], [Link])
+	END
+GO
+
+/********************************************************
+ * PROCEDURE: Analytics_LogPageView
+ ********************************************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_LogPageView]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Analytics_LogPageView]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Analytics_LogPageView]
+	@DateId				INT,
+	@VisitorGuid		UNIQUEIDENTIFIER,
+	@SessionGuid		UNIQUEIDENTIFIER,
+	@PortalId			INT,
+	@TabId				INT,
+	@UserId				INT,
+	@Device				INT,
+	@OperatingSystem	NVARCHAR(200),
+	@Channel			INT,
+	@ReferrerHost		NVARCHAR(200),
+	@ReferrerDetail		NVARCHAR(200),
+	@ReferrerPageId		INT,
+	@ExitPage			NVARCHAR(200),
+	@TotalSeconds		INT,
+	@UserAgent			NVARCHAR(200),
+	@PageLanguage		NVARCHAR(10),
+	@IPAddress			NVARCHAR(50),
+	@UrlQuery			NVARCHAR(200),
+	@ContentItemId		INT,
+	@ContentItemReferrerId		INT
+
+AS
+BEGIN
+	INSERT INTO {objectQualifier}Analytics_PageViews (
+		DateId,
+		VisitorGuid,
+		SessionGuid,
+		PortalId,
+		TabId,
+		UserId,
+		Device,
+		OperatingSystem,
+		Channel,
+		ReferrerHost,
+		ReferrerDetail,
+		ReferrerPageId,
+		ExitPage,
+		TotalSeconds,
+		UserAgent,
+		PageLanguage,
+		IPAddress,
+		UrlQuery,
+		ContentItemId,
+		ContentItemReferrerId,
+		CreatedOnDate
+	)
+	VALUES (
+		@DateId,
+		@VisitorGuid,
+		@SessionGuid,
+		@PortalId,
+		@TabId,
+		@UserId,
+		@Device,
+		@OperatingSystem,
+		@Channel,
+		@ReferrerHost,
+		@ReferrerDetail,
+		@ReferrerPageId,
+		@ExitPage,
+		@TotalSeconds,
+		@UserAgent,
+		@PageLanguage,
+		@IPAddress,
+		@UrlQuery,
+		@ContentItemId,
+		@ContentItemReferrerId,
+		getutcdate()
+	)END
+GO
+
+/********************************************************
+ * PROCEDURE: Analytics_ProcessPageViews
+ ********************************************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_ProcessPageViews]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Analytics_ProcessPageViews]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Analytics_ProcessPageViews]
+	@FirstPageId		INT,
+	@BatchSize			INT
+AS
+BEGIN
+	DECLARE @LastPageId BIGINT
+	--Find LastPageId based on batch size
+	;WITH PageViews AS
+	(
+	SELECT TOP (@BatchSize) PageViewId FROM {databaseOwner}{objectQualifier}Analytics_PageViews WHERE PageViewId > @FirstPageId ORDER BY PageViewId
+	)
+	SELECT @LastPageId = MAX(PageViewId) FROM PageViews
+	IF @LastPageId IS NULL
+	BEGIN
+		SELECT @FirstPageId
+		RETURN
+	END
+	SELECT @LastPageId
+
+	--Process Devices
+	;WITH Source as (
+		SELECT DateId, PortalId, TabId, ContentItemId, Device, OperatingSystem, COUNT(*) AS PageViews
+		FROM {databaseOwner}{objectQualifier}Analytics_PageViews WITH (NOLOCK)
+		WHERE PageviewId > @FirstPageId AND PageViewId <=  @LastPageId
+		GROUP BY DateId, PortalId, TabId, ContentItemId, Device, OperatingSystem
+	) 
+	MERGE {databaseOwner}{objectQualifier}Analytics_Fact_Devices AS f
+	USING Source AS s
+		ON (f.DateId   = s.DateId 
+		AND f.PortalId = s.PortalId
+		AND f.PageId    = s.TabId
+		AND f.ContentItemId =  s.ContentItemId
+		AND f.Device   = s.Device
+		AND f.OperatingSystem = s.OperatingSystem) 
+	WHEN NOT MATCHED BY TARGET 
+		THEN INSERT(DateId, PortalId, PageId, ContentItemId, Device, OperatingSystem, PageViews) 
+			VALUES(s.DateId, s.PortalId, s.TabId, s.ContentItemId, s.Device, s.OperatingSystem, s.PageViews)
+	WHEN MATCHED 
+		THEN UPDATE SET f.PageViews = f.PageViews + s.PageViews;
+
+	--Process PageViews
+	;WITH Source as (
+		SELECT pv.DateId, pv.PortalId, pv.TabId, pv.ContentItemId, t.TabName, COUNT(*) AS PageViews, SUM(TotalSeconds) AS TimeOnPage
+		FROM {databaseOwner}{objectQualifier}Analytics_PageViews pv WITH (NOLOCK)
+		INNER JOIN {databaseOwner}{objectQualifier}Tabs t WITH (NOLOCK)
+			ON pv.TabId = t.TabId
+		WHERE PageviewId > @FirstPageId AND PageViewId <=  @LastPageId
+		GROUP BY DateId, pv.PortalId, pv.TabId, pv.ContentItemId, t.TabName
+	) 
+	MERGE {databaseOwner}{objectQualifier}Analytics_Fact_PageViews AS f
+	USING Source AS s
+		ON (f.DateId   = s.DateId 
+		AND f.PortalId = s.PortalId
+		AND f.PageId    = s.TabId
+		AND f.ContentItemId = s.ContentItemId) 
+	WHEN NOT MATCHED BY TARGET 
+		THEN INSERT(DateId, PortalId, PageId, ContentItemId, PageName, PageViews, TimeOnPage) 
+			VALUES(s.DateId, s.PortalId, s.TabId, s.ContentItemId, s.TabName ,s.PageViews, s.TimeOnPage)
+	WHEN MATCHED
+		THEN UPDATE SET f.PageViews = f.PageViews + s.PageViews,
+						f.TimeOnPage = f.TimeOnPage + s.TimeOnPage;
+
+	--Process Sessions
+	;WITH Source as (
+		SELECT pv.DateId, pv.PortalId, pv.TabId, pv.ContentItemId, pv.SessionGuid, COUNT(*) AS PageViews, SUM(TotalSeconds) AS TimeOnPage
+		FROM {databaseOwner}{objectQualifier}Analytics_PageViews pv WITH (NOLOCK)
+		WHERE PageviewId > @FirstPageId AND PageViewId <=  @LastPageId
+		GROUP BY DateId, pv.PortalId, pv.TabId, pv.ContentItemId, pv.SessionGuid
+	) 
+	MERGE {databaseOwner}{objectQualifier}Analytics_Fact_Sessions AS f
+	USING Source AS s
+		ON (f.DateId   = s.DateId 
+		AND f.PortalId = s.PortalId
+		AND f.PageId    = s.TabId
+		AND f.ContentItemId = s.ContentItemId
+		AND f.SessionGuid = s.SessionGuid) 
+	WHEN NOT MATCHED BY TARGET 
+		THEN INSERT(DateId, PortalId, PageId, ContentItemId, SessionGuid, PageViews, TimeOnPage) 
+			VALUES(s.DateId, s.PortalId, s.TabId, s.ContentItemId, s.SessionGuid ,s.PageViews, s.TimeOnPage)
+	WHEN MATCHED
+		THEN UPDATE SET f.PageViews = f.PageViews + s.PageViews,
+						f.TimeOnPage = f.TimeOnPage + s.TimeOnPage;
+
+	--Process Visitors
+	;WITH Source as (
+		SELECT pv.DateId, pv.PortalId, pv.TabId, pv.ContentItemId, pv.VisitorGuid, COUNT(*) AS PageViews, SUM(TotalSeconds) AS TimeOnPage
+		FROM {databaseOwner}{objectQualifier}Analytics_PageViews pv WITH (NOLOCK)
+		WHERE PageviewId > @FirstPageId AND PageViewId <=  @LastPageId
+		GROUP BY DateId, pv.PortalId, pv.TabId, pv.ContentItemId, pv.VisitorGuid
+	) 
+	MERGE {databaseOwner}{objectQualifier}Analytics_Fact_Visitors AS f
+	USING Source AS s
+		ON (f.DateId   = s.DateId 
+		AND f.PortalId = s.PortalId
+		AND f.PageId    = s.TabId
+		AND f.ContentItemId = s.ContentItemId
+		AND f.VisitorGuid = s.VisitorGuid) 
+	WHEN NOT MATCHED BY TARGET 
+		THEN INSERT(DateId, PortalId, PageId, ContentItemId, VisitorGuid, PageViews, TimeOnPage) 
+			VALUES(s.DateId, s.PortalId, s.TabId, s.ContentItemId, s.VisitorGuid ,s.PageViews, s.TimeOnPage)
+	WHEN MATCHED
+		THEN UPDATE SET f.PageViews = f.PageViews + s.PageViews,
+						f.TimeOnPage = f.TimeOnPage + s.TimeOnPage;
+
+	--Process Users
+	;WITH Source as (
+		SELECT pv.DateId, pv.PortalId, pv.TabId, pv.ContentItemId, pv.UserId, COUNT(*) AS PageViews, SUM(TotalSeconds) AS TimeOnPage
+		FROM {databaseOwner}{objectQualifier}Analytics_PageViews pv WITH (NOLOCK)
+		WHERE PageviewId > @FirstPageId AND PageViewId <=  @LastPageId
+		AND UserId > 0
+		GROUP BY DateId, pv.PortalId, pv.TabId, pv.ContentItemId, pv.UserId
+	) 
+	MERGE {databaseOwner}{objectQualifier}Analytics_Fact_Users AS f
+	USING Source AS s
+		ON (f.DateId   = s.DateId 
+		AND f.PortalId = s.PortalId
+		AND f.PageId   = s.TabId
+		AND f.ContentItemId = s.ContentItemId
+		AND f.UserId   = s.UserId) 
+	WHEN NOT MATCHED BY TARGET 
+		THEN INSERT(DateId, PortalId, PageId, ContentItemId, UserId, PageViews, TimeOnPage) 
+			VALUES(s.DateId, s.PortalId, s.TabId, s.ContentItemId, s.UserId ,s.PageViews, s.TimeOnPage)
+	WHEN MATCHED
+		THEN UPDATE SET f.PageViews = f.PageViews + s.PageViews,
+						f.TimeOnPage = f.TimeOnPage + s.TimeOnPage;
+
+	--Process Referrers 
+	;WITH Source as (
+		SELECT DateId, PortalId, TabId, ContentItemId, Channel, ReferrerHost, ReferrerDetail, 
+			   ReferrerPageId, ContentItemReferrerId, COUNT(*) AS PageViews
+		FROM {databaseOwner}{objectQualifier}Analytics_PageViews WITH (NOLOCK)
+		WHERE PageviewId > @FirstPageId AND PageViewId <=  @LastPageId
+		AND ((Channel > -1 OR ReferrerPageId > 0) AND (ReferrerPageId <> TabId OR ContentItemReferrerId <> ContentItemId))
+		GROUP BY DateId, PortalId, TabId, ContentItemId, Channel, ReferrerHost, ReferrerDetail, ReferrerPageId, ContentItemReferrerId
+	) 
+	MERGE {databaseOwner}{objectQualifier}Analytics_Fact_Referrers AS f
+	USING Source AS s
+		ON (f.DateId   = s.DateId 
+		AND f.PortalId = s.PortalId
+		AND f.PageId   = s.TabId
+		AND f.ContentItemId = s.ContentItemId
+		AND f.ReferrerDetail = s.ReferrerDetail) 
+	WHEN NOT MATCHED BY TARGET 
+		THEN INSERT(DateId, PortalId, PageId, ContentItemId, Channel, ReferrerHost, ReferrerDetail, ReferrerPageId, ContentItemReferrerId, PageViews) 
+			VALUES(s.DateId, s.PortalId, s.TabId, s.ContentItemId, s.Channel, s.ReferrerHost, s.ReferrerDetail, s.ReferrerPageId, s.ContentItemReferrerId, s.PageViews)
+	WHEN MATCHED
+		THEN UPDATE SET f.PageViews = f.PageViews + s.PageViews;
+
+	--Process Exit Pages 
+	;WITH Source as (
+		SELECT DateId, PortalId, ReferrerPageId, ContentItemId, ExitPage, TabId, ContentItemReferrerId, COUNT(*) AS PageViews
+		FROM {databaseOwner}{objectQualifier}Analytics_PageViews WITH (NOLOCK)
+		WHERE PageviewId > @FirstPageId AND PageViewId <=  @LastPageId
+		AND (Channel = -1 AND (ReferrerPageId <> TabId OR ContentItemReferrerId <> ContentItemId))
+		GROUP BY DateId, PortalId, ReferrerPageId, ContentItemId, ExitPage, TabId, ContentItemReferrerId
+	) 
+	MERGE {databaseOwner}{objectQualifier}Analytics_Fact_ExitPages AS f
+	USING Source AS s
+		ON (f.DateId   = s.DateId 
+		AND f.PortalId = s.PortalId
+		AND f.PageId   = s.ReferrerPageId
+		AND f.ContentItemId = s.ContentItemId
+		AND f.ExitPage = s.ExitPage) 
+	WHEN NOT MATCHED BY TARGET 
+		THEN INSERT(DateId, PortalId, PageId, ContentItemId, ExitPage, ExitPageId, ExitPageContentItemId, PageViews) 
+			VALUES(s.DateId, s.PortalId, s.ReferrerPageId, s.ContentItemReferrerId, s.ExitPage, s.TabId, s.ContentItemId, s.PageViews)
+	WHEN MATCHED
+		THEN UPDATE SET f.PageViews = f.PageViews + s.PageViews;
+
+	--Process Mechanics for Viewers 
+	;WITH Source as (
+		SELECT VisitorGuid, PortalId
+		FROM {databaseOwner}{objectQualifier}Analytics_PageViews WITH (NOLOCK)
+		WHERE PageviewId > @FirstPageId AND PageViewId <=  @LastPageId
+		AND UserId < 1
+		GROUP BY VisitorGuid, PortalId
+	) 
+	MERGE {databaseOwner}{objectQualifier}Mechanics_VisitorScoring AS f
+	USING Source AS s
+		ON (f.VisitorId   = s.VisitorGuid 
+		AND f.PortalId = s.PortalId) 
+	WHEN NOT MATCHED BY TARGET 
+		THEN INSERT(VisitorId, PortalId, ExperiencePoints, ReputationPoints) 
+			VALUES(s.VisitorGuid, s.PortalId, 0, 0)
+	WHEN MATCHED
+		THEN UPDATE SET f.LastModifiedOnDate = getutcdate();
+
+END
+GO
+
+/********************************************************
+ * PROCEDURE: Analytics_MigratePageViews
+ ********************************************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_MigratePageViews]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Analytics_MigratePageViews]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Analytics_MigratePageViews]
+	@FirstPageId		INT,
+	@BatchSize			INT
+AS
+BEGIN
+	DECLARE @LastPageId BIGINT
+	--Find LastPageId based on batch size
+	;WITH PageViews AS
+	(
+	SELECT TOP (@BatchSize) PageViewId FROM {databaseOwner}{objectQualifier}Analytics_PageViews WHERE PageViewId > @FirstPageId ORDER BY PageViewId
+	)
+	SELECT @LastPageId = MAX(PageViewId) FROM PageViews
+	IF @LastPageId IS NULL
+	BEGIN
+		SELECT @FirstPageId
+		RETURN
+	END
+	SELECT @LastPageId
+
+	--Update ContentItemId. 
+	--Note we want to find CID fromUrlQuery, e.g. find 334 from ?TabId=68&cid=334&language=en-US
+	--5 is the lenght of &cid=
+	;WITH Source as (
+		SELECT PageViewId, 
+		SUBSTRING(UrlQuery, PATINDEX('%&cid=%', UrlQuery) + 5, CHARINDEX('&', UrlQuery, PATINDEX('%&cid=%', UrlQuery) + 5) - PATINDEX('%&cid=%', UrlQuery) - 5) AS ContentItemId
+		FROM {databaseOwner}{objectQualifier}Analytics_PageViews WITH (NOLOCK)
+		WHERE PageviewId > @FirstPageId AND PageViewId <=  @LastPageId
+		AND ContentItemId = -1
+		AND UrlQuery LIKE '%&cid=%'
+	) 
+	MERGE {databaseOwner}{objectQualifier}Analytics_PageViews AS pv
+	USING Source AS s
+		ON (pv.PageViewId = s.PageViewId) 
+	WHEN MATCHED 
+		THEN UPDATE SET pv.ContentItemId = s.ContentItemId;
+
+END
+GO
+
+/********************************************************
+ * PROCEDURE: Analytics_ProcessEventData
+ ********************************************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_ProcessEventData]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Analytics_ProcessEventData]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Analytics_ProcessEventData]
+	@FirstEventId		INT,
+	@BatchSize			INT
+AS
+BEGIN
+	DECLARE @LastEventId BIGINT
+	--Find LastEventId based on batch size
+	;WITH Events AS
+	(
+	SELECT top (@BatchSize) EventDataId from {databaseOwner}{objectQualifier}Analytics_EventData where EventDataId > @FirstEventId
+	)
+	SELECT @LastEventId = MAX(EventDataId) from Events
+	IF @LastEventId IS NULL
+	BEGIN
+		SELECT @FirstEventId
+		RETURN
+	END
+	SELECT @LastEventId
+
+	--Process Conversion
+	;WITH Source as (
+		SELECT DateId, PortalId, TabId, ContentItemId, EventName, EventValue, COUNT(*) AS EventCount
+		FROM {databaseOwner}{objectQualifier}Analytics_EventData WITH (NOLOCK)
+		WHERE EventDataId > @FirstEventId AND EventDataId <=  @LastEventId
+		GROUP BY DateId, PortalId, TabId, ContentItemId, EventName, EventValue
+	) 
+	MERGE {databaseOwner}{objectQualifier}Analytics_Fact_Conversions AS f
+	USING Source AS s
+		ON (f.DateId   = s.DateId 
+		AND f.PortalId = s.PortalId
+		AND f.PageId    = s.TabId
+		AND f.ContentItemId =  s.ContentItemId
+		AND f.EventName   = s.EventName
+		AND f.EventValue = s.EventValue) 
+	WHEN NOT MATCHED BY TARGET 
+		THEN INSERT(DateId, PortalId, PageId, ContentItemId, EventName, EventValue, EventCount) 
+			VALUES(s.DateId, s.PortalId, s.TabId, s.ContentItemId, s.EventName, s.EventValue, s.EventCount)
+	WHEN MATCHED 
+		THEN UPDATE SET f.EventCount = f.EventCount + s.EventCount;
+
+	--Process LinkClick
+	;WITH Source as (
+		SELECT DateId, PortalId, TabId, UserId, VisitorId, ContentItemId, EventName, EventValue, COUNT(*) AS EventCount
+		FROM {databaseOwner}{objectQualifier}Analytics_EventData WITH (NOLOCK)
+		WHERE EventDataId > @FirstEventId AND EventDataId <=  @LastEventId
+		AND EventName = 'LinkClicked'
+		GROUP BY DateId, PortalId, TabId, UserId, VisitorId, ContentItemId, EventName, EventValue
+	) 
+	MERGE {databaseOwner}{objectQualifier}Analytics_Fact_LinkClicked AS f
+	USING Source AS s
+		ON (f.DateId   = s.DateId 
+		AND f.PortalId = s.PortalId
+		AND f.PageId    = s.TabId
+		AND f.ContentItemId =  s.ContentItemId
+		AND f.UserId =  s.UserId
+		AND f.VisitorId =  s.VisitorId
+		AND f.Link   = s.EventValue)
+	WHEN NOT MATCHED BY TARGET 
+		THEN INSERT(DateId, PortalId, PageId, UserId, VisitorId, ContentItemId, Link, LinkCount) 
+			VALUES(s.DateId, s.PortalId, s.TabId, s.UserId, s.VisitorId, s.ContentItemId, s.EventValue, s.EventCount)
+	WHEN MATCHED 
+		THEN UPDATE SET f.LinkCount = f.LinkCount + s.EventCount;
+
+END
+GO

@@ -1,0 +1,70 @@
+﻿/********************************************************
+ * SPROC: Dashboard_GetUserActivitiesHeatMap
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Dashboard_GetUserActivitiesHeatMap]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Dashboard_GetUserActivitiesHeatMap] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Dashboard_GetUserActivitiesHeatMap]	
+	@PortalId int,
+	@UserId int
+AS
+	BEGIN
+		SELECT 
+			COUNT([UserId]) AS [Count], 
+			DATEADD(DAY, 0, DATEDIFF(DAY,0, [CreatedOnDate])) AS [Date]
+		FROM 
+			{databaseOwner}{objectQualifier}Mechanics_UserScoringLog WITH (NOLOCK) 
+		WHERE [UserId] = @UserId
+		AND [PortalId] = @PortalId
+		AND [CreatedOnDate] > DATEADD(YYYY, -1, GETUTCDATE())
+		AND [ScoringActionDefId] != 1
+		AND [ReputationPoints] != 0
+		GROUP BY DATEADD(DAY, 0, DATEDIFF(DAY, 0, [CreatedOnDate]))
+	END
+GO
+
+/********************************************************
+ * SPROC: Dashboard_GetUseActivitieForDay
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Dashboard_GetUseActivitieForDay]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Dashboard_GetUseActivitieForDay] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Dashboard_GetUseActivitieForDay]	
+	@PortalId INT,
+	@UserId INT,
+	@Day DATETIME
+AS
+	BEGIN
+		DECLARE @NextDay DATETIME
+		DECLARE @CurrentDay DATETIME
+
+		SET @CurrentDay =  DATEADD(DAY,0, DATEDIFF(DAY,0, @Day))
+		SET @NextDay = DATEADD(DAY,1, DATEDIFF(DAY,0, @Day))
+
+			SELECT TOP 100 
+				USL.ContentItemId,
+				"ContentTitle" = CASE WHEN CIMD.MetaDataValue <> '' THEN CIMD.MetaDataValue WHEN CI.Content IS NOT NULL THEN CI.Content ELSE SAD.ActionName END,
+				TabId,
+				ContentKey,
+				ISNULL(DM.FriendlyName, PK.FriendlyName) AS Area,
+				ReputationPoints,
+				SAD.ScoringActionDefId,
+				USL.CreatedOnDate
+			FROM 
+				{databaseOwner}{objectQualifier}Mechanics_UserScoringLog USL WITH (NOLOCK) 
+				INNER JOIN {databaseOwner}{objectQualifier}Mechanics_ScoringActionDefinition SAD WITH (NOLOCK) ON USL.ScoringActionDefId = SAD.ScoringActionDefId
+				LEFT OUTER JOIN {databaseOwner}{objectQualifier}DesktopModules DM WITH (NOLOCK) ON SAD.DesktopModuleID = DM.DesktopModuleID
+				LEFT OUTER JOIN {databaseOwner}{objectQualifier}Packages PK WITH (NOLOCK) ON SAD.PackageId = Pk.PackageID
+				LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems CI WITH (NOLOCK) ON USL.ContentItemId = CI.ContentItemId
+				LEFT OUTER JOIN	{databaseOwner}{objectQualifier}ContentItems_MetaData CIMD WITH (NOLOCK) ON CIMD.ContentItemID = USL.ContentItemId AND CIMD.MetaDataID = (SELECT MetaDataID FROM {databaseOwner}{objectQualifier}MetaData WITH (NOLOCK) WHERE MetaDataName = 'Title')
+			WHERE [UserId] = @UserId
+			AND USL.[PortalId] = @PortalId
+			AND [ActionType] != 1
+			AND [ReputationPoints] != 0
+			AND USL.[CreatedOnDate] >= @CurrentDay
+			AND USL.[CreatedOnDate] < @NextDay
+			ORDER BY CreatedOnDate DESC
+	END
+GO

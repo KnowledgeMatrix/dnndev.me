@@ -1,0 +1,259 @@
+﻿ALTER TABLE {databaseOwner}{objectQualifier}ContentItem_Slug DROP 
+	CONSTRAINT FK_{objectQualifier}ContentItem_Slug_ContentItems
+GO
+
+ALTER TABLE {databaseOwner}{objectQualifier}ContentItem_Slug
+	ALTER COLUMN ContentItemId INT NULL
+GO
+
+ALTER TABLE {databaseOwner}{objectQualifier}ContentItem_Slug ADD CONSTRAINT 
+	FK_{objectQualifier}ContentItem_Slug_ContentItems FOREIGN KEY (ContentItemId) 
+		REFERENCES {databaseOwner}{objectQualifier}ContentItems (ContentItemId) 
+			ON DELETE SET NULL
+GO
+
+IF object_id(N'{databaseOwner}{objectQualifier}ContentItemUrlProvider_ResolveSlug', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}ContentItemUrlProvider_ResolveSlug
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}ContentItemUrlProvider_ResolveSlug (
+	@TabId INT,
+	@Slug NVARCHAR(255)
+) AS
+BEGIN
+	SELECT s.ContentItemId, 
+		CASE WHEN s.ContentItemId IS NULL THEN 404 ELSE s.HttpStatus END HttpStatus, 
+		r.Slug RedirectTo
+	FROM {databaseOwner}{objectQualifier}ContentItem_Slug s WITH (NOLOCK)
+		LEFT JOIN {databaseOwner}{objectQualifier}ContentItem_Slug r 
+			ON s.TabId = r.TabId 
+				AND s.ContentItemId = r.ContentItemId 
+				AND s.HttpStatus = 301 AND r.HttpStatus = 200
+	WHERE s.TabId = @TabId 
+	  AND s.Slug = @Slug
+END
+GO
+
+IF object_id(N'{databaseOwner}{objectQualifier}ContentItemUrlProvider_AddSlug', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}ContentItemUrlProvider_AddSlug
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}ContentItemUrlProvider_AddSlug (
+	@TabId INT,
+	@ContentItemId INT,
+	@Slug NVARCHAR(255),
+	@Separator NVARCHAR(1)
+) AS
+BEGIN
+	DECLARE @OrigSlug NVARCHAR(255) = @Slug
+
+	DECLARE @ReserverdWordList NVARCHAR(MAX)
+
+	SELECT @ReserverdWordList = s.SettingValue
+	FROM {databaseOwner}{objectQualifier}ExtensionUrlProviders p
+		JOIN {databaseOwner}{objectQualifier}ExtensionUrlProviderSetting s ON p.ExtensionUrlProviderID = s.ExtensionUrlProviderID
+	WHERE p.ProviderName = 'Evoq Content Item Url Extension Provider'
+		AND s.SettingName = 'ReservedWordList'
+
+	DECLARE @ReservedWords AS TABLE (Word NVARCHAR(MAX))
+	INSERT INTO @ReservedWords (Word) SELECT val FROM {databaseOwner}{objectQualifier}CsvSplit(@ReserverdWordList, ',')
+		UNION SELECT 'module' UNION SELECT 'ctl' UNION SELECT 'moduleid' UNION SELECT 'tabid' UNION SELECT 'groupid' UNION SELECT 'skinSrc'
+
+	DECLARE @i INT = 1
+	WHILE EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}ContentItem_Slug WITH (NOLOCK)
+		WHERE TabId = @TabId
+		  AND (ContentItemId IS NULL OR ContentItemId <> @ContentItemId)
+		  AND Slug = @Slug)
+		OR @Slug IN (SELECT Word FROM @ReservedWords)
+	BEGIN			     
+		SET @Slug = @OrigSlug + @Separator + CONVERT(NVARCHAR(5), @i)
+		SET @i = @i + 1
+	END
+
+	UPDATE {databaseOwner}{objectQualifier}ContentItem_Slug
+	SET HttpStatus = 301
+	WHERE TabId = @TabId AND ContentItemId = @ContentItemId 
+	  AND Slug <> @Slug 
+	  AND HttpStatus = 200
+
+	UPDATE {databaseOwner}{objectQualifier}ContentItem_Slug
+	SET HttpStatus = 200
+	WHERE TabId = @TabId AND ContentItemId = @ContentItemId 
+	  AND Slug = @Slug
+
+	IF @@ROWCOUNT = 0 
+	BEGIN
+		INSERT {databaseOwner}{objectQualifier}ContentItem_Slug(TabId, ContentItemId, HttpStatus, Slug)
+		VALUES (@TabId, @ContentItemId, 200, @Slug)
+	END
+
+	SELECT @Slug
+END
+GO
+
+
+IF object_id(N'{databaseOwner}{objectQualifier}ContentItemUrlProvider_GetSlug', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}ContentItemUrlProvider_GetSlug
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}ContentItemUrlProvider_GetSlug (
+	@TabId INT,
+	@ContentItemId INT
+) AS
+BEGIN
+	SELECT Slug
+	FROM {databaseOwner}{objectQualifier}ContentItem_Slug WITH (NOLOCK)
+	WHERE 
+		TabId = @TabId AND 
+		ContentItemId = @ContentItemId AND 
+		HttpStatus = 200
+END
+GO
+
+/********************************************************
+ * SPROC: Personabar_GetUsersByUserIds
+ ********************************************************/
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Personabar_GetUsersByUserIds') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Personabar_GetUsersByUserIds
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Personabar_GetUsersByUserIds (
+	@PortalId INT,
+	@UserIds nvarchar(max) -- comma separated list of UserIds
+) AS
+BEGIN
+		SELECT DISTINCT U.UserID, U.Username, U.DisplayName, U.Email, U.CreatedOnDate
+		FROM {databaseOwner}{objectQualifier}Users U WITH (NOLOCK)
+		INNER JOIN (Select RowValue FROM {databaseOwner}{objectQualifier}ConvertListToTable(',',@UserIds)) UserIds
+			ON U.UserID = UserIds.RowValue
+		INNER JOIN {databaseOwner}{objectQualifier}UserPortals UP WITH (NOLOCK)
+			ON U.UserID = UP.UserId
+		WHERE UP.PortalId = @PortalId
+END
+GO
+
+/********************************************************
+ * CONTENT-5218: Update FolderName in Packages table upon upgrade
+ ********************************************************/
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/DigitalAssets' WHERE Name = 'DigitalAssetsManagementPro' AND FolderName = ''
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/DNNCorp/ContentPersonalization' WHERE Name = 'DotNetNuke.Enterprise.ContentPersonalization' AND FolderName = ''
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/DNNCorp' WHERE Name = 'DotNetNuke.Professional' AND FolderName = ''
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/DnnCorp/Connectors/Box' WHERE Name = 'Evoq.BoxConnector' AND FolderName = ''
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/DNNCorp/EvoqContentLibrary' WHERE Name = 'Evoq.Content.Library' AND FolderName = ''
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/DnnCorp/Connectors/Disqus' WHERE Name = 'Evoq.DisqusConnector' AND FolderName = ''
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/DNNCorp/Connectors/Dropbox' WHERE Name = 'Evoq.DropboxConnector' AND FolderName = ''
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/DNNCorp/Connectors/Zendesk' WHERE Name = 'Evoq.Engage.ZendeskConnector' AND FolderName = ''
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/DNNCorp/Connectors/GoogleAnalytics' WHERE Name = 'Evoq.GoogleAnalyticsConnector' AND FolderName = ''
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/DNNCorp/EvoqLibrary' WHERE Name = 'Evoq.Library' AND FolderName = ''
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/DnnCorp/Connectors/Marketo' WHERE Name = 'Evoq.MarketoConnector' AND FolderName = ''
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/DnnCorp/Connectors/Facebook' WHERE Name = 'Evoq.Social.FacebookConnector' AND FolderName = ''
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/DnnCorp/Connectors/LinkedIn' WHERE Name = 'Evoq.Social.LinkedInConnector' AND FolderName = ''
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/DnnCorp/Connectors/Twitter' WHERE Name = 'Evoq.Social.TwitterConnector' AND FolderName = ''
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/Admin/UrlManagement' WHERE Name = 'UrlManagement' AND FolderName = ''
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/DNNCorp/RevisionsAPI' WHERE Name = 'Evoq.Revisions' AND FolderName = ''
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/DNNCorp/Analytics' WHERE Name = 'Evoq.Social.Analytics' AND FolderName = ''
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/DNNCorp/Mechanics' WHERE Name = 'Evoq.Social.Mechanics' AND FolderName = ''
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/DNNCorp/Revisions' WHERE Name = 'Evoq.Social.Revisions' AND FolderName = ''
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/DNNCorp/SocialLibrary' WHERE Name = 'Evoq.Social.SocialLibrary' AND FolderName = ''
+UPDATE {databaseOwner}{objectQualifier}Packages SET FolderName = 'DesktopModules/DNNCorp/SocialSolution' WHERE Name = 'Evoq.Social.SocialSolution' AND FolderName = ''
+GO
+
+/********************************************************
+ * SPROC: PersonaBar_GetUserDetail
+ ********************************************************/
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}PersonaBar_GetUserDetail') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}PersonaBar_GetUserDetail
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}PersonaBar_GetUserDetail (
+	@PortalId INT,
+	@UserId INT
+) AS
+BEGIN
+	--Basic Details
+	SELECT UP.PortalID, U.UserID, U.Username, U.DisplayName, US.LastModifiedOnDate,
+		"IsDeleted" = CASE WHEN u.IsDeleted = 1 OR up.IsDeleted = 0 THEN 0 ELSE 1 END,
+		COALESCE(us.ContentCreatedCount, 0) AS [TotalContribution],
+		COALESCE(us.ReputationPoints, 0) AS [Reputation],	
+		COALESCE(us.ExperiencePoints, 0) AS [Experience]
+	FROM {databaseOwner}{objectQualifier}Users U WITH (NOLOCK)
+		INNER JOIN {databaseOwner}{objectQualifier}UserPortals UP WITH (NOLOCK)
+			ON U.UserID = UP.UserId
+		LEFT OUTER JOIN {databaseOwner}[{objectQualifier}Mechanics_UserScoring] US 
+			ON US.UserId = U.UserID AND UP.PortalId = US.PortalId
+	WHERE UP.PortalId = @PortalId
+		AND U.UserID = @UserID
+		AND UP.PortalId = @PortalId
+
+	--Rank
+	DECLARE @RP INT
+	SELECT @RP = US.ReputationPoints
+	FROM {databaseOwner}[{objectQualifier}Mechanics_UserScoring] US WITH (NOLOCK)
+	WHERE US.UserID = @UserID
+	AND US.PortalId = @PortalId
+		
+	IF @RP IS NOT NULL
+	BEGIN
+		SELECT @RP = COUNT(*) + 1 
+		FROM {databaseOwner}[{objectQualifier}Mechanics_UserScoring] US WITH (NOLOCK)
+		WHERE US.PortalId = @PortalId
+			AND US.ReputationPoints > @RP 
+	END
+	SELECT COALESCE(@RP, -1) As Rank
+
+	--Time on site
+	SELECT IsNull(SUM(TimeOnPage),0) AS TimeOnPage 
+		FROM {databaseOwner}[{objectQualifier}Analytics_Fact_Users]
+		WHERE UserID = @UserID
+		AND PortalId = @PortalId	
+
+	--Optimal Engagement
+	IF EXISTS(SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Get_Optimal_Score') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	BEGIN
+		DECLARE @SprocResults TABLE ([OptimalEngagementScore] DECIMAL(18,0))
+		INSERT INTO @SprocResults
+		EXEC {databaseOwner}{objectQualifier}Analytics_Get_Optimal_Score @PortalId, 'Engagement'
+
+		SELECT TOP 1 CONVERT(INT, [OptimalEngagementScore]) OptimalEngagementScore FROM @SprocResults
+	END
+	ELSE
+		SELECT 0 OptimalEngagementScore
+
+	--Engagement (available in Social only)
+	IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Users]') AND type in (N'U'))
+    BEGIN
+		SELECT TOP 1 Engagement
+		FROM {databaseOwner}[{objectQualifier}Analytics_Users]
+		WHERE UserID = @UserID
+		AND PortalId = @PortalId	
+    END
+	ELSE
+		SELECT CAST('' AS XML)
+
+	--Influence (available in Social only)
+	IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_UserInfluenceRollup]') AND type in (N'U'))
+    BEGIN
+		SELECT InfluenceYearly Influence
+		FROM {databaseOwner}{objectQualifier}Analytics_UserInfluenceRollup
+		WHERE UserID = @UserID AND PortalId = @PortalId
+    END
+	ELSE
+		SELECT -1 Influence
+
+	--User Activity
+	SELECT TOP 5 SAD.FriendlyName AS Area, USL.CreatedOnDate, SAD.ScoringActionDefId,
+	"Title" = CASE WHEN CIMD.MetaDataValue <> '' THEN CIMD.MetaDataValue ELSE CI.Content END 
+	FROM {databaseOwner}[{objectQualifier}Mechanics_UserScoringLog] USL WITH (NOLOCK)
+	INNER JOIN {databaseOwner}[{objectQualifier}vw_Mechanics_ScoringActionDefinitions] SAD
+		ON USL.ScoringActionDefId = SAD.ScoringActionDefId
+	LEFT OUTER JOIN {databaseOwner}[{objectQualifier}ContentItems] CI
+        ON USL.ContentItemId = CI.ContentItemId
+	LEFT OUTER JOIN	{databaseOwner}{objectQualifier}ContentItems_MetaData CIMD WITH (NOLOCK)
+		ON CIMD.ContentItemID = USL.ContentItemId
+		  AND CIMD.MetaDataID = (SELECT MetaDataID FROM {databaseOwner}{objectQualifier}MetaData WITH (NOLOCK) WHERE MetaDataName = 'Title')
+	WHERE USL.UserId =  @UserID
+		AND USL.PortalId = @PortalId
+		AND SAD.ActionType IN(0,2,7,11) -- Interacted = 0, Created = 2, FormedRelationship = 7, Shared = 11
+	ORDER BY USL.UserScoringLogId DESC   
+END
+GO

@@ -1,0 +1,223 @@
+/**** obj qualif checks ****/
+if '{objectQualifier}' <> ''
+BEGIN
+
+/**** 010000 ****/
+BEGIN TRY
+ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGalleryCategory]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyGalleryCategory]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyGalleryCategory]', N'{objectQualifier}EasyGalleryCategory', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyGalleryCategory', N'PK_{objectQualifier}EasyGalleryCategory', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyGallery_EasyGalleryCategory', N'FK_{objectQualifier}EasyGallery_{objectQualifier}EasyGalleryCategory', 'OBJECT'
+  END
+ END
+END TRY
+BEGIN CATCH
+END CATCH
+
+BEGIN TRY
+  IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGallery]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyGallery]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyGallery]', N'{objectQualifier}EasyGallery', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyGallery', N'PK_{objectQualifier}EasyGallery', 'OBJECT'
+  END
+ END
+ END TRY
+BEGIN CATCH
+END CATCH
+
+BEGIN TRY
+   IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyDNNThumbs]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyDNNThumbs]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyDNNThumbs]', N'{objectQualifier}EasyDNNThumbs', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyDNNThumbs', N'PK_{objectQualifier}EasyDNNThumbs', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyDNNThumbs_EasyGallery', N'FK_{objectQualifier}EasyDNNThumbs_{objectQualifier}EasyGallery', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyDNNThumbs_{objectQualifier}Modules', N'FK_{objectQualifier}EasyDNNThumbs_{objectQualifier}Modules', 'OBJECT'
+  END
+ END
+ END TRY
+BEGIN CATCH
+END CATCH
+ 
+BEGIN TRY
+   IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGalleryPictures]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyGalleryPictures]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyGalleryPictures]', N'{objectQualifier}EasyGalleryPictures', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyGalleryPictures', N'PK_{objectQualifier}EasyGalleryPictures', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyGalleryPictures_EasyGallery', N'FK_{objectQualifier}EasyGalleryPictures_{objectQualifier}EasyGallery', 'OBJECT'
+  END
+ END
+ END TRY
+BEGIN CATCH
+END CATCH
+
+BEGIN TRY
+   IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGalleryIntegration]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyGalleryIntegration]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyGalleryIntegration]', N'{objectQualifier}EasyGalleryIntegration', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyGalleryIntegration', N'PK_{objectQualifier}EasyGalleryIntegration', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyGalleryIntegration_EasyGallery', N'FK_{objectQualifier}EasyGalleryIntegration_{objectQualifier}EasyGallery', 'OBJECT'
+  END
+ END
+ END TRY
+BEGIN CATCH
+END CATCH
+/**** 010000 ****/
+
+/**** 010600 ****/
+BEGIN TRY
+ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGallerySettings]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyGallerySettings]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyGallerySettings]', N'{objectQualifier}EasyGallerySettings', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyGallerySettings', N'PK_{objectQualifier}EasyGallerySettings', 'OBJECT'
+  END
+ END
+END TRY
+BEGIN CATCH
+END CATCH
+/**** 010600 ****/
+
+
+/**** 020200 ****/
+BEGIN TRY
+ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyDNNMediaLocalization]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyDNNMediaLocalization]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyDNNMediaLocalization]', N'{objectQualifier}EasyDNNMediaLocalization', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyDNNMediaLocalization', N'PK_{objectQualifier}EasyDNNMediaLocalization', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyDNNMediaLocalization_EasyGalleryPictures', N'FK_{objectQualifier}EasyDNNMediaLocalization_{objectQualifier}EasyGalleryPictures', 'OBJECT'
+  END
+ END
+ END TRY
+BEGIN CATCH
+END CATCH
+
+BEGIN TRY
+  IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyDNNGalleryLocalization]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyDNNGalleryLocalization]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyDNNGalleryLocalization]', N'{objectQualifier}EasyDNNGalleryLocalization', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyDNNGalleryLocalization', N'PK_{objectQualifier}EasyDNNGalleryLocalization', 'OBJECT'
+    EXECUTE sp_rename N'FK_EasyDNNGalleryLocalization_EasyGallery', N'FK_{objectQualifier}EasyDNNGalleryLocalization_{objectQualifier}EasyGallery', 'OBJECT'
+  END
+ END
+ END TRY
+BEGIN CATCH
+END CATCH
+
+BEGIN TRY
+   IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyDNNCategoryLocalization]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyDNNCategoryLocalization]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyDNNCategoryLocalization]', N'{objectQualifier}EasyDNNCategoryLocalization', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyDNNCategoryLocalization', N'PK_{objectQualifier}EasyDNNCategoryLocalization', 'OBJECT'
+    EXECUTE sp_rename N'FK_EasyDNNCategoryLocalization_EasyGalleryCategory', N'FK_{objectQualifier}EasyDNNCategoryLocalization_{objectQualifier}EasyGalleryCategory', 'OBJECT'
+  END
+ END
+ END TRY
+BEGIN CATCH
+END CATCH
+ 
+/**** 020200 ****/
+
+/**** 020400 ****/
+
+BEGIN TRY
+IF EXISTS (SELECT * FROM sys.key_constraints WHERE type = 'PK' AND parent_object_id = OBJECT_ID('{databaseOwner}[{objectQualifier}EasyDNNMediaLocalization]') AND Name = 'PK_EasyDNNMediaLocalization')
+BEGIN
+ EXECUTE sp_rename N'PK_EasyDNNMediaLocalization', N'PK_{objectQualifier}EasyDNNMediaLocalization', 'OBJECT'
+END
+
+IF EXISTS (SELECT * FROM sys.key_constraints WHERE type = 'PK' AND parent_object_id = OBJECT_ID('{databaseOwner}[{objectQualifier}EasyDNNGalleryLocalization]') AND Name = 'PK_EasyDNNGalleryLocalization')
+BEGIN
+ EXECUTE sp_rename N'PK_EasyDNNGalleryLocalization', N'PK_{objectQualifier}EasyDNNGalleryLocalization', 'OBJECT'
+END
+
+IF EXISTS (SELECT * FROM sys.key_constraints WHERE type = 'PK' AND parent_object_id = OBJECT_ID('{databaseOwner}[{objectQualifier}EasyDNNCategoryLocalization]') AND Name = 'PK_EasyDNNCategoryLocalization')
+BEGIN
+ EXECUTE sp_rename N'PK_EasyDNNCategoryLocalization', N'PK_{objectQualifier}EasyDNNCategoryLocalization', 'OBJECT'
+END
+ END TRY
+BEGIN CATCH
+END CATCH
+/**** 020400 ****/
+
+
+/**** 030000 ****/
+BEGIN TRY
+ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGalleryUpload]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyGalleryUpload]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyGalleryUpload]', N'{objectQualifier}EasyGalleryUpload', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyGalleryUpload', N'PK_{objectQualifier}EasyGalleryUpload', 'OBJECT'
+  END
+ END
+  END TRY
+BEGIN CATCH
+END CATCH
+/**** 030000 ****/
+
+/**** 040100 ****/
+BEGIN TRY
+ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyDNNRotatorGalleryBridge]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.key_constraints WHERE type = 'FK' AND parent_object_id = OBJECT_ID('{databaseOwner}[{objectQualifier}EasyDNNRotatorGalleryBridge]') AND Name = 'FK_EasyDNNRotatorGallerySettings_EasyGallery')
+  BEGIN
+   EXECUTE sp_rename N'FK_EasyDNNRotatorGallerySettings_EasyGallery', N'FK_{objectQualifier}EasyDNNRotatorGallerySettings_{objectQualifier}EasyGallery', 'OBJECT'
+  END
+ END
+  END TRY
+BEGIN CATCH
+END CATCH
+/**** 040100 ****/
+
+/**** 040600 ****/
+BEGIN TRY
+ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGalleryInfo]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyGalleryInfo]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyGalleryInfo]', N'{objectQualifier}EasyGalleryInfo', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyGalleryInfoPrimary', N'PK_{objectQualifier}EasyGalleryInfoPrimary', 'OBJECT'
+  END
+ END
+   END TRY
+BEGIN CATCH
+END CATCH
+/**** 040600 ****/
+
+END
+GO
+/**** obj qualif checks ****/
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGalleryPortalSharing]') AND type in (N'U'))
+BEGIN
+	SET ANSI_NULLS ON
+	SET QUOTED_IDENTIFIER ON
+	CREATE TABLE {databaseOwner}[{objectQualifier}EasyGalleryPortalSharing](
+		[PortalIDFrom] [int] NOT NULL,
+		[PortalIDTo] [int] NOT NULL,
+		CONSTRAINT [PK_{objectQualifier}EasyGalleryPortalSharing] PRIMARY KEY CLUSTERED ([PortalIDFrom] ASC,[PortalIDTo] ASC) WITH (STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF)
+	)
+	IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_{objectQualifier}EasyGalleryPortalSharing_{objectQualifier}Portals1]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGalleryPortalSharing]'))
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryPortalSharing]  WITH CHECK ADD CONSTRAINT [FK_{objectQualifier}EasyGalleryPortalSharing_{objectQualifier}Portals1] FOREIGN KEY([PortalIDFrom]) REFERENCES {databaseOwner}{objectQualifier}Portals ([PortalID]) ON DELETE CASCADE
+
+	IF EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[FK_{objectQualifier}EasyGalleryPortalSharing_{objectQualifier}Portals1]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGalleryPortalSharing]'))
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryPortalSharing] CHECK CONSTRAINT [FK_{objectQualifier}EasyGalleryPortalSharing_{objectQualifier}Portals1]
+END

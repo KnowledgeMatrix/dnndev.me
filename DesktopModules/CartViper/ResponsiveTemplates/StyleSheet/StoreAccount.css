@@ -1,0 +1,1555 @@
+/* ==================== */
+/* Module Store Account */
+/* ==================== */
+
+
+div.StoreAccount-Header {
+	margin:0 0 15px 0;
+	padding:3px 10px;
+	background-color:#864343;
+	color:#000;
+}
+div.StoreAccount-Title {
+	float:left;
+	text-align:left;
+margin-top:2px;
+}
+span.StoreAccountParentTitle {
+	color:#fff;
+	font-weight:bold;
+	font-size:12px;
+}
+
+a.StoreAccountButton:link,
+a.StoreAccountButton:visited {
+	font:12px Verdana, Arial, Helvetica, sans-serif;
+	color:#fff;
+	font-weight:bold;
+}
+a.StoreAccountButton:hover,
+a.StoreAccountButton:active 
+{
+	font:12px Verdana, Arial, Helvetica, sans-serif;
+	color:#fff;
+	font-weight:bold;
+}
+
+span.StoreAccountSpacer {
+	color:#D2D2D2;
+}
+
+/* Customer Cart */
+
+div.StoreAccountCheckout {
+	margin:15px 0 0 0;
+	padding:0;
+}
+
+.checkoutbuttonpadding
+{
+	padding-left: 578px;
+    text-align: left;
+}
+
+.StoreCheckOutWrapper
+{
+	display:inline-block;
+	border:0;
+	text-align:center;
+	vertical-align:middle;
+	border:1px solid #864343;
+	margin-top:20px;
+}
+
+.StoreCheckOutheader
+{
+	background-color:#864343;
+	color:#fff;
+	font-weight:bold;
+	font-size:14px;	
+	height:20px;
+	padding:5px;
+}
+
+.StoreCheckoutMessage
+{
+	
+	padding:5px;
+}
+
+a.StoreAccountCheckoutButton {
+	display:inline-block;
+	margin:0;
+	padding:0;
+	border:0;
+	text-align:center;
+	vertical-align:middle;
+	white-space:nowrap;
+	cursor:pointer;
+	background:none;
+}
+a.StoreAccountCheckoutButton span {
+	position:relative;
+	float:left;
+	padding:0 0 0 8px;
+	vertical-align:middle;
+}
+a.StoreAccountCheckoutButton span span {
+	padding:0 8px 0 0;
+}
+a.StoreAccountCheckoutButton span span span {
+	height:24px;
+	padding:3px 5px 0 5px;
+	line-height:1.5;
+
+}
+a.StoreAccountCheckoutButton:link,
+a.StoreAccountCheckoutButton:visited {
+	color:#D2D2D2;
+}
+a.StoreAccountCheckoutButton:hover,
+a.StoreAccountCheckoutButton:active {
+}
+
+.cvStoreAccount{
+margin:0px;
+text-align:right;
+margin-top:2px;
+}
+
+.cvStoreAccount li{
+display:inline;
+margin:0px;
+padding:0px 10px 0px 10px;
+border-right:1px solid #fff;
+}
+
+.cvStoreAccount li.last{
+border-right:none;
+}
+
+/* Checkout */
+div.StoreAccountCheckoutWrapper {
+	margin:0;
+	padding:0;
+	width:100%;
+	text-align:center;
+}
+fieldset.StoreAccountCheckoutBillingAddress {
+	margin:0 10%;
+	width:80%;
+	text-align:left;
+}
+table.StoreAccountCheckoutSelectBillingAddress {
+	font-size:12px;
+	border-collapse:collapse;
+	border-style:hidden;
+	border-width:0px;
+	empty-cells:hide;
+	table-layout:auto;
+	text-align:left;
+}
+table.StoreAccountCheckoutSelectBillingAddress tr {
+	text-align:left;
+	vertical-align:baseline;
+}
+fieldset.StoreAccountCheckoutShippingAddress {
+	margin:0 10%;
+	width:80%;
+	text-align:center;
+}
+table.StoreAccountCheckoutSelectShippingAddress {
+	font-size:12px;
+	border-collapse:collapse;
+	border-style:hidden;
+	border-width:0px;
+	empty-cells:hide;
+	table-layout:auto;
+	text-align:left;
+}
+table.StoreAccountCheckoutSelectShippingAddress tr {
+	vertical-align:baseline;
+}
+div.StoreAccountCheckoutCart {
+	margin:0 auto;
+	padding:0;
+	text-align:center;
+}
+div.StoreAccountCheckoutTotal {
+	margin:0 10%;
+	padding:10px 0;
+	text-align:right;
+}
+div.StoreAccountCheckoutTotal table {
+	margin:auto;
+	width:100%;
+	font-size:12px;
+	border-collapse:collapse;
+	border-style:hidden;
+	border-width:0px;
+	empty-cells:hide;
+	table-layout:auto;
+	text-align:right;
+}
+td.StoreAccountCheckoutTaxTotal {
+	width:90px;
+}
+td.StoreAccountCheckoutShippingTotal input {
+	width:90px;
+	border-style:hidden;
+	border-width:0px;
+	text-align:right;
+}
+td.StoreAccountCheckoutShippingTotal {
+	width:90px;
+}
+td.StoreAccountCheckoutTaxTotal input {
+	width:90px;
+	border-style:hidden;
+	border-width:0px;
+	text-align:right;
+}
+td.StoreAccountCheckoutCartFooter span {
+	font-weight:bold;
+}
+td.StoreAccountCheckoutCartTotal {
+	width:90px;
+}
+td.StoreAccountCheckoutCartTotal input {
+	width:90px;
+	border-style:hidden;
+	border-width:0px;
+	font-weight:bold;
+	text-align:right;
+}
+p.StoreAccountCheckoutError {
+}
+div.StoreAccountCheckoutGateway {
+	margin:0 auto;
+	padding:0;
+	text-align:center;
+}
+/* Email Provider */
+div.StoreAccountCheckoutEmailProvider {
+	margin:0 10%;
+	padding:0;
+	width:80%;
+	text-align:center;
+}
+/* PayPal Provider */
+div.StoreAccountCheckoutPayPalProvider {
+	margin:0 10%;
+	padding:0;
+	width:80%;
+	text-align:center;
+}
+
+div.StoreAccountCheckoutPayProprovider {
+	margin:0 10%;
+	width:80%;
+}
+
+.StoreAccountCheckoutFirstDataCardInfos
+{
+	text-align:left;
+}
+
+.StoreAccountCheckoutFirstDataCardLabel
+{
+vertical-align:top;
+width:145px;
+}
+
+div.StoreAccountCheckoutAuthorizeProvider,
+div.StoreAccountCheckoutAuthorizeResult,
+div.StoreAccountCheckoutFirstDataProvider,
+div.StoreAccountCheckoutFirstDataResult {
+	margin:0 10%;
+	padding:0;
+	width:80%;
+	text-align:center;
+}
+table.StoreAccountCheckoutAuthorizeCardInfos {
+	font-size:12px;
+	border-collapse:collapse;
+	border-style:hidden;
+	border-width:0px;
+	empty-cells:hide;
+	table-layout:auto;
+	text-align:left;
+}
+table.StoreAccountCheckoutAuthorizeCardInfos tr {
+	vertical-align:baseline;
+}
+td.StoreAccountCheckoutAuthorizeCardLabel 
+{
+vertical-align:top;
+width:145px;
+}
+td.StoreAccountCheckoutAuthorizeCardValue {
+}
+/* Result Payment Order Message */
+div.StoreAccountCheckoutOrderResult {
+}
+span.StoreAccountCheckoutOrderNumber {
+}
+span.StoreAccountCheckoutOrderProcessed {
+}
+input.StoreAccountCheckoutDisplayOrder {
+}
+/* Customer Addresses */
+div.StoreAccountAddressesWrapper {
+	padding:5px 0;
+	text-align:center;
+}
+span.StoreAccountAddressesLogin {
+	font-size:14px;
+	color:#F00;
+}
+table.StoreAccountAddresses {
+	font-size:12px;
+	border-collapse:collapse;
+	border-style:solid;
+	border-width:1px;
+	border-color:#4696BE;
+	empty-cells:hide;
+	table-layout:auto;
+	text-align:center;
+	margin: 0 auto;
+	width:100%;
+}
+table.StoreAccountAddresses tr {
+	border-style:solid;
+	border-width:1px;
+	border-color:#4696BE;
+	padding: 2px;
+}
+tr.StoreAccountAddressesHeader {
+}
+tr.StoreAccountAddressesItem {
+}
+tr.StoreAccountAddressesAlternatingItem {
+}
+table.StoreAccountAddresses td {
+	border-style:solid;
+	border-width:1px;
+	border-color:#4696BE;
+	padding: 3px;
+}
+td.StoreAccountAddressesDescriptionHeader {
+	text-align:left;
+	font-weight:bold;
+}
+td.StoreAccountAddressesDescription {
+	text-align:left;
+}
+td.StoreAccountAddressesPrimaryHeader {
+	text-align:center;
+	font-weight:bold;
+	width:70px;
+}
+td.StoreAccountAddressesPrimary {
+	text-align:center;
+}
+td.StoreAccountAddressesEditHeader {
+	text-align:center;
+	font-weight:bold;
+	width:70px;
+}
+td.StoreAccountAddressesEdit {
+	text-align:center;
+}
+a.StoreAccountAddressesEditButton:link,
+a.StoreAccountAddressesEditButton:visited {
+}
+a.StoreAccountAddressesEditButton:hover,
+a.StoreAccountAddressesEditButton:active {
+	text-decoration:none;
+}
+a.StoreAccountAddressesAddButton:link,
+a.StoreAccountAddressesAddButton:visited {
+}
+a.StoreAccountAddressesAddButton:hover,
+a.StoreAccountAddressesAddButton:active {
+	text-decoration:none;
+}
+/* Customer Address */
+table.StoreAccountAddress {
+	font-size:11px;
+	border-collapse:collapse;
+	border-style:hidden;
+	border-width:0;
+	empty-cells:hide;
+	table-layout:auto;
+	text-align:left;
+	margin: 0 auto;
+	width:auto;
+}
+table.StoreAccountAddress tr {
+	border-style:hidden;
+	border-width:0;
+	padding: 2px;
+}
+table.StoreAccountAddress td {
+	border-style:hidden;
+	border-width:0;
+	padding: 3px;
+}
+table.StoreAccountAddress td.StoreAddressLabel {
+	width:130px;
+	font-weight:bold;
+	white-space:nowrap;
+}
+table.StoreAccountAddress td.StoreAddressField {
+	vertical-align:top;
+	white-space:nowrap;
+}
+input.StoreAddressField {
+	width:250px;
+}
+table.StoreAccountAddressCmd {
+	font-size:11px;
+	border-collapse:collapse;
+	border-style:hidden;
+	border-width:0;
+	empty-cells:hide;
+	table-layout:auto;
+	text-align:left;
+	margin: 0 auto;
+	width:auto;
+}
+table.StoreAccountAddressCmd tr {
+	border-style:hidden;
+	border-width:0;
+	padding: 2px;
+}
+table.StoreAccountAddressCmd td {
+	border-style:hidden;
+	border-width:0;
+	padding: 3px;
+}
+table.StoreAccountAddressCmd td.StoreAddressLabel {
+	width:150px;
+	font-weight:bold;
+	white-space:nowrap;
+}
+table.StoreAccountAddressCmd td.StoreAddressField {
+	vertical-align:top;
+	white-space:nowrap;
+	width:350px;
+}
+table.StoreAccountAddressCmd td.StoreAddressCommand {
+	text-align:center;
+	white-space:nowrap;
+	width:500px;
+}
+a.StoreAccountAddressUpdateButton:link,
+a.StoreAccountAddressUpdateButton:visited {
+}
+a.StoreAccountAddressUpdateButton:hover,
+a.StoreAccountAddressUpdateButton:active {
+	text-decoration:none;
+}
+a.StoreAccountAddressCancelButton:link,
+a.StoreAccountAddressCancelButton:visited {
+}
+a.StoreAccountAddressCancelButton:hover,
+a.StoreAccountAddressCancelButton:active {
+	text-decoration:none;
+}
+a.StoreAccountAddressDeleteButton:link,
+a.StoreAccountAddressDeleteButton:visited {
+}
+a.StoreAccountAddressDeleteButton:hover,
+a.StoreAccountAddressDeleteButton:active {
+	text-decoration:none;
+}
+/* Customer Orders */
+div.StoreAccountOrdersWrapper {
+	padding: 5px 0;
+	text-align:center;
+}
+
+.StoreError,
+span.StoreAccountOrdersError {
+	font-size:14px;
+	color:red;
+}
+
+table.StoreAccountOrders {
+	font-size:11px;
+	border-collapse:collapse;
+	border-style:solid;
+	border-width:1px;
+	border-color:#4696BE;
+	empty-cells:hide;
+	table-layout:auto;
+	text-align:center;
+	margin: 0 auto;
+	width:100%;
+}
+table.StoreAccountOrders tr {
+	border-style:solid;
+	border-width:1px;
+	border-color:#4696BE;
+	padding: 2px;
+}
+tr.StoreAccountOrdersHeader {
+}
+tr.StoreAccountOrdersItem {
+}
+tr.StoreAccountOrdersAlternatingItem {
+}
+table.StoreAccountOrders td {
+	border-style:solid;
+	border-width:1px;
+	border-color:#4696BE;
+	padding: 3px;
+}
+td.StoreAccountOrdersNumberHeader {
+	text-align:center;
+	font-weight:bold;
+}
+td.StoreAccountOrdersNumber {
+	text-align:center;
+}
+td.StoreAccountOrdersDateHeader {
+	text-align:center;
+	font-weight:bold;
+}
+td.StoreAccountOrdersDate {
+	text-align:center;
+}
+td.StoreAccountOrdersTotalHeader {
+	text-align:right;
+	font-weight:bold;
+}
+td.StoreAccountOrdersTotal {
+	text-align:right;
+}
+td.StoreAccountOrdersStatusHeader {
+	text-align:center;
+	font-weight:bold;
+}
+td.StoreAccountOrdersStatus {
+	text-align:center;
+}
+td.StoreAccountOrdersStatusDateHeader {
+	text-align:center;
+	font-weight:bold;
+}
+td.StoreAccountOrdersStatusDate {
+	text-align:center;
+}
+td.StoreAccountOrdersEditHeader {
+	text-align:center;
+	font-weight:bold;
+	width:70px;
+}
+td.StoreAccountOrdersEdit {
+	text-align:center;
+}
+a.StoreAccountOrdersEditButton:link,
+a.StoreAccountOrdersEditButton:visited {
+}
+a.StoreAccountOrdersEditButton:hover,
+a.StoreAccountOrdersEditButton:active {
+	text-decoration:none;
+}
+td.StoreAccountOrdersCancel {
+	text-align:center;
+}
+a.StoreAccountOrdersCancelButton:link,
+a.StoreAccountOrdersCancelButton:visited {
+}
+a.StoreAccountOrdersCancelButton:hover,
+a.StoreAccountOrdersCancelButton:active {
+	text-decoration:none;
+}
+/* Order Detail Header */
+span.StoreAccountOrderTitle {
+	color:#4696BE;
+}
+table.StoreAccountOrderHeader {
+	font-size:11px;
+	border-collapse:collapse;
+	border-style:hidden;
+	border-width:0;
+	empty-cells:hide;
+	table-layout:auto;
+	text-align:left;
+	margin: 0 auto;
+	width:100%;
+}
+table.StoreAccountOrderHeader tr {
+	border-style:hidden;
+	border-width:0;
+	padding: 2px;
+}
+table.StoreAccountOrderHeader td {
+	border-style:hidden;
+	border-width:0;
+	padding: 3px;
+}
+td.StoreAccountOrderHeaderHeader,
+.StoreAccountOrderHeaderHeader{
+	font-weight:bold;
+}
+td.StoreAccountOrderHeaderOrderNumber {
+	width:35%;
+	vertical-align:top;
+}
+td.StoreAccountOrderHeaderOrderDate {
+	width:32%;
+	vertical-align:top;
+}
+td.StoreAccountOrderHeaderOrderStatus {
+	vertical-align:top;
+}
+td.StoreAccountOrderHeaderOrderStatus select {
+	vertical-align:top;
+}
+td.StoreAccountOrderHeaderStatusButtons {
+	vertical-align:top;
+}
+a.StoreAccountOrderHeaderButtonSave:link,
+a.StoreAccountOrderHeaderButtonSave:visited {
+}
+a.StoreAccountOrderHeaderButtonSave:hover,
+a.StoreAccountOrderHeaderButtonSave:active {
+}
+td.StoreAccountOrderHeaderBillTo,
+td.StoreAccountOrderHeaderShipTo {
+	vertical-align:top;
+}
+
+/* Order Detail Body */
+table.StoreAccountOrderBody {
+	font-size:11px;
+	border-collapse:collapse;
+	border-style:solid;
+	border-width:1px;
+	border-color:#4696BE;
+	empty-cells:hide;
+	table-layout:auto;
+	text-align:center;
+	margin:5px auto;
+	width:100%;
+	vertical-align:text-top;
+}
+table.StoreAccountOrderBody tr {
+	border-style:solid;
+	border-width:1px;
+	border-color:#4696BE;
+	padding: 2px;
+}
+table.StoreAccountOrderBody td {
+	border-style:solid;
+	border-width:1px;
+	border-color:#4696BE;
+	padding: 3px;
+}
+tr.StoreAccountOrderBodyHeader {
+}
+tr.StoreAccountOrderBodyItem {
+vertical-align:top;
+
+}
+tr.StoreAccountOrderBodyAlternatingItem {
+vertical-align:top;
+
+}
+td.StoreAccountOrderBodyProductHeader {
+	text-align:left;
+	font-weight:bold;
+}
+td.StoreAccountOrderBodyProduct {
+	text-align:left;
+	vertical-align:text-top;
+}
+td.StoreAccountOrderBodyDownloadHeader {
+	text-align:right;
+	font-weight:bold;
+	width:75px;
+}
+td.StoreAccountOrderBodyDownload {
+	text-align:right;
+}
+td.StoreAccountOrderBodyQtyHeader {
+	text-align:right;
+	width:60px;
+	font-weight:bold;
+}
+td.StoreAccountOrderBodyQty {
+	text-align:right;
+}
+td.StoreAccountOrderBodyPriceHeader {
+	text-align:right;
+	width:120px;
+	font-weight:bold;
+}
+td.StoreAccountOrderBodyPrice {
+	text-align:right;
+}
+td.StoreAccountOrderBodySubtotalHeader {
+	text-align:right;
+	width:110px;
+	font-weight:bold;
+}
+td.StoreAccountOrderBodySubtotal {
+	text-align:right;
+}
+
+.cvstoreOrdersProductImage
+{
+	float:left;
+	padding-right:5px;
+}
+
+.cvstoreOrdersProductDetails
+{
+	vertical-align:top;
+	float:left;
+	padding-left:5px;
+	text-align:left;
+}
+/* Order Detail Footer */
+table.StoreAccountOrderFooter {
+	font-size:11px;
+	border-collapse:collapse;
+	/*empty-cells:hide;
+	table-layout:auto;
+	text-align:right;
+	margin: 0px auto;*/
+	width:100%;
+
+}
+table.StoreAccountOrderFooter tr {
+	padding: 2px;
+}
+table.StoreAccountOrderFooter td {
+	padding: 3px;
+}
+td.StoreAccountOrderFooterHeader {
+	text-align:right;
+	font-weight:bold;
+	width:87%;
+}
+td.StoreAccountOrderFooterRight {
+	padding-left:20px;
+	text-align:right;
+}
+td.StoreAccountOrderFooterBack {
+	text-align:center;
+}
+td.StoreAccountOrderFooterBack input {
+}
+fieldset.StoreAccountOrderSatutsManagement {
+}
+fieldset.StoreAccountOrderSatutsManagement table {
+	border-collapse:collapse;
+	border-style:hidden;
+	border-width:0;
+}
+
+
+.cvStoreCheckoutSteps
+{
+padding: 5px;
+border:1px solid #864343;
+background:#864343;
+width:630px;
+margin: 30px auto;
+}
+
+.cvStoreCheckoutSteps li
+{
+display:inline;
+margin:0px 5px;
+padding: 5px;
+color:#fff;
+
+}
+
+.cvStoreCheckoutCurrentStep
+{
+font-weight:900;
+}
+
+.cvCheckoutCaption{
+padding:20px 0px 30px 20px;
+display:block;
+text-align:left;
+}
+
+.strong
+{
+font-weight:900;
+}
+
+.cvPaymentSummaryTotal
+{
+border:1px solid #848484;
+width:180px;
+padding:15px;
+margin-left:225px;
+}
+
+.cvPaymentSummaryAddress
+{
+border:1px solid #848484;
+width:550px;
+padding:10px;
+margin-left:50px;
+margin-bottom:10px;
+text-align:left;
+}
+
+.cvPaymentSummaryBillingAddressPadding
+{
+	width:250px;
+}
+.cvPaymentSummaryShippinhAddressPadding
+{
+	width:250px;
+}
+.cvPaymentSummaryAddressPadding
+{
+	width:50px;
+}
+
+.cvPaymentSummaryShippingLabel
+{
+	padding-right:5px;
+}
+
+.cvPaymentSummaryAddressLabels
+{
+	font-weight:bold;
+}
+
+
+.cvPaymentSummary
+{
+	width:80%;
+	margin:10px auto;
+}
+
+.cvPaymentMethodDiv{
+width:80%;
+text-align:left;
+margin:10px auto;
+}
+
+.cvOfflinePaymentHelp{
+font-size:77%;
+font-style:italic;
+}
+
+cvWishlist{
+padding:0px;
+text-align:left;
+
+}
+
+.cvWishlist li{
+list-style-type:none;
+clear:both;
+height:100px;
+border-bottom:1px dashed;
+padding: 5px 0px 0px 10px;
+}
+
+.cvWishlistImage{
+width:100px;
+float:left;
+}
+
+.cvWishlistDetails{
+width: auto;
+text-align:left;
+}
+
+.cvWishlistDeleteLink{
+margin-left:20px;
+}
+
+
+.cvPaymentSummaryDetails
+{
+width:100%;
+margin:20px 0px 20px 0px;
+}
+
+.cvPaymentSummaryTotalsTable
+{
+float:right;
+text-align:right;
+margin-right:50px;
+}
+
+.cvPaymentSummaryDeliveryMethod
+{
+margin:10px 0px;
+}
+
+.cvOfferCodeSummarySummary
+{
+	margin:10px 0px;
+}
+
+.cvCompanyNameSummary
+{
+	margin:10px 0px;
+}
+
+.cvVATNumberSummary
+{
+	margin:10px 0px;
+}
+
+.donationThankYouCheckoutButton
+{
+	margin-top:10px;
+}
+
+.StoreAccountOrderNotesHeader
+{
+	font-weight:bold;
+}
+
+.couponMessage
+{
+    width:195px;
+}
+
+#cartCouponAjaxButtons
+{
+    margin: 5px 0px;
+}
+
+.paymentGatewayCCLogos
+{
+	margin:10px 0px 15px 0px;
+}
+
+.paymentGatewayCCLogosContainer
+{
+	text-align:left;
+}
+
+.cvCheckoutMainDiv h2.billingHeader{
+margin: 0px 0px 20px 0px;
+}
+
+.cvCheckoutMainDiv h2{
+text-align:left;
+font-weight:900;
+color:#999;
+font-size:18px;
+margin: 50px 0px 20px 0px;
+}
+
+.cvCheckoutSidebarDiv
+{
+    margin-bottom:50px;
+}
+
+.cvCheckoutSidebarDiv .rowLine{
+border-top:1px solid #999;
+margin:5px 0px;
+}
+
+.cvCheckoutSidebarDiv h2{
+background:#eee;
+padding:5px;
+font-weight:900;
+color:#666;
+}
+
+.cvCheckoutSidebarDiv table{
+width:100%;
+}
+
+.cvCheckoutSidebarDiv td{
+vertical-align:top;
+}
+
+.cvCheckoutSidebarDiv .qty{
+font-size:11px;
+color:#666;
+font-style:italic;
+}
+
+.cvCheckoutSidebarDiv .rowTotals,
+.cvCheckoutSidebarDiv .subTotal,
+.cvCheckoutSidebarDiv .taxTotal,
+.cvCheckoutSidebarDiv .discountTotal,
+.cvCheckoutSidebarDiv .grandTotal,
+.cvCheckoutSidebarDiv .shippingTotal,
+.cvCheckoutSidebarDiv .handlingTotal{
+font-weight:900;
+font-size:16px;
+color:#666;
+}
+
+.cvCheckoutMainDiv fieldset{
+border:0px;
+}
+/*
+.cvCheckoutMainDiv label{
+display:block;
+text-align:left;
+margin-bottom:3px;
+font-size:12px;
+}
+
+
+.cvCheckoutMainDiv input,
+.cvCheckoutMainDiv textarea,
+.cvCheckoutMainDiv select{
+border:1px solid #ccc;
+padding:3px;
+width:240px;
+}
+
+.cvCheckoutMainDiv textarea{
+width:360px;
+height: 90px;
+}
+
+*/
+
+.spanStoreCc{
+font-size:11px;
+color:#666;
+}
+
+.chkAgreeTermsAndConditions label
+{
+    display:inline;
+}
+
+.calDeliveryDates input 
+{
+    width:100px;
+    border:none;
+}
+
+.rdShippingOptions label,
+.rdOgonePayment label,
+.rdBuckaRooPayment label,
+.rdOfflinePayment label,
+.rbCreditCard label,
+.rdBarclays label,
+.rdAuthnetSIM label,
+.rdRaboOmniKassaPayment label,
+.rbFirstDataConnect label,
+.rdNabDirect label
+{
+	display:inline;
+}
+
+
+.chkInStorePickup label{
+display:inline;
+}
+
+.cvCheckoutMainDiv .orderButton{
+margin-top:50px;
+}
+
+
+.cvCheckoutMainDiv .rowValidator{
+text-align:left;
+margin-bottom:15px;
+font-size:14px;
+}
+
+.cvCheckoutMainDiv .col-left{
+float:left;
+width:300px;
+}
+
+.cvCheckoutMainDiv .col-right{
+float:left;
+width:270px;
+}
+
+.cvCheckoutMainDiv .storeCreditCard{
+display:block;
+clear:both;
+margin:0px;
+padding:0px;
+}
+
+.cvCheckoutMainDiv .storeCreditCard li{
+float:left;
+height:30px;
+margin:4px 0px;
+list-style-type: none;
+}
+
+.cvCheckoutMainDiv .storeCreditCardRow
+{
+display:none;
+}
+
+.cartProductRow{
+vertical-align:top;
+}
+
+.cartDetailsPrice{
+font-size:16px;
+}
+
+.cartLineItems{
+margin-top:3px;
+display: block;
+}
+
+.lblTaxNote{
+font-size:11px;
+float:right;
+color:#666;
+}
+
+
+.threeStepCheckoutWrapper
+{
+	width:98%;
+	padding:10px;
+	border:1px solid #cecece;
+	margin-bottom:10px;
+}
+
+.threeStepCheckoutLeft
+{
+	float:left;
+	width:425px;
+	text-align:left;
+}
+
+.threeStepCheckoutRight
+{
+	float:left;
+	width:250px;
+	text-align:left;
+}
+
+.threeStepCheckoutWrapper h2
+{
+	font-size:16px;
+	color:#cecece;
+	font-weight:bold;
+}
+
+.pnlPaymentOptions{
+text-align:left;
+}
+
+.pnlPaymentOptions div.paymentOption{
+width:550px;
+margin:0px auto;
+}
+
+.pnlPaymentOptions label{
+font-weight:900;
+font-size:14px;
+}
+
+.btnPlaceOrderCv
+{
+cursor:pointer;
+width:auto !important;
+}
+
+.pnlPrePaidControl{
+margin:10px auto;
+width:600px;
+}
+
+.pnlPrePaidCredit{
+float:left;
+}
+
+.pnlPrePaidBalance{
+border:1px solid #864343;
+float:left;
+margin-left:30px;
+padding:5px;
+}
+
+.pnlPrePaidBalance h3{
+margin:0px;
+font-size:14px;
+}
+
+.rblPrePaidCredit{
+padding:10px 0px;
+display:block;
+text-align:left;
+padding-left:30px;
+}
+
+.pnlPrePaidBalance .amount{
+font-weight:900;
+color:#f00;
+margin:10px 0px 0px 0px;
+display:block;
+
+}
+
+.StoreCheckOutLogin .dnnForm{
+min-width:0px;
+}
+
+.cvCheckoutMainDiv .rowValidator span{
+border:1px solid red;
+background:#FFEFF1;
+padding:5px;
+display:block;
+}
+
+.cvCheckoutMainDiv label
+{
+    margin-top:20px;
+}
+
+.awaitingModRow{
+font-weight:900;
+}
+
+.StoreAccountCheckoutMollieProvider
+{
+    margin:20px;
+}
+
+.quoteContinueShoppingWrapper
+{
+	padding-top:20px;
+    float:right;
+}
+
+.cvCartInStorePickOnly{
+font-weight:900;
+font-size:11px;
+font-style:italic;
+}
+
+.cvCheckoutModPayDiv{
+width:100%;
+}
+
+.cvModPayBillingAddress{
+float:left;
+min-width:200px;
+padding:5px;
+text-align:left;
+}
+
+.cvModPayShippingAddress{
+float:left;
+min-width:200px;
+padding:5px;
+text-align:left;
+}
+
+.cvModPayOrderData{
+float:left;
+min-width:200px;
+max-width: 400px;
+padding:5px;
+text-align:left;
+}
+
+.cvModPayOrderDetails{
+clear:both;
+}
+
+.cvModPayOrderDataCaption{
+font-weight:900;
+}
+
+.cvCheckoutModPayDiv .StoreAccountOrderBody td,
+.cvCheckoutModPayDiv .StoreAccountOrderFooterHeader{
+font-size:13px;
+}
+
+.ogoneSurchargeMessage,
+.paypalSurchargeMessage
+{
+    font-weight:bold;
+    font-style:italic;
+    font-size:10px;
+}
+
+.creditCardOption
+{
+width:100% !important;
+}
+
+.quoteAwaitingPaymentRow{
+font-weight:900;
+}
+
+.cvRequestQuoteDiv,
+.cvAdminCreateOrderDiv{
+margin:20px 0px 0px 0px;
+}
+
+.cvUmUserInfo{
+list-style-type:none;
+}
+
+.cvUmUserInfo li{
+list-style-type:none;
+margin:0px 0px 3px 0px;
+}
+
+.cvUmUserInfo .NormalBold{
+padding-right:15px;
+}
+
+.cvModeratorsComment{
+border:1px solid #ccc;
+text-align:left;
+padding:3px;
+}
+.cvModeratorsCommentValue{
+font-weight:400;
+font-style:italic;
+}
+
+.grdAuditData th{
+text-align:left;
+}
+
+.grdAuditData .adminAuditViewMore{
+border-bottom:1px solid #ccc !important;
+text-align:left;
+background:#eee;
+padding:10px;
+margin:10px;
+width:95%;
+}
+
+.grdAuditPaging a{
+margin:0px 1px;
+padding:2px;
+}
+
+.pnlClearAudit{
+margin:10px;
+text-align:left;
+}
+
+.cvBold
+{
+    font-weight:bold;
+    font-size:14px;
+}
+
+.cvBoldRed
+{
+    font-weight:bold;
+    font-size:18px;
+	color:#C1272D;
+}
+
+.divTermsConditions
+{
+    margin-bottom:15px;
+}
+
+.cvCartDetails li{
+list-style-type:none;
+}
+
+.cvCartDetailHeaders
+{
+  list-style-type:none;
+  position:relative;
+  margin:0px 0px 10px 0px;
+  height:20px;
+}
+
+.cvCartDetailHeaders li
+{
+ list-style-type:none;
+  display:inline;
+  float:left;
+}
+
+.cvCartDetailsHeaderProduct{
+  position:absolute;
+  left:25px;
+}
+
+.cvCartDetailsHeaderQty{
+   position:absolute;
+  left:375px;
+}
+
+.cvCartDetailsHeaderPrice{
+   position:absolute;
+  left:500px;
+}
+
+.cvCartDetailsHeaderLineTotal{
+   position:absolute;
+  left:598px;
+}
+
+.cvCartItemRow
+{
+    margin:5px 0px;
+}
+
+.cartItemRowFooterCaption
+{
+    text-align:right;
+}
+
+.cvCartItemRowFooter
+{
+    margin:5px 0px;
+}
+
+.cvCartItemRow li{
+list-style-type:none;
+  display:inline;
+  float:left;
+  text-align:left;
+}
+
+.cvCartItemThumbnail
+{
+    width:80px;
+}
+
+.cvCartItemProductName{
+  width:350px;
+}
+
+.cvCartItemQty{
+}
+
+.cvCartItemPrice{
+  width:100px;
+  margin:0px 0px 0px 70px;
+  
+}
+
+.cvCartItemLineTotal{
+  width:100px;
+}
+
+.cvCartItemDeleteItem{
+  margin-left:20px;
+}
+
+.cvCartFooter
+{
+  margin:0px 104px 0px 0px;
+}
+
+.cvCartFooterItem{
+  float:right;
+  clear:both;
+  text-align:left;
+  width:450px;
+  min-height:25px;
+  margin:0px 0px 5px 0px;
+}
+
+.cvCartFooterItem .cartLabels
+{
+    width:130px;
+    display:inline-block;
+}
+
+.cvUpdateCartButton
+{
+    margin-left:30px;
+}
+
+.cvDeleteCartButton
+{
+    margin-left:10px;
+}
+
+
+.cvInstorePickup
+{
+    display: block;
+}
+
+.cvDeleteCartImg,
+.cvUpdateCartImg
+{
+    vertical-align:middle;
+
+}
+
+
+.moderationOrderAddress
+{
+margin:0px;
+}
+.moderationOrderAddress li{
+list-style-type:none;
+}
+
+.moderationOrderAddress input{
+margin-bottom:3px;
+}
+
+.StoreCheckCentre, .infoAnonCheckoutCaption {
+    width: 100%;
+    max-width: 525px;
+}
+ 
+div.StoreCheckOutheader + div {
+    padding: 0 10px;
+}
+ 
+.StoreCheckOutLogin {
+    height: auto;
+}
+ 
+.xsCheckoutHeader {
+    font-weight: bold;
+	display:block;
+}
+
+.subscriptionCardInput .form-control{
+    width:auto;
+    display:inline;
+}
+
+.subscriptionCardInput .row{
+    margin-bottom:20px;
+}
+
+.StripeElement {
+  background-color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  box-shadow: 0 1px 3px 0 #e6ebf1;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+}
+
+.StripeElement--focus {
+  box-shadow: 0 1px 3px 0 #cfd7df;
+}
+
+.StripeElement--invalid {
+  border-color: #fa755a;
+}
+
+.StripeElement--webkit-autofill {
+  background-color: #fefde5 !important;
+}

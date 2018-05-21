@@ -1,0 +1,6 @@
+﻿IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}SearchTypes WHERE [SearchTypeName] = 'image') 
+BEGIN
+    INSERT INTO {databaseOwner}{objectQualifier}SearchTypes (SearchTypeName, SearchResultClass)
+    VALUES ('image', 'DotNetNuke.Professional.SearchCrawler.Results.ImageResultController')
+END 
+GO

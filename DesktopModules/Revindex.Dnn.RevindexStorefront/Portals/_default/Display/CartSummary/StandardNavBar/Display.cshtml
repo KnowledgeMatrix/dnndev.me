@@ -1,0 +1,139 @@
+﻿@using Revindex.Business.Revindex.Revindex.Storefront;
+@using Revindex.Dnn.RevindexStorefront.Models;
+@using Revindex.Web.Mvc.Dnn.Helpers;
+@inherits Revindex.Dnn.RevindexStorefront.Views.ClientSideWebViewPage
+
+<div id="rvdsfCartSummaryNavBarContainer" class="rvdsf rvdsf-cartsummary-container">
+    <div class="rvdsf-cartsummary-header-container">
+        <a data-bind="attr: {href: Cart.TabUrl}" class="btn rvdsf-btn-viewcart"><span class="glyphicon glyphicon-shopping-cart"></span></a>
+        <span class="rvd-label-qty" data-bind="text: SalesOrderSet.MainQuantity"></span> @Html.LocalizeString("ItemsLabel") <span class="rvdsf-label-amount" data-bind="text: SalesOrderSet.HasQuotedProduct() ? null : SalesOrderSet.FormattedSubTotalAmount"></span>
+    </div>
+    <div class="rvdsf-cartsummary-detail-container">
+        <div data-bind="visible: SalesOrderSet.MainQuantity() == 0">
+            <span>@Html.LocalizeString(Global.LocalizedStrings.Message_CartEmpty, Global.FilePaths.LocalSharedResourceFile)</span>
+        </div>
+        <div data-bind="visible: SalesOrderSet.MainQuantity() > 0">
+            <table class="table table-striped rvdsf-salesorderdetail-table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>@Html.LocalizeString("ProductColumn")</th>
+                        <th>@Html.LocalizeString("QuantityColumn")</th>
+                        <th>@Html.LocalizeString("AmountColumn")</th>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach: SalesOrderSet.MainSalesOrderDetails">
+                    <tr>
+                        <td data-bind="if: ProductVariant.MainThumbnailGallery"><img data-bind="attr: {src: ProductVariant.MainThumbnailGallery.MediaUrl}"/></td>
+                        <td>
+                            <a data-bind="text: ProductName, attr: { href: ProductVariant.ProductDetail.TabUrl }"></a>
+                            <div class="rvdsf-productvariant-name" data-bind="visible: ProductVariantName, text: ProductVariantName"></div>
+                            <!-- ko if: FormattedBookingStartDate -->
+                            <dl class="rvdsf-bookingdates">
+                                <dt>@Html.LocalizeString("BookingStartDateLabel")</dt>
+                                <dd data-bind="text: FormattedBookingStartDate"></dd>
+                                <dt>@Html.LocalizeString("BookingStopDateLabel")</dt>
+                                <dd data-bind="text: FormattedBookingStopDate"></dd>
+                            </dl>
+                            <!-- /ko -->
+                            <!-- ko if: Object.keys(DynamicFormResult).length > 0 -->
+                                <!-- ko with: DynamicFormResult -->
+                                <dl class="rvdsf-dynamicformresult" data-bind="foreach: Object.keys($data)">
+                                    <dt data-bind="text: $data"></dt>
+                                    <dd data-bind="text: $parent[$data]"></dd>
+                                </dl>
+                                <!-- /ko -->
+                            <!-- /ko -->
+                        </td>
+                        <td class="rvdsf-label-qty" data-bind="text: Quantity"></td>
+                        <td class="rvdsf-label-amount" data-bind="text: Status() == 9 ? null : FormattedCombinedTotalAmount"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="form-horizontal rvdsf-cartsummary-amount-container" data-bind="ifnot: SalesOrderSet.HasQuotedProduct">
+                <div class="form-group rvdsf-label-subtotalamount">
+                    <label class="control-label col-sm-6">@Html.LocalizeString("SubTotalLabel")</label>
+                    <div class="col-sm-6">
+                        <p class="form-control-static" data-bind="text: SalesOrderSet.FormattedSubTotalAmount"></p>
+                    </div>
+                </div>
+                <div class="form-group rvdsf-label-rewardspoint" data-bind="visible: ShowRewardsPoint">
+                    <label class="control-label col-sm-6">@Html.LocalizeString("RewardsPointQualifiedLabel")</label>
+                    <div class="col-sm-6">
+                        <p class="form-control-static" data-bind="text: SalesOrderSet.FormattedRewardsPointsQualified"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="btn-toolbar text-center">
+                <button type="button" data-bind="click: function() { location.href = Cart.TabUrl() }" class="btn btn-primary rvdsf-btn-cart">@Html.LocalizeString("CartLink")</button>
+                <button type="button" data-bind="click: function() { location.href = Checkout.TabUrl() }" class="btn btn-primary rvdsf-btn-checkout">@Html.LocalizeString("CheckoutLink")</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* Uses KnockoutJS. See http://knockoutjs.com *@
+<script src="~/Resources/Shared/scripts/knockout.js" type="text/javascript"></script>
+<script src="~/Resources/Shared/scripts/knockout.mapping.js" type="text/javascript"></script>
+
+@* Uses JSON-cycle to resolve references *@
+<script src="~/DesktopModules/Revindex.Dnn.RevindexStorefront/Scripts/json-cycle/cycle.js"></script>
+
+<script type="text/javascript">
+
+        var cartDetailTimer = null;
+        $(document).ready(function() {
+
+            // Show cart detail on hover
+            if ($("div.rvdsf-cartsummary-detail-container").length) {
+                $("div.rvdsf-cartsummary-header-container").hover(function () {
+		            $("div.rvdsf-cartsummary-detail-container").slideDown();
+                },
+                function () {
+                    cartDetailTimer = setTimeout(function () {
+                        $("div.rvdsf-cartsummary-detail-container").slideUp();
+                    }, 2000);
+                });
+
+                $("div.rvdsf-cartsummary-detail-container").hover(function () {
+                    clearTimeout(cartDetailTimer);
+                },
+                function () {
+                    cartDetailTimer = setTimeout(function () {
+                        $("div.rvdsf-cartsummary-detail-container").slideUp();
+                    }, 2000);
+                });
+            }
+
+            // Bind KnockoutJS view model
+            var container = document.getElementById("rvdsfCartSummaryNavBarContainer")
+
+            container.databind = function () {
+                var servicesFramework = $.ServicesFramework(@Dnn.Module.ModuleID);
+
+                $.ajax({
+                    headers: { "Accept-Language": "@Dnn.Portal.CultureCode" },
+                    beforeSend: servicesFramework.setModuleHeaders,
+                    url: servicesFramework.getServiceRoot("@Dnn.Module.DesktopModule.FolderName") + "CartSummary/ViewModel"
+                })
+                .done(function (data, status) {
+                    if (container.viewModel) {
+                        ko.mapping.fromJS(data, container.viewModel)
+                    }
+                    else {
+                        container.viewModel = ko.mapping.fromJS(data);
+
+                        // Helper function to format currency
+                        container.viewModel.formatCurrency = function (number) {
+                            return new Intl.NumberFormat(this.Currency.CultureCode(), { style: 'currency', currency: this.Currency.CurrencyCode() }).format((typeof number === "function" ? number() : number) * this.Currency.ExchangeRate());
+                        }
+
+                        ko.applyBindings(container.viewModel, container)
+                    }
+                })
+            }
+
+            container.databind()
+        })
+</script>
+

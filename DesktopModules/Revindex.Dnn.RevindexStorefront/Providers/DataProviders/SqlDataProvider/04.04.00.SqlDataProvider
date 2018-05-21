@@ -1,0 +1,98 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+SET XACT_ABORT ON
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+	
+	-- Add support for eWay Direct Payment gateway
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewayseWayDirectPaymentCustomerID varchar(255) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewayseWayDirectPaymentRefundPassword varchar(255) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewayseWayDirectPaymentTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewayseWayDirectPaymentTestMode DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewayseWayDirectPaymentTestMode
+	
+	-- Wish list in-place add to cart
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD WishListAddToCartInPlace bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_WishListAddToCartInPlace DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_WishListAddToCartInPlace
+	
+	-- Add support for Intuit QuickBooks Merchant Service payment gateway
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysIntuitQBMSAppID varchar(255) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysIntuitQBMSAppLogin varchar(255) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysIntuitQBMSConnectionTicket varchar(255) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysIntuitQBMSTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysIntuitQBMSTestMode DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysIntuitQBMSTestMode
+	
+	-- Add support for Tile gallery
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD GalleryProductsTileWidth int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_GalleryProductsTileWidth DEFAULT 30
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_GalleryProductsTileWidth
+	
+	-- Add RecurringSalesOrderID to SalesOrderDetail table for tracking purposes
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrderDetail ADD RecurringSalesOrderID int NULL
+	
+	-- Product filter display template
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD ProductFilterDisplayTemplate varchar(255) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductFilterDisplayTemplate DEFAULT 'Standard1'
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductFilterDisplayTemplate
+	
+	-- Support PayPal Payflow Pro
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysPayPalPPUser varchar(255) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysPayPalPPVendor varchar(255) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysPayPalPPPartner varchar(255) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysPayPalPPPassword varchar(255) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysPayPalPPTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysPayPalPPTestMode DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysPayPalPPTestMode
+	
+	-- Support Towah payment gateway
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysTowahMerchantID varchar(255) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysTowahSecretKey varchar(255) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysTowahTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysTowahTestMode DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysTowahTestMode
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentMethodsTowahActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsTowahActive DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsTowahActive
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentMethodsTowahAvailabilityRule xml NULL
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesPayment ADD PaymentGatewayPaymentFormPost nvarchar(MAX) NULL
+	
+COMMIT TRANSACTION
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+	
+		--	Upgrade default Category template to "Standard2"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CategoryDisplayTemplate = 'Standard2' WHERE CategoryDisplayTemplate LIKE 'Standard%'
+	
+		--	Upgrade default Cart template to "Standard6"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CartDisplayTemplate = 'Standard6' WHERE CartDisplayTemplate LIKE 'Standard%'
+	
+		-- Upgrade default Checkout template to "Standard9"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CheckoutDisplayTemplate = 'Standard9' WHERE CheckoutDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default Confirmation template to "Standard7"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ConfirmationDisplayTemplate = 'Standard7' WHERE ConfirmationDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default ProductDetail template to "Standard9"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductDetailDisplayTemplate = 'Standard9' WHERE ProductDetailDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default ProductList template to "Standard6"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductListDisplayTemplate = 'Standard6' WHERE ProductListDisplayTemplate LIKE 'Standard%'
+		
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

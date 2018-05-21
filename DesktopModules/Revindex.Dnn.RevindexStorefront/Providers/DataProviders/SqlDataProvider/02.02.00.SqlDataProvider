@@ -1,0 +1,72 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+GO
+
+BEGIN TRY
+	BEGIN TRANSACTION
+		
+		-- Upgrade default ProductDetail template to "Standard4"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductDetailDisplayTemplate = 'Standard4' WHERE ProductDetailDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default Cart template to "Standard3"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CartDisplayTemplate = 'Standard3' WHERE CartDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default Checkout template to "Standard4"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CheckoutDisplayTemplate = 'Standard4' WHERE CheckoutDisplayTemplate LIKE 'Standard%'
+		
+		-- Add configuration column for VAT support
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD GeneralPriceDisplayMode int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_GeneralPriceDisplayMode DEFAULT 1
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_GeneralPriceDisplayMode
+		
+		-- Add tax columns to SalesOrderDetail
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrderDetail ADD
+			TaxAmount1 decimal(19, 4) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrderDetail_TaxAmount1 DEFAULT 0,
+			TaxAmount2 decimal(19, 4) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrderDetail_TaxAmount2 DEFAULT 0,
+			TaxAmount3 decimal(19, 4) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrderDetail_TaxAmount3 DEFAULT 0,
+			TaxAmount4 decimal(19, 4) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrderDetail_TaxAmount4 DEFAULT 0,
+			TaxAmount5 decimal(19, 4) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrderDetail_TaxAmount5 DEFAULT 0
+			
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrderDetail DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrderDetail_TaxAmount1
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrderDetail DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrderDetail_TaxAmount2
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrderDetail DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrderDetail_TaxAmount3
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrderDetail DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrderDetail_TaxAmount4
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrderDetail DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrderDetail_TaxAmount5
+		
+		-- Add tax columns to SalesOrder
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder ADD
+			ShippingTaxAmount1 decimal(19, 4) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrder_ShippingTaxAmount1 DEFAULT 0,
+			ShippingTaxAmount2 decimal(19, 4) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrder_ShippingTaxAmount2 DEFAULT 0,
+			ShippingTaxAmount3 decimal(19, 4) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrder_ShippingTaxAmount3 DEFAULT 0,
+			ShippingTaxAmount4 decimal(19, 4) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrder_ShippingTaxAmount4 DEFAULT 0,
+			ShippingTaxAmount5 decimal(19, 4) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrder_ShippingTaxAmount5 DEFAULT 0,
+			HandlingTaxAmount1 decimal(19, 4) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrder_HandlingTaxAmount1 DEFAULT 0,
+			HandlingTaxAmount2 decimal(19, 4) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrder_HandlingTaxAmount2 DEFAULT 0,
+			HandlingTaxAmount3 decimal(19, 4) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrder_HandlingTaxAmount3 DEFAULT 0,
+			HandlingTaxAmount4 decimal(19, 4) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrder_HandlingTaxAmount4 DEFAULT 0,
+			HandlingTaxAmount5 decimal(19, 4) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrder_HandlingTaxAmount5 DEFAULT 0
+			
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrder_ShippingTaxAmount1
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrder_ShippingTaxAmount2
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrder_ShippingTaxAmount3
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrder_ShippingTaxAmount4
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrder_ShippingTaxAmount5
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrder_HandlingTaxAmount1
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrder_HandlingTaxAmount2
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrder_HandlingTaxAmount3
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrder_HandlingTaxAmount4
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrder_HandlingTaxAmount5
+		
+		
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

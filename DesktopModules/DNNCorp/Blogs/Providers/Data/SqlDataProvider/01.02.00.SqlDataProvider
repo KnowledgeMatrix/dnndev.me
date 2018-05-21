@@ -1,0 +1,161 @@
+﻿
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Blog_GetRoster') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Blog_GetRoster
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Blogs_Blog_GetRoster]
+    @ModuleId INT ,
+    @GroupId INT
+AS
+BEGIN
+	SELECT @GroupId = Coalesce(@GroupId, -1);
+
+    SELECT  B.* ,
+            ( SELECT    COUNT(BlogId)
+              FROM      {databaseOwner}[{objectQualifier}Blogs_Entry]
+              WHERE     BlogId = B.BlogId
+                        AND Approved = 1
+                        AND PublishOnDate <= GETUTCDATE()
+            ) AS BlogPostCount
+    FROM    {databaseOwner}[{objectQualifier}Blogs_Blog] B
+    WHERE   
+			B.BlogId IN (
+				SELECT BB.BlogId FROM  {databaseOwner}[{objectQualifier}Blogs_Blog] BB
+				LEFT JOIN {databaseOwner}[{objectQualifier}Blogs_Entry] E ON B.BlogId = E.BlogId
+				LEFT JOIN {databaseOwner}[{objectQualifier}ContentItems] CI ON E.ContentItemId = CI.ContentItemID	
+				WHERE (( CI.ModuleId = @ModuleId ) OR ( CI.ModuleId IS NULL ))
+				  AND (( @GroupId < 1 AND (BB.GroupId < 1 OR BB.GroupId IS NULL)) OR ( BB.GroupId = @GroupId ))
+			)           
+    
+    ORDER BY Title ASC
+END
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes
+				WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Blogs_Entry]')
+				AND name = N'IX_{objectQualifier}Blogs_Enry_BlogId_Approved_PublishedDate')
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Blogs_Enry_BlogId_Approved_PublishedDate]
+		ON {databaseOwner}[{objectQualifier}Blogs_Entry] ([BlogId],[Approved],[PublishOnDate])
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes
+				WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Blogs_Entry]')
+				AND name = N'IX_{objectQualifier}Blogs_Entry_Approved_PublishOn')
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Blogs_Entry_Approved_PublishOn]
+		ON {databaseOwner}[{objectQualifier}Blogs_Entry] ([Approved],[PublishOnDate])
+		INCLUDE ([BlogId])
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes
+				WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Blogs_Entry]')
+				AND name = N'IX_{objectQualifier}Blogs_Entry_ContentItemID')
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Blogs_Entry_ContentItemID]
+		ON {databaseOwner}[{objectQualifier}Blogs_Entry] ([ContentItemId])
+GO
+
+
+/* Migrate Subscriptions */
+IF exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Subscriptions_Type') and OBJECTPROPERTY(id, N'IsTable') = 1)
+BEGIN
+	DECLARE @DesktopModuleId INT
+	DECLARE @NewSubscriptionTypeId INT
+
+	SET @DesktopModuleId = (SELECT ISNULL(DesktopModuleId, -1) FROM {databaseOwner}{objectQualifier}DesktopModules WHERE ModuleName = 'Blogs' )
+
+	IF @DesktopModuleId > 0
+		BEGIN
+			-- Means the module is being upgraded, migrate subscriptions
+			SET @NewSubscriptionTypeId = (SELECT TOP 1 SubscriptionTypeId FROM {databaseOwner}{objectQualifier}CoreMessaging_SubscriptionTypes WHERE SubscriptionName = 'DNNCorp_Blogs')
+
+			IF @NewSubscriptionTypeId IS NULL
+				BEGIN
+					INSERT {databaseOwner}{objectQualifier}CoreMessaging_SubscriptionTypes
+					(SubscriptionName, FriendlyName, DesktopModuleId)
+					VALUES
+					('DNNCorp_Blogs', 'Blogs Subscriptions', @DesktopModuleId)
+					
+					SET @NewSubscriptionTypeId = (SELECT SCOPE_IDENTITY())
+
+					-- get all subscribers and copy over
+					DECLARE @OldSubscriptionTypeId INT
+					SET @OldSubscriptionTypeId = (SELECT TOP 1 SubscriptionTypeId FROM {databaseOwner}{objectQualifier}Subscriptions_Type WHERE SubscriptionName = 'DNNCorp_Blogs')
+
+					IF @OldSubscriptionTypeId > 0
+						BEGIN
+							DECLARE @PortalId INT
+							DECLARE @UserId INT
+							DECLARE @CreatedOnDate DATETIME
+							DECLARE @ModuleId INT
+							DECLARE @ObjectKey NVARCHAR(255)					
+							DECLARE @ContentItemId INT
+							DECLARE @GroupId INT
+							DECLARE @Description NVARCHAR(255)
+
+							DECLARE BlogMigrate_Cursor CURSOR
+							FOR
+								SELECT  DISTINCT ss.PortalId, ss.UserId, ss.CreatedOnDate, ss.ModuleId, ss.GroupId, ss.ContentItemId
+								FROM    {databaseOwner}{objectQualifier}Subscriptions_Subscriber ss
+										INNER JOIN {databaseOwner}{objectQualifier}Modules m ON ss.ModuleID = m.ModuleID
+								WHERE	SubscriptionTypeId = @OldSubscriptionTypeId
+
+								OPEN BlogMigrate_Cursor
+								FETCH NEXT FROM BlogMigrate_Cursor 
+								INTO @PortalId, @UserId, @CreatedOnDate, @ModuleId, @GroupId, @ContentItemId
+
+								WHILE @@FETCH_STATUS = 0 
+								BEGIN
+
+									BEGIN TRANSACTION
+										-- after selecting row of data in cursor
+										IF @ContentItemId > 0
+											BEGIN
+												SET @ObjectKey = 'gid=' + CONVERT(NVARCHAR(10), @GroupId) + ';cid=' + CONVERT(NVARCHAR(10), @ContentItemId)
+												SET @Description = 'Blog Entry Activity'
+											END	
+										ELSE
+											BEGIN
+												SET @ObjectKey = 'gid=' + CONVERT(NVARCHAR(10), @GroupId)
+												SET @Description = 'New Blog Entries'
+											END		
+								
+										INSERT {databaseOwner}{objectQualifier}CoreMessaging_Subscriptions
+											(UserId, PortalId, SubscriptionTypeId, ObjectKey, CreatedOnDate, ModuleId, [Description], TabId)
+										VALUES
+											(@UserId, @PortalId, @NewSubscriptionTypeId, @ObjectKey, @CreatedOnDate, @ModuleId, @Description, 0)
+
+
+										COMMIT
+
+											FETCH NEXT FROM BlogMigrate_Cursor INTO @PortalId, @UserId, @CreatedOnDate, @ModuleId, @GroupId, @ContentItemId
+										END
+								
+								CLOSE BlogMigrate_Cursor
+								DEALLOCATE BlogMigrate_Cursor
+						END
+				END
+		END
+END
+GO
+
+/* Update any orphan non-group blogs (for subscriptions) */
+UPDATE {databaseOwner}{objectQualifier}Blogs_Blog SET GroupId = -1 WHERE GroupId IS NULL
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Entry_GetByRange') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Entry_GetByRange
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Blogs_Entry_GetByRange]
+    @StartingEntryId INT,	
+	@RecordsToReturn INT
+AS
+BEGIN
+    SELECT  TOP (@RecordsToReturn) BE.EntryId, B.PortalId, B.GroupId 
+    FROM    {databaseOwner}[{objectQualifier}Blogs_Entry] BE
+	INNER JOIN {databaseOwner}[{objectQualifier}Blogs_Blog] B
+		ON BE.BlogId = B.BlogId
+    WHERE   
+		EntryId > @StartingEntryId    
+    ORDER BY EntryId ASC
+END
+GO

@@ -1,0 +1,358 @@
+﻿/********************************************************
+ * SPROC: SocialEvents_Guest_Save
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}SocialEvents_Guest_Save]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Guest_Save] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Guest_Save]
+    @EventId INT ,
+    @UserId INT ,
+    @Email NVARCHAR(150) ,
+    @RsvpStatus INT
+AS
+BEGIN
+    DECLARE @GuestId INT
+    SET @GuestId = ( SELECT GuestId
+                     FROM   {databaseOwner}{objectQualifier}SocialEvents_Guest
+                     WHERE  UserId = @UserId
+                            AND EventId = @EventId
+                   )
+	
+    IF @GuestId > 0 
+        BEGIN
+            UPDATE  {databaseOwner}{objectQualifier}SocialEvents_Guest
+            SET     RsvpStatus = @RsvpStatus ,
+                    RepliedOnDate = GETUTCDATE()
+            WHERE   GuestId = @GuestId	
+        END
+    ELSE 
+        INSERT  {databaseOwner}{objectQualifier}SocialEvents_Guest
+                ( EventId ,
+                  UserId ,
+                  Email ,
+                  RsvpStatus ,
+                  RepliedOnDate
+		        )
+        VALUES  ( @EventId ,
+                  @UserId ,
+                  @Email ,
+                  @RsvpStatus ,
+                  GETUTCDATE()
+                )
+                
+    UPDATE  {databaseOwner}{objectQualifier}SocialEvents_Event
+    SET     Attending = ( SELECT    COUNT(EventId)
+                          FROM      {databaseOwner}{objectQualifier}SocialEvents_Guest
+                          WHERE     EventId = @EventId
+                                    AND RsvpStatus = 1
+                        ) ,
+            MayAttend = ( SELECT COUNT(EventId)
+                             FROM   {databaseOwner}{objectQualifier}SocialEvents_Guest
+                             WHERE  EventId = @EventId
+                                    AND RsvpStatus = 2
+                           ) ,
+            NotAttending = ( SELECT    COUNT(EventId)
+                          FROM      {databaseOwner}{objectQualifier}SocialEvents_Guest
+                          WHERE     EventId = @EventId
+                                    AND RsvpStatus = 3
+                        )
+    WHERE   EventId = @EventId 
+END
+GO
+
+/********************************************************
+ * SPROC: SocialEvents_Event_GetById
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}SocialEvents_Event_GetById]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Event_GetById] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}{objectQualifier}SocialEvents_Event_GetById
+    @EventId INT
+AS
+BEGIN
+	SELECT  EventId ,
+			E.ContentItemId ,
+			GroupId ,
+			PortalId ,
+			UserId ,
+			StartTime ,
+			EndTime ,
+			ViewCount ,
+			Approved ,
+			Deleted ,
+			Street ,
+			City ,
+			Region ,
+			Country ,
+			PostalCode ,
+			MaxAttendees ,
+			InvitationOnly ,
+			ShowGuests ,
+			Attending ,
+			NotAttending ,
+			MayAttend ,
+			InviteType ,
+			Content ,
+			ContentTypeID ,
+			TabID ,
+			ModuleID ,
+			ContentKey ,
+			Indexed ,
+			CreatedByUserId ,
+			CreatedOnDate ,
+			LastModifiedByUserID ,
+			LastModifiedOnDate ,
+			CIMD.MetaDataValue AS ContentTitle ,
+			1 AS TotalRecords
+	FROM   {databaseOwner}{objectQualifier}SocialEvents_Event E
+			INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI ON E.ContentItemId = CI.ContentItemID
+			LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD ON CIMD.ContentItemID = E.ContentItemID
+															  AND CIMD.MetaDataID = ( SELECT
+															  MetaDataID
+															  FROM
+															  {databaseOwner}[{objectQualifier}MetaData]
+															  WHERE
+															  MetaDataName = 'Title'
+															  )
+	WHERE   E.EventId = @EventId
+			AND Deleted = 0
+END
+GO
+
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}SocialEvents_Event_GetByDates]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Event_GetByDates]
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}SocialEvents_Event_GetByDates
+	@ModuleID INT,
+	@PortalId INT ,
+	@GroupId INT,
+	@StartDate DATETIME ,
+	@EndDate DATETIME 
+AS 
+	BEGIN
+
+		SELECT  SE.*
+		FROM    {databaseOwner}{objectQualifier}SocialEvents_Event SE
+		INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI
+			ON SE.ContentItemID = CI.ContentItemID
+		WHERE   SE.PortalId = @PortalId
+				AND SE.Approved = 1
+				AND CI.ModuleID = @ModuleID
+				AND SE.GroupID = @GroupId
+				AND SE.StartTime BETWEEN @StartDate AND @EndDate
+	END
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}SocialEvents_Event_Search]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Event_Search]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Event_Search]
+	@ModuleId INT ,
+	@GroupId INT ,
+	@StartDate DATETIME = null,
+	@EndDate DATETIME = null,
+	@PageSize INT ,
+	@PageIndex INT ,
+	@Filter INT ,
+	@SortColumn VARCHAR(32) ,
+	@SortAscending BIT ,
+	@Keyword NVARCHAR(128) ,
+	@UserId INT ,
+	@Tags NVARCHAR(256)
+AS
+BEGIN
+
+	-- Only run one to cacluate the length of the tags and insert the tags into
+	-- temp table so as to not have to call the table valued function for every row.
+	DECLARE @TagLength Int
+	DECLARE @MetID Int
+
+	Set @TagLength = ( SELECT LEN(@Tags) - LEN(REPLACE(@Tags, ',', '')) + 1)
+
+	SELECT	@MetID = MetaDataID
+	FROM	{databaseOwner}{objectQualifier}MetaData
+	WHERE	MetaDataName = 'Title'
+
+	Create Table #Tags(
+		RowNumber smallint,
+		RowValue nvarchar(50) COLLATE DATABASE_DEFAULT)
+
+	Create Table #Taxonomy(
+		TermID Int,
+		Name nVarchar(250) COLLATE DATABASE_DEFAULT)
+
+	Insert Into #Tags
+		Select RowNumber,RowValue
+		From {databaseOwner}{objectQualifier}ConvertListToTable(',', @Tags);
+
+	Insert Into #Taxonomy
+		Select TermID, Name
+		From {databaseOwner}{objectQualifier}Taxonomy_Terms TT
+			Inner Join #Tags T on TT.Name = T.RowValue;
+
+	WITH TopicSet
+	AS (
+		SELECT	COUNT(*) OVER () AS TotalRecords,
+				EventId,
+				E.ContentItemId,
+				GroupId,
+				PortalId,
+				ViewCount,
+				Approved,
+				Deleted,
+				Content,
+				ContentTypeID,
+				TabID,
+				ModuleID,
+				ContentKey,
+				Indexed,
+				[MaxAttendees],
+				[InvitationOnly],
+				[ShowGuests],
+				[Attending],
+				[NotAttending],
+				[MayAttend],
+				[StartTime],
+				[EndTime],
+				[Street],
+				[City],
+				[Region],
+				[PostalCode],
+				[Country],
+				[InviteType],
+				CI.CreatedByUserID,
+				CI.CreatedOnDate,
+				CI.LastModifiedByUserID,
+				CI.LastModifiedOnDate,
+				CIMD.MetaDataValue AS ContentTitle,
+				U.DisplayName AS DisplayName,
+				ROW_NUMBER() OVER
+					( ORDER BY
+						CASE WHEN @SortColumn = 'EventStartTime' AND @SortAscending = 1 THEN [StartTime] END ASC,
+						CASE WHEN @SortColumn = 'EventStartTime' AND @SortAscending = 0 THEN [StartTime] END DESC,
+						CASE WHEN @SortColumn = 'CreatedDate' AND @SortAscending = 1 THEN CI.CreatedOnDate END ASC,
+						CASE WHEN @SortColumn = 'CreatedDate' AND @SortAscending = 0 THEN CI.CreatedOnDate END DESC,
+						CASE WHEN @SortColumn = 'LastActive' AND @SortAscending = 1 THEN CI.LastModifiedOnDate END ASC,
+						CASE WHEN @SortColumn = 'LastActive' AND @SortAscending = 0 THEN CI.LastModifiedOnDate END DESC,
+						CASE WHEN @SortColumn = 'Title' AND @SortAscending = 1 THEN MetaDataValue END ASC,
+						CASE WHEN @SortColumn = 'Title' AND @SortAscending = 0 THEN MetaDataValue END DESC,
+						CASE WHEN @SortColumn = 'Author' AND @SortAscending = 1 THEN DisplayName END ASC,
+						CASE WHEN @SortColumn = 'Author' AND @SortAscending = 0 THEN DisplayName END DESC,
+						CASE WHEN @SortColumn = 'Views' AND @SortAscending = 0 THEN [ViewCount] END DESC,
+						CASE WHEN @SortColumn = 'Views' AND @SortAscending = 1 THEN [ViewCount] END ASC
+					) AS [RowNumber]
+		FROM	{databaseOwner}{objectQualifier}SocialEvents_Event AS E
+				INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI ON CI.ContentItemID = E.ContentItemId
+				INNER JOIN {databaseOwner}{objectQualifier}Users U ON U.UserID = CI.CreatedByUserID
+				LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD
+					ON CIMD.ContentItemID = E.ContentItemId	AND CIMD.MetaDataID = @MetID
+		WHERE	CI.ModuleId = @ModuleId
+		  AND	Deleted = 0
+		  AND	Approved = 1
+		  AND ( (@GroupId < 1 AND E.GroupId < 1) OR E.GroupId = @GroupId)
+		  AND ( @Filter < 0
+				OR (@Filter = 0
+					AND (@StartDate IS NULL
+					OR (E.StartTime BETWEEN @StartDate AND @EndDate))
+					AND (Approved = 1 OR E.UserId = @UserId))
+				OR (@Filter = 2
+					AND (	SELECT	COUNT(CommentId)
+							FROM	{databaseOwner}{objectQualifier}Journal_Comments JC
+									INNER JOIN {databaseOwner}{objectQualifier}Journal J ON JC.JournalId = J.JournalId
+							WHERE	ContentItemId = J.ContentItemId
+							  AND	ContentItemId = E.ContentItemId) < 1)
+				OR (@Filter = 3
+					AND CI.CreatedByUserID = @UserId)
+				OR (@Filter = 4
+					AND (	SELECT	COUNT(CommentId)
+							FROM	{databaseOwner}{objectQualifier}Journal AS J
+									INNER JOIN {databaseOwner}{objectQualifier}Journal_Comments JC ON JC.JournalId = J.JournalId
+							WHERE	ContentItemId = J.ContentItemId
+							  AND	ContentItemId = E.ContentItemId
+							  AND	JC.UserId = @UserId) > 0)
+				OR (@Filter = 5
+					AND ((E.StartTime > @StartDate) OR (@StartDate < E.EndTime))
+					AND (Approved = 1 OR E.UserId = @UserId))
+			  )
+		  AND ( @Tags IS NULL OR LEN(@Tags) = 0
+				OR (	SELECT	COUNT(*)
+						FROM	{databaseOwner}{objectQualifier}ContentItems_Tags CIT
+								INNER JOIN #Taxonomy T On CIT.TermID = T.TermID
+						WHERE CIT.ContentItemID = E.ContentItemId
+						AND (	SELECT	[Approved]
+								FROM	{databaseOwner}{objectQualifier}SocialEvents_Event
+								WHERE EventId = E.EventId) = 1) = @TagLength
+			  )
+		)
+	SELECT	TOP (@PageSize) *
+	FROM	TopicSet
+	WHERE	RowNumber >= (@PageIndex * @PageSize) + 1;
+
+	Drop Table #Tags
+	Drop Table #Taxonomy
+END
+GO
+
+/* Sitemap Provider */
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}SocialEvents_Event_GetSitemap') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}SocialEvents_Event_GetSitemap
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Event_GetSitemap]
+	@PortalId INT
+AS
+	SELECT  EventId ,
+			E.ContentItemId ,
+			GroupId ,
+			E.PortalId ,
+			UserId ,
+			StartTime ,
+			EndTime ,
+			ViewCount ,
+			Approved ,
+			Deleted ,
+			Street ,
+			City ,
+			Region ,
+			Country ,
+			PostalCode ,
+			MaxAttendees ,
+			InvitationOnly ,
+			ShowGuests ,
+			Attending ,
+			NotAttending ,
+			MayAttend ,
+			InviteType ,
+			Content ,
+			ContentTypeID ,
+			TabID ,
+			ModuleID ,
+			ContentKey ,
+			Indexed ,
+			CI.CreatedByUserId ,
+			CI.CreatedOnDate ,
+			CI.LastModifiedByUserID ,
+			CI.LastModifiedOnDate ,
+			CIMD.MetaDataValue AS ContentTitle ,
+			COUNT(*) OVER () AS TotalRecords
+	FROM    {databaseOwner}{objectQualifier}SocialEvents_Event E WITH (NOLOCK) 
+			INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI WITH (NOLOCK) ON E.ContentItemId = CI.ContentItemID
+			LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD WITH (NOLOCK) ON CIMD.ContentItemID = E.ContentItemId
+															  AND CIMD.MetaDataID = ( SELECT
+															  MetaDataID
+															  FROM
+															  {databaseOwner}[{objectQualifier}MetaData]
+															  WHERE
+															  MetaDataName = 'Title'
+															  )
+			LEFT OUTER JOIN {databaseOwner}{objectQualifier}Roles R WITH (NOLOCK) ON GroupId = R.RoleID
+	WHERE   Deleted = 0
+			AND Approved = 1
+			AND E.PortalId = @PortalId
+			AND ((GroupId < 1) OR (GroupId > 0 AND IsPublic = 1))
+GO

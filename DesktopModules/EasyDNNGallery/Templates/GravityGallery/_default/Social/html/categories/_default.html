@@ -1,0 +1,29 @@
+<!--HeaderTemplateBegin-->
+[Has:EDG:CommunityMode]<div class="edsgg_myGalleriesLinkWrapper">[EDG:CommunityModeEditMedia]</div>[/Has:EDG:CommunityMode]
+<!--HeaderTemplateEnd-->
+
+<!--CategoryItemTemplateBegin-->
+[Has:EDG:EditPermission][EDG:EditCategoryData][/Has:EDG:EditPermission]
+<div class="edsgg_thumbnailWrapper" style="width:[EDG:CategoryThumbWidth]px">
+	<div>
+		<div class="edsgg_imageContainer">
+			<a class="edsgg__itemDetailsAndLightboxTrigger" href="[EDG:CategoryLink]" title="[EDG:CategoryTitle]"><span>[EDG:CategoryTitle]</span></a>
+			<div class="edsgg_imageOverlay"></div>
+			<div class="edsgg_elements">
+				[Has:EDG:NumberOfGalleries]<span class="edsgg_numberOfItems">[EDG:NumberOfGalleries]</span>[/Has:EDG:NumberOfGalleries]
+			</div>
+			<img alt="[EDG:CategoryTitle]" src="[EDG:CategoryThumbnail]"/>
+			[Has:EDG:CategorySharingButtons]<div class="edsgg_shareButtons">[EDG:CategoryShareButtons]</div>[/Has:EDG:CategorySharingButtons]
+			[Has:EDG:CategoryShowRss]<a class="edsgg_rssLink" href="[EDG:CategoryRSSURL]"><span>RSS</span></a>[/Has:EDG:CategoryShowRss]
+		</div>
+		[Has:EDG:CategoryTitle]<h2 class="listItemTitle"><a href="[EDG:CategoryLink]">[EDG:CategoryTitle]</a></h2>[/Has:EDG:CategoryTitle]
+		[Has:EDG:CategoryDescription]<div class="edsgg_listItemDescription">[EDG:CategoryDescription]</div>[/Has:EDG:CategoryDescription]
+	</div>
+</div>
+<!--CategoryItemTemplateEnd-->
+
+<!--FooterTemplateBegin-->
+<div class="edsgg_clear"></div>
+[EDG:CategoryPaging]
+[Has:EDG:CategoryShowRss]<div class="edsgg_listRssWrapper"><a href="[EDG:CategoryListRSSURL]"><span>[EDG:LocalizedText:RSS]</span></a></div>[/Has:EDG:CategoryShowRss]
+<!--FooterTemplateEnd-->

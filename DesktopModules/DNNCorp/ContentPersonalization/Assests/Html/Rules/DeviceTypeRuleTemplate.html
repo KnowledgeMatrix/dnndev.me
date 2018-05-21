@@ -1,0 +1,8 @@
+﻿<div id='{0}' style="padding-bottom: 10px" class="contentPersonalizationDeviceTypeRule">
+    <span data-bind='text: resx.RulesDeviceTypeName' class='caption'></span>
+    <input class='left-checkbox' type='checkbox' data-bind='checked:mobileSelected, hasFocus:true' aria-label="Mobile" /><span data-bind="text: resx.RulesDeviceTypeMobileLabel" class='label'></span>
+    <input class='left-checkbox' type='checkbox' data-bind='checked:tabletSelected' aria-label="Tablet" /><span data-bind="text: resx.RulesDeviceTypeTabletLabel" class='label'></span>
+    <input class='left-checkbox' type='checkbox' data-bind='checked:pcSelected' aria-label="PC" /><span data-bind="text: resx.RulesDeviceTypeDesktopLabel" class='label'></span>
+    <span class='rulesValidationMessage' data-bind='validationMessage: anyDeviceTypeSelected'></span>
+    <div data-bind='text: resx.RulesRemoveRule, click: remove' class='deleteRule'></div>
+</div>

@@ -1,0 +1,55 @@
+
+.evoq-autocomplete-menu.ui-autocomplete {
+    background: white;
+    border: 1px solid #eee;
+    -webkit-box-shadow: 2px 2px 6px -2px rgba(0,0,0,0.75);
+    -moz-box-shadow: 2px 2px 6px -2px rgba(0,0,0,0.75);
+    box-shadow: 2px 2px 6px -2px rgba(0,0,0,0.75);
+    max-width: 185px;
+    position: absolute; 
+    z-index: 99999999999;
+}
+
+li.evoq-autocomplete-menu-item {
+    list-style-type: none;
+    padding: 5px;
+    margin: 0;
+}
+
+    li.evoq-autocomplete-menu-item img {
+        margin-right: 5px;
+    }
+
+    li.evoq-autocomplete-menu-item + li {
+        border-top: 1px solid #eee;
+    }
+
+    li.evoq-autocomplete-menu-item.ui-state-focus {
+        background: #dddddd;
+    }
+
+.evoq-user-mention[data-mention], .redactor-editor [data-mention], [contenteditable="true"] [data-mention] {
+    background-color: #eee;
+    color: rgb(2, 139, 255);
+    font-weight: normal;
+    text-decoration: none !important;
+}
+
+
+.evoq-loading {
+  position: relative;
+  opacity: 0.65;
+}
+.evoq-loading:before {
+  background: url('../../../Images/dnnanim.gif') no-repeat center center;
+  content: '';
+  top: 49%;
+  padding: 20px;
+  display: block;
+  position: absolute;
+  left: 48%;
+}
+
+.ui-helper-hidden-accessible {
+    display: none;
+}

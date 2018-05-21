@@ -1,0 +1,528 @@
+﻿IF COL_LENGTH('{databaseOwner}[{objectQualifier}Wiki_Article]', 'Approved') IS NOT NULL
+	ALTER TABLE {databaseOwner}[{objectQualifier}Wiki_Article] DROP COLUMN Approved
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_Article_Add') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_Add
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Wiki_Article_Add]
+    @ArticleTypeId int,
+    @ContentItemId int,
+    @SummaryContentItemId int,
+    @PortalId int,
+    @GroupId int,
+    @Protected bit,
+    @Elements int
+AS 
+    INSERT INTO {databaseOwner}{objectQualifier}Wiki_Article
+           (ArticleTypeId,
+            ContentItemId,
+            SummaryContentItemId,
+            PortalId,
+            GroupId,
+            ViewCount,
+            Protected,
+            Elements)
+    VALUES (@ArticleTypeId,
+            @ContentItemId,
+            @SummaryContentItemId,
+            @PortalId,
+            @GroupId,
+            0,
+            @Protected,
+            @Elements)
+
+    SELECT SCOPE_IDENTITY()
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_Article_GetSearchable') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_GetSearchable
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Wiki_Article_GetSearchable]
+    @ModuleId INT,
+    @StartDate DATETIME,
+    @EndDate DATETIME,
+    @StartDateUTC DATETIME,
+    @EndDateUTC DATETIME
+AS	
+    SELECT  ArticleId,
+            ArticleTypeId,
+            A.ContentItemId,
+            SummaryContentItemId,
+            GroupId,
+            PortalId,
+            ViewCount,
+            Protected,
+            Elements,
+            S.Content AS [Summary],
+            CI.Content,
+            CI.ContentTypeID,
+            CI.TabID,
+            CI.ModuleID,
+            CI.ContentKey,
+            CI.Indexed,
+            CI.CreatedByUserId,
+            CI.CreatedOnDate,
+            CI.LastModifiedByUserID,
+            CI.LastModifiedOnDate,
+            CIMD.MetaDataValue AS [ContentTitle],
+            1 AS TotalRecords
+    FROM    {databaseOwner}{objectQualifier}Wiki_Article A
+            INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI WITH (NOLOCK) ON A.ContentItemId = CI.ContentItemID
+            LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems S WITH (NOLOCK) ON A.SummaryContentItemId = S.ContentItemID
+            LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD WITH (NOLOCK) ON CIMD.ContentItemID = A.ContentItemId
+                AND CIMD.MetaDataID = (SELECT MetaDataID FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Title')
+    WHERE   EXISTS(SELECT 1 FROM {databaseOwner}{objectQualifier}Revisions R WITH (NOLOCK) WHERE R.ContentItemID = A.ContentItemID AND R.State = 2)
+            AND CI.ModuleID = @ModuleID
+            AND
+            -- Comments have been added or updated within the given time frame
+            (
+              (CI.LastModifiedOnDate >= @StartDate OR S.LastModifiedOnDate >= @StartDate)
+              AND (CI.LastModifiedOnDate <= @EndDate OR S.LastModifiedOnDate <= @EndDate)
+              OR
+              (										
+                (SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}Journal_Comments JC 
+                 WHERE JC.[JournalId] IN (SELECT JournalId FROM {databaseOwner}{objectQualifier}Journal J WHERE J.[ContentItemId] = A.[ContentItemId]) 
+                  AND 
+                  ((JC.[DateCreated] >= @StartDateUTC AND JC.[DateCreated] <= @EndDateUTC)
+                    OR
+                  (JC.[DateUpdated] >= @StartDateUTC AND JC.[DateUpdated] <= @EndDateUTC)
+                  )
+                ) > 0 
+              )
+            )
+GO
+
+/********************************************************
+ * SPROC: Wiki_Article_List
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Wiki_Article_List]', N'P') IS NULL
+    EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Wiki_Article_List] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Wiki_Article_List]
+    @ModuleId int,
+    @UserId int,
+    @PageIndex int,
+    @PageSize int,
+    @GroupId int,
+    @SortMode int,
+    @ExclusionList varchar(MAX),
+    @Tags nvarchar(MAX)
+AS
+BEGIN
+    IF @ModuleId < 0
+        SET @ModuleId = NULL
+
+    ;WITH OrderedSet AS(
+        SELECT
+            ArticleId,
+            ArticleTypeId,
+            A.ContentItemId,
+            SummaryContentItemId,
+            GroupId,
+            PortalId,
+            ViewCount,
+            Protected,
+            Elements,
+            S.Content AS [Summary],
+            CI.Content,
+            CI.ContentTypeID,
+            CI.TabID,
+            CI.ModuleID,
+            CI.ContentKey,
+            CI.Indexed,
+            CI.CreatedByUserId,
+            CI.CreatedOnDate,
+            CI.LastModifiedByUserID,
+            CI.LastModifiedOnDate,
+            CIMD.MetaDataValue AS [ContentTitle],
+            ROW_NUMBER() OVER (
+                ORDER BY
+                    CASE WHEN @SortMode = 0 THEN CI.CreatedOnDate END DESC,
+                    CASE WHEN @SortMode = 1 THEN CI.LastModifiedOnDate END DESC,
+                    A.ArticleId DESC) AS RowNumber,
+            COUNT(*) OVER () AS TotalRecords
+        FROM			{databaseOwner}{objectQualifier}Wiki_Article A WITH (NOLOCK)
+        INNER JOIN		{databaseOwner}{objectQualifier}ContentItems CI WITH (NOLOCK) ON A.ContentItemId = CI.ContentItemID
+        LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems S WITH (NOLOCK) ON A.SummaryContentItemId = S.ContentItemID
+        LEFT OUTER JOIN	{databaseOwner}{objectQualifier}ContentItems_MetaData CIMD WITH (NOLOCK)
+            ON CIMD.ContentItemID = A.ContentItemID AND CIMD.MetaDataID = (SELECT MetaDataID FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Title')
+
+        -- match tags (if specified)
+        WHERE 	(@Tags IS NULL OR LEN(@Tags) = 0 OR
+            (SELECT		COUNT(*)
+                        FROM		{databaseOwner}{objectQualifier}ContentItems_Tags CIT WITH (NOLOCK)
+                        INNER JOIN	{databaseOwner}{objectQualifier}Taxonomy_Terms TT WITH (NOLOCK) ON CIT.TermID = TT.TermID
+                        INNER JOIN	{databaseOwner}[{objectQualifier}ConvertListToTable](',', @Tags) T ON TT.Name = T.RowValue
+                        WHERE		CIT.ContentItemID = A.ContentItemId) = (SELECT LEN(@Tags) - LEN(REPLACE(@Tags, ',', '')) + 1))
+
+        -- match group (if specified)
+        AND 
+            (GroupId = @groupId)
+
+        AND
+            (CI.ModuleID = COALESCE(@ModuleId, CI.ModuleID)) AND
+            (@ExclusionList IS NULL OR NOT (ArticleId IN (SELECT RowValue FROM {databaseOwner}{objectQualifier}ConvertListToTable(' ', @ExclusionList)))))
+
+    SELECT	TOP (@PageSize) *
+    FROM	OrderedSet
+    WHERE	RowNumber >= (@PageIndex * @PageSize) + 1
+    ORDER BY RowNumber ASC
+END
+GO
+
+/********************************************************
+ * SPROC: Wiki_Article_GetByContentItem
+ ********************************************************/
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_Article_GetByContentItem') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_GetByContentItem
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Wiki_Article_GetByContentItem]
+    @ContentItemId INT,
+    @ModuleId INT
+AS 
+    SELECT  ArticleId,
+            ArticleTypeId,
+            A.ContentItemId,
+            SummaryContentItemId,
+            GroupId,
+            PortalId,
+            ViewCount,
+            Protected,
+            Elements,
+            S.[Content] AS [Summary],
+            CI.Content,
+            CI.ContentTypeID,
+            CI.TabID,
+            CI.ModuleID,
+            CI.ContentKey,
+            CI.Indexed,
+            CI.CreatedByUserId,
+            CI.CreatedOnDate,
+            CI.LastModifiedByUserID,
+            CI.LastModifiedOnDate,
+            CIMD.MetaDataValue AS [ContentTitle],
+            1 AS TotalRecords
+    FROM    {databaseOwner}{objectQualifier}Wiki_Article A
+            INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI ON A.ContentItemId = CI.ContentItemID
+            LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems S WITH (NOLOCK) ON A.SummaryContentItemId = S.ContentItemID
+            LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD ON CIMD.ContentItemID = A.ContentItemID
+                                AND CIMD.MetaDataID = (SELECT MetaDataID FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Title')
+    WHERE   A.ContentItemID = @ContentItemId AND CI.ModuleID = @ModuleId
+GO
+
+/********************************************************
+ * SPROC: Wiki_Article_UpdateViewCount
+ ********************************************************/
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_Article_UpdateViewCount') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_UpdateViewCount
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Wiki_Article_UpdateViewCount]
+    @ContentItemId INT,
+    @PortalId INT
+AS 
+    UPDATE {databaseOwner}{objectQualifier}Wiki_Article
+    SET     ViewCount = ViewCount + 1
+    WHERE   PortalID = @PortalId
+      AND   ContentItemId = @ContentItemId
+      AND   EXISTS(SELECT 1 FROM {databaseOwner}{objectQualifier}Revisions R WITH (NOLOCK) WHERE R.ContentItemID = ContentItemID AND R.State = 2)
+GO
+
+/********************************************************
+ * SPROC: Wiki_Article_Search
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Wiki_Article_Search]', N'P') IS NULL
+    EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Wiki_Article_Search] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Wiki_Article_Search]
+    @PortalId INT,
+    @ModuleId INT,
+    @GroupId INT,
+    @PageSize INT,
+    @PageIndex INT,
+    @SortColumn VARCHAR(32),
+    @SortAscending BIT,
+    @UserId INT,
+    @Tags NVARCHAR(256),
+    @draftOnly BIT
+AS
+BEGIN
+
+    DECLARE @MetaDataID int
+    SELECT @MetaDataID=MetaDataID FROM {databaseOwner}{objectQualifier}MetaData WITH ( NOLOCK ) WHERE MetaDataName = 'Title'
+
+    ;WITH OrderedSet
+    AS (
+        SELECT
+                COUNT(*) OVER () AS TotalRecords,
+                ArticleId,
+                ArticleTypeId,
+                A.ContentItemId,
+                SummaryContentItemId,
+                PortalId,
+                GroupId,
+                ViewCount,
+                Protected,
+                Elements,
+                S.Content AS [Summary],
+                CI.Content,
+                CI.ContentTypeID,
+                CI.TabID,
+                CI.ModuleID,
+                CI.ContentKey,
+                CI.Indexed,
+                CI.CreatedByUserID,
+                CI.[CreatedOnDate],
+                CI.LastModifiedByUserID,
+                CI.[LastModifiedOnDate],
+                CIMD.[MetaDataValue] AS [ContentTitle],
+                ROW_NUMBER() OVER (
+                    ORDER BY
+                        CASE WHEN @SortColumn = 'CreatedDate' AND @SortAscending = 1 THEN CI.CreatedOnDate END ASC,
+                        CASE WHEN @SortColumn = 'CreatedDate' AND @SortAscending = 0 THEN CI.CreatedOnDate END DESC,
+                        CASE WHEN @SortColumn = 'LastActive' AND @SortAscending = 1 THEN CI.LastModifiedOnDate END ASC,
+                        CASE WHEN @SortColumn = 'LastActive' AND @SortAscending = 0 THEN CI.LastModifiedOnDate END DESC,
+                        CASE WHEN @SortColumn = 'Title' AND @SortAscending = 1 THEN MetaDataValue END ASC,
+                        CASE WHEN @SortColumn = 'Title' AND @SortAscending = 0 THEN MetaDataValue END DESC,
+                        CASE WHEN @SortColumn = 'Views' AND @SortAscending = 0 THEN ViewCount END DESC,
+                        CASE WHEN @SortColumn = 'Views' AND @SortAscending = 1 THEN ViewCount END ASC
+                    ) AS [RowNumber]
+        FROM {databaseOwner}{objectQualifier}Wiki_Article A WITH ( NOLOCK )
+                    INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI WITH ( NOLOCK ) ON CI.ContentItemID = A.ContentItemID
+                    INNER JOIN {databaseOwner}{objectQualifier}Users U WITH ( NOLOCK ) ON U.UserID = CI.CreatedByUserID
+                    INNER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD WITH ( NOLOCK )
+                        ON CIMD.ContentItemID = A.ContentItemID
+                    LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems S WITH (NOLOCK) ON A.SummaryContentItemId = S.ContentItemID
+        WHERE (ArticleTypeId > 0)
+		  AND (A.PortalId = @PortalId)
+          AND (CIMD.MetaDataID = @MetaDataID)
+          AND ((@GroupId < 1 AND A.GroupId < 1) OR A.GroupId = @GroupId)
+          AND (
+                (@DraftOnly = 1 AND @UserID < 1 AND NOT EXISTS(
+                    SELECT 1 FROM {databaseOwner}{objectQualifier}Revisions R WITH (NOLOCK)
+                    WHERE R.ContentItemID = A.ContentItemID AND R.State = 2)
+                )
+                OR
+                (@DraftOnly = 0 AND @UserID < 1 AND
+                    EXISTS(SELECT 1 FROM {databaseOwner}{objectQualifier}Revisions R WITH (NOLOCK) WHERE R.ContentItemID = A.ContentItemID AND R.State = 2)
+                )
+                OR
+                (CI.CreatedByUserID = @UserId)
+            )
+        AND	(@Tags IS NULL OR LEN(@Tags) = 0 OR
+            (SELECT COUNT(*)
+                FROM   {databaseOwner}{objectQualifier}ContentItems_Tags CIT WITH ( NOLOCK )
+                INNER JOIN {databaseOwner}{objectQualifier}Taxonomy_Terms TT WITH ( NOLOCK ) ON CIT.TermID = TT.TermID
+                INNER JOIN {databaseOwner}{objectQualifier}ConvertListToTable(',', @Tags) T ON TT.Name = T.RowValue
+                WHERE  CIT.ContentItemID = A.ContentItemId) = ( SELECT LEN(@Tags) - LEN(REPLACE(@Tags, ',', '')) + 1))
+    )
+
+    SELECT	TOP (@PageSize) *
+    FROM    OrderedSet
+    WHERE   RowNumber >= (@PageIndex * @PageSize) + 1
+END
+GO
+
+/********************************************************
+ * SPROC: Wiki_Article_Update
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Wiki_Article_Update]', N'P') IS NULL
+    EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Wiki_Article_Update] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Wiki_Article_Update]
+    @ArticleId INT,
+    @ContentItemId INT,
+    @PortalId INT,
+    @GroupId INT,
+    @Protected BIT,
+    @Elements int
+AS 
+    UPDATE  {databaseOwner}{objectQualifier}Wiki_Article
+    SET     GroupId = @GroupId,
+            Protected = @Protected,
+            Elements = @Elements
+    WHERE   ContentItemId = @ContentItemId
+            AND ArticleId = @ArticleId
+            AND PortalId = @PortalId
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_Article_Get') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_Get
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_Get
+    @ArticleId int
+AS
+BEGIN
+    SELECT
+        a.[ArticleId],
+        a.[ArticleTypeId],
+        a.[ContentItemId],
+        a.[SummaryContentItemId],
+        a.[PortalId],
+        a.[GroupId],
+        a.[ViewCount],
+        a.[Protected],
+        s.[Content] AS [Summary],
+        c.[Content],
+        c.[ContentTypeID],
+        c.[TabID],
+        c.[ModuleID],
+        c.[ContentKey],
+        c.[Indexed],
+        c.[CreatedByUserID],
+        c.[CreatedOnDate],
+        c.[LastModifiedByUserID],
+        c.[LastModifiedOnDate],
+        c.[StateID],
+        m.[MetaDataValue] AS [ContentTitle],
+        u.DisplayName
+    FROM {databaseOwner}{objectQualifier}Wiki_Article a WITH (NOLOCK)
+    LEFT OUTER JOIN	{databaseOwner}{objectQualifier}ContentItems c WITH (NOLOCK) ON a.ContentItemId = c.ContentItemID
+    LEFT OUTER JOIN {databaseOwner}[{objectQualifier}Users] u WITH (NOLOCK) ON U.UserID = c.CreatedByUserID
+    LEFT OUTER JOIN {databaseOwner}[{objectQualifier}ContentItems_MetaData] m WITH (NOLOCK) ON m.ContentItemID = a.[ContentItemId] AND m.MetaDataID =
+        (SELECT	[MetaDataID]
+         FROM   {databaseOwner}[{objectQualifier}MetaData] WITH (NOLOCK)
+         WHERE  [MetaDataName] = 'Title')	
+    LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems S WITH (NOLOCK) ON A.SummaryContentItemId = S.ContentItemID
+    WHERE		a.ArticleId = @ArticleId
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Wiki_Article_GetBySubject') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_GetBySubject
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_GetBySubject
+    @ModuleId INT ,
+    @Subject NVARCHAR(512) ,
+    @ArticleTypeId INT = -1 ,
+    @GroupId INT = -1
+AS
+    BEGIN
+            SELECT  a.[ArticleId] ,
+                    a.[ArticleTypeId] ,
+                    a.[ContentItemId] ,
+                    a.[SummaryContentItemId] ,
+                    a.[PortalId] ,
+                    a.[GroupId] ,
+                    a.[ViewCount] ,
+                    a.[Protected] ,
+                    a.[Elements] ,
+                    s.[Content] AS [Summary] ,
+                    c.[Content] ,
+                    c.[ContentTypeID] ,
+                    c.[TabID] ,
+                    c.[ModuleID] ,
+                    c.[ContentKey] ,
+                    c.[Indexed] ,
+                    c.[CreatedByUserID] ,
+                    c.[CreatedOnDate] ,
+                    c.[LastModifiedByUserID] ,
+                    c.[LastModifiedOnDate] ,
+                    c.[StateID] ,
+                    m.[MetaDataValue] AS [ContentTitle] ,
+                    u.DisplayName
+            FROM	{databaseOwner}{objectQualifier}Wiki_Article a WITH (NOLOCK)
+                    INNER JOIN {databaseOwner}{objectQualifier}ContentItems c WITH (NOLOCK) ON c.ContentItemID = a.ContentItemId
+                    INNER JOIN {databaseOwner}{objectQualifier}MetaData md WITH (NOLOCK) ON md.MetaDataName = 'Title'
+                    INNER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData m WITH (NOLOCK) ON m.MetaDataID = md.MetaDataID AND m.ContentItemID = c.ContentItemID
+                    INNER JOIN {databaseOwner}{objectQualifier}Users u WITH (NOLOCK) ON u.UserID = c.CreatedByUserID
+                    LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems s WITH (NOLOCK) ON a.SummaryContentItemId = s.ContentItemID
+            WHERE   m.MetaDataValue = @Subject
+                    AND ( @ArticleTypeId < 0
+                          OR a.ArticleTypeId = @ArticleTypeId
+                        )
+                    AND ( c.ModuleID = @ModuleId )
+                    AND ( @GroupId < 0
+                          OR a.GroupId = @GroupId
+                        )
+    END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_Article_GetByUserId') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_GetByUserId
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Wiki_Article_GetByUserId]
+    @PortalId INT,
+    @UserId INT
+AS 
+    SELECT  ArticleId,
+            ArticleTypeId,
+            A.ContentItemId,
+            SummaryContentItemId,
+            GroupId,
+            PortalId,
+            ViewCount,
+            Protected,
+            Elements,
+            S.[Content] AS [Summary],
+            CI.Content,
+            CI.ContentTypeID,
+            CI.TabID,
+            CI.ModuleID,
+            CI.ContentKey,
+            CI.Indexed,
+            CI.CreatedByUserId,
+            CI.CreatedOnDate,
+            CI.LastModifiedByUserID,
+            CI.LastModifiedOnDate,
+            CIMD.MetaDataValue AS [ContentTitle],
+            1 AS TotalRecords
+    FROM    {databaseOwner}{objectQualifier}Wiki_Article A
+            INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI ON A.ContentItemId = CI.ContentItemID
+            LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems S WITH (NOLOCK) ON A.SummaryContentItemId = S.ContentItemID
+            LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD ON CIMD.ContentItemID = A.ContentItemID
+                                AND CIMD.MetaDataID = (SELECT MetaDataID FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Title')
+    WHERE   PortalId = @PortalId
+            AND CI.CreatedByUserId = @UserId
+
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Wiki_Article_GetSitemap') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_GetSitemap
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Wiki_Article_GetSitemap]
+    @PortalId INT
+AS	
+    SELECT  ArticleId,
+            ArticleTypeId,
+            A.ContentItemId,
+            SummaryContentItemId,
+            GroupId,
+            A.PortalId,
+            ViewCount,
+            Protected,
+            Elements,
+            S.Content AS [Summary],
+            CI.Content,
+            CI.ContentTypeID,
+            CI.TabID,
+            CI.ModuleID,
+            CI.ContentKey,
+            CI.Indexed,
+            CI.CreatedByUserId,
+            CI.CreatedOnDate,
+            CI.LastModifiedByUserID,
+            CI.LastModifiedOnDate,
+            CIMD.MetaDataValue AS [ContentTitle],
+            COUNT(*) OVER () AS TotalRecords
+    FROM    {databaseOwner}{objectQualifier}Wiki_Article A WITH (NOLOCK) 
+            INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI WITH (NOLOCK) ON A.ContentItemId = CI.ContentItemID
+            LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems S WITH (NOLOCK) ON A.SummaryContentItemId = S.ContentItemID
+            LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD WITH (NOLOCK) ON CIMD.ContentItemID = A.ContentItemId
+                AND CIMD.MetaDataID = (SELECT MetaDataID FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Title')
+            LEFT OUTER JOIN {databaseOwner}{objectQualifier}Roles R WITH (NOLOCK) ON GroupId = R.RoleID
+    WHERE   EXISTS(SELECT 1 FROM {databaseOwner}{objectQualifier}Revisions Rv WITH (NOLOCK) WHERE Rv.ContentItemID = A.ContentItemID AND Rv.State = 2)
+            AND A.PortalID = @PortalId
+            AND ((GroupId < 1) OR (GroupId > 0 AND IsPublic = 1))
+GO

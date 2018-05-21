@@ -1,0 +1,7 @@
+﻿<div id="{0}" class="contentPersonalizationLanguageRule">
+    <span data-bind="text: resx.RulesLanguageName" class="caption"></span>
+    <input type="text" class=".dnnFormItem .token-input-list-facebook" aria-label="Language"
+           data-bind="tokenInput: tokens, settings: { url: url, theme:'facebook', resultsFormatter: tokenInputResultsFormatter }, hasFocus: true" />
+    <span class="rulesValidationMessage" data-bind="validationMessage: tokens"></span>
+    <div data-bind="text: resx.RulesRemoveRule, click: remove" class="deleteRule"></div>
+</div>

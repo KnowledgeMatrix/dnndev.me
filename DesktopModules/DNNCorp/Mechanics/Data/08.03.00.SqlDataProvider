@@ -1,0 +1,260 @@
+﻿/********************************************************
+ * SPROC: Mechanics_SaveUserScore
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Mechanics_SaveUserScore]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Mechanics_SaveUserScore] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Mechanics_SaveUserScore]
+	@UserId INT,
+    @PortalId INT,
+    @ContentItemId INT,
+    @ScoringActionDefId INT,
+    @ExperiencePoints INT,
+    @ReputationPoints INT,
+    @Notes nvarchar(400),
+    @Context nvarchar(200),
+    @GroupId INT,
+    @CreatedOnDate datetime = NULL
+
+AS
+BEGIN
+   IF @UserId IS NULL OR @UserId < 0
+        RETURN
+
+    IF @CreatedOnDate IS NULL
+        SET @CreatedOnDate = GETUTCDATE()
+
+    DECLARE @UserScoringLogId INT
+
+    INSERT INTO {databaseOwner}[{objectQualifier}Mechanics_UserScoringLog]
+            ( UserId,
+              PortalId,
+              GroupId,
+              ContentItemId,
+              ScoringActionDefId,
+              ExperiencePoints,
+              ReputationPoints,
+              Notes,
+              Context,
+              CreatedOnDate
+            )
+    VALUES  ( @UserId,
+              @PortalId,
+              @GroupId,
+              @ContentItemId,
+              @ScoringActionDefId,
+              @ExperiencePoints,
+              @ReputationPoints,
+              @Notes,
+              @Context,
+              @CreatedOnDate
+            )
+
+    SET @UserScoringLogId = SCOPE_IDENTITY()
+    SELECT @UserScoringLogId
+
+    DECLARE @TotalExperiencePoints INT
+    DECLARE @TotalReputationPoints INT
+    DECLARE @TopReputationPoints INT
+    DECLARE @InteractedCount INT
+    DECLARE @ViewedCount INT
+    DECLARE @CreatedCount INT
+    DECLARE @EditedCount INT
+    DECLARE @DeletedCount INT
+    DECLARE @FlaggedCount INT
+
+
+    SELECT @TotalExperiencePoints = SUM(ExperiencePoints),
+        @TotalReputationPoints = (CASE WHEN SUM(ReputationPoints) < 0 THEN 0 ELSE SUM(ReputationPoints) END),
+        @TopReputationPoints = SUM(CASE WHEN ReputationPoints > 0 THEN ReputationPoints ELSE 0 END),
+        @InteractedCount = SUM(CASE WHEN ActionType = 0 THEN 1 ELSE 0 END),
+        @ViewedCount = SUM(CASE WHEN ActionType = 1 THEN 1 ELSE 0 END),
+        @CreatedCount = SUM(CASE WHEN ActionType = 2 THEN 1 ELSE 0 END),
+        @EditedCount = SUM(CASE WHEN ActionType = 3 THEN 1 ELSE 0 END),
+        @DeletedCount = SUM(CASE WHEN ActionType = 4 THEN 1 ELSE 0 END),
+        @FlaggedCount = SUM(CASE WHEN ActionType = 5 THEN 1 ELSE 0 END)
+    FROM {databaseOwner}[{objectQualifier}Mechanics_UserScoringLog] usl
+    INNER JOIN {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition] sad on usl.ScoringActionDefId = sad.ScoringActionDefId
+    WHERE usl.UserId = @UserId
+    AND usl.PortalId = @PortalId
+
+    DECLARE @UserScoringId INT
+    DECLARE @BestReputationPoints INT
+
+    SELECT @UserScoringId = UserScoringId,
+        @BestReputationPoints = COALESCE(BestReputationPoints, 0)
+    FROM {databaseOwner}[{objectQualifier}Mechanics_UserScoring]
+    WHERE [PortalId] = @PortalId AND [UserId] = @UserId
+
+    DECLARE @DailyReputationPoints INT
+
+    SELECT @DailyReputationPoints = COALESCE(SUM([ReputationPoints]), 0)
+    FROM {databaseOwner}[{objectQualifier}Mechanics_UserScoringLog]
+    WHERE [PortalId] = @PortalId AND [UserId] = @UserId
+    AND [CreatedOnDate] >= dateadd(hour, -24, @CreatedOnDate) AND [CreatedOnDate] <= @CreatedOnDate
+    AND ReputationPoints > 0
+
+    IF @DailyReputationPoints > @BestReputationPoints OR @BestReputationPoints IS NULL
+        SELECT @BestReputationPoints = @DailyReputationPoints
+
+    IF @UserScoringId IS NOT NULL
+     BEGIN
+        UPDATE {databaseOwner}[{objectQualifier}Mechanics_UserScoring]
+        SET ExperiencePoints = ExperiencePoints + @ExperiencePoints,
+            ReputationPoints = ReputationPoints + @ReputationPoints,
+            TopReputationPoints = @TopReputationPoints,
+            BestReputationPoints = @BestReputationPoints,
+            DailyReputationPoints = @DailyReputationPoints,
+            ContentInteractedCount = @InteractedCount,
+            ContentViewedCount = @ViewedCount,
+            ContentCreatedCount = @CreatedCount,
+            ContentEditedCount = @EditedCount,
+            ContentDeletedCount = @DeletedCount,
+            ContentFlaggedCount = @FlaggedCount,
+            LastModifiedOnDate = GETUTCDATE()
+        WHERE UserScoringId = @UserScoringId
+     END
+    ELSE
+     BEGIN
+        INSERT INTO {databaseOwner}[{objectQualifier}Mechanics_UserScoring]
+                ( UserId,
+                  PortalId,
+                  ExperiencePoints,
+                  ReputationPoints,
+                  TopReputationPoints,
+                  BestReputationPoints,
+                  DailyReputationPoints,
+                  ContentInteractedCount,
+                  ContentViewedCount,
+                  ContentCreatedCount,
+                  ContentEditedCount,
+                  ContentDeletedCount,
+                  ContentFlaggedCount,
+                  CreatedOnDate,
+                  LastModifiedOnDate
+                )
+        VALUES  ( @UserId,
+                  @PortalId,
+                  @TotalExperiencePoints,
+                  @TotalReputationPoints,
+                  @TopReputationPoints,
+                  @BestReputationPoints,
+                  @DailyReputationPoints,
+                  @InteractedCount,
+                  @ViewedCount,
+                  @CreatedCount,
+                  @EditedCount,
+                  @DeletedCount,
+                  @FlaggedCount,
+                  GETUTCDATE(),
+                  GETUTCDATE()
+                )
+     END
+END
+GO
+
+/* DNN-7161 String Split */
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Mechanics_CreateBadge]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Mechanics_CreateBadge]
+GO
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Mechanics_CreateBadge]
+    @PortalId int,
+    @Name nvarchar(256),
+    @TimeFrameInDays int,
+    @Tier int,
+    @ImageFileId int,
+    @ScoringActionDefinitionList varchar(1024), -- serialized list of BadgeSads
+    @UserId int = -1
+AS
+BEGIN
+    BEGIN TRANSACTION
+    
+    -- Create new Badge row that we can reference in the BadgeScoActDef rows.
+    DECLARE @BadgeId INT
+    INSERT INTO {databaseOwner}[{objectQualifier}Mechanics_Badge] (
+            [PortalId],
+            [BadgeName],
+            [TimeFrameInDays],
+            [Tier],
+            [ImageFileId],
+            [CreatedByUserID],
+            [CreatedOnDate],
+            [LastModifiedByUserID],
+            [LastModifiedOnDate])
+        VALUES
+            (@PortalId,
+             @Name,
+             @TimeFrameInDays,
+             @Tier,
+             @ImageFileId,
+             @UserId,
+             GETUTCDATE(),
+             @UserId,
+             GETUTCDATE())
+    SELECT @BadgeId = SCOPE_IDENTITY()
+        
+	INSERT INTO {databaseOwner}[{objectQualifier}Mechanics_BadgeScoActDef] (
+			[BadgeId],
+			[ScoringActionDefId],
+			[NumberOfTimes],
+			[CreatedOnDate])
+	SELECT	@BadgeId
+			,Nullif(substring(item,1,CHARINDEX(' ',item,0)),'') ScoringActionDefId
+			,Nullif(substring(item,CHARINDEX(' ',item,0),LEN(item)-CHARINDEX(' ',item,0)+1),'')
+			,GETUTCDATE()
+	FROM {databaseOwner}{objectQualifier}SplitStrings_CTE(@ScoringActionDefinitionList,',')                
+
+    --Commit all our changes
+    COMMIT TRANSACTION	
+   	  
+    SELECT @BadgeId
+END
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Mechanics_UpdateBadge]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Mechanics_UpdateBadge]
+GO
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Mechanics_UpdateBadge]
+    @BadgeId int,
+    @Name nvarchar(256),
+    @TimeFrameInDays int,
+    @Tier int,
+    @ImageFileId int,
+    @ScoringActionDefinitionList varchar(1024), -- serialized list of BadgeSads
+    @UserId int = -1
+AS
+BEGIN
+    BEGIN TRANSACTION
+    
+    UPDATE {databaseOwner}[{objectQualifier}Mechanics_Badge]
+        SET
+            [BadgeName] = @Name,
+            [TimeFrameInDays] = @TimeFrameInDays,
+            [Tier] = @Tier,
+            [ImageFileId] = @ImageFileId,
+            [LastModifiedByUserID] = @UserId,
+            [LastModifiedOnDate] = getutcdate()
+        WHERE
+            [BadgeId] = @BadgeId
+
+    DELETE FROM {databaseOwner}[{objectQualifier}Mechanics_BadgeScoActDef] WHERE [BadgeId] = @BadgeId		
+
+    -- Convert Scoring Action Definition serialized list into table of intermediate values
+    INSERT INTO {databaseOwner}[{objectQualifier}Mechanics_BadgeScoActDef] (
+			[BadgeId],
+			[ScoringActionDefId],
+			[NumberOfTimes],
+			[CreatedOnDate])
+	SELECT	@BadgeId
+			,Nullif(substring(item,1,CHARINDEX(' ',item,0)),'') ScoringActionDefId
+			,Nullif(substring(item,CHARINDEX(' ',item,0),LEN(item)-CHARINDEX(' ',item,0)+1),'')
+			,GETUTCDATE()
+	FROM {databaseOwner}{objectQualifier}SplitStrings_CTE(@ScoringActionDefinitionList,',')     
+
+    -- Commit all our changes
+    COMMIT TRANSACTION	
+        
+    SELECT 0
+END
+GO

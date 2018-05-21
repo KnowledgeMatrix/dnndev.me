@@ -1,0 +1,9 @@
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryPictures' AND column_name = 'ExifData')
+BEGIN
+ ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryPictures] ALTER COLUMN ExifData nvarchar(MAX);
+END
+
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryPortfolioProSettings' AND column_name = 'ShowGalleryMediaCounter')
+BEGIN
+	ALTER TABLE {databaseOwner} [{objectQualifier}EasyGalleryPortfolioProSettings] ADD ShowGalleryMediaCounter BIT CONSTRAINT DF_{objectQualifier}EasyGalleryPortfolioProSettings_ShowGalleryMediaCounter DEFAULT (1) NOT NULL
+END

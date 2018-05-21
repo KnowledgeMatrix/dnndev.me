@@ -1,0 +1,956 @@
+﻿
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Challenges_Challenge_Search') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Challenges_Challenge_Search
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Challenges_Challenge_GetByContentItem') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Challenges_Challenge_GetByContentItem
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Challenges_Challenge_Get') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Challenges_Challenge_Get
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Challenges_Challenge_GetSearchable') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Challenges_Challenge_GetSearchable
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Challenges_Challenge_Delete') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Challenges_Challenge_Delete
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Challenges_Challenge_GetAccepted') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Challenges_Challenge_GetAccepted
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Challenges_Challenge_GetCompleted') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Challenges_Challenge_GetCompleted
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Challenges_Challenge_GetCompletedUserList') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Challenges_Challenge_GetCompletedUserList
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Challenges_GetAnalytics') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Challenges_GetAnalytics
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Challenges_Challenge_GetPendingByUser') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Challenges_Challenge_GetPendingByUser
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Challenges_GetActiveChallengesByUser') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Challenges_GetActiveChallengesByUser
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Challenges_IsUserInvited') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Challenges_IsUserInvited
+GO
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Challenges_Challenge]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}Challenges_Challenge](
+	[ChallengeId] [int] IDENTITY(1,1) NOT NULL,
+	[ContentItemId] [int] NOT NULL,
+	[ChallengeTypeId] [int] NOT NULL,
+	[Url] [nvarchar](150) NOT NULL,
+	[TargetItemId] [int] NULL,
+	[RepPoints] [int] NOT NULL,
+	[SocialNetworks] [nvarchar](50) NULL,
+	[MessageToShare] [nvarchar](max) NULL,
+	[LockedMessage] [bit] NOT NULL,
+	[Expires] [datetime] NULL,
+	[Approved] [bit] NOT NULL,
+	[GroupId] [int] NULL,
+	[PortalId] [int] NOT NULL,
+			CONSTRAINT [PK_{objectQualifier}Challenges_Challenge] PRIMARY KEY CLUSTERED ( [ChallengeId] DESC )
+	)
+	
+	ALTER TABLE {databaseOwner}[{objectQualifier}Challenges_Challenge] 
+		WITH NOCHECK ADD CONSTRAINT [FK_{objectQualifier}Challenges_Challenge_{objectQualifier}ContentItems] 
+		FOREIGN KEY ([ContentItemId]) REFERENCES {databaseOwner}[{objectQualifier}ContentItems] ([ContentItemID]) ON DELETE CASCADE
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Challenges_Challenge] 
+		WITH NOCHECK ADD CONSTRAINT [FK_{objectQualifier}Challenges_Challenge_{objectQualifier}Portals] 
+		FOREIGN KEY ([PortalId]) REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID]) ON DELETE CASCADE
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Challenges_UserChallenge]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}Challenges_UserChallenge](
+	[UserChallengeId] [int] IDENTITY(1,1) NOT NULL,
+	[ChallengeId] [int] NOT NULL,
+	[UserId] [int] NOT NULL,
+	[FirstAcceptance] [bit] NOT NULL,
+	[FirstCompletion] [bit] NOT NULL,
+	[AcceptanceDate] [datetime],
+	[CompletionDate] [datetime],
+			CONSTRAINT [PK_{objectQualifier}Challenges_UserChallenge] PRIMARY KEY NONCLUSTERED ( [UserChallengeId] DESC )
+	)
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Challenges_UserChallenge] 
+		WITH NOCHECK ADD CONSTRAINT [FK_{objectQualifier}Challenges_UserChallenge_{objectQualifier}Challenges_Challenge] 
+		FOREIGN KEY ([ChallengeId]) REFERENCES {databaseOwner}[{objectQualifier}Challenges_Challenge] ([ChallengeId]) ON DELETE CASCADE
+	
+	ALTER TABLE {databaseOwner}[{objectQualifier}Challenges_UserChallenge] 
+		WITH NOCHECK ADD CONSTRAINT [FK_{objectQualifier}Challenges_UserChallenge_{objectQualifier}Users] 
+		FOREIGN KEY ([UserId]) REFERENCES {databaseOwner}[{objectQualifier}Users] ([UserID]) ON DELETE CASCADE
+
+	CREATE UNIQUE CLUSTERED INDEX IX_{objectQualifier}UserIdChallengeId ON {databaseOwner}{objectQualifier}Challenges_UserChallenge
+		 (
+			 UserId ASC,
+			 ChallengeId ASC
+		 ) 
+		 WITH( STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Challenges_ChallengeUserInvites]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}Challenges_ChallengeUserInvites](
+	[ChallengeUserInviteId] [int] IDENTITY(1,1) NOT NULL,
+	[ChallengeId] [int] NOT NULL,
+	[UserId] [int] NOT NULL,
+			CONSTRAINT [PK_{objectQualifier}Challenges_ChallengeUserInvites] PRIMARY KEY NONCLUSTERED ( [ChallengeUserInviteId] DESC )
+	)
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Challenges_ChallengeUserInvites] 
+		WITH NOCHECK ADD CONSTRAINT [FK_{objectQualifier}Challenges_ChallengeUserInvites_{objectQualifier}Challenges_Challenge] 
+		FOREIGN KEY ([ChallengeId]) REFERENCES {databaseOwner}[{objectQualifier}Challenges_Challenge] ([ChallengeId]) ON DELETE CASCADE
+	
+	ALTER TABLE {databaseOwner}[{objectQualifier}Challenges_ChallengeUserInvites] 
+		WITH NOCHECK ADD CONSTRAINT [FK_{objectQualifier}Challenges_ChallengeUserInvites_{objectQualifier}Users] 
+		FOREIGN KEY ([UserId]) REFERENCES {databaseOwner}[{objectQualifier}Users] ([UserID]) ON DELETE CASCADE
+
+	CREATE UNIQUE CLUSTERED INDEX IX_{objectQualifier}ChallengeIdUserId ON {databaseOwner}{objectQualifier}Challenges_ChallengeUserInvites
+		 (
+			 ChallengeId ASC,
+			 UserId ASC
+		 ) 
+		 WITH( STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Challenges_ChallengeRoleInvites]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}Challenges_ChallengeRoleInvites](
+	[ChallengeRoleInviteId] [int] IDENTITY(1,1) NOT NULL,
+	[ChallengeId] [int] NOT NULL,
+	[RoleId] [int] NOT NULL,
+			CONSTRAINT [PK_{objectQualifier}Challenges_ChallengeRoleInvites] PRIMARY KEY NONCLUSTERED ( [ChallengeRoleInviteId] DESC )
+	)
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Challenges_ChallengeRoleInvites] 
+		WITH NOCHECK ADD CONSTRAINT [FK_{objectQualifier}Challenges_ChallengeRoleInvites_{objectQualifier}Challenges_Challenge] 
+		FOREIGN KEY ([ChallengeId]) REFERENCES {databaseOwner}[{objectQualifier}Challenges_Challenge] ([ChallengeId]) ON DELETE CASCADE
+	
+	ALTER TABLE {databaseOwner}[{objectQualifier}Challenges_ChallengeRoleInvites] 
+		WITH NOCHECK ADD CONSTRAINT [FK_{objectQualifier}Challenges_ChallengeRoleInvites_{objectQualifier}Roles] 
+		FOREIGN KEY ([RoleId]) REFERENCES {databaseOwner}[{objectQualifier}Roles] ([RoleID]) ON DELETE NO ACTION
+
+	CREATE UNIQUE CLUSTERED INDEX IX_{objectQualifier}ChallengeIdRoleId ON {databaseOwner}{objectQualifier}Challenges_ChallengeRoleInvites
+		 (
+			 ChallengeId ASC,
+			 RoleId ASC
+		 ) 
+		 WITH( STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Challenges_Network]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}Challenges_Network](
+	[NetworkId] [int] NOT NULL,
+	[Name] [nvarchar](150) NOT NULL,
+			CONSTRAINT [PK_{objectQualifier}Challenges_Network] PRIMARY KEY CLUSTERED ( [NetworkId] DESC )
+	)
+
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Challenges_UserNetwork]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}Challenges_UserNetwork](
+		[UserNetworkId] [int] IDENTITY(1,1) NOT NULL,
+		[NetworkId] [int] NOT NULL,
+		[UserId] [int] NOT NULL,
+		[PortalId] [int] NOT NULL,
+		[AccessToken] [nvarchar](1024) NOT NULL,
+		[ExpirationDate] [datetime] NOT NULL,
+		[RefreshToken] [nvarchar](1024),
+		[NetworkUserId] [nvarchar](256),
+		[NetworkDisplayName] [nvarchar](256),
+		[NetworkProfileUrl] [nvarchar](1024),
+		[NetworkProfileAvatar] [nvarchar](1024),
+		CONSTRAINT [PK_{objectQualifier}Challenges_UserNetwork] PRIMARY KEY CLUSTERED ( [UserNetworkId] DESC )
+	)
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Challenges_UserNetwork] 
+		WITH NOCHECK ADD CONSTRAINT [FK_{objectQualifier}Challenges_UserNetwork_{objectQualifier}Challenges_Network] 
+		FOREIGN KEY ([NetworkId]) REFERENCES {databaseOwner}[{objectQualifier}Challenges_Network] ([NetworkId]) ON DELETE CASCADE
+	
+	ALTER TABLE {databaseOwner}[{objectQualifier}Challenges_UserNetwork] 
+		WITH NOCHECK ADD CONSTRAINT [FK_{objectQualifier}Challenges_UserNetwork_{objectQualifier}Users] 
+		FOREIGN KEY ([UserId]) REFERENCES {databaseOwner}[{objectQualifier}Users] ([UserID]) ON DELETE CASCADE
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Challenges_UserNetwork] 
+		WITH NOCHECK ADD CONSTRAINT [FK_{objectQualifier}Challenges_UserNetwork_{objectQualifier}Portals] 
+		FOREIGN KEY ([PortalId]) REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID]) ON DELETE CASCADE
+
+	CREATE UNIQUE INDEX IX_{objectQualifier}UserIdNetworkId ON {databaseOwner}{objectQualifier}Challenges_UserNetwork
+		 (
+			 UserId ASC,
+			 PortalId ASC,
+			 NetworkId ASC
+		 )
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Challenges_UserChallengeNetwork]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}Challenges_UserChallengeNetwork](
+		[UserChallengeNetworkId] [int] IDENTITY(1,1) NOT NULL,
+		[NetworkId] [int] NOT NULL,
+		[UserId] [int] NOT NULL,
+		[ChallengeId] [int] NOT NULL,
+		[ShareDate] [datetime] NOT NULL,
+		[IsFollower] [bit] NOT NULL,
+		[TrackingId] [int],
+		[ShortUrl] NVARCHAR(50),
+		CONSTRAINT [PK_{objectQualifier}Challenges_UserChallengeNetwork] PRIMARY KEY CLUSTERED ( [UserChallengeNetworkId] DESC )
+	)
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Challenges_UserChallengeNetwork] 
+		WITH NOCHECK ADD CONSTRAINT [FK_{objectQualifier}Challenges_UserChallengeNetwork_{objectQualifier}Challenges_Network] 
+		FOREIGN KEY ([NetworkId]) REFERENCES {databaseOwner}[{objectQualifier}Challenges_Network] ([NetworkId]) ON DELETE CASCADE
+	
+	ALTER TABLE {databaseOwner}[{objectQualifier}Challenges_UserChallengeNetwork] 
+		WITH NOCHECK ADD CONSTRAINT [FK_{objectQualifier}Challenges_UserChallengeNetwork_{objectQualifier}Users] 
+		FOREIGN KEY ([UserId]) REFERENCES {databaseOwner}[{objectQualifier}Users] ([UserID]) ON DELETE CASCADE
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Challenges_UserChallengeNetwork] 
+		WITH NOCHECK ADD CONSTRAINT [FK_{objectQualifier}Challenges_UserChallengeNetwork_{objectQualifier}Challenges_Challenge] 
+		FOREIGN KEY ([ChallengeId]) REFERENCES {databaseOwner}[{objectQualifier}Challenges_Challenge] ([ChallengeId]) ON DELETE CASCADE
+
+	CREATE UNIQUE INDEX IX_{objectQualifier}ChallengeIdNetworkId ON {databaseOwner}{objectQualifier}Challenges_UserChallengeNetwork
+		 (
+			 ChallengeId ASC,
+			 NetworkId ASC,
+			 UserId ASC
+		 )
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Challenges_ChallengeAdopters]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}Challenges_ChallengeAdopters](
+	[ChallengeAdopterId] [int] IDENTITY(1,1) NOT NULL,
+	[ChallengeId] [int] NOT NULL,
+	[AdopterUserId] [int] NOT NULL,
+	[SharerUserId] [int] NOT NULL,
+	[TrackingId] [int] NOT NULL
+			CONSTRAINT [PK_{objectQualifier}Challenges_ChallengeAdopters] PRIMARY KEY NONCLUSTERED ( [ChallengeAdopterId] DESC )
+	)
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Challenges_ChallengeAdopters] 
+		WITH NOCHECK ADD CONSTRAINT [FK_{objectQualifier}Challenges_ChallengeAdopters_{objectQualifier}Challenges_Challenge] 
+		FOREIGN KEY ([ChallengeId]) REFERENCES {databaseOwner}[{objectQualifier}Challenges_Challenge] ([ChallengeId]) ON DELETE CASCADE
+	
+	ALTER TABLE {databaseOwner}[{objectQualifier}Challenges_ChallengeAdopters] 
+		WITH NOCHECK ADD CONSTRAINT [FK_{objectQualifier}Challenges_ChallengeAdopters_AdopterUserId_{objectQualifier}Users] 
+		FOREIGN KEY ([AdopterUserId]) REFERENCES {databaseOwner}[{objectQualifier}Users] ([UserID]) ON DELETE CASCADE
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Challenges_ChallengeAdopters] 
+		WITH NOCHECK ADD CONSTRAINT [FK_{objectQualifier}Challenges_ChallengeAdopters_TrackingId_{objectQualifier}Social_Tracking] 
+		FOREIGN KEY ([TrackingId]) REFERENCES {databaseOwner}[{objectQualifier}Social_Tracking] ([TrackingId]) ON DELETE CASCADE
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Challenges_ChallengeAdopters] 
+		WITH NOCHECK ADD CONSTRAINT [FK_{objectQualifier}Challenges_ChallengeAdopters_SharerUserId_{objectQualifier}Users] 
+		FOREIGN KEY ([SharerUserId]) REFERENCES {databaseOwner}[{objectQualifier}Users] ([UserID]) ON DELETE NO ACTION
+
+	CREATE UNIQUE CLUSTERED INDEX IX_{objectQualifier}ChallengeIdUserId ON {databaseOwner}{objectQualifier}Challenges_ChallengeAdopters
+		 (
+			 ChallengeId ASC,
+			 SharerUserId ASC,
+			 AdopterUserId ASC
+		 ) 
+		 WITH( STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+END
+GO
+
+IF NOT EXISTS( SELECT * FROM {databaseOwner}{objectQualifier}ContentTypes WHERE [ContentType] = 'DNNCorp_Challenge')             
+   BEGIN
+        INSERT INTO {databaseOwner}{objectQualifier}ContentTypes ([ContentType]) VALUES ('DNNCorp_Challenge')
+    END 
+GO
+
+IF NOT EXISTS( SELECT * FROM {databaseOwner}{objectQualifier}Challenges_Network WHERE [NAME] = 'facebook')             
+   BEGIN
+        INSERT INTO {databaseOwner}{objectQualifier}Challenges_Network ([NetworkId], [Name])
+        VALUES (1, 'facebook')
+    END 
+GO
+
+IF NOT EXISTS( SELECT * FROM {databaseOwner}{objectQualifier}Challenges_Network WHERE [NAME] = 'twitter')             
+   BEGIN
+        INSERT INTO {databaseOwner}{objectQualifier}Challenges_Network ([NetworkId], [Name])
+        VALUES (2, 'twitter')
+    END 
+GO
+
+IF NOT EXISTS( SELECT * FROM {databaseOwner}{objectQualifier}Challenges_Network WHERE [NAME] = 'linkedin')             
+   BEGIN
+        INSERT INTO {databaseOwner}{objectQualifier}Challenges_Network ([NetworkId], [Name])
+        VALUES (3, 'linkedin')
+    END 
+GO
+
+IF NOT EXISTS( SELECT * FROM {databaseOwner}{objectQualifier}Challenges_Network WHERE [NAME] = 'google')             
+   BEGIN
+        INSERT INTO {databaseOwner}{objectQualifier}Challenges_Network ([NetworkId], [Name])
+        VALUES (4, 'google')
+    END 
+GO
+
+IF NOT EXISTS( SELECT * FROM {databaseOwner}{objectQualifier}Challenges_Network WHERE [NAME] = 'pinterest')             
+   BEGIN
+        INSERT INTO {databaseOwner}{objectQualifier}Challenges_Network ([NetworkId], [Name])
+        VALUES (5, 'pinterest')
+    END 
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Challenges_Challenge_Search]
+	@ModuleId INT,
+	@IsAdmin BIT,
+	@PageSize INT,
+	@PageIndex INT,
+	@Category NVARCHAR(20) ,
+	@SortColumn VARCHAR(32),
+	@SortAscending BIT,
+	@Search NVARCHAR(128),
+	@UserId INT,
+	@GroupId INT,
+	@Tags NVARCHAR(256)
+AS
+BEGIN
+	WITH    ChallengeSet
+				AS ( SELECT   COUNT(*) OVER ( ) AS TotalRecords ,
+							ChallengeId,
+							C.ContentItemId,
+							ChallengeTypeId,
+							Url,
+							TargetItemId,
+							RepPoints,
+							SocialNetworks,
+							MessageToShare,
+							LockedMessage,
+							Expires,
+							Approved,
+							GroupId,
+							PortalId,
+							CI.CreatedByUserID,
+							CI.CreatedOnDate,
+							CI.LastModifiedByUserID,
+							CI.LastModifiedOnDate,
+							CI.TabID,
+							CI.Content,
+							CIMD.MetaDataValue AS ContentTitle,
+							U.DisplayName AS DisplayName
+					FROM    {databaseOwner}{objectQualifier}ContentItems CI
+							INNER JOIN {databaseOwner}{objectQualifier}Challenges_Challenge C ON CI.ContentItemID = C.ContentItemId
+							INNER JOIN {databaseOwner}{objectQualifier}Users U ON U.UserID = CI.CreatedByUserID
+							LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD ON CIMD.ContentItemID = CI.ContentItemId
+															AND CIMD.MetaDataID = ( SELECT
+															MetaDataID
+															FROM
+															{databaseOwner}{objectQualifier}MetaData
+															WHERE
+															MetaDataName = 'Title'
+															)
+					WHERE    CI.ModuleId = @ModuleId
+							AND ( ( @Category IS NULL
+										AND Approved = 1
+										)
+									OR ( @Category = 'activechallenges'
+										AND Approved = 1
+										--AND Expires < GETUTCDATE()
+										)
+									OR ( @Category = 'mychallenges'
+										AND CI.CreatedByUserID = @UserId
+										)
+									OR ( @Category = 'mycomments'
+										AND ( SELECT COUNT(CommentId)
+												FROM   {databaseOwner}{objectQualifier}Journal AS J
+													INNER JOIN {databaseOwner}{objectQualifier}Journal_Comments
+													AS JC ON J.JournalId = JC.JournalId
+												WHERE  J.ContentItemId = CI.ContentItemId
+													AND JC.UserId = @UserId
+											) > 0
+										AND Approved = 1
+										)
+								)
+							AND ( @Tags IS NULL
+									OR LEN(@Tags) = 0
+									OR ( SELECT   COUNT(*)
+										FROM     {databaseOwner}{objectQualifier}ContentItems_Tags CIT
+												INNER JOIN {databaseOwner}{objectQualifier}Taxonomy_Terms TT ON CIT.TermID = TT.TermID
+												INNER JOIN {databaseOwner}{objectQualifier}ConvertListToTable(',',
+															@Tags) CLT ON TT.Name = CLT.RowValue
+										WHERE    CIT.ContentItemID = CI.ContentItemId
+										) = ( SELECT   LEN(@Tags)
+													- LEN(REPLACE(@Tags,
+															',', '')) + 1
+											)
+								)
+					),
+			ChallengeSort
+				AS ( SELECT   ROW_NUMBER() OVER ( ORDER BY CASE
+															WHEN @SortColumn = 'CreatedDate'
+															AND @SortAscending = 1
+															THEN T.CreatedOnDate
+															END ASC, CASE
+															WHEN @SortColumn = 'CreatedDate'
+															AND @SortAscending = 0
+															THEN T.CreatedOnDate
+															END DESC, CASE
+															WHEN @SortColumn = 'LastActive'
+															AND @SortAscending = 1
+															THEN T.LastModifiedOnDate
+															END ASC, CASE
+															WHEN @SortColumn = 'LastActive'
+															AND @SortAscending = 0
+															THEN T.LastModifiedOnDate
+															END DESC, CASE
+															WHEN @SortColumn = 'Title'
+															AND @SortAscending = 1
+															THEN T.ContentTitle
+															END ASC, CASE
+															WHEN @SortColumn = 'Title'
+															AND @SortAscending = 0
+															THEN T.ContentTitle
+															END DESC, CASE
+															WHEN @SortColumn = 'Author'
+															AND @SortAscending = 1
+															THEN T.DisplayName
+															END ASC, CASE
+															WHEN @SortColumn = 'Author'
+															AND @SortAscending = 0
+															THEN T.DisplayName
+															END DESC, T.CreatedOnDate DESC ) AS RowNumber ,
+							T.*
+					FROM     ChallengeSet T
+					)
+		SELECT  *
+		FROM    ChallengeSort
+		WHERE   RowNumber BETWEEN ( @PageIndex * @PageSize + 1 )
+							AND     ( ( @PageIndex + 1 ) * @PageSize )
+END
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Challenges_Challenge_GetByContentItem]
+	@ContentItemId INT ,
+	@ModuleId INT
+AS 
+	SELECT 	ChallengeId,
+			ChallengeTypeId,
+			Url,
+			TargetItemId,
+			RepPoints,
+			SocialNetworks,
+			MessageToShare,
+			LockedMessage,
+			Expires,
+			Approved,
+			GroupId,
+			PortalId,
+			CI.ContentItemID ,
+			CI.Content ,
+			CI.ContentTypeID ,
+			CI.TabID ,
+			CI.ModuleID ,
+			CI.ContentKey ,
+			CI.Indexed ,
+			CI.CreatedByUserID ,
+			CI.CreatedOnDate ,
+			CI.LastModifiedByUserID ,
+			CI.LastModifiedOnDate ,
+			CIMD.MetaDataValue AS [ContentTitle]
+	FROM    {databaseOwner}{objectQualifier}ContentItems CI 
+			INNER JOIN {databaseOwner}{objectQualifier}Challenges_Challenge C ON CI.ContentItemID = C.ContentItemId
+			LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD ON CIMD.ContentItemID = CI.[ContentItemID]
+															  AND CIMD.MetaDataID = ( SELECT
+															  MetaDataID
+															  FROM
+															  {databaseOwner}{objectQualifier}MetaData
+															  WHERE
+															  MetaDataName = 'Title'
+															  )
+	WHERE   CI.ContentItemID = @ContentItemId
+	AND ModuleID = @ModuleId
+
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Challenges_Challenge_GetSearchable]
+	@ModuleId int,
+	@StartDate datetime,
+	@EndDate datetime,
+	@StartDateUTC datetime,
+	@EndDateUTC datetime
+AS
+	SELECT
+		CI.Content,
+		CI.ContentTypeID,
+		CI.TabID,
+		CI.ModuleID,
+		CI.ContentKey,
+		CI.Indexed,
+		CI.CreatedByUserID,
+		CI.[CreatedOnDate],
+		CI.LastModifiedByUserID,
+		CI.[LastModifiedOnDate],
+		TB.[PortalID],
+		CIMD.[MetaDataValue] AS [ContentTitle],
+		(SELECT PortalID FROM {databaseOwner}{objectQualifier}Modules WITH (NOLOCK) WHERE ModuleID = CI.ModuleId) AS [PortalId]
+	FROM {databaseOwner}{objectQualifier}ContentItems CI WITH (NOLOCK) 
+		INNER JOIN {databaseOwner}{objectQualifier}Tabs TB WITH (NOLOCK) ON TB.[TabID] = CI.[TabID]
+		LEFT OUTER JOIN {databaseOwner}{objectQualifier}Journal J WITH (NOLOCK) ON J.[ContentItemID] = CI.[ContentItemID]
+		INNER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD WITH (NOLOCK) ON CIMD.ContentItemID = CI.[ContentItemID] AND CIMD.MetaDataID =
+			(SELECT	[MetaDataID]
+				FROM   {databaseOwner}{objectQualifier}MetaData WITH (NOLOCK)
+				WHERE  [MetaDataName] = 'Title')
+	WHERE CI.ModuleId = @ModuleId
+	  -- Comments have been added or updated within the given time frame
+	  AND ( (     CI.LastModifiedOnDate >= @StartDate
+	  		  AND CI.LastModifiedOnDate <= @EndDate 
+	  	    )
+	  	 OR ( ( SELECT COUNT(*)
+	  		 FROM   {databaseOwner}{objectQualifier}Journal_Comments JC
+	  		 WHERE  JC.[JournalId] IN (
+	  				SELECT  JournalId
+	  				FROM    {databaseOwner}{objectQualifier}Journal J
+	  				WHERE   J.[ContentItemId] = CI.[ContentItemId] )
+	  				AND ( ( JC.[DateCreated] >= @StartDateUTC
+	  						AND JC.[DateCreated] <= @EndDateUTC
+	  					  )
+	  					  OR ( JC.[DateUpdated] >= @StartDateUTC
+	  						   AND JC.[DateUpdated] <= @EndDateUTC
+	  						 )
+	  					)
+	  	   ) > 0 )
+	  	)
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Challenges_Challenge_Delete]
+	@ChallengeId INT,
+	@PortalId INT
+AS 
+	DELETE  FROM {databaseOwner}{objectQualifier}Challenges_Challenge
+	WHERE   ChallengeId = @ChallengeId
+			AND PortalId = @PortalId
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Challenges_Challenge_GetAccepted]	
+	@ContentItemId INT
+AS
+	BEGIN
+		DECLARE @ChallengesDesktopModuleId INT
+		SET @ChallengesDesktopModuleId = (SELECT DesktopModuleID FROM dbo.DesktopModules WHERE ModuleName = 'Challenges')
+
+		/* Accepted */
+		SELECT DATEADD(DAY,0, DATEDIFF(DAY,0,  USL.CreatedOnDate)) AS CreatedOnDate, COUNT(USL.CreatedOnDate) AS UserCount FROM {databaseOwner}{objectQualifier}Mechanics_UserScoringLog USL
+		INNER JOIN {databaseOwner}{objectQualifier}Mechanics_ScoringActionDefinition SAD ON USL.ScoringActionDefId = SAD.ScoringActionDefId
+		WHERE ActionName = 'AcceptedChallenge'
+		AND DesktopModuleId = @ChallengesDesktopModuleId
+		AND ContentItemId = @ContentItemId
+		GROUP BY DATEADD(DAY,0, DATEDIFF(DAY,0, USL.CreatedOnDate))
+	END
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Challenges_Challenge_GetCompleted]
+	@ContentItemId INT
+AS
+	BEGIN
+		DECLARE @ChallengesDesktopModuleId INT
+		SET @ChallengesDesktopModuleId = (SELECT DesktopModuleID FROM dbo.DesktopModules WHERE ModuleName = 'Challenges')
+
+		/* Completed */
+		SELECT DATEADD(DAY,0, DATEDIFF(DAY,0,  USL.CreatedOnDate)) AS CreatedOnDate, COUNT(USL.CreatedOnDate) AS UserCount FROM {databaseOwner}{objectQualifier}Mechanics_UserScoringLog USL
+		INNER JOIN {databaseOwner}{objectQualifier}Mechanics_ScoringActionDefinition SAD ON USL.ScoringActionDefId = SAD.ScoringActionDefId
+		WHERE ActionName = 'CompletedChallenge'
+		AND DesktopModuleId = @ChallengesDesktopModuleId
+		AND ContentItemId = @ContentItemId
+		GROUP BY DATEADD(DAY,0, DATEDIFF(DAY,0, USL.CreatedOnDate))
+	END
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Challenges_Challenge_GetCompletedUserList]
+	@ChallengeId int,
+	@PortalId int,
+	@CurrentUserId int,
+	@RowIndex int,
+	@MaxRows int
+AS
+BEGIN
+	IF @RowIndex < 1 BEGIN SET @RowIndex = 1 END
+	DECLARE @EndRow int SET @EndRow = @RowIndex + @MaxRows - 1;
+
+	DECLARE @RegisteredUsersRole int
+	SELECT @RegisteredUsersRole = roleID FROM {databaseOwner}[{objectQualifier}Roles] WITH (NOLOCK) WHERE RoleName = 'Registered Users'
+
+	DECLARE @FriendRelationshipID int
+	SELECT @FriendRelationshipID = RelationshipTypeID FROM {databaseOwner}[{objectQualifier}Relationships] WITH (NOLOCK) WHERE Name = 'Friends'
+
+	;With Items AS
+	(
+		Select	COUNT(*) OVER () AS TotalRecords, u.UserId, u.DisplayName,
+				COALESCE(ur.Status, 0) AS FriendStatus,
+				CASE WHEN u.UserId = @CurrentUserId THEN 1 ELSE 0 END AS You,
+				uc.UserChallengeId, up.IsDeleted
+		FROM	{databaseOwner}[{objectQualifier}Challenges_UserChallenge] as uc
+					INNER JOIN {databaseOwner}[{objectQualifier}Challenges_Challenge] as c WITH (NOLOCK) ON uc.ChallengeId = c.ChallengeId
+					INNER JOIN {databaseOwner}[{objectQualifier}Users] as u WITH (NOLOCK) ON u.UserID = uc.UserId
+					INNER JOIN {databaseOwner}[{objectQualifier}UserPortals]up WITH (NOLOCK) ON up.UserId = u.userId
+					LEFT OUTER JOIN {databaseOwner}[{objectQualifier}UserRelationships] ur WITH (NOLOCK)
+						ON (((ur.UserId = u.UserId AND ur.RelatedUserID = @CurrentUserId)
+							OR (ur.RelatedUserID = u.UserId AND ur.UserId = @CurrentUserId))
+							AND ur.RelationshipID = @FriendRelationshipID)
+		WHERE u.IsDeleted = 0 AND up.PortalId = @PortalId
+		AND uc.ChallengeId = @ChallengeId
+		AND c.PortalId = @PortalId
+		AND uc.CompletionDate IS NOT NULL
+	),
+	ItemsSorted AS
+	(
+		SELECT *, ROW_NUMBER() OVER (ORDER BY You DESC, FriendStatus DESC, UserChallengeId DESC) AS RowNumber FROM Items
+	)
+	SELECT * FROM ItemsSorted WHERE RowNumber BETWEEN @RowIndex AND @EndRow
+
+END
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetTimeSeriesResolution]') IS NOT NULL
+	DROP FUNCTION {databaseOwner}{objectQualifier}GetTimeSeriesResolution
+GO
+
+CREATE FUNCTION {databaseOwner}[{objectQualifier}GetTimeSeriesResolution]
+(
+	@StartDate DATETIME,
+	@EndDate DATETIME	
+)
+RETURNS NCHAR(1)
+AS
+BEGIN	
+
+	IF DATEDIFF(MINUTE, @StartDate, @EndDate) <= (24 * 60)
+		RETURN 'h'
+	
+	IF DATEDIFF(DAY, @StartDate, @EndDate) <= DAY(DATEADD(DD,-1,DATEADD(MM,DATEDIFF(MM,-1,@EndDate),0)))
+		RETURN 'd'
+
+	RETURN 'm'
+	
+END
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Challenges_GetAnalyticsAcceptedCompleted') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Challenges_GetAnalyticsAcceptedCompleted
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Challenges_GetAnalyticsAcceptedCompleted]
+	@ChallengeId INT,
+	@StartDateUtc DATETIME,
+	@EndDateUtc DATETIME
+AS
+BEGIN
+	DECLARE @EndDate DATETIME
+	DECLARE @EndChallengeDate DATETIME
+	DECLARE @ContentItemId INT
+
+	SELECT @ContentItemId = ContentItemId, @EndChallengeDate = [Expires] FROM {databaseOwner}{objectQualifier}Challenges_Challenge 
+	WHERE ChallengeId = @ChallengeId
+	
+	IF @EndChallengeDate < @EndDateUtc
+		SET @EndDate = @EndChallengeDate
+	ELSE
+		SET @EndDate = @EndDateUtc
+
+	DECLARE @ResultsTable TABLE
+	(
+		StartDate DATETIME,
+		EndDate DATETIME,
+		AcceptedCount INT,
+		CompletedCount INT
+	)
+	DECLARE @Grouping CHAR(1) = {databaseOwner}{objectQualifier}GetTimeSeriesResolution(@StartDateUtc, @EndDate)
+	DECLARE @Count INT = 1
+	DECLARE @MaxDate DATETIME = @EndDate	
+	DECLARE @MinDate DATETIME = {databaseOwner}{objectQualifier}Analytics_DecrementDate(@EndDate, @StartDateUtc, @Count, @Grouping)
+
+	WHILE @StartDateUtc < @MaxDate
+	BEGIN
+		INSERT INTO @ResultsTable (StartDate, EndDate, AcceptedCount, CompletedCount) 
+		SELECT @MinDate, @MaxDate, ISNULL(SUM(CASE ad.ActionName WHEN 'AcceptedChallenge' THEN 1 ELSE 0 END), 0) AS AcceptedCount,
+			ISNULL(SUM(CASE ad.ActionName WHEN 'CompletedChallenge' THEN 1 ELSE 0 END), 0) AS CompletedCount
+		FROM {databaseOwner}{objectQualifier}Analytics_Fact_UserScoringLog  af
+			INNER JOIN {databaseOwner}{objectQualifier}Analytics_Dim_ActionDefinition ad ON af.ActionDefinitionId = ad.ActionDefinitionId
+		WHERE ContentId = @ContentItemId
+				AND af.TimeStamp >= @MinDate AND af.TimeStamp < @MaxDate
+		
+		SET @MaxDate = @MinDate
+		SET @Count = @Count + 1
+		SET @MinDate = {databaseOwner}{objectQualifier}Analytics_DecrementDate(@EndDate, @StartDateUtc, @Count, @Grouping)
+	END
+
+	SELECT StartDate,EndDate, AcceptedCount FROM @ResultsTable 
+	ORDER BY StartDate
+
+	SELECT StartDate,EndDate, CompletedCount FROM @ResultsTable 
+	ORDER BY StartDate
+   
+END
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Challenges_GetAnalytics]
+	@ChallengeId INT,
+	@StartDateUtc DATETIME,
+	@EndDateUtc DATETIME
+AS
+	BEGIN
+
+		/*Adopters*/
+		SELECT Count(*) as Adopters
+		FROM {databaseOwner}{objectQualifier}Challenges_ChallengeAdopters
+		WHERE ChallengeId = @ChallengeId 
+
+		/*UsersInvited - By UserId*/
+		SELECT Count(*) as UsersInvitedByUserId
+		FROM {databaseOwner}{objectQualifier}Challenges_ChallengeUserInvites
+		WHERE ChallengeId = @ChallengeId 
+
+		/*UsersInvited  - By RoleId*/
+		SELECT Count(*) as UsersInvitedByRoleId
+		FROM {databaseOwner}{objectQualifier}Challenges_ChallengeRoleInvites CRI
+		INNER JOIN {databaseOwner}{objectQualifier}UserRoles UR ON CRI.RoleId = UR.RoleID
+		WHERE ChallengeId = @ChallengeId 
+
+		/*Accepted*/
+		SELECT Count(*) as Accepted
+		FROM {databaseOwner}{objectQualifier}Challenges_UserChallenge
+		WHERE ChallengeId = @ChallengeId 
+		AND AcceptanceDate IS NOT NULL
+
+		/*Completed*/
+		SELECT Count(*) as Completed
+		FROM {databaseOwner}{objectQualifier}Challenges_UserChallenge
+		WHERE ChallengeId = @ChallengeId 
+		AND CompletionDate IS NOT NULL
+
+		/*NewParticipants*/
+		SELECT Count(*) as NewParticipants
+		FROM {databaseOwner}{objectQualifier}Challenges_UserChallenge
+		WHERE ChallengeId = @ChallengeId 
+		AND FirstAcceptance = 1
+
+		/*NewCompletionists*/
+		SELECT Count(*) as NewCompletionists
+		FROM {databaseOwner}{objectQualifier}Challenges_UserChallenge
+		WHERE ChallengeId = @ChallengeId 
+		AND FirstCompletion = 1
+
+		/*UniqueClicks*/
+		SELECT Count(*) as UniqueClicks
+		FROM {databaseOwner}{objectQualifier}Social_TrackingClicks TC 
+		INNER JOIN {databaseOwner}{objectQualifier}Challenges_UserChallengeNetwork UCN ON TC.TrackingId = UCN.TrackingId
+		WHERE UCN.ChallengeId = @ChallengeId 
+
+		/*Followers
+		SELECT IsFollower, Count(*) as Count
+		FROM {databaseOwner}{objectQualifier}Challenges_UserChallengeNetwork
+		WHERE ChallengeId = @ChallengeId 
+		GROUP BY IsFollower
+		*/
+
+		/*Network Breakdown*/
+		SELECT NetworkId, Count(*) as Count
+		FROM {databaseOwner}{objectQualifier}Challenges_UserChallengeNetwork
+		WHERE ChallengeId = @ChallengeId 
+		GROUP BY NetworkId
+
+		/*Top Accepted Users*/
+		SELECT TOP 10 UC.UserID, U.DisplayName, US.ReputationPoints
+		FROM {databaseOwner}{objectQualifier}Challenges_Challenge C
+		INNER JOIN {databaseOwner}{objectQualifier}Challenges_UserChallenge UC ON C.ChallengeId = UC.ChallengeId
+		INNER JOIN {databaseOwner}{objectQualifier}Mechanics_UserScoring US ON UC.UserId = US.UserId AND US.PortalId = C.PortalId
+		INNER JOIN {databaseOwner}{objectQualifier}vw_Users U ON UC.UserId = U.UserId AND (U.PortalId = C.PortalId OR IsSuperUser = 1) AND IsDeleted = 0
+		WHERE UC.AcceptanceDate IS NOT NULL
+		AND C.ChallengeId = @ChallengeId
+		ORDER BY UC.UserChallengeId desc
+
+		/*Top Completed Users*/
+		SELECT TOP 10 UC.UserID, U.DisplayName, US.ReputationPoints
+		FROM {databaseOwner}{objectQualifier}Challenges_Challenge C
+		INNER JOIN {databaseOwner}{objectQualifier}Challenges_UserChallenge UC ON C.ChallengeId = UC.ChallengeId
+		INNER JOIN {databaseOwner}{objectQualifier}Mechanics_UserScoring US ON UC.UserId = US.UserId AND US.PortalId = C.PortalId
+		INNER JOIN {databaseOwner}{objectQualifier}vw_Users U ON UC.UserId = U.UserId AND (U.PortalId = C.PortalId OR IsSuperUser = 1) AND IsDeleted = 0
+		WHERE UC.CompletionDate IS NOT NULL
+		AND C.ChallengeId = @ChallengeId
+		ORDER BY UC.CompletionDate desc
+
+		/*Participation graph data*/
+		EXEC {databaseOwner}[{objectQualifier}Challenges_GetAnalyticsAcceptedCompleted] @ChallengeId, @StartDateUtc, @EndDateUtc
+ 
+	END
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Challenges_AcceptedPreviously') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Challenges_AcceptedPreviously
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Challenges_AcceptedPreviously]
+	@PortalId INT,
+	@UserId INT
+AS
+	BEGIN
+		;WITH Counts AS
+		(
+			SELECT TOP 1 UserChallengeId
+			FROM {databaseOwner}{objectQualifier}Challenges_UserChallenge UC
+			INNER JOIN {databaseOwner}{objectQualifier}Challenges_Challenge C ON C.ChallengeId = UC.ChallengeId
+			WHERE UC.UserId = @UserId 
+			AND C.PortalId = @PortalId
+			AND UC.AcceptanceDate IS NOT NULL
+		)
+		SELECT COUNT(*) from Counts
+	END
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Challenges_CompletedPreviously') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Challenges_CompletedPreviously
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Challenges_CompletedPreviously]
+	@PortalId INT,
+	@UserId INT
+AS
+	BEGIN
+		;WITH Counts AS
+		(
+			SELECT TOP 1 UserChallengeId
+			FROM {databaseOwner}{objectQualifier}Challenges_UserChallenge UC
+			INNER JOIN {databaseOwner}{objectQualifier}Challenges_Challenge C ON C.ChallengeId = UC.ChallengeId
+			WHERE UC.UserId = @UserId 
+			AND C.PortalId = @PortalId
+			AND UC.CompletionDate IS NOT NULL
+		)
+		SELECT COUNT(*) from Counts
+	END
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Challenges_GetActiveChallengesByUser]
+	@UserId INT,
+	@PortalId INT,
+	@PageSize INT = 10
+AS
+	BEGIN
+		DECLARE @JournalTypeId INT
+		SET @JournalTypeId = ( SELECT JournalTypeId FROM {databaseOwner}{objectQualifier}Journal_Types WHERE JournalType = 'challengeadded' )
+
+		SELECT TOP(@PageSize) C.ChallengeId,
+		cimd.MetaDataValue AS [ContentTitle],
+		C.[RepPoints],
+		J.JournalId,
+		C.ContentItemId
+		FROM {databaseOwner}{objectQualifier}Challenges_Challenge C
+		INNER JOIN {databaseOwner}{objectQualifier}Journal J ON c.ContentItemId = J.ContentItemID
+		INNER JOIN {databaseOwner}{objectQualifier}ContentItems ci ON c.ContentItemId = ci.ContentItemID
+		LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData cimd ON cimd.ContentItemID = ci.ContentItemID
+											AND cimd.MetaDataID = (SELECT MetaDataID FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Title')
+		WHERE C.PortalId = @PortalId
+		AND   Expires > GETUTCDATE()		
+		AND J.JournalTypeId = @JournalTypeId
+		AND (
+			(CI.CreatedByUserId = @UserId)
+			OR (EXISTS( SELECT ChallengeUserInviteId FROM {databaseOwner}{objectQualifier}Challenges_ChallengeUserInvites WHERE ChallengeId = C.ChallengeId AND UserId = @UserId) )
+			OR (
+				EXISTS(SELECT ChallengeRoleInviteId 
+							FROM {databaseOwner}{objectQualifier}Challenges_ChallengeRoleInvites CRI 
+							INNER JOIN {databaseOwner}{objectQualifier}UserRoles UR ON CRI.RoleId = UR.RoleId AND UR.UserId = @UserId
+							WHERE ChallengeId = C.ChallengeId 
+					  ) 
+											
+			   )
+			)
+		ORDER BY C.ChallengeId desc
+	END
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Challenges_IsUserInvited]
+	@UserId INT,
+	@PortalId INT,
+	@ChallengeId INT
+AS
+	BEGIN
+		SELECT C.ChallengeId
+		FROM {databaseOwner}{objectQualifier}Challenges_Challenge C
+		INNER JOIN {databaseOwner}{objectQualifier}ContentItems ci ON c.ContentItemId = ci.ContentItemID
+		WHERE C.PortalId = @PortalId
+		AND C.ChallengeId = @ChallengeId
+		AND (
+			(CI.CreatedByUserId = @UserId)
+			OR (EXISTS( SELECT ChallengeUserInviteId FROM {databaseOwner}{objectQualifier}Challenges_ChallengeUserInvites WHERE ChallengeId = C.ChallengeId AND UserId = @UserId) )
+			OR (
+				EXISTS(SELECT ChallengeRoleInviteId 
+							FROM {databaseOwner}{objectQualifier}Challenges_ChallengeRoleInvites CRI 
+							INNER JOIN {databaseOwner}{objectQualifier}UserRoles UR ON CRI.RoleId = UR.RoleId AND UR.UserId = @UserId
+							WHERE ChallengeId = C.ChallengeId 
+					  ) 
+											
+			   )
+			)
+	END
+GO
+
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Challenges_Challenge_GetPendingByUser
+	@PortalId INT,
+	@UserId INT
+AS
+BEGIN	
+	SELECT  c.ChallengeId,
+			c.ChallengeTypeId,
+			c.Url,
+			c.TargetItemId,
+			c.RepPoints,
+			c.SocialNetworks,
+			c.MessageToShare,
+			c.LockedMessage,
+			c.Expires,
+			c.Approved,
+			c.GroupId,
+			c.PortalId,
+			ci.ContentItemID,
+			ci.Content,
+			ci.ContentTypeID,
+			ci.TabID,
+			ci.ModuleID,
+			ci.ContentKey ,
+			ci.Indexed ,
+			ci.CreatedByUserID ,
+			ci.CreatedOnDate ,
+			ci.LastModifiedByUserID ,
+			ci.LastModifiedOnDate ,
+			cimd.MetaDataValue AS [ContentTitle]
+	FROM {databaseOwner}{objectQualifier}Challenges_Challenge c	
+		JOIN {databaseOwner}{objectQualifier}ContentItems ci ON c.ContentItemId = ci.ContentItemID
+		LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData cimd ON cimd.ContentItemID = ci.ContentItemID
+											AND cimd.MetaDataID = (SELECT MetaDataID FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Title')
+		JOIN {databaseOwner}{objectQualifier}Challenges_UserChallenge uc ON c.ChallengeId = uc.ChallengeId
+	WHERE Expires >= GETUTCDATE()
+		AND Approved = 1
+		AND PortalId = @PortalId
+		AND uc.UserId = @UserId
+		AND uc.AcceptanceDate IS NOT NULL
+		AND uc.CompletionDate IS NULL
+END
+GO

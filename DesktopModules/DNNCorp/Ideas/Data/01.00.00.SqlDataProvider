@@ -1,0 +1,1050 @@
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Ideas_Idea_Add]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Idea_Add]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Ideas_Comment_Add]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Comment_Add]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Ideas_Idea_IncreaseViews]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Idea_IncreaseViews]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Ideas_Comment_Vote_Add]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Comment_Vote_Add]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Ideas_Idea_Delete]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Idea_Delete]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Ideas_Idea_Get]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Idea_Get]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Ideas_Idea_Search]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Idea_Search]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Ideas_Idea_SearchRelated]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Idea_SearchRelated]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Ideas_Idea_GetByCategory]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Idea_GetByCategory]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Ideas_Subscriber_GetByUser]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Subscriber_GetByUser]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Ideas_Subscriber_Get]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Subscriber_Get]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Ideas_Vote_GetByIdea]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Vote_GetByIdea]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Ideas_Idea_Update]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Idea_Update]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Ideas_Subscriber_Update]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Subscriber_Update]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Ideas_Vote_Update]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Vote_Update]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Ideas_Vote_GetVoteCount]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Vote_GetVoteCount]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Ideas_Idea_GetResponseHistory]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Idea_GetResponseHistory]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Ideas_Idea_GetResponseCount]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Idea_GetResponseCount]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Ideas_Idea_ResponseHistory_Add]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Idea_ResponseHistory_Add]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Ideas_Vote_GetVotesByIdea]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Vote_GetVotesByIdea]
+GO	
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Ideas_Vote_GetUserVotesByIdea]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Vote_GetUserVotesByIdea]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Ideas_Idea_GetByContentItem]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Idea_GetByContentItem]
+GO	
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Ideas_Idea_GetSearchable]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Idea_GetSearchable]
+GO	
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Ideas_IsTagMatch]', N'FN') IS NOT NULL
+	DROP FUNCTION {databaseOwner}[{objectQualifier}Ideas_IsTagMatch]
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Ideas_IsSearchMatch]', N'FN') IS NOT NULL
+	DROP FUNCTION {databaseOwner}[{objectQualifier}Ideas_IsSearchMatch]
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Ideas_IsRelatedSearchMatch]', N'FN') IS NOT NULL
+	DROP FUNCTION {databaseOwner}[{objectQualifier}Ideas_IsRelatedSearchMatch]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Ideas_Idea_SearchRelated]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Idea_SearchRelated]
+GO	
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Ideas_GetIdeaIdFromContentItemId]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Ideas_GetIdeaIdFromContentItemId]
+GO	
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Ideas_Idea]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}Ideas_Idea](
+		[IdeaId] [int] IDENTITY(1,1) NOT NULL,
+		[GroupId] [int] NOT NULL,
+		[ModuleId] [int] NOT NULL,
+		[Authorized] [bit] NOT NULL,
+		[Views] [int] NULL,
+		[Votes] [int] NOT NULL,
+		[Comments] [int] NOT NULL,
+		[Supporters] [int] NOT NULL,
+		[Status] [int] NULL,
+		[Custom1] [nvarchar](255) NULL,
+		[Custom2] [nvarchar](255) NULL,
+		[Custom3] [nvarchar](255) NULL,
+		[Custom4] [nvarchar](255) NULL,
+		[ContentItemId] [int] NULL,
+		[AcceptedOnDate] [datetime] NULL,
+		[ScheduledOnDate] [datetime] NULL,
+		[DeliveredOnDate] [datetime] NULL,
+			CONSTRAINT [PK_{objectQualifier}Ideas_Idea] PRIMARY KEY CLUSTERED ( [IdeaId] DESC )
+	)
+	
+	ALTER TABLE {databaseOwner}[{objectQualifier}Ideas_Idea] 
+		WITH NOCHECK ADD CONSTRAINT [FK_{objectQualifier}Ideas_Idea_{objectQualifier}Modules] 
+		FOREIGN KEY ([ModuleId]) REFERENCES {databaseOwner}[{objectQualifier}Modules] ([ModuleID]) ON DELETE CASCADE
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Ideas_Subscriber]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}Ideas_Subscriber](
+		[IdeaSubscriberId] [int] IDENTITY(1,1) NOT NULL,
+		[ModuleId] [int] NOT NULL,
+		[UserId] [int] NOT NULL,
+		[Notify] [bit] NOT NULL,
+		[CreatedOnDate] [datetime] NOT NULL,
+			CONSTRAINT [PK_{objectQualifier}Ideas_Subscriber] PRIMARY KEY CLUSTERED ( [IdeaSubscriberId] ASC )
+	)
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Ideas_Subscriber] 
+		WITH NOCHECK ADD CONSTRAINT [FK_{objectQualifier}Ideas_Subscriber_{objectQualifier}Modules]
+		FOREIGN KEY ([ModuleId]) REFERENCES {databaseOwner}[{objectQualifier}Modules] ([ModuleID]) ON DELETE CASCADE
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Ideas_Vote]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}Ideas_Vote](
+		[IdeaVoteId] [int] IDENTITY(1,1) NOT NULL,
+		[IdeaId] [int] NOT NULL,
+		[UserId] [int] NOT NULL,
+		[CreatedOnDate] [datetime] NOT NULL,
+		[Votes] [int] NOT NULL,
+		[Committed] [bit] NULL,
+			CONSTRAINT [PK_{objectQualifier}Ideas_Vote] PRIMARY KEY CLUSTERED ( [IdeaVoteId] ASC )
+	)
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Ideas_ResponseHistory]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+	CREATE TABLE {databaseOwner}[{objectQualifier}Ideas_ResponseHistory](
+		[ResponseHistoryId] [int] IDENTITY(1,1) NOT NULL,
+		[IdeaId] [int] NOT NULL,
+		[Status] [int] NOT NULL,
+		[Response] [nvarchar](max) NULL,
+		[CreatedByUserId] [int] NOT NULL,
+		[CreatedOnDate] [datetime] NOT NULL,
+			CONSTRAINT [PK_{objectQualifier}Ideas_Idea_ResponseHistory] PRIMARY KEY CLUSTERED ([ResponseHistoryId] ASC )
+	)
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Idea_Add]
+	@ContentItemId INT,
+	@ModuleId INT,
+	@GroupId INT,
+	@Authorized BIT,
+	@Status INT,
+	@Custom1 NVARCHAR(255),
+	@Custom2 NVARCHAR(255),
+	@Custom3 NVARCHAR(255),
+	@Custom4 NVARCHAR(255)
+AS 
+	INSERT  INTO {databaseOwner}{objectQualifier}Ideas_Idea
+			(ModuleId,
+			 GroupId,
+			 Authorized,
+			 [Status],
+			 Votes,
+			 Comments,
+			 Supporters,
+			 Custom1,
+			 Custom2,
+			 Custom3,
+			 Custom4,
+			 ContentItemID)
+	VALUES  (@ModuleId,
+			 @GroupId,
+			 @Authorized,
+			 @Status,
+			 0,
+			 0,
+			 0,
+			 @Custom1,
+			 @Custom2,
+			 @Custom3,
+			 @Custom4,
+			 @ContentItemId)
+
+	SELECT SCOPE_IDENTITY()
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Idea_Delete]
+	@IdeaId INT,
+	@ModuleId INT
+AS 
+	DELETE  FROM {databaseOwner}{objectQualifier}Ideas_Idea
+	WHERE   IdeaId = @IdeaId
+			AND ModuleId = @ModuleId
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Idea_Get]
+	@IdeaId INT ,
+	@ModuleId INT
+AS 
+	SELECT  [IdeaId] ,
+			[GroupId],
+			[Authorized] ,
+			[Views] ,
+			[Votes] ,
+			[Comments] ,
+			[Supporters] ,
+			[Status] ,
+			[Custom1] ,
+			[Custom2] ,
+			[Custom3] ,
+			[Custom4] ,
+			[AcceptedOnDate] ,
+			[ScheduledOnDate] ,
+			[DeliveredOnDate] ,
+			CI.ContentItemID ,
+			CI.Content ,
+			CI.ContentTypeID ,
+			CI.TabID ,
+			CI.ModuleID ,
+			CI.ContentKey ,
+			CI.Indexed ,
+			CI.CreatedByUserID ,
+			CI.CreatedOnDate ,
+			CI.LastModifiedByUserID ,
+			CI.LastModifiedOnDate ,
+			CIMD.MetaDataValue AS [ContentTitle]
+	FROM    {databaseOwner}{objectQualifier}Ideas_Idea AS I
+			INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI ON I.ContentItemId = CI.ContentItemID
+			LEFT OUTER JOIN {databaseOwner}[{objectQualifier}ContentItems_MetaData] CIMD ON CIMD.ContentItemID = CI.[ContentItemID]
+															  AND CIMD.MetaDataID = ( SELECT
+															  MetaDataID
+															  FROM
+															  {databaseOwner}[{objectQualifier}MetaData]
+															  WHERE
+															  MetaDataName = 'Title'
+															  )
+	WHERE   IdeaId = @IdeaId
+			AND I.ModuleId = @ModuleId
+GO
+
+CREATE FUNCTION {databaseOwner}[{objectQualifier}Ideas_IsSearchMatch]
+	(
+	  @IdeaId INT ,
+	  @IdeaGroupId INT,
+	  @GroupId INT,
+	  @ContentItemId INT ,
+	  @UserId INT ,
+	  @IdeaUserID INT ,
+	  @IsAdmin BIT ,
+	  @Category VARCHAR(32) ,
+	  @Filter INT ,
+	  @Search NVARCHAR(255) ,
+	  @Authorized BIT ,
+	  @Status INT ,
+	  @Description NVARCHAR(1000) ,
+	  @Tags NVARCHAR(255)
+	)
+RETURNS BIT
+AS 
+	BEGIN
+
+		-- Group filter
+		IF @GroupId > 0
+			BEGIN
+				IF @GroupId <> @IdeaGroupId
+					RETURN 0
+			END
+
+		-- Tag filter
+		IF LEN(@Tags) > 0 
+			BEGIN
+				IF ( SELECT COUNT(*)
+					 FROM   {databaseOwner}{objectQualifier}ContentItems_Tags CIT
+							INNER JOIN {databaseOwner}{objectQualifier}Taxonomy_Terms TT ON CIT.TermID = TT.TermID
+							INNER JOIN {databaseOwner}[{objectQualifier}ConvertListToTable](',', @Tags) T ON TT.Name = T.RowValue
+					 WHERE  CIT.ContentItemID = @ContentItemID
+							AND ( @Authorized = 1
+								  
+								)
+				   ) != ( SELECT    LEN(@Tags) - LEN(REPLACE(@Tags, ',', ''))
+									+ 1
+						) 
+					RETURN 0
+			END
+	
+		-- Category filter
+		IF LEN(@Category) > 0 
+			BEGIN
+				IF @Category = 'myvotes' 
+					BEGIN
+						IF NOT EXISTS ( SELECT  *
+										FROM    {databaseOwner}{objectQualifier}Ideas_Vote
+										WHERE   IdeaId = @IdeaId
+												AND UserId = @UserId ) 
+							RETURN 0
+					END
+			
+				IF @Category = 'mycomments' 
+					BEGIN
+						IF NOT EXISTS ( SELECT TOP 1
+												i.IdeaId ,
+												j.ContentItemId ,
+												j.ObjectKey ,
+												jc.CommentId ,
+												jc.UserId
+										FROM    {databaseOwner}{objectQualifier}Journal_Comments AS jc
+												INNER JOIN {databaseOwner}{objectQualifier}Journal AS j ON jc.JournalId = j.JournalId
+												INNER JOIN {databaseOwner}{objectQualifier}Ideas_Idea AS i ON j.ContentItemId = i.ContentItemId
+										WHERE   i.IdeaId = @IdeaId
+												AND jc.UserId = @UserId ) 
+							RETURN 0
+					END
+			END
+
+		IF @Filter = 0 --> all ideas except delivered, duplicates and declined
+			BEGIN
+				IF ( @Category = 'myideas' ) 
+					IF ( @UserId = @IdeaUserID )
+						AND @Description LIKE '%' + @Search + '%'
+						AND ( @Status <> 30 ) 
+						RETURN 1
+					ELSE 
+						RETURN 0
+				ELSE 
+					IF (@Authorized = 1 )
+						AND @Description LIKE '%' + @Search + '%'
+						AND ( @Status <> 30 ) 
+						RETURN 1
+					ELSE 
+						RETURN 0
+			END
+
+		IF @Filter = 1 --> all ideas in submitted status
+			BEGIN
+				IF ( @Category = 'myideas' ) 
+					IF ( @UserId = @IdeaUserID )
+						AND @Description LIKE '%' + @Search + '%'
+						AND ( @Status = 0 ) 
+						RETURN 1
+					ELSE 
+						RETURN 0
+				ELSE 
+					IF (@Authorized = 1  )
+						AND @Description LIKE '%' + @Search + '%'
+						AND ( @Status = 0 ) 
+						RETURN 1
+					ELSE 
+						RETURN 0
+			END
+		
+		IF @Filter = 2 --> all ideas in under review status
+			BEGIN
+				IF ( @Category = 'myideas' ) 
+					IF ( @UserId = @IdeaUserID )
+						AND @Description LIKE '%' + @Search + '%'
+						AND ( @Status = 5 ) 
+						RETURN 1
+					ELSE 
+						RETURN 0
+				ELSE 
+					IF (@Authorized = 1  )
+						AND @Description LIKE '%' + @Search + '%'
+						AND ( @Status = 5 ) 
+						RETURN 1
+					ELSE 
+						RETURN 0
+			END
+		
+		IF @Filter = 3 --> all ideas in reviewed status
+			BEGIN
+				IF (@Category = 'myideas' ) 
+					IF ( @UserId = @IdeaUserID )
+						AND @Description LIKE '%' + @Search + '%'
+						AND ( @Status = 10 ) 
+						RETURN 1
+					ELSE 
+						RETURN 0
+				ELSE 
+					IF (@Authorized = 1  )
+						AND @Description LIKE '%' + @Search + '%'
+						AND ( @Status = 10 ) 
+						RETURN 1
+					ELSE 
+						RETURN 0
+			END
+		
+		IF @Filter = 4 --> all ideas in accepted status
+			BEGIN
+				IF (@Category = 'myideas' ) 
+					IF ( @UserId = @IdeaUserID )
+						AND @Description LIKE '%' + @Search + '%'
+						AND ( @Status = 15 ) 
+						RETURN 1
+					ELSE 
+						RETURN 0
+				ELSE 
+					IF (@Authorized = 1  )
+						AND @Description LIKE '%' + @Search + '%'
+						AND ( @Status = 15 ) 
+						RETURN 1
+					ELSE 
+						RETURN 0
+			END
+	
+		IF @Filter = 5 --> all ideas in scheduled status
+			BEGIN
+				IF (@Category = 'myideas' ) 
+					IF ( @UserId = @IdeaUserID )
+						AND @Description LIKE '%' + @Search + '%'
+						AND ( @Status = 20 ) 
+						RETURN 1
+					ELSE 
+						RETURN 0
+				ELSE 
+					IF ( @Authorized = 1  )
+						AND @Description LIKE '%' + @Search + '%'
+						AND ( @Status = 20 ) 
+						RETURN 1
+					ELSE 
+						RETURN 0
+			END
+		
+		IF @Filter = 6 --> all ideas in delivered status
+			BEGIN
+				IF (@Category = 'myideas' ) 
+					IF ( @UserId = @IdeaUserID )
+						AND @Description LIKE '%' + @Search + '%'
+						AND ( @Status = 25 ) 
+						RETURN 1
+					ELSE 
+						RETURN 0
+				ELSE 
+					IF ( @Authorized = 1 )
+						AND @Description LIKE '%' + @Search + '%'
+						AND ( @Status = 25 ) 
+						RETURN 1
+					ELSE 
+						RETURN 0
+			END
+		
+		IF @Filter = 7 --> all ideas in declined status
+			BEGIN
+				IF (@Category = 'myideas' ) 
+					IF ( @UserId = @IdeaUserID )
+						AND @Description LIKE '%' + @Search + '%'
+						AND ( @Status = 35 ) 
+						RETURN 1
+					ELSE 
+						RETURN 0
+				ELSE 
+					IF (@Authorized = 1 )
+						AND @Description LIKE '%' + @Search + '%'
+						AND ( @Status = 35 ) 
+						RETURN 1
+					ELSE 
+						RETURN 0
+			END
+
+		RETURN 0
+	END
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Idea_Search]
+	@ModuleId INT ,
+	@IsAdmin BIT ,
+	@PageSize INT ,
+	@PageIndex INT ,
+	@Category VARCHAR(32) ,
+	@Filter INT ,
+	@SortColumn VARCHAR(32) ,
+	@SortAscending BIT ,
+	@Search NVARCHAR(128) ,
+	@UserId INT ,
+	@GroupId INT,
+	@Tags NVARCHAR(256)
+AS 
+BEGIN
+
+		SELECT  COUNT(*) AS [TotalResults]
+		FROM    {databaseOwner}[{objectQualifier}Ideas_Idea] AS I
+				INNER JOIN {databaseOwner}[{objectQualifier}ContentItems] CI ON CI.[ContentItemID] = I.[ContentItemID]
+		WHERE   I.ModuleId = @ModuleId
+				AND {databaseOwner}[{objectQualifier}Ideas_IsSearchMatch](
+											I.IdeaID,
+											@GroupId,
+											I.GroupId,
+											I.ContentItemID,
+											@UserId,
+											CI.CreatedByUserID,
+											@IsAdmin,
+											@Category,
+											@Filter,
+											@Search,
+											I.Authorized,
+											I.Status,
+											CI.Content,
+											@Tags) = 1;
+			WITH    IdeasSet
+					  AS ( SELECT   I.[IdeaId] ,
+									I.[GroupId],
+									I.[Authorized] ,
+									( CASE [Views]
+										WHEN -1 THEN 0
+										ELSE COALESCE([Views], 0)
+									  END ) AS [Views] ,
+									I.[Votes] ,
+									I.[Comments] ,
+									I.[Supporters] ,
+									I.[Status] ,
+									I.[Custom1] ,
+									I.[Custom2] ,
+									I.[Custom3] ,
+									I.[Custom4] ,
+									I.[ContentItemId] ,
+									I.[AcceptedOnDate] ,
+									I.[ScheduledOnDate] ,
+									I.[DeliveredOnDate] ,
+									CI.Content ,
+									CI.ContentTypeID ,
+									CI.TabID ,
+									CI.ModuleID ,
+									CI.ContentKey ,
+									CI.Indexed ,
+									CI.CreatedByUserID ,
+									CI.[CreatedOnDate] ,
+									CI.LastModifiedByUserID ,
+									CI.[LastModifiedOnDate] ,
+									CIMD.[MetaDataValue] AS [ContentTitle] ,
+									U.DisplayName AS DisplayName
+						   FROM     {databaseOwner}[{objectQualifier}Ideas_Idea] AS I
+									INNER JOIN {databaseOwner}[{objectQualifier}ContentItems] CI ON CI.[ContentItemID] = I.[ContentItemID]
+									INNER JOIN {databaseOwner}[{objectQualifier}Users] U ON U.UserID = CI.CreatedByUserID
+									LEFT OUTER JOIN {databaseOwner}[{objectQualifier}ContentItems_MetaData] CIMD ON CIMD.ContentItemID = I.[ContentItemID]
+															  AND CIMD.MetaDataID = ( SELECT
+															  MetaDataID
+															  FROM
+															  {databaseOwner}[{objectQualifier}MetaData]
+															  WHERE
+															  MetaDataName = 'Title'
+															  )
+						   WHERE    I.ModuleId = @ModuleId
+									AND {databaseOwner}[{objectQualifier}Ideas_IsSearchMatch](
+															  I.IdeaID,
+															  @GroupId,
+															  I.GroupId,
+															  I.ContentItemID,
+															  @UserId,
+															  CI.CreatedByUserID,
+															  @IsAdmin,
+															  @Category,
+															  @Filter, @Search,
+															  I.Authorized,
+															  I.Status,
+															  CI.Content,
+															  @Tags) = 1
+						 ),
+					IdeasSort
+					  AS ( SELECT   ROW_NUMBER() OVER ( ORDER BY CASE
+															  WHEN @SortColumn = 'CreatedDate'
+															  AND @SortAscending = 1
+															  THEN I.CreatedOnDate
+															  END ASC, CASE
+															  WHEN @SortColumn = 'CreatedDate'
+															  AND @SortAscending = 0
+															  THEN I.CreatedOnDate
+															  END DESC, CASE
+															  WHEN @SortColumn = 'LastActive'
+															  AND @SortAscending = 1
+															  THEN I.LastModifiedOnDate
+															  END ASC, CASE
+															  WHEN @SortColumn = 'LastActive'
+															  AND @SortAscending = 0
+															  THEN I.LastModifiedOnDate
+															  END DESC, CASE
+															  WHEN @SortColumn = 'Title'
+															  AND @SortAscending = 1
+															  THEN I.ContentTitle
+															  END ASC, CASE
+															  WHEN @SortColumn = 'Title'
+															  AND @SortAscending = 0
+															  THEN I.ContentTitle
+															  END DESC, CASE
+															  WHEN @SortColumn = 'Author'
+															  AND @SortAscending = 1
+															  THEN I.DisplayName
+															  END ASC, CASE
+															  WHEN @SortColumn = 'Author'
+															  AND @SortAscending = 0
+															  THEN I.DisplayName
+															  END DESC, CASE
+															  WHEN @SortColumn = 'Votes'
+															  AND @SortAscending = 0
+															  THEN I.Votes
+															  END DESC, CASE
+															  WHEN @SortColumn = 'Votes'
+															  AND @SortAscending = 1
+															  THEN I.Votes
+															  END ASC, CASE
+															  WHEN @SortColumn = 'Views'
+															  AND @SortAscending = 0
+															  THEN I.[Views]
+															  END DESC, CASE
+															  WHEN @SortColumn = 'Views'
+															  AND @SortAscending = 1
+															  THEN I.[Views]
+															  END ASC, I.CreatedOnDate DESC ) AS RowNumber ,
+									COUNT(*) OVER ( ) AS TotalRecords ,
+													I.*
+						   FROM                     IdeasSet I
+						 )
+			SELECT  *
+			FROM    IdeasSort
+			WHERE   RowNumber BETWEEN ( @PageIndex * @PageSize + 1 )
+							  AND     ( ( @PageIndex + 1 ) * @PageSize )
+	END
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Subscriber_GetByUser]
+	@ModuleId INT,
+	@UserId INT
+AS
+BEGIN
+	DECLARE @VotesCast INT
+	DECLARE @VotesCommitted INT
+	SET @VotesCast = ( SELECT   SUM(IV.Votes)
+					   FROM     {databaseOwner}{objectQualifier}Ideas_Vote AS IV
+								INNER JOIN {databaseOwner}{objectQualifier}Ideas_Idea AS I ON I.IdeaId = IV.IdeaId
+					   WHERE    IV.UserId = @UserId
+								AND ModuleId = @ModuleId
+					 )
+	SET @VotesCommitted = ( SELECT  SUM(IV.Votes)
+							FROM    {databaseOwner}{objectQualifier}Ideas_Vote AS IV
+									INNER JOIN {databaseOwner}{objectQualifier}Ideas_Idea AS I ON I.IdeaId = IV.IdeaId
+							WHERE   IV.UserId = @UserId
+									AND IV.[Committed] = 1
+									AND I.Authorized = 1
+									AND ModuleId = @ModuleId
+						  )
+	SELECT  ISNULL(ISU.IdeaSubscriberId, -1) AS IdeaSubscriberId,
+			U.UserId,
+			U.DisplayName,
+			U.Email,
+			ISNULL(ISU.ModuleId, @ModuleId) AS ModuleId,
+			ISNULL(ISU.Notify, 0) AS Notify,
+			ISU.CreatedOnDate,
+			ISNULL(@VotesCast, 0) AS [VotesCast],
+			ISNULL(@VotesCommitted, 0) AS [VotesCommitted]
+	FROM    {databaseOwner}{objectQualifier}Users AS U
+			LEFT OUTER JOIN {databaseOwner}{objectQualifier}Ideas_Subscriber AS ISU ON U.UserId = ISU.UserId
+														 AND ISU.ModuleId = @ModuleId
+	WHERE   U.UserID = @UserID
+END
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Subscriber_Get] @ModuleId INT
+AS 
+	SELECT  *
+	FROM    {databaseOwner}{objectQualifier}Ideas_Subscriber AS ISU
+			INNER JOIN {databaseOwner}{objectQualifier}Users AS U ON ISU.UserId = U.UserID
+	WHERE   ModuleId = @ModuleId
+			AND Notify = 1
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Vote_GetByIdea]
+	@ModuleId INT,
+	@IdeaId INT,
+	@UserId INT
+AS
+BEGIN
+	DECLARE @Votes INT
+	DECLARE @Total INT
+
+	SELECT  @Votes = [Votes]
+	FROM    {databaseOwner}{objectQualifier}Ideas_Vote
+	WHERE   IdeaId = @IdeaId
+			AND UserId = @UserId
+
+	SELECT  @Total = SUM(IV.Votes)
+	FROM    {databaseOwner}{objectQualifier}Ideas_Vote AS IV
+			INNER JOIN {databaseOwner}{objectQualifier}Ideas_Idea AS I ON IV.IdeaId = I.IdeaId
+	WHERE   ModuleId = @ModuleId
+			AND IV.UserId = @UserId
+
+	SELECT  [Votes] = ISNULL(@Votes, 0),
+			[Total] = ISNULL(@Total, 0)
+END
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Idea_Update]
+	@IdeaId INT,
+	@GroupId INT,
+	@ModuleId INT,
+	@Authorized BIT,
+	@Status INT,
+	@Custom1 NVARCHAR(255),
+	@Custom2 NVARCHAR(255),
+	@Custom3 NVARCHAR(255),
+	@Custom4 NVARCHAR(255),
+	@ContentItemId INT,
+	@AcceptedOnDate DATETIME,
+	@ScheduledOnDate DATETIME,
+	@DeliveredOnDate DATETIME
+AS
+BEGIN
+	UPDATE  {databaseOwner}{objectQualifier}Ideas_Idea
+		SET
+			GroupId = @GroupId,
+			Authorized = @Authorized,
+			[Status] = @Status,
+			Custom1 = @Custom1,
+			Custom2 = @Custom2,
+			Custom3 = @Custom3,
+			Custom4 = @Custom4,
+			ContentItemId = @ContentItemId,
+			AcceptedOnDate = @AcceptedOnDate,
+			ScheduledOnDate = @ScheduledOnDate,
+			DeliveredOnDate = @DeliveredOnDate
+	WHERE   IdeaId = @IdeaId
+			AND ModuleId = @ModuleId
+	
+	IF @@ROWCOUNT <> 0
+		SELECT 0 AS [Result]
+	ELSE
+		SELECT -1 AS [Result]
+			
+	IF (@Status > 14 AND @Status < 26)  --> 15 is accepted
+		BEGIN
+			UPDATE  {databaseOwner}{objectQualifier}Ideas_Vote
+			SET     [Committed] = 1
+			WHERE   IdeaId = @IdeaId
+		END		
+END
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Subscriber_Update]
+	@ModuleId INT,
+	@UserId INT,
+	@Notify BIT
+AS
+BEGIN
+	IF NOT EXISTS ( SELECT  1
+					FROM    {databaseOwner}{objectQualifier}Ideas_Subscriber
+					WHERE   ModuleId = @ModuleId
+							AND UserId = @UserId ) 
+		BEGIN
+			INSERT  INTO {databaseOwner}{objectQualifier}Ideas_Subscriber
+					( ModuleId,
+					  UserId,
+					  Notify,
+					  CreatedOnDate
+					)
+			VALUES  ( @ModuleId,
+					  @UserId,
+					  @Notify,
+					  GETDATE()
+					)
+		END
+	ELSE 
+		BEGIN
+			UPDATE  {databaseOwner}{objectQualifier}Ideas_Subscriber
+			SET     Notify = @Notify
+			WHERE   ModuleId = @ModuleId
+					AND UserId = @UserId
+		END
+END
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Vote_Update]
+	@IdeaId INT,
+	@UserId INT,
+	@Votes INT
+AS
+BEGIN
+	IF @Votes = 0 
+		BEGIN
+			DELETE  FROM {databaseOwner}{objectQualifier}Ideas_Vote
+			WHERE   IdeaId = @IdeaId
+					AND UserId = @UserId
+		END
+	ELSE 
+		BEGIN
+			IF NOT EXISTS ( SELECT  1
+							FROM    {databaseOwner}{objectQualifier}Ideas_Vote
+							WHERE   IdeaId = @IdeaId
+									AND UserId = @UserId ) 
+				BEGIN
+					INSERT  INTO {databaseOwner}{objectQualifier}Ideas_Vote
+							( IdeaId,
+							  UserId,
+							  CreatedOnDate,
+							  Votes
+							)
+					VALUES  ( @IdeaId,
+							  @UserId,
+							  GETDATE(),
+							  @Votes
+							)
+				END
+			ELSE 
+				BEGIN
+					UPDATE  {databaseOwner}{objectQualifier}Ideas_Vote
+					SET     Votes = @Votes
+					WHERE   IdeaId = @IdeaId
+							AND UserId = @UserId
+				END
+		END
+
+	UPDATE  {databaseOwner}{objectQualifier}Ideas_Idea
+	SET     Votes = ( SELECT    ISNULL(SUM(Votes), 0)
+					  FROM      {databaseOwner}{objectQualifier}Ideas_Vote
+					  WHERE     IdeaId = @IdeaId
+					),
+			Supporters = ( SELECT   COUNT(DISTINCT UserId)
+						   FROM     {databaseOwner}{objectQualifier}Ideas_Vote
+						   WHERE    IdeaId = @IdeaId
+						 )
+	WHERE   IdeaId = @IdeaId
+END
+GO
+
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Idea_GetResponseHistory]
+	@IdeaId INT 
+AS 
+	SELECT RH.*, U.DisplayName as ResponseBy
+	FROM  {databaseOwner}[{objectQualifier}Ideas_ResponseHistory] AS RH
+	INNER JOIN {databaseOwner}[{objectQualifier}Users] U ON RH.CreatedByUserId = U.UserID
+	WHERE     (IdeaId = @IdeaId)
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Idea_GetResponseCount]
+	@IdeaId INT
+AS
+	SELECT COUNT(*) FROM {databaseOwner}[{objectQualifier}Ideas_ResponseHistory] WHERE IdeaId = @IdeaId
+GO
+
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Idea_ResponseHistory_Add]
+	@IdeaId INT,
+	@Status INT,
+	@Response NVARCHAR(max),
+	@UserId INT,
+	@CreatedOn DateTime
+AS
+BEGIN
+	INSERT INTO {databaseOwner}[{objectQualifier}Ideas_ResponseHistory]
+		   ([IdeaId]
+		  ,[Status]
+		  ,[Response]
+		  ,[CreatedByUserId]
+		  ,[CreatedOnDate])
+	 VALUES
+		   (@IdeaId
+		  ,@Status
+		  ,@Response
+		  ,@UserId
+		  ,@CreatedOn)
+
+
+	SELECT  SCOPE_IDENTITY()
+END
+GO
+
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Vote_GetVotesByIdea]
+	@IdeaId INT 
+AS
+BEGIN
+	SELECT iv.*, u.DisplayName
+	FROM {databaseOwner}[{objectQualifier}Ideas_Vote] iv
+	INNER JOIN {databaseOwner}[{objectQualifier}Users] u on u.UserId = iv.UserId
+	WHERE     (IdeaId = @IdeaId)	
+END
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Vote_GetUserVotesByIdea]
+	@ModuleId INT,
+	@IdeaId INT,
+	@UserId INT
+AS
+BEGIN 
+	DECLARE @Votes INT
+	DECLARE @Total INT
+
+	SELECT  @Votes = [Votes]
+	FROM    {databaseOwner}[{objectQualifier}Ideas_Vote]
+	WHERE   IdeaId = @IdeaId AND UserId = @UserId
+
+	SELECT  @Total = SUM(IV.Votes)
+	FROM    {databaseOwner}[{objectQualifier}Ideas_Vote]  AS IV
+	INNER JOIN {databaseOwner}[{objectQualifier}Ideas_Idea] AS I ON IV.IdeaId = I.IdeaId
+	WHERE   ModuleId = @ModuleId AND IV.UserId = @UserId
+
+	SELECT  [Votes] = ISNULL(@Votes, 0), [Total] = ISNULL(@Total, 0)
+END
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Vote_GetVoteCount]
+	@IdeaId INT
+AS
+BEGIN
+	SELECT COALESCE(SUM(Votes), 0) AS [Count] FROM {databaseOwner}[{objectQualifier}Ideas_Vote] WHERE IdeaId = @IdeaId
+END
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Idea_IncreaseViews]
+	@IdeaId INT
+AS
+BEGIN
+	DECLARE @ViewCount INT
+
+	SELECT
+		@ViewCount = (COALESCE([Views], 0) + 1)
+	FROM {databaseOwner}[{objectQualifier}Ideas_Idea] WHERE [IdeaId] = @IdeaId
+
+	UPDATE {databaseOwner}[{objectQualifier}Ideas_Idea] SET [Views] = @ViewCount WHERE [IdeaId] = @IdeaId
+
+	SELECT @ViewCount AS [Views]
+END
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Idea_GetByContentItem]
+	@ContentItemId INT ,
+	@ModuleId INT
+AS 
+	SELECT  [IdeaId] ,
+			[GroupId],
+			[Authorized] ,
+			[Views] ,
+			[Votes] ,
+			[Comments] ,
+			[Supporters] ,
+			[Status] ,
+			[Custom1] ,
+			[Custom2] ,
+			[Custom3] ,
+			[Custom4] ,
+			[AcceptedOnDate] ,
+			[ScheduledOnDate] ,
+			[DeliveredOnDate] ,
+			CI.ContentItemID ,
+			CI.Content ,
+			CI.ContentTypeID ,
+			CI.TabID ,
+			CI.ModuleID ,
+			CI.ContentKey ,
+			CI.Indexed ,
+			CI.CreatedByUserID ,
+			CI.CreatedOnDate ,
+			CI.LastModifiedByUserID ,
+			CI.LastModifiedOnDate ,
+			CIMD.MetaDataValue AS [ContentTitle]
+	FROM    {databaseOwner}{objectQualifier}Ideas_Idea AS I
+			INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI ON I.ContentItemId = CI.ContentItemID
+			LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD ON CIMD.ContentItemID = CI.[ContentItemID]
+															  AND CIMD.MetaDataID = ( SELECT
+															  MetaDataID
+															  FROM
+															  {databaseOwner}[{objectQualifier}MetaData]
+															  WHERE
+															  MetaDataName = 'Title'
+															  )
+	WHERE   I.ContentItemID = @ContentItemId
+			AND I.ModuleId = @ModuleId
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Idea_GetSearchable]
+	@StartDate DATETIME ,
+	@ModuleId INT
+AS 
+	SELECT  [IdeaId],
+			[GroupId],
+			[Authorized] ,
+			[Views] ,
+			[Votes] ,
+			[Comments] ,
+			[Supporters] ,
+			[Status] ,
+			[Custom1] ,
+			[Custom2] ,
+			[Custom3] ,
+			[Custom4] ,
+			[AcceptedOnDate] ,
+			[ScheduledOnDate] ,
+			[DeliveredOnDate] ,
+			CI.ContentItemID ,
+			CI.Content ,
+			CI.ContentTypeID ,
+			CI.TabID ,
+			CI.ModuleID ,
+			CI.ContentKey ,
+			CI.Indexed ,
+			CI.CreatedByUserID ,
+			CI.CreatedOnDate ,
+			CI.LastModifiedByUserID ,
+			CI.LastModifiedOnDate ,
+			CIMD.MetaDataValue AS [ContentTitle]
+	FROM    {databaseOwner}{objectQualifier}Ideas_Idea AS I
+			INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI ON I.ContentItemId = CI.ContentItemID
+			LEFT OUTER JOIN {databaseOwner}[{objectQualifier}ContentItems_MetaData] CIMD ON CIMD.ContentItemID = CI.[ContentItemID]
+															  AND CIMD.MetaDataID = ( SELECT
+															  MetaDataID
+															  FROM
+															  {databaseOwner}[{objectQualifier}MetaData]
+															  WHERE
+															  MetaDataName = 'Title'
+															  )
+	WHERE   Authorized = 1
+			AND I.[Status] <> 30
+			AND I.ModuleId = @ModuleId
+			AND CI.LastModifiedOnDate > @StartDate
+GO

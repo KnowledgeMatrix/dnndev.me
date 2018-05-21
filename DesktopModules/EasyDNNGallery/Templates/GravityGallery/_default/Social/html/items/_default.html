@@ -1,0 +1,76 @@
+<!--HeaderTemplateBegin-->
+[Has:EDG:BreadCrumbLink]<div class="edsgg_breadcrumbs">[EDG:BreadCrumbLink]</div>[/Has:EDG:BreadCrumbLink]
+[Has:EDG:CommunityMode]<div class="edsgg_myGalleriesLinkWrapper">[EDG:CommunityModeEditMedia]</div>[/Has:EDG:CommunityMode]
+[Has:EDG:NewsArticleLink]<div class="edsgg_newsArticleLinkWrapper"><a class="edsgg_newsArticleLink" href="[EDG:NewsArticleLink]">[EDG:LocalizedText:BacktoArticle]</a></div>[/Has:EDG:NewsArticleLink]
+[Has:EDG:ItemParentGalleryTitle]<h1 class="edsgg_mainTitle">[EDG:ItemParentGalleryTitle]</h1>[/Has:EDG:ItemParentGalleryTitle]
+[Has:EDG:ItemParentGalleryDescription]<div class="edsgg_description">[EDG:ItemParentGalleryDescription]</div>[/Has:EDG:ItemParentGalleryDescription]
+<!--HeaderTemplateEnd-->
+
+<!--ItemTemplateBegin-->
+[Has:EDG:EditPermission][EDG:EditMediaData][/Has:EDG:EditPermission]
+<div class="edsgg_thumbnailWrapper" style="width:[EDG:ListItemThumbWidth]px">
+	<div>
+		[EDG:DontEmbedInPage]
+		<div class="edsgg_imageContainer">
+			<a class="edsgg__itemDetailsAndLightboxTrigger" target="[EDG:MediaUrlTarget]" href="[EDG:ItemMediaLink]" title="[EDG:ItemTitle]"><span>[EDG:ItemTitle]</span></a>
+			<div class="edsgg_imageOverlay"></div>
+			[Has:EDG:MediaType]<span class="edsgg_mediaTypeIcon edsgg_[EDG:MediaType]"><span>[EDG:MediaType]</span></span>[/Has:EDG:MediaType]
+			<img alt="[EDG:ItemTitle]" src="[EDG:ItemThumbnail]"/>
+			[EDG:MediaLike]
+		</div>
+		<div class="edsgg_topRibbon">
+			[Has:EDG:ReportMedia][EDG:ReportMedia][/Has:EDG:ReportMedia]
+			[Has:EDG:MediaDownload]<a class="edsgg_mediaDownloadLink" href="[EDG:MediaDownloadLink]" ><span><strong>[EDG:LocalizedText:DownloadMedia]</strong> <em>.[EDG:DownloadMediaExtension]</em> ([EDG:DownloadMediaSize])</span></a>[/Has:EDG:MediaDownload]
+			[Has:EDG:EmailLink]
+			<a class="edsgg_emailLink" title="[EDG:LocalizedText:Email]" href="mailto:?to=&amp;subject=[EDG:LocalizedText:EmailSubject]&amp;body=[EDG:LocalizedText:EmailBody][EDG:ItemMediaLink]"><span><span>[EDG:LocalizedText:Email]</span></span></a>
+			[/Has:EDG:EmailLink]
+			<div class="edsgg_clear"></div>
+		</div>
+		[Has:EDG:ItemTitle]<h2 class="listItemTitle"><a class="edsgg__itemDetailsAndLightboxTrigger" href="[EDG:ItemMediaLink]">[EDG:ItemTitle]</a></h2>[/Has:EDG:ItemTitle]
+		[/EDG:DontEmbedInPage]
+		[EDG:EmbedInPage]
+		<div class="edsgg_imageContainer">
+			[EDG:EmbedMediaData]
+		</div>
+		<div class="edsgg_topRibbon">
+			[Has:EDG:ReportMedia][EDG:ReportMedia][/Has:EDG:ReportMedia]
+			[EDG:MediaLike]
+			[Has:EDG:MediaDownload]<a class="edsgg_mediaDownloadLink" href="[EDG:MediaDownloadLink]" ><span><strong>[EDG:LocalizedText:DownloadMedia]</strong> <em>.[EDG:DownloadMediaExtension]</em> ([EDG:DownloadMediaSize])</span></a>[/Has:EDG:MediaDownload]
+			[Has:EDG:EmailLink]
+			<a class="edsgg_emailLink" title="[EDG:LocalizedText:Email]" href="mailto:?to=&amp;subject=[EDG:LocalizedText:EmailSubject]&amp;body=[EDG:LocalizedText:EmailBody][EDG:CurrentMediaURL]"><span><span>[EDG:LocalizedText:Email]</span></span></a>
+			[/Has:EDG:EmailLink]
+			<div class="edsgg_clear"></div>
+		</div>
+		[Has:EDG:ItemTitle]<h2 class="listItemTitle">[EDG:ItemTitle]</h2>[/Has:EDG:ItemTitle]
+		[/EDG:EmbedInPage]
+		[Has:EDG:ItemDescription]<div class="edsgg_listItemDescription">[EDG:ItemDescription]</div>[/Has:EDG:ItemDescription]
+		[Has:EDG:ItemUploaderInfo]<a class="edsgg_authorDate[Has:EDG:AvatarProvider] avatar[/Has:EDG:AvatarProvider]" href="[EDG:ItemAuthorProfileLink]" >[EDG:ItemAuthorAvatar]<span>[EDG:ItemAuthor]</span><span class="edsgg_dateCreated">[EDG:ItemUploadDate]</span></a>[/Has:EDG:ItemUploaderInfo]
+	</div>
+	[EDG:MediaTopComments]
+	[Has:EDG:NumberOfComments]<span class="edsgg_numberOfCommentsContainer">[EDG:NumberOfComments]</span>[/Has:EDG:NumberOfComments]
+</div>
+<!--ItemTemplateEnd-->
+
+<!--FooterTemplateBegin-->
+<div class="edsgg_clear"></div>
+[EDG:ItemPaging]
+[Has:EDG:ItemListShowRss]<div class="edsgg_listRssWrapper"><a href="[EDG:ItemListRSSURL]"><span>[EDG:LocalizedText:RSS]</span></a></div>[/Has:EDG:ItemListShowRss]
+<!--FooterTemplateEnd-->
+
+<!--CommentsTemplateBegin-->
+<!--CommentsSectionWrapperHeaderTemplateBegin-->
+<!--CommentsSectionWrapperHeaderTemplateEnd-->
+
+	<!--CommentsListHeaderTemplateBegin-->
+	<!--CommentsListHeaderTemplateEnd-->
+
+	<!--SingleCommentInListTemplateBegin-->
+	<div>[EDG:CommentersAvatar]<h5 class="edsgg_commentsListCommentersName">[EDG:CommentersName]</h5><div>[EDG:CommentFormatedText]</div></div>
+	<!--SingleCommentInListTemplateEnd-->
+
+	<!--CommentsListFooterTemplateBegin-->
+	<!--CommentsListFooterTemplateEnd-->
+
+<!--CommentsSectionWrapperFooterTemplateBegin-->
+<!--CommentsSectionWrapperFooterTemplateEnd-->
+<!--CommentsTemplateEnd-->

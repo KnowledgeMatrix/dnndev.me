@@ -1,0 +1,8 @@
+﻿-- SOCIAL-4378 New entry publishing notification not shown on PB
+
+UPDATE {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] 
+	SET [IsTask] = 1
+WHERE Name = 'DNNCorp_Blogs_Entry_Publishing'
+GO
+
+-- END SOCIAL-4378

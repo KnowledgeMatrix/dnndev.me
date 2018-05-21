@@ -1,0 +1,189 @@
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryGravityGallerySettings' AND column_name = 'EnableUpload')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryGravityGallerySettings] ADD EnableUpload BIT CONSTRAINT DF_{objectQualifier}EasyGalleryGravityGallerySettings_EnableUpload DEFAULT (0) NOT NULL
+END
+GO
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryGravityGallerySettings' AND column_name = 'ApproveUploadedImages')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryGravityGallerySettings] ADD ApproveUploadedImages BIT CONSTRAINT DF_{objectQualifier}EasyGalleryGravityGallerySettings_ApproveUploadedImages DEFAULT (0) NOT NULL
+END
+GO
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryGravityGallerySettings' AND column_name = 'LimitUploadSize')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryGravityGallerySettings] ADD LimitUploadSize BIGINT CONSTRAINT DF_{objectQualifier}EasyGalleryGravityGallerySettings_LimitUploadSize DEFAULT (0) NOT NULL
+END
+GO
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryGravityGallerySettings' AND column_name = 'ResizeUploadedImages')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryGravityGallerySettings] ADD ResizeUploadedImages BIT CONSTRAINT DF_{objectQualifier}EasyGalleryGravityGallerySettings_ResizeUploadedImages DEFAULT (0) NOT NULL
+END
+GO
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryGravityGallerySettings' AND column_name = 'UploadResizeWidth')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryGravityGallerySettings] ADD UploadResizeWidth INT CONSTRAINT DF_{objectQualifier}EasyGalleryGravityGallerySettings_UploadResizeWidth DEFAULT (900) NOT NULL
+END
+GO
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryGravityGallerySettings' AND column_name = 'UploadResizeHeight')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryGravityGallerySettings] ADD UploadResizeHeight INT CONSTRAINT DF_{objectQualifier}EasyGalleryGravityGallerySettings_UploadResizeHeight DEFAULT (600) NOT NULL
+END
+GO
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryGravityGallerySettings' AND column_name = 'SendApproveNotification')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryGravityGallerySettings] ADD SendApproveNotification BIT CONSTRAINT DF_{objectQualifier}EasyGalleryGravityGallerySettings_SendApproveNotification DEFAULT (0) NOT NULL
+END
+GO
+
+
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryUserPermissions' AND column_name = 'AllowToUpload')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryUserPermissions] ADD AllowToUpload BIT CONSTRAINT DF_{objectQualifier}EasyGalleryUserPermissions_AllowToUpload DEFAULT (0) NOT NULL
+END
+GO
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryUserPermissions' AND column_name = 'Approve')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryUserPermissions] ADD Approve BIT CONSTRAINT DF_{objectQualifier}EasyGalleryUserPermissions_Approve DEFAULT (0) NOT NULL
+END
+GO
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryRolePermissions' AND column_name = 'AllowToUpload')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryRolePermissions] ADD AllowToUpload BIT CONSTRAINT DF_{objectQualifier}EasyGalleryRolePermissions_AllowToUpload DEFAULT (0) NOT NULL
+END
+GO
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryRolePermissions' AND column_name = 'Approve')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryRolePermissions] ADD Approve BIT CONSTRAINT DF_{objectQualifier}EasyGalleryRolePermissions_Approve DEFAULT (0) NOT NULL
+END
+GO
+
+/****** Object:  StoredProcedure {databaseOwner}[{objectQualifier}EasyDNNGalleryPermissions]    Script Date: 07/04/2015 09:47:03 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyDNNGalleryPermissions]') AND type in (N'P', N'PC'))
+BEGIN
+drop procedure {databaseOwner}[{objectQualifier}EasyDNNGalleryPermissions]
+END
+EXEC dbo.sp_executesql @statement = N'CREATE PROCEDURE {databaseOwner}[{objectQualifier}EasyDNNGalleryPermissions]
+    @UserID int,
+    @PortalID int,
+    @ModuleID int
+AS 
+SET NOCOUNT ON;
+IF @UserID = -1
+BEGIN
+	SELECT [AllowToComment],[CommentEditing],[CommentDeleting],[AllowToRate],[ShowComments],[ShowRating],[AllowToDownload], [AllowToLike] , [AllowToUpload] , [Approve]  FROM {databaseOwner}{objectQualifier}EasyGalleryRolePermissions WHERE RoleID IS NULL AND ModuleID = @ModuleID;
+END
+ELSE
+BEGIN
+	WITH RoleAndUserRights as
+	(
+		SELECT DISTINCT [AllowToComment],[CommentEditing],[CommentDeleting],[AllowToRate],[ShowComments],[ShowRating], [AllowToDownload], [AllowToLike], [AllowToUpload], [Approve]
+			FROM {databaseOwner}{objectQualifier}EasyGalleryRolePermissions AS rps INNER JOIN {databaseOwner}{objectQualifier}UserRoles AS ur ON ur.RoleID = rps.RoleID INNER JOIN {databaseOwner}{objectQualifier}Roles as r ON r.RoleID = ur.RoleID
+		WHERE ur.UserID = @UserID AND rps.ModuleID = @ModuleID AND r.PortalID = @PortalID
+		UNION
+		SELECT [AllowToComment],[CommentEditing],[CommentDeleting],[AllowToRate],[ShowComments],[ShowRating],[AllowToDownload], [AllowToLike], [AllowToUpload], [Approve] FROM  {databaseOwner}{objectQualifier}EasyGalleryUserPermissions AS ups
+		WHERE ups.UserID = @UserID AND ups.ModuleID = @ModuleID
+	)
+	SELECT TOP(1)
+		CASE WHEN EXISTS (SELECT AllowToComment FROM RoleAndUserRights WHERE AllowToComment = 1) THEN CAST(1 AS bit) ELSE CAST(0 AS bit) END AS AllowToComment,
+		CASE WHEN EXISTS (SELECT CommentEditing FROM RoleAndUserRights WHERE CommentEditing = 1) THEN CAST(1 AS bit) ELSE CAST(0 AS bit) END AS CommentEditing,
+		CASE WHEN EXISTS (SELECT CommentDeleting FROM RoleAndUserRights WHERE CommentDeleting = 1) THEN CAST(1 AS bit) ELSE CAST(0 AS bit) END AS CommentDeleting,
+		CASE WHEN EXISTS (SELECT AllowToRate FROM RoleAndUserRights WHERE AllowToRate = 1) THEN CAST(1 AS bit) ELSE CAST(0 AS bit) END AS AllowToRate,
+		CASE WHEN EXISTS (SELECT ShowComments FROM RoleAndUserRights WHERE ShowComments = 1) THEN CAST(1 AS bit) ELSE CAST(0 AS bit) END AS ShowComments,
+		CASE WHEN EXISTS (SELECT ShowRating FROM RoleAndUserRights WHERE ShowRating = 1) THEN CAST(1 AS bit) ELSE CAST(0 AS bit) END AS ShowRating,
+		CASE WHEN EXISTS (SELECT AllowToDownload FROM RoleAndUserRights WHERE AllowToDownload = 1) THEN CAST(1 AS bit) ELSE CAST(0 AS bit) END AS AllowToDownload,
+		CASE WHEN EXISTS (SELECT AllowToLike FROM RoleAndUserRights WHERE AllowToLike = 1) THEN CAST(1 AS bit) ELSE CAST(0 AS bit) END AS AllowToLike,
+		CASE WHEN EXISTS (SELECT AllowToUpload FROM RoleAndUserRights WHERE AllowToUpload = 1) THEN CAST(1 AS bit) ELSE CAST(0 AS bit) END AS AllowToUpload,
+		CASE WHEN EXISTS (SELECT Approve FROM RoleAndUserRights WHERE Approve = 1) THEN CAST(1 AS bit) ELSE CAST(0 AS bit) END AS Approve
+	FROM RoleAndUserRights
+END' 
+GO
+/*** GalleryName Not null ***/
+IF EXISTS (select * from INFORMATION_SCHEMA.columns where table_name = '{objectQualifier}EasyGallery' and column_name = 'GalleryName')
+BEGIN
+	UPDATE {databaseOwner}[{objectQualifier}EasyGallery] SET GalleryName ='Gallery' WHERE GalleryName IS NULL OR LEN([GalleryName]) = 0
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGallery] ALTER COLUMN GalleryName nvarchar(500) NOT NULL;
+END
+GO
+
+/*** CategoryName Not null ***/
+IF EXISTS (select * from INFORMATION_SCHEMA.columns where table_name = '{objectQualifier}EasyGalleryCategory' and column_name = 'CategoryName')
+BEGIN
+	UPDATE {databaseOwner}[{objectQualifier}EasyGalleryCategory] SET CategoryName ='Category' WHERE CategoryName IS NULL OR LEN([CategoryName]) = 0
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryCategory] ALTER COLUMN CategoryName nvarchar(500) NOT NULL;
+END
+GO
+
+
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryGravityGallerySettings' AND column_name = 'GalleryDisplayShowEmptyGalleries')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryGravityGallerySettings] ADD GalleryDisplayShowEmptyGalleries BIT CONSTRAINT DF_{objectQualifier}EasyGalleryGravityGallerySettings_GalleryDisplayShowEmptyGalleries DEFAULT (0) NOT NULL
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryGravityGallerySettings' AND column_name = 'UserUploadInterface')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryGravityGallerySettings] ADD UserUploadInterface TINYINT CONSTRAINT DF_{objectQualifier}EasyGalleryGravityGallerySettings_UserUploadInterface DEFAULT (0) NOT NULL
+END
+GO
+/*** image report option ***/
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryGravityGallerySettings' AND column_name = 'ItemsListEnableUserImageReport')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryGravityGallerySettings] ADD ItemsListEnableUserImageReport BIT CONSTRAINT DF_{objectQualifier}EasyGalleryGravityGallerySettings_ItemsListEnableUserImageReport DEFAULT (0) NOT NULL
+END
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryGravityGallerySettings' AND column_name = 'DetailsDisplayEnableUserImageReport')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryGravityGallerySettings] ADD DetailsDisplayEnableUserImageReport BIT CONSTRAINT DF_{objectQualifier}EasyGalleryGravityGallerySettings_DetailsDisplayEnableUserImageReport DEFAULT (0) NOT NULL
+END
+GO
+
+/**** Image report table ****/
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGalleryReportedPicturesItems]') AND type in (N'U'))
+BEGIN
+CREATE TABLE {databaseOwner}[{objectQualifier}EasyGalleryReportedPicturesItems](
+	[PictureID] [int] NOT NULL,
+	[UserID] [int] NOT NULL,
+	[DateReported] [datetime] NOT NULL,
+	[ReportDismissed] [bit] NOT NULL,
+ CONSTRAINT [PK_{objectQualifier}EasyGalleryReportedPicturesItems] PRIMARY KEY CLUSTERED 
+(
+	[PictureID] ASC,
+	[UserID] ASC
+)WITH (STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF)
+)
+END
+GO
+/****** Object:  Default [DF_{objectQualifier}EasyGalleryReportedPicturesItems_DateReported]    Script Date: 09/21/2015 14:17:40 ******/
+IF Not EXISTS (SELECT * FROM sys.default_constraints WHERE object_id = OBJECT_ID(N'{databaseOwner}[DF_{objectQualifier}EasyGalleryReportedPicturesItems_DateReported]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGalleryReportedPicturesItems]'))
+Begin
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[DF_{objectQualifier}EasyGalleryReportedPicturesItems_DateReported]') AND type = 'D')
+BEGIN
+ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryReportedPicturesItems] ADD  CONSTRAINT [DF_{objectQualifier}EasyGalleryReportedPicturesItems_DateReported]  DEFAULT (getutcdate()) FOR [DateReported]
+END
+
+
+End
+GO
+/****** Object:  ForeignKey [FK_{objectQualifier}EasyGalleryReportedPicturesItems_EasyGalleryPictures]    Script Date: 09/21/2015 14:17:40 ******/
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[FK_{objectQualifier}EasyGalleryReportedPicturesItems_EasyGalleryPictures]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGalleryReportedPicturesItems]'))
+ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryReportedPicturesItems]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}EasyGalleryReportedPicturesItems_EasyGalleryPictures] FOREIGN KEY([PictureID])
+REFERENCES {databaseOwner}[{objectQualifier}EasyGalleryPictures] ([PictureID])
+ON DELETE CASCADE
+GO
+IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[FK_{objectQualifier}EasyGalleryReportedPicturesItems_EasyGalleryPictures]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGalleryReportedPicturesItems]'))
+ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryReportedPicturesItems] CHECK CONSTRAINT [FK_{objectQualifier}EasyGalleryReportedPicturesItems_EasyGalleryPictures]
+GO
+/****** Object:  ForeignKey [FK_{objectQualifier}EasyGalleryReportedPicturesItems_Users]    Script Date: 09/21/2015 14:17:40 ******/
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[FK_{objectQualifier}EasyGalleryReportedPicturesItems_Users]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGalleryReportedPicturesItems]'))
+ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryReportedPicturesItems]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}EasyGalleryReportedPicturesItems_Users] FOREIGN KEY([UserID])
+REFERENCES {databaseOwner}[{objectQualifier}Users] ([UserID])
+ON DELETE CASCADE
+GO
+IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[FK_{objectQualifier}EasyGalleryReportedPicturesItems_Users]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGalleryReportedPicturesItems]'))
+ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryReportedPicturesItems] CHECK CONSTRAINT [FK_{objectQualifier}EasyGalleryReportedPicturesItems_Users]
+GO
+
+
+

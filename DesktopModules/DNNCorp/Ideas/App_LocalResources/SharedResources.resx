@@ -1,0 +1,954 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddComment.Text" xml:space="preserve">
+    <value>Add Comment</value>
+  </data>
+  <data name="AddResponse.Text" xml:space="preserve">
+    <value>Add Response</value>
+  </data>
+  <data name="lblAuthorized.Text" xml:space="preserve">
+    <value>Approved:</value>
+  </data>
+  <data name="Average.Help" xml:space="preserve">
+    <value>The average number of votes per user</value>
+  </data>
+  <data name="Average.Text" xml:space="preserve">
+    <value>Average</value>
+  </data>
+  <data name="by.Text" xml:space="preserve">
+    <value>by</value>
+  </data>
+  <data name="Cancel.Text" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="CommentLogin.Text" xml:space="preserve">
+    <value>&lt;br /&gt;&lt;br /&gt;You Must Be Logged In To Add A Comment</value>
+  </data>
+  <data name="Comments.Text" xml:space="preserve">
+    <value>Comments</value>
+  </data>
+  <data name="Created.Help" xml:space="preserve">
+    <value>The date the suggestion was created and user who created it</value>
+  </data>
+  <data name="Created.Text" xml:space="preserve">
+    <value>Created</value>
+  </data>
+  <data name="DeleteComment.Text" xml:space="preserve">
+    <value>Delete Comment</value>
+  </data>
+  <data name="Delivered.Text" xml:space="preserve">
+    <value>Delivered</value>
+  </data>
+  <data name="lblDescription.Text" xml:space="preserve">
+    <value>Description:</value>
+  </data>
+  <data name="EditResponse.Text" xml:space="preserve">
+    <value>Edit Response</value>
+  </data>
+  <data name="EditIdea.Text" xml:space="preserve">
+    <value>Edit Idea</value>
+  </data>
+  <data name="NOTIFY_IdeaPendingApproval.Subject" xml:space="preserve">
+    <value>Idea Submitted: [TITLE]</value>
+  </data>
+  <data name="EMAIL_USER_RESPONSE.Text" xml:space="preserve">
+    <value>This is the response template.</value>
+  </data>
+  <data name="NoComments.Text" xml:space="preserve">
+    <value>&lt;br /&gt;No comments have been added for this idea.</value>
+  </data>
+  <data name="Notify.Text" xml:space="preserve">
+    <value>Notify me of new ideas?</value>
+  </data>
+  <data name="on.Text" xml:space="preserve">
+    <value>on</value>
+  </data>
+  <data name="Response.Help" xml:space="preserve">
+    <value>Enter the response for this suggestion</value>
+  </data>
+  <data name="Response.Text" xml:space="preserve">
+    <value>Response</value>
+  </data>
+  <data name="ResponseBy.Help" xml:space="preserve">
+    <value>User that submitted the response</value>
+  </data>
+  <data name="ResponseBy.Text" xml:space="preserve">
+    <value>Response By</value>
+  </data>
+  <data name="ResponseDate.Help" xml:space="preserve">
+    <value>Date of the response</value>
+  </data>
+  <data name="ResponseDate.Text" xml:space="preserve">
+    <value>Response Date</value>
+  </data>
+  <data name="ResponseDelete.Text" xml:space="preserve">
+    <value>Are You Sure You Wish To Delete This Response?</value>
+  </data>
+  <data name="SaveComment.Text" xml:space="preserve">
+    <value>Save Comment</value>
+  </data>
+  <data name="SearchGo.Text" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="Status.Accepted" xml:space="preserve">
+    <value>Accepted</value>
+  </data>
+  <data name="Status.Delivered" xml:space="preserve">
+    <value>Delivered</value>
+  </data>
+  <data name="Status.Duplicate" xml:space="preserve">
+    <value>Duplicate</value>
+  </data>
+  <data name="Status.Reviewed" xml:space="preserve">
+    <value>Reviewed</value>
+  </data>
+  <data name="Status.Scheduled" xml:space="preserve">
+    <value>Scheduled</value>
+  </data>
+  <data name="Status.Submitted" xml:space="preserve">
+    <value>Submitted</value>
+  </data>
+  <data name="lblStatus.Text" xml:space="preserve">
+    <value>Status:</value>
+  </data>
+  <data name="IdeaDelete.Text" xml:space="preserve">
+    <value>Are you sure you want to delete this idea?</value>
+  </data>
+  <data name="Summary.Help" xml:space="preserve">
+    <value>Enter a summary description of your suggestion</value>
+  </data>
+  <data name="Summary.Text" xml:space="preserve">
+    <value>Summary</value>
+  </data>
+  <data name="Supporter.Text" xml:space="preserve">
+    <value>Supporter</value>
+  </data>
+  <data name="Supporters.Help" xml:space="preserve">
+    <value>The number of users who voted for the suggestion</value>
+  </data>
+  <data name="Supporters.Text" xml:space="preserve">
+    <value>Supporters</value>
+  </data>
+  <data name="lblTitle.Text" xml:space="preserve">
+    <value>Idea Title:</value>
+  </data>
+  <data name="Update.Text" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="Voter.Vote" xml:space="preserve">
+    <value>vote</value>
+  </data>
+  <data name="Voter.VoteNow" xml:space="preserve">
+    <value>Vote Now!</value>
+  </data>
+  <data name="Voter.Votes" xml:space="preserve">
+    <value>votes</value>
+  </data>
+  <data name="Votes.Help" xml:space="preserve">
+    <value>The number of votes for the suggestion</value>
+  </data>
+  <data name="Votes.Text" xml:space="preserve">
+    <value>Votes</value>
+  </data>
+  <data name="VotesLeft.Help" xml:space="preserve">
+    <value>Every user is allocated {0} votes.  You can use up to {1} votes per idea. Votes that you apply to an idea will remain committed to that idea until the idea is delivered.  Once the idea has been delivered you will be able to use those votes again towards other ideas. You do have the option to remove your votes from an idea at any time.</value>
+  </data>
+  <data name="Dashboard.Text" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
+  <data name="valTags.ErrorMessage" xml:space="preserve">
+    <value>You must select at least one tag</value>
+  </data>
+  <data name="valTitle.ErrorMessage" xml:space="preserve">
+    <value>You must enter a title</value>
+  </data>
+  <data name="Select.Text" xml:space="preserve">
+    <value>----Please Select----</value>
+  </data>
+  <data name="lblCategory.Text" xml:space="preserve">
+    <value>Select a Category:</value>
+  </data>
+  <data name="lblType.Text" xml:space="preserve">
+    <value>Type of Idea:</value>
+  </data>
+  <data name="Accepted.Text" xml:space="preserve">
+    <value>Accepted</value>
+  </data>
+  <data name="VotesLeft.1" xml:space="preserve">
+    <value>You have 1 vote remaining.</value>
+  </data>
+  <data name="VotesLeft.n" xml:space="preserve">
+    <value>You have {0} votes remaining.</value>
+  </data>
+  <data name="Anonymous.Text" xml:space="preserve">
+    <value>Anonymous</value>
+  </data>
+  <data name="CommentsCount.Text" xml:space="preserve">
+    <value>{0} comments</value>
+  </data>
+  <data name="CommentsSingleCount.Text" xml:space="preserve">
+    <value>1 comment</value>
+  </data>
+  <data name="NoRecords.Text" xml:space="preserve">
+    <value>No ideas found.</value>
+  </data>
+  <data name="Subscribe.Text" xml:space="preserve">
+    <value>Subscribe</value>
+  </data>
+  <data name="SubscribeTip.Text" xml:space="preserve">
+    <value>Click to receive email notifications of all new ideas.</value>
+  </data>
+  <data name="Unsubscribe.Text" xml:space="preserve">
+    <value>Unsubscribe</value>
+  </data>
+  <data name="UnsubscribeTip.Text" xml:space="preserve">
+    <value>Click to no longer receive email notifications of new ideas.</value>
+  </data>
+  <data name="JournalAddVoteSummary.Text" xml:space="preserve">
+    <value>Assigned +{0} votes to the idea.</value>
+  </data>
+  <data name="UpdateComment.Text" xml:space="preserve">
+    <value>Update Comment</value>
+  </data>
+  <data name="LoggedInVote.Text" xml:space="preserve">
+    <value>You must be logged in to vote.</value>
+  </data>
+  <data name="UnAuthorized.Text" xml:space="preserve">
+    <value>This idea is not authorized for public viewing &amp; voting at this time. </value>
+  </data>
+  <data name="SelectBothCategories.Text" xml:space="preserve">
+    <value>You must select a type of idea and associate it with a category. </value>
+  </data>
+  <data name="Status.UnderReview" xml:space="preserve">
+    <value>Under Review</value>
+  </data>
+  <data name="lblInitialVotes.Text" xml:space="preserve">
+    <value>Apply My Votes:</value>
+  </data>
+  <data name="valInitialVotes.ErrorMessage" xml:space="preserve">
+    <value>Invalid amount of votes. (max 3).</value>
+  </data>
+  <data name="EnterValue.Text" xml:space="preserve">
+    <value>Enter</value>
+  </data>
+  <data name="InsufficientVotes.Text" xml:space="preserve">
+    <value>You have only {0} votes left that can used.</value>
+  </data>
+  <data name="MaxVotesForIdeaReached.Text" xml:space="preserve">
+    <value>You have used the max({0}) amount of votes for this idea.</value>
+  </data>
+  <data name="NoVotesLeft.Text" xml:space="preserve">
+    <value>You have used up all your votes. To submit ideas or vote requires votes.</value>
+  </data>
+  <data name="SelectValue.Text" xml:space="preserve">
+    <value>Select</value>
+  </data>
+  <data name="MyVotes.Text" xml:space="preserve">
+    <value>My Votes ({0})</value>
+  </data>
+  <data name="ApproveIdea_desc.Text" xml:space="preserve">
+    <value>Do you want to approve this idea?</value>
+  </data>
+  <data name="Ok.Text" xml:space="preserve">
+    <value>Ok</value>
+  </data>
+  <data name="JournalAddResponseSummary.Text" xml:space="preserve">
+    <value>New response added for the idea.</value>
+  </data>
+  <data name="JournalUpdateIdeaSummary.Text" xml:space="preserve">
+    <value>Idea details has been updated.</value>
+  </data>
+  <data name="VoteDownToolTip.Text" xml:space="preserve">
+    <value>This Comment Is NOT Useful</value>
+  </data>
+  <data name="VoteUpToolTip.Text" xml:space="preserve">
+    <value>This Comment Is Useful</value>
+  </data>
+  <data name="IdeaCreate.Text" xml:space="preserve">
+    <value>Create</value>
+  </data>
+  <data name="WaitForModeration.Text" xml:space="preserve">
+    <value>Your idea has been submitted and is awaiting moderation.</value>
+  </data>
+  <data name="BackToIdeas.Text" xml:space="preserve">
+    <value>Back to Ideas</value>
+  </data>
+  <data name="ApproveIdea.Text" xml:space="preserve">
+    <value>Approve Idea</value>
+  </data>
+  <data name="DeleteIdea.Text" xml:space="preserve">
+    <value>Delete Idea</value>
+  </data>
+  <data name="DeleteIdea_Desc.Text" xml:space="preserve">
+    <value>All votes, comments and responses will be lost for the idea if deleted. Are you sure you wish to delete this idea?</value>
+  </data>
+  <data name="valDescription.ErrorMessage" xml:space="preserve">
+    <value>You must enter a description</value>
+  </data>
+  <data name="ApprovedIdea.Text" xml:space="preserve">
+    <value>Approved Idea</value>
+  </data>
+  <data name="ApprovedIdea_desc.Text" xml:space="preserve">
+    <value>Approved an idea.</value>
+  </data>
+  <data name="BookmarkedIdea.Text" xml:space="preserve">
+    <value>Bookmarked idea</value>
+  </data>
+  <data name="BookmarkedIdea_desc.Text" xml:space="preserve">
+    <value>Bookmarked a specific idea.</value>
+  </data>
+  <data name="EditedIdea.Text" xml:space="preserve">
+    <value>Edited idea</value>
+  </data>
+  <data name="EditedIdea_desc.Text" xml:space="preserve">
+    <value>Edited an existing idea.</value>
+  </data>
+  <data name="FlaggedIdea.Text" xml:space="preserve">
+    <value>Flagged idea</value>
+  </data>
+  <data name="FlaggedIdea_desc.Text" xml:space="preserve">
+    <value>Flagged an idea for moderator attention.</value>
+  </data>
+  <data name="LikedIdea.Text" xml:space="preserve">
+    <value>Liked idea</value>
+  </data>
+  <data name="LikedIdea_desc.Text" xml:space="preserve">
+    <value>Liked a specific idea</value>
+  </data>
+  <data name="UnLikedIdea.Text" xml:space="preserve">
+    <value>Unliked idea</value>
+  </data>
+  <data name="UnLikedIdea_desc.Text" xml:space="preserve">
+    <value>Unliked a comment</value>
+  </data>
+  <data name="LikedIdeaComment.Text" xml:space="preserve">
+    <value>Liked comment</value>
+  </data>
+  <data name="LikedIdeaComment_desc.Text" xml:space="preserve">
+    <value>Liked a comment</value>
+  </data>
+  <data name="UnLikedIdeaComment.Text" xml:space="preserve">
+    <value>Unliked comment</value>
+  </data>
+  <data name="UnLikedIdeaComment_desc.Text" xml:space="preserve">
+    <value>Unliked a comment</value>
+  </data>
+  <data name="ProvidedLikedIdea.Text" xml:space="preserve">
+    <value>Provided liked idea</value>
+  </data>
+  <data name="ProvidedLikedIdea_desc.Text" xml:space="preserve">
+    <value>Provided an idea that was liked</value>
+  </data>
+  <data name="ProvidedUnLikedIdea.Text" xml:space="preserve">
+    <value>Provided unliked idea</value>
+  </data>
+  <data name="ProvidedUnLikedIdea_desc.Text" xml:space="preserve">
+    <value>Provided a comment that was unliked</value>
+  </data>
+  <data name="ProvidedLikedIdeaComment.Text" xml:space="preserve">
+    <value>Provided liked comment</value>
+  </data>
+  <data name="ProvidedLikedIdeaComment_desc.Text" xml:space="preserve">
+    <value>Provided a comment that was liked</value>
+  </data>
+  <data name="ProvidedUnLikedIdeaComment.Text" xml:space="preserve">
+    <value>Provided unliked comment</value>
+  </data>
+  <data name="ProvidedUnLikedIdeaComment_desc.Text" xml:space="preserve">
+    <value>Provided a comment that was unliked</value>
+  </data>
+  <data name="ProvidedAcceptedIdea.Text" xml:space="preserve">
+    <value>Provided accepted idea</value>
+  </data>
+  <data name="ProvidedAcceptedIdea_desc.Text" xml:space="preserve">
+    <value>Created an idea that was approved and had its status set to accepted or greater.</value>
+  </data>
+  <data name="ProvidedFlaggedIdea.Text" xml:space="preserve">
+    <value>Provided flagged idea</value>
+  </data>
+  <data name="ProvidedFlaggedIdea_desc.Text" xml:space="preserve">
+    <value>Created an idea that was approved and then the idea was flagged for moderator attention.</value>
+  </data>
+  <data name="ProvidedIdea.Text" xml:space="preserve">
+    <value>Provided idea</value>
+  </data>
+  <data name="ProvidedIdeaResponse.Text" xml:space="preserve">
+    <value>Provided idea response</value>
+  </data>
+  <data name="ProvidedIdeaResponse_desc.Text" xml:space="preserve">
+    <value>Added a response to an idea (moderator or admin only have this option).</value>
+  </data>
+  <data name="ProvidedIdeaVotedOn.Text" xml:space="preserve">
+    <value>Provided idea voted on</value>
+  </data>
+  <data name="ProvidedIdeaVotedOn_desc.Text" xml:space="preserve">
+    <value>Created an idea that was approved and was voted on by another user (occurs each time another user votes)</value>
+  </data>
+  <data name="ProvidedIdea_desc.Text" xml:space="preserve">
+    <value>Created an idea that was approved.</value>
+  </data>
+  <data name="SearchedIdeas.Text" xml:space="preserve">
+    <value>Searched ideas</value>
+  </data>
+  <data name="SearchedIdeas_desc.Text" xml:space="preserve">
+    <value>Searched ideas</value>
+  </data>
+  <data name="SubscribedToAnIdea.Text" xml:space="preserve">
+    <value>Subscribed to idea</value>
+  </data>
+  <data name="SubscribedToAnIdea_desc.Text" xml:space="preserve">
+    <value>Subscribed to an idea.</value>
+  </data>
+  <data name="ViewedIdea.Text" xml:space="preserve">
+    <value>Viewed idea</value>
+  </data>
+  <data name="ViewedIdea_desc.Text" xml:space="preserve">
+    <value>Viewed an idea in detail.</value>
+  </data>
+  <data name="VotedOnIdea.Text" xml:space="preserve">
+    <value>Voted on idea</value>
+  </data>
+  <data name="VotedOnIdea_desc.Text" xml:space="preserve">
+    <value>Assigned 1+ votes to a specific idea.</value>
+  </data>
+  <data name="ResponseHistory.Text" xml:space="preserve">
+    <value>Response History</value>
+  </data>
+  <data name="hlAddIdea.Text" xml:space="preserve">
+    <value>Share Idea</value>
+  </data>
+  <data name="LastActive.Text" xml:space="preserve">
+    <value>Last Activity:</value>
+  </data>
+  <data name="Report.Text" xml:space="preserve">
+    <value>Report</value>
+  </data>
+  <data name="Vote.Text" xml:space="preserve">
+    <value>Vote</value>
+  </data>
+  <data name="First.Text" xml:space="preserve">
+    <value>First</value>
+  </data>
+  <data name="Last.Text" xml:space="preserve">
+    <value>Last</value>
+  </data>
+  <data name="Next.Text" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="Previous.Text" xml:space="preserve">
+    <value>Previous</value>
+  </data>
+  <data name="UnknownError.Text" xml:space="preserve">
+    <value>Unknown error</value>
+  </data>
+  <data name="Create.Text" xml:space="preserve">
+    <value>Create</value>
+  </data>
+  <data name="SaveFailed.Text" xml:space="preserve">
+    <value>There was an error creating this post, please try again.</value>
+  </data>
+  <data name="SaveFailedTitle.Text" xml:space="preserve">
+    <value>Save Failure</value>
+  </data>
+  <data name="UnableToGetTerms.Text" xml:space="preserve">
+    <value>Unable to retrieve a list of Folksonomy Terms: {0}</value>
+  </data>
+  <data name="UnableToGetTermsTitle.Text" xml:space="preserve">
+    <value>Terms Error</value>
+  </data>
+  <data name="Status.All" xml:space="preserve">
+    <value>Any status</value>
+  </data>
+  <data name="lblTags.Text" xml:space="preserve">
+    <value>Tags:</value>
+  </data>
+  <data name="NoResults.Text" xml:space="preserve">
+    <value>No matching results</value>
+  </data>
+  <data name="Searching.Text" xml:space="preserve">
+    <value>Searching...</value>
+  </data>
+  <data name="GetTagError.Text" xml:space="preserve">
+    <value>Failure to get tag list: {0}</value>
+  </data>
+  <data name="GetTagErrorTitle.Text" xml:space="preserve">
+    <value>Tag Error</value>
+  </data>
+  <data name="CannotFindIdea.Text" xml:space="preserve">
+    <value>Cannot find Idea ({0})</value>
+  </data>
+  <data name="CannotEditIdea.Text" xml:space="preserve">
+    <value>Cannot edit Idea ({0})</value>
+  </data>
+  <data name="CannotPostEmptyReply.Text" xml:space="preserve">
+    <value>Cannot post an empty reply</value>
+  </data>
+  <data name="CannotPostReply.Text" xml:space="preserve">
+    <value>Cannot post reply</value>
+  </data>
+  <data name="InvalidNegativeVote.Text" xml:space="preserve">
+    <value>Invalid negative vote</value>
+  </data>
+  <data name="Now.Text" xml:space="preserve">
+    <value>Now</value>
+  </data>
+  <data name="VoteFailure.Text" xml:space="preserve">
+    <value>Failure to Vote</value>
+  </data>
+  <data name="CodecLookupFailure.Text" xml:space="preserve">
+    <value>Failed to find specified codec</value>
+  </data>
+  <data name="JournalUpdateFailure.Text" xml:space="preserve">
+    <value>Failed to update Journal: {0}</value>
+  </data>
+  <data name="NotificationFailure.Text" xml:space="preserve">
+    <value>Failure to send notification: {0}</value>
+  </data>
+  <data name="VoteFailureText.Text" xml:space="preserve">
+    <value>Unable to update vote count: {0}</value>
+  </data>
+  <data name="BookmarkFailure.Text" xml:space="preserve">
+    <value>Unable to bookmark this</value>
+  </data>
+  <data name="LikeFailure.Text" xml:space="preserve">
+    <value>Unable to like</value>
+  </data>
+  <data name="UnableToLike.Text" xml:space="preserve">
+    <value>Unable to like this idea: could not find the related Journal entry</value>
+  </data>
+  <data name="UnableToUnlike.Text" xml:space="preserve">
+    <value>Unable to unlike this idea (unknown error)</value>
+  </data>
+  <data name="UnbookmarkFailure.Text" xml:space="preserve">
+    <value>Unable to remove bookmark</value>
+  </data>
+  <data name="UnlikeFailure.Text" xml:space="preserve">
+    <value>Unable to unlike</value>
+  </data>
+  <data name="UnsubscribeFailure.Text" xml:space="preserve">
+    <value>Unable to remove subscription</value>
+  </data>
+  <data name="NewIdeasNotAllowed.Text" xml:space="preserve">
+    <value>Creation of new Ideas is not allowed</value>
+  </data>
+  <data name="RequiresVotesText.Text" xml:space="preserve">
+    <value>Unfortunately, the action you are attempting requires more votes than you presently possess.</value>
+  </data>
+  <data name="RequiresVotesTitle.Text" xml:space="preserve">
+    <value>Unable to complete action</value>
+  </data>
+  <data name="AddTag.Text" xml:space="preserve">
+    <value>Enter tags separated by a comma</value>
+  </data>
+  <data name="MODERATORS.Text" xml:space="preserve">
+    <value>Moderators</value>
+  </data>
+  <data name="NOTIFY_CommentFlagged.Subject" xml:space="preserve">
+    <value>Comment Reported: [TITLE]</value>
+  </data>
+  <data name="NOTIFY_IdeaFlagged.Subject" xml:space="preserve">
+    <value>Idea Reported: [TITLE]</value>
+  </data>
+  <data name="DisabledVotes.Text" xml:space="preserve">
+    <value>Disabled. You do not have enough votes left.</value>
+  </data>
+  <data name="InitialVotesRequired.Text" xml:space="preserve">
+    <value>New Idea submissions require at least one vote to be cast.</value>
+  </data>
+  <data name="DeletedComment.Text" xml:space="preserve">
+    <value>Deleted comment</value>
+  </data>
+  <data name="DeleteComment_Desc.Text" xml:space="preserve">
+    <value>Delete the comment, it will not be published and will not be available for future edits.</value>
+  </data>
+  <data name="DeletedIdea.Text" xml:space="preserve">
+    <value>Deleted idea</value>
+  </data>
+  <data name="DeletedIdea_desc.Text" xml:space="preserve">
+    <value>Deleted an idea</value>
+  </data>
+  <data name="FlaggedIdeaComment.Text" xml:space="preserve">
+    <value>Reported comment</value>
+  </data>
+  <data name="FlaggedIdeaComment_desc.Text" xml:space="preserve">
+    <value>Reported an idea comment that was flagged for moderator attention. </value>
+  </data>
+  <data name="ProvidedDeletedComment.Text" xml:space="preserve">
+    <value>Provided deleted comment</value>
+  </data>
+  <data name="ProvidedDeletedComment_desc.Text" xml:space="preserve">
+    <value>Provided a comment that was deleted</value>
+  </data>
+  <data name="ProvidedDeletedIdea.Text" xml:space="preserve">
+    <value>Provided deleted idea</value>
+  </data>
+  <data name="ProvidedDeletedIdea_desc.Text" xml:space="preserve">
+    <value>Provided an idea that was deleted</value>
+  </data>
+  <data name="ProvidedFlaggedComment.Text" xml:space="preserve">
+    <value>Provided flagged comment</value>
+  </data>
+  <data name="ProvidedFlaggedComment_desc.Text" xml:space="preserve">
+    <value>Provided a comment on an idea that was flagged for moderator attention</value>
+  </data>
+  <data name="lblResponse.Text" xml:space="preserve">
+    <value>Response</value>
+  </data>
+  <data name="Save.Text" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Comment.Text" xml:space="preserve">
+    <value>Comment</value>
+  </data>
+  <data name="View.Text" xml:space="preserve">
+    <value>View</value>
+  </data>
+  <data name="Views.Text" xml:space="preserve">
+    <value>Views</value>
+  </data>
+  <data name="InvalidPublishKey.Text" xml:space="preserve">
+    <value>Invalid Publish Key: {0}</value>
+  </data>
+  <data name="ViewIdea.Text" xml:space="preserve">
+    <value>View Idea</value>
+  </data>
+  <data name="lblSubscribe.Text" xml:space="preserve">
+    <value>Subscribe:</value>
+  </data>
+  <data name="NOTIFY_NewIdeaTitle.Text" xml:space="preserve">
+    <value>Idea: [TITLE]</value>
+  </data>
+  <data name="SubscribedToAllIdeas.Text" xml:space="preserve">
+    <value>Subcribed to all ideas</value>
+  </data>
+  <data name="SubscribedToAllIdeas_desc.Text" xml:space="preserve">
+    <value>Subscribed to receive notification of new ideas</value>
+  </data>
+  <data name="UnsubscribedFromAllIdeas.Text" xml:space="preserve">
+    <value>Unsubscribed from new ideas</value>
+  </data>
+  <data name="UnsubscribedFromAllIdeas_desc.Text" xml:space="preserve">
+    <value>Unsubscribed from receiving notification each time a new idea is created</value>
+  </data>
+  <data name="UnsubscribedFromIdea.Text" xml:space="preserve">
+    <value>Unsubscribed from idea</value>
+  </data>
+  <data name="UnsubscribedFromIdea_desc.Text" xml:space="preserve">
+    <value>Unsubscribed from receiving notification each time an activity was performed around a specific idea</value>
+  </data>
+  <data name="Close.Text" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="NOTIFY_NewVoteIdeaTitle.Text" xml:space="preserve">
+    <value>Idea Voted on: [TITLE]</value>
+  </data>
+  <data name="ChangedVote.Text" xml:space="preserve">
+    <value>Changed vote</value>
+  </data>
+  <data name="ChangedVote_desc.Text" xml:space="preserve">
+    <value>Changed the number of votes assigned to an idea</value>
+  </data>
+  <data name="RemovedVotes.Text" xml:space="preserve">
+    <value>Removed votes</value>
+  </data>
+  <data name="RemovedVotes_desc.Text" xml:space="preserve">
+    <value>Removed all votes from an idea</value>
+  </data>
+  <data name="PostedComment.Text" xml:space="preserve">
+    <value>Provided idea comment</value>
+  </data>
+  <data name="PostedComment_desc.Text" xml:space="preserve">
+    <value>Provided a comment on an idea</value>
+  </data>
+  <data name="NOTIFY_CompanyResponseTitle.Text" xml:space="preserve">
+    <value>Idea Response: [TITLE]</value>
+  </data>
+  <data name="NOTIFY_NewCommentTitle.Text" xml:space="preserve">
+    <value>Idea Comment: [TITLE]</value>
+  </data>
+  <data name="DialogTitle.Text" xml:space="preserve">
+    <value>Share an Idea</value>
+  </data>
+  <data name="ConfirmText.Text" xml:space="preserve">
+    <value>Are you sure you would like to permanently delete this idea?</value>
+  </data>
+  <data name="ConfirmTitle.Text" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="CreateUnmoderatedComments.Text" xml:space="preserve">
+    <value>Create unmoderated comments</value>
+  </data>
+  <data name="CreateUnmoderatedComments_desc.Text" xml:space="preserve">
+    <value>Permits the user to create comment unmoderated regardless of moderation being enabled</value>
+  </data>
+  <data name="ShareUnmoderated.Text" xml:space="preserve">
+    <value>Share unmoderated</value>
+  </data>
+  <data name="ShareUnmoderated_desc.Text" xml:space="preserve">
+    <value>Permits the user to share new ideas unmoderated regardless of moderation being enabled</value>
+  </data>
+  <data name="EditOwnItems.Text" xml:space="preserve">
+    <value>Edit own ideas and comments</value>
+  </data>
+  <data name="EditOwnItems_desc.Text" xml:space="preserve">
+    <value>Edit any idea or comment created by you.</value>
+  </data>
+  <data name="ApproveComment.Text" xml:space="preserve">
+    <value>Approve</value>
+  </data>
+  <data name="ApproveComment_desc.Text" xml:space="preserve">
+    <value>Approve the idea comment</value>
+  </data>
+  <data name="RejectComment.Text" xml:space="preserve">
+    <value>Reject</value>
+  </data>
+  <data name="RejectComment_Desc.Text" xml:space="preserve">
+    <value>This comment will be deleted permanently. Are you sure you want to do this?</value>
+  </data>
+  <data name="ApprovedComment.Text" xml:space="preserve">
+    <value>Approved comment</value>
+  </data>
+  <data name="ApprovedComment_desc.Text" xml:space="preserve">
+    <value>Approved an idea comment</value>
+  </data>
+  <data name="RemovedIdeaBookmark.Text" xml:space="preserve">
+    <value>Removed idea bookmark</value>
+  </data>
+  <data name="RemovedIdeaBookmark_desc.Text" xml:space="preserve">
+    <value>Removed a bookmark associated with an idea</value>
+  </data>
+  <data name="Moderators.Permission" xml:space="preserve">
+    <value>Moderators</value>
+  </data>
+  <data name="RejectAllReportNotifications.Text" xml:space="preserve">
+    <value>Reject</value>
+  </data>
+  <data name="RejectAllReportNotifications_Desc.Text" xml:space="preserve">
+    <value>Reject all report content notifications that were sent out for this idea</value>
+  </data>
+  <data name="RejectCommentReportNotifications.Text" xml:space="preserve">
+    <value>Reject</value>
+  </data>
+  <data name="RejectCommentReportNotifications_Desc.Text" xml:space="preserve">
+    <value>Reject all report comment notifications that were sent out for this comment</value>
+  </data>
+  <data name="lblClosed.Text" xml:space="preserve">
+    <value>Lock:</value>
+  </data>
+  <data name="EditedComment.Text" xml:space="preserve">
+    <value>Edited comment</value>
+  </data>
+  <data name="EditedComment_desc.Text" xml:space="preserve">
+    <value>Edited a comment</value>
+  </data>
+  <data name="Share.Text" xml:space="preserve">
+    <value>Shared a link</value>
+  </data>
+  <data name="Share_desc.Text" xml:space="preserve">
+    <value>Shared a link to content on the site using a social share service</value>
+  </data>
+  <data name="TransformingUrl.Text" xml:space="preserve">
+    <value>Transforming URL...</value>
+  </data>
+  <data name="FacebookShare.Text" xml:space="preserve">
+    <value>Facebook Share</value>
+  </data>
+  <data name="FacebookShare_desc.Text" xml:space="preserve">
+    <value>Shared a link to content on the site using the Facebook share service</value>
+  </data>
+  <data name="GoogleShare.Text" xml:space="preserve">
+    <value>Google Share</value>
+  </data>
+  <data name="GoogleShare_desc.Text" xml:space="preserve">
+    <value>Shared a link to content on the site using the Google share service</value>
+  </data>
+  <data name="LinkedInShare.Text" xml:space="preserve">
+    <value>LinkedIn Share</value>
+  </data>
+  <data name="LinkedInShare_desc.Text" xml:space="preserve">
+    <value>Shared a link to content on the site using the LinkedIn share service</value>
+  </data>
+  <data name="TwitterShare.Text" xml:space="preserve">
+    <value>Twitter Share</value>
+  </data>
+  <data name="TwitterShare_desc.Text" xml:space="preserve">
+    <value>Shared a link to content on the site using the Twitter share service</value>
+  </data>
+  <data name="Badge_ThumbsUp.Text" xml:space="preserve">
+    <value>Thumbs Up</value>
+  </data>
+  <data name="Badge_ThumbsUp_desc.Text" xml:space="preserve">
+    <value>Provided an idea that others voted for</value>
+  </data>
+  <data name="NOTIFY_UpdatedIdea_TITLE.Text" xml:space="preserve">
+    <value>Idea Updated: [TITLE]</value>
+  </data>
+  <data name="CopyIdea.Text" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="MoveIdea.Text" xml:space="preserve">
+    <value>Move</value>
+  </data>
+  <data name="Idea.Text" xml:space="preserve">
+    <value>Idea</value>
+  </data>
+  <data name="Copy.Text" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="Move.Text" xml:space="preserve">
+    <value>Move</value>
+  </data>
+  <data name="SubsIdeaActivity.Text" xml:space="preserve">
+    <value>Idea Activity</value>
+  </data>
+  <data name="SubsNewIdeas.Text" xml:space="preserve">
+    <value>New Ideas</value>
+  </data>
+  <data name="CopyIdeaToComment.Text" xml:space="preserve">
+    <value>Copy to comment</value>
+  </data>
+  <data name="MoveIdeaToComment.Text" xml:space="preserve">
+    <value>Move to comment</value>
+  </data>
+  <data name="ToComment.Text" xml:space="preserve">
+    <value>to comment</value>
+  </data>
+  <data name="CommentMovedOnIdea.Text" xml:space="preserve">
+    <value>Comment moved on Idea </value>
+  </data>
+  <data name="CannotVoteOnLockedClosedIdea.Text" xml:space="preserve">
+    <value>The idea is locked or closed so it is not possible to vote on it.</value>
+  </data>
+  <data name="UserDontHaveEnoughVotes.Text" xml:space="preserve">
+    <value>You cannot give {0} votes to the idea, you do not have enough remaining votes</value>
+  </data>
+  <data name="CopiedItem.Text" xml:space="preserve">
+    <value>Copied idea</value>
+  </data>
+  <data name="CopiedItem_desc.Text" xml:space="preserve">
+    <value>Copied an idea to other module/page</value>
+  </data>
+  <data name="MovedItem.Text" xml:space="preserve">
+    <value>Moved idea</value>
+  </data>
+  <data name="MovedItem_desc.Text" xml:space="preserve">
+    <value>Moved an idea to other module/page</value>
+  </data>
+</root>

@@ -1,0 +1,46 @@
+/****** Object:  StoredProcedure [dbo].[Mandeeps_Workflow_GetReviewContentByPermission]    Script Date: 01/09/2014 16:22:39 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[Mandeeps_Workflow_GetReviewContentByPermission]') AND type in (N'P', N'PC'))
+DROP PROCEDURE {databaseOwner}[Mandeeps_Workflow_GetReviewContentByPermission]
+GO
+
+/****** Object:  StoredProcedure {databaseOwner}[Mandeeps_Workflow_GetReviewContentByPermission]    Script Date: 01/09/2014 16:22:39 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Jasmeet Singh
+-- Create date: 17-12-13
+-- Description:	Get reviewcontent detail by permission
+-- =============================================
+CREATE PROCEDURE {databaseOwner}[Mandeeps_Workflow_GetReviewContentByPermission]  
+	-- Add the parameters for the stored procedure here
+	@UserId int = 0,
+	@IsAdmin bit
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    -- Insert statements for procedure here
+	SELECT     *
+FROM         (SELECT     cr.ContentID, cr.AppGUID
+                       FROM          {databaseOwner}[Mandeeps_Workflow_State_Permission] AS wsp RIGHT JOIN
+                                              {databaseOwner}[Mandeeps_Workflow_ContentReview] as cr ON wsp.StateID = cr.StateId LEFT OUTER JOIN
+                                                  (SELECT     *
+                                                    FROM          {databaseOwner}[{objectQualifier}UserRoles]
+                                                    WHERE      (ExpiryDate > GETDATE()) AND (EffectiveDate <= GETDATE()) OR
+                                                                           (ExpiryDate IS NULL) AND (EffectiveDate IS NULL)) AS ur ON wsp.RoleID = ur.RoleID
+                       WHERE      (@IsAdmin = 1) OR
+                                              (wsp.AllowAccess = 1) AND (wsp.UserID = @UserId) OR
+                                              (wsp.AllowAccess = 1) AND (ur.UserID = @UserId) OR
+                                              (wsp.AllowAccess = 1) AND (wsp.RoleID = - 1) OR
+                                              (wsp.AllowAccess = 1) AND (wsp.UserID = - 1) AND (wsp.RoleID = - 3)
+                       GROUP BY cr.ContentID, cr.AppGUID) AS res INNER JOIN
+                      {databaseOwner}[Mandeeps_Workflow_ContentReview] AS cr1 ON res.ContentID = cr1.ContentID AND 
+                      res.AppGUID = cr1.AppGUID
+END
+GO

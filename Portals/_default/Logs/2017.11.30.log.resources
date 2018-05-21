@@ -1,0 +1,1141 @@
+2017-11-30 11:48:35.396+05:30 [KM-SHELLBY][D:2][T:59][FATAL] DotNetNuke.Framework.PageBase - An error has occurred while loading page.
+System.Reflection.TargetInvocationException: Exception has been thrown by the target of an invocation. ---> System.Data.SqlClient.SqlException: The parameterized query '(@GalleryID int,@localeCode nvarchar(20))SELECT egp.[PictureID]' expects the parameter '@localeCode', which was not supplied.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString, Boolean isInternal, Boolean forDescribeParameterEncryption)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, Boolean inRetry, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean& usedCache, Boolean asyncWrite, Boolean inRetry)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   at System.Data.Common.DbDataAdapter.FillInternal(DataSet dataset, DataTable[] datatables, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataSet dataSet, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataSet dataSet, String srcTable)
+   at EasyDNN.Modules.EasyDNNGallery.DataAcess.GetRandomImagesFromGallerySortingLocalized(Int32 PortalID, Int32 GalleryID, Boolean isRandom, String SortMethod, String SortType, String localeCode)
+   --- End of inner exception stack trace ---
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   at System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(Object obj, Object[] parameters, Object[] arguments)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Web.UI.WebControls.ObjectDataSourceView.InvokeMethod(ObjectDataSourceMethod method, Boolean disposeInstance, Object& instance)
+   at System.Web.UI.WebControls.ObjectDataSourceView.ExecuteSelect(DataSourceSelectArguments arguments)
+   at System.Web.UI.WebControls.Repeater.GetData()
+   at System.Web.UI.WebControls.Repeater.CreateControlHierarchy(Boolean useDataSource)
+   at System.Web.UI.WebControls.Repeater.OnDataBinding(EventArgs e)
+   at System.Web.UI.WebControls.Repeater.EnsureDataBound()
+   at System.Web.UI.WebControls.Repeater.OnPreRender(EventArgs e)
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Page.ProcessRequestMain(Boolean includeStagesBeforeAsyncPoint, Boolean includeStagesAfterAsyncPoint)
+2017-11-30 11:48:35.443+05:30 [KM-SHELLBY][D:2][T:59][ERROR] DotNetNuke.Services.Exceptions.Exceptions - ~/Default.aspx?tabid=54&error=An unexpected error has occurred&content=0
+System.Reflection.TargetInvocationException: Exception has been thrown by the target of an invocation. ---> System.Data.SqlClient.SqlException: The parameterized query '(@GalleryID int,@localeCode nvarchar(20))SELECT egp.[PictureID]' expects the parameter '@localeCode', which was not supplied.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString, Boolean isInternal, Boolean forDescribeParameterEncryption)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, Boolean inRetry, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean& usedCache, Boolean asyncWrite, Boolean inRetry)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   at System.Data.Common.DbDataAdapter.FillInternal(DataSet dataset, DataTable[] datatables, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataSet dataSet, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataSet dataSet, String srcTable)
+   at EasyDNN.Modules.EasyDNNGallery.DataAcess.GetRandomImagesFromGallerySortingLocalized(Int32 PortalID, Int32 GalleryID, Boolean isRandom, String SortMethod, String SortType, String localeCode)
+   --- End of inner exception stack trace ---
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   at System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(Object obj, Object[] parameters, Object[] arguments)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Web.UI.WebControls.ObjectDataSourceView.InvokeMethod(ObjectDataSourceMethod method, Boolean disposeInstance, Object& instance)
+   at System.Web.UI.WebControls.ObjectDataSourceView.ExecuteSelect(DataSourceSelectArguments arguments)
+   at System.Web.UI.WebControls.Repeater.GetData()
+   at System.Web.UI.WebControls.Repeater.CreateControlHierarchy(Boolean useDataSource)
+   at System.Web.UI.WebControls.Repeater.OnDataBinding(EventArgs e)
+   at System.Web.UI.WebControls.Repeater.EnsureDataBound()
+   at System.Web.UI.WebControls.Repeater.OnPreRender(EventArgs e)
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Page.ProcessRequestMain(Boolean includeStagesBeforeAsyncPoint, Boolean includeStagesAfterAsyncPoint)
+2017-11-30 11:48:35.818+05:30 [KM-SHELLBY][D:2][T:59][FATAL] DotNetNuke.Framework.PageBase - An error has occurred while loading page.
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at ASP.desktopmodules_easydnngallery_controls_lightbox_lightbox0_ascx.__RenderpnlFullscreenlink(HtmlTextWriter __w, Control parameterContainer)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.WebControls.WebControl.RenderContents(HtmlTextWriter writer)
+   at System.Web.UI.WebControls.WebControl.Render(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at ASP.desktopmodules_easydnngallery_controls_lightbox_lightbox0_ascx.__Render__control2(HtmlTextWriter __w, Control parameterContainer)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.UpdatePanel.RenderChildren(HtmlTextWriter writer)
+   at System.Web.UI.UpdatePanel.Render(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at ASP.desktopmodules_easydnngallery_controls_lightbox_lightbox0_ascx.__Render__control1(HtmlTextWriter __w, Control parameterContainer)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at ASP.desktopmodules_easydnngallery_vieweasydnngallery_ascx.__Render__control1(HtmlTextWriter __w, Control parameterContainer)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at ASP.portals__default_skins_ozone_home_ascx.__Render__control1(HtmlTextWriter __w, Control parameterContainer)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.HtmlControls.HtmlForm.RenderChildren(HtmlTextWriter writer)
+   at System.Web.UI.HtmlControls.HtmlContainerControl.Render(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.HtmlControls.HtmlForm.RenderControl(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.HtmlControls.HtmlContainerControl.Render(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at DotNetNuke.Framework.PageBase.Render(HtmlTextWriter writer)
+   at DotNetNuke.Framework.DefaultPage.Render(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Page.ProcessRequestMain(Boolean includeStagesBeforeAsyncPoint, Boolean includeStagesAfterAsyncPoint)
+2017-11-30 11:48:35.818+05:30 [KM-SHELLBY][D:2][T:59][ERROR] DotNetNuke.Services.Exceptions.Exceptions - ~/Default.aspx?tabid=54&error=terminate
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at ASP.desktopmodules_easydnngallery_controls_lightbox_lightbox0_ascx.__RenderpnlFullscreenlink(HtmlTextWriter __w, Control parameterContainer)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.WebControls.WebControl.RenderContents(HtmlTextWriter writer)
+   at System.Web.UI.WebControls.WebControl.Render(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at ASP.desktopmodules_easydnngallery_controls_lightbox_lightbox0_ascx.__Render__control2(HtmlTextWriter __w, Control parameterContainer)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.UpdatePanel.RenderChildren(HtmlTextWriter writer)
+   at System.Web.UI.UpdatePanel.Render(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at ASP.desktopmodules_easydnngallery_controls_lightbox_lightbox0_ascx.__Render__control1(HtmlTextWriter __w, Control parameterContainer)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at ASP.desktopmodules_easydnngallery_vieweasydnngallery_ascx.__Render__control1(HtmlTextWriter __w, Control parameterContainer)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at ASP.portals__default_skins_ozone_home_ascx.__Render__control1(HtmlTextWriter __w, Control parameterContainer)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.HtmlControls.HtmlForm.RenderChildren(HtmlTextWriter writer)
+   at System.Web.UI.HtmlControls.HtmlContainerControl.Render(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.HtmlControls.HtmlForm.RenderControl(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.HtmlControls.HtmlContainerControl.Render(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at DotNetNuke.Framework.PageBase.Render(HtmlTextWriter writer)
+   at DotNetNuke.Framework.DefaultPage.Render(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Page.ProcessRequestMain(Boolean includeStagesBeforeAsyncPoint, Boolean includeStagesAfterAsyncPoint)
+2017-11-30 11:48:35.927+05:30 [KM-SHELLBY][D:2][T:59][ERROR] DotNetNuke.Services.Exceptions.Exceptions - DotNetNuke.Services.Exceptions.PageLoadException: Object reference not set to an instance of an object. ---> System.NullReferenceException: Object reference not set to an instance of an object.
+   at ASP.desktopmodules_easydnngallery_controls_lightbox_lightbox0_ascx.__RenderpnlFullscreenlink(HtmlTextWriter __w, Control parameterContainer)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.WebControls.WebControl.RenderContents(HtmlTextWriter writer)
+   at System.Web.UI.WebControls.WebControl.Render(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at ASP.desktopmodules_easydnngallery_controls_lightbox_lightbox0_ascx.__Render__control2(HtmlTextWriter __w, Control parameterContainer)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.UpdatePanel.RenderChildren(HtmlTextWriter writer)
+   at System.Web.UI.UpdatePanel.Render(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at ASP.desktopmodules_easydnngallery_controls_lightbox_lightbox0_ascx.__Render__control1(HtmlTextWriter __w, Control parameterContainer)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at ASP.desktopmodules_easydnngallery_vieweasydnngallery_ascx.__Render__control1(HtmlTextWriter __w, Control parameterContainer)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at ASP.portals__default_skins_ozone_home_ascx.__Render__control1(HtmlTextWriter __w, Control parameterContainer)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.HtmlControls.HtmlForm.RenderChildren(HtmlTextWriter writer)
+   at System.Web.UI.HtmlControls.HtmlContainerControl.Render(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.HtmlControls.HtmlForm.RenderControl(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.HtmlControls.HtmlContainerControl.Render(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at DotNetNuke.Framework.PageBase.Render(HtmlTextWriter writer)
+   at DotNetNuke.Framework.DefaultPage.Render(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Page.ProcessRequestMain(Boolean includeStagesBeforeAsyncPoint, Boolean includeStagesAfterAsyncPoint)
+   --- End of inner exception stack trace ---
+2017-11-30 11:54:31.053+05:30 [KM-SHELLBY][D:2][T:48][FATAL] DotNetNuke.Framework.PageBase - An error has occurred while loading page.
+System.Reflection.TargetInvocationException: Exception has been thrown by the target of an invocation. ---> System.Data.SqlClient.SqlException: The parameterized query '(@GalleryID int,@localeCode nvarchar(20))SELECT egp.[PictureID]' expects the parameter '@localeCode', which was not supplied.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString, Boolean isInternal, Boolean forDescribeParameterEncryption)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, Boolean inRetry, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean& usedCache, Boolean asyncWrite, Boolean inRetry)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   at System.Data.Common.DbDataAdapter.FillInternal(DataSet dataset, DataTable[] datatables, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataSet dataSet, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataSet dataSet, String srcTable)
+   at EasyDNN.Modules.EasyDNNGallery.DataAcess.GetRandomImagesFromGallerySortingLocalized(Int32 PortalID, Int32 GalleryID, Boolean isRandom, String SortMethod, String SortType, String localeCode)
+   --- End of inner exception stack trace ---
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   at System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(Object obj, Object[] parameters, Object[] arguments)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Web.UI.WebControls.ObjectDataSourceView.InvokeMethod(ObjectDataSourceMethod method, Boolean disposeInstance, Object& instance)
+   at System.Web.UI.WebControls.ObjectDataSourceView.ExecuteSelect(DataSourceSelectArguments arguments)
+   at System.Web.UI.WebControls.Repeater.GetData()
+   at System.Web.UI.WebControls.Repeater.CreateControlHierarchy(Boolean useDataSource)
+   at System.Web.UI.WebControls.Repeater.OnDataBinding(EventArgs e)
+   at System.Web.UI.WebControls.Repeater.EnsureDataBound()
+   at System.Web.UI.WebControls.Repeater.OnPreRender(EventArgs e)
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Page.ProcessRequestMain(Boolean includeStagesBeforeAsyncPoint, Boolean includeStagesAfterAsyncPoint)
+2017-11-30 11:54:31.053+05:30 [KM-SHELLBY][D:2][T:48][ERROR] DotNetNuke.Services.Exceptions.Exceptions - ~/Default.aspx?tabid=54&error=An unexpected error has occurred&content=0
+System.Reflection.TargetInvocationException: Exception has been thrown by the target of an invocation. ---> System.Data.SqlClient.SqlException: The parameterized query '(@GalleryID int,@localeCode nvarchar(20))SELECT egp.[PictureID]' expects the parameter '@localeCode', which was not supplied.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString, Boolean isInternal, Boolean forDescribeParameterEncryption)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, Boolean inRetry, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean& usedCache, Boolean asyncWrite, Boolean inRetry)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   at System.Data.Common.DbDataAdapter.FillInternal(DataSet dataset, DataTable[] datatables, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataSet dataSet, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataSet dataSet, String srcTable)
+   at EasyDNN.Modules.EasyDNNGallery.DataAcess.GetRandomImagesFromGallerySortingLocalized(Int32 PortalID, Int32 GalleryID, Boolean isRandom, String SortMethod, String SortType, String localeCode)
+   --- End of inner exception stack trace ---
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   at System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(Object obj, Object[] parameters, Object[] arguments)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Web.UI.WebControls.ObjectDataSourceView.InvokeMethod(ObjectDataSourceMethod method, Boolean disposeInstance, Object& instance)
+   at System.Web.UI.WebControls.ObjectDataSourceView.ExecuteSelect(DataSourceSelectArguments arguments)
+   at System.Web.UI.WebControls.Repeater.GetData()
+   at System.Web.UI.WebControls.Repeater.CreateControlHierarchy(Boolean useDataSource)
+   at System.Web.UI.WebControls.Repeater.OnDataBinding(EventArgs e)
+   at System.Web.UI.WebControls.Repeater.EnsureDataBound()
+   at System.Web.UI.WebControls.Repeater.OnPreRender(EventArgs e)
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Page.ProcessRequestMain(Boolean includeStagesBeforeAsyncPoint, Boolean includeStagesAfterAsyncPoint)
+2017-11-30 11:54:31.318+05:30 [KM-SHELLBY][D:2][T:48][FATAL] DotNetNuke.Framework.PageBase - An error has occurred while loading page.
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at ASP.desktopmodules_easydnngallery_controls_lightbox_lightbox0_ascx.__RenderpnlFullscreenlink(HtmlTextWriter __w, Control parameterContainer)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.WebControls.WebControl.RenderContents(HtmlTextWriter writer)
+   at System.Web.UI.WebControls.WebControl.Render(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at ASP.desktopmodules_easydnngallery_controls_lightbox_lightbox0_ascx.__Render__control2(HtmlTextWriter __w, Control parameterContainer)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.UpdatePanel.RenderChildren(HtmlTextWriter writer)
+   at System.Web.UI.UpdatePanel.Render(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at ASP.desktopmodules_easydnngallery_controls_lightbox_lightbox0_ascx.__Render__control1(HtmlTextWriter __w, Control parameterContainer)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at ASP.desktopmodules_easydnngallery_vieweasydnngallery_ascx.__Render__control1(HtmlTextWriter __w, Control parameterContainer)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at ASP.portals__default_skins_ozone_home_ascx.__Render__control1(HtmlTextWriter __w, Control parameterContainer)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.HtmlControls.HtmlForm.RenderChildren(HtmlTextWriter writer)
+   at System.Web.UI.HtmlControls.HtmlContainerControl.Render(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.HtmlControls.HtmlForm.RenderControl(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.HtmlControls.HtmlContainerControl.Render(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at DotNetNuke.Framework.PageBase.Render(HtmlTextWriter writer)
+   at DotNetNuke.Framework.DefaultPage.Render(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Page.ProcessRequestMain(Boolean includeStagesBeforeAsyncPoint, Boolean includeStagesAfterAsyncPoint)
+2017-11-30 11:54:31.318+05:30 [KM-SHELLBY][D:2][T:48][ERROR] DotNetNuke.Services.Exceptions.Exceptions - ~/Default.aspx?tabid=54&error=terminate
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at ASP.desktopmodules_easydnngallery_controls_lightbox_lightbox0_ascx.__RenderpnlFullscreenlink(HtmlTextWriter __w, Control parameterContainer)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.WebControls.WebControl.RenderContents(HtmlTextWriter writer)
+   at System.Web.UI.WebControls.WebControl.Render(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at ASP.desktopmodules_easydnngallery_controls_lightbox_lightbox0_ascx.__Render__control2(HtmlTextWriter __w, Control parameterContainer)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.UpdatePanel.RenderChildren(HtmlTextWriter writer)
+   at System.Web.UI.UpdatePanel.Render(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at ASP.desktopmodules_easydnngallery_controls_lightbox_lightbox0_ascx.__Render__control1(HtmlTextWriter __w, Control parameterContainer)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at ASP.desktopmodules_easydnngallery_vieweasydnngallery_ascx.__Render__control1(HtmlTextWriter __w, Control parameterContainer)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at ASP.portals__default_skins_ozone_home_ascx.__Render__control1(HtmlTextWriter __w, Control parameterContainer)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.HtmlControls.HtmlForm.RenderChildren(HtmlTextWriter writer)
+   at System.Web.UI.HtmlControls.HtmlContainerControl.Render(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.HtmlControls.HtmlForm.RenderControl(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.HtmlControls.HtmlContainerControl.Render(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at DotNetNuke.Framework.PageBase.Render(HtmlTextWriter writer)
+   at DotNetNuke.Framework.DefaultPage.Render(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Page.ProcessRequestMain(Boolean includeStagesBeforeAsyncPoint, Boolean includeStagesAfterAsyncPoint)
+2017-11-30 11:54:31.428+05:30 [KM-SHELLBY][D:2][T:48][ERROR] DotNetNuke.Services.Exceptions.Exceptions - DotNetNuke.Services.Exceptions.PageLoadException: Object reference not set to an instance of an object. ---> System.NullReferenceException: Object reference not set to an instance of an object.
+   at ASP.desktopmodules_easydnngallery_controls_lightbox_lightbox0_ascx.__RenderpnlFullscreenlink(HtmlTextWriter __w, Control parameterContainer)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.WebControls.WebControl.RenderContents(HtmlTextWriter writer)
+   at System.Web.UI.WebControls.WebControl.Render(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at ASP.desktopmodules_easydnngallery_controls_lightbox_lightbox0_ascx.__Render__control2(HtmlTextWriter __w, Control parameterContainer)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.UpdatePanel.RenderChildren(HtmlTextWriter writer)
+   at System.Web.UI.UpdatePanel.Render(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at ASP.desktopmodules_easydnngallery_controls_lightbox_lightbox0_ascx.__Render__control1(HtmlTextWriter __w, Control parameterContainer)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at ASP.desktopmodules_easydnngallery_vieweasydnngallery_ascx.__Render__control1(HtmlTextWriter __w, Control parameterContainer)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at ASP.portals__default_skins_ozone_home_ascx.__Render__control1(HtmlTextWriter __w, Control parameterContainer)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.HtmlControls.HtmlForm.RenderChildren(HtmlTextWriter writer)
+   at System.Web.UI.HtmlControls.HtmlContainerControl.Render(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.HtmlControls.HtmlForm.RenderControl(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at System.Web.UI.HtmlControls.HtmlContainerControl.Render(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at DotNetNuke.Framework.PageBase.Render(HtmlTextWriter writer)
+   at DotNetNuke.Framework.DefaultPage.Render(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Page.ProcessRequestMain(Boolean includeStagesBeforeAsyncPoint, Boolean includeStagesAfterAsyncPoint)
+   --- End of inner exception stack trace ---
+2017-11-30 12:07:48.319+05:30 [KM-SHELLBY][D:2][T:29][FATAL] DotNetNuke.Framework.PageBase - An error has occurred while loading page.
+System.Reflection.TargetInvocationException: Exception has been thrown by the target of an invocation. ---> System.Data.SqlClient.SqlException: The parameterized query '(@GalleryID int,@localeCode nvarchar(20))SELECT egp.[PictureID]' expects the parameter '@localeCode', which was not supplied.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString, Boolean isInternal, Boolean forDescribeParameterEncryption)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, Boolean inRetry, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean& usedCache, Boolean asyncWrite, Boolean inRetry)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   at System.Data.Common.DbDataAdapter.FillInternal(DataSet dataset, DataTable[] datatables, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataSet dataSet, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataSet dataSet, String srcTable)
+   at EasyDNN.Modules.EasyDNNGallery.DataAcess.GetRandomImagesFromGallerySortingLocalized(Int32 PortalID, Int32 GalleryID, Boolean isRandom, String SortMethod, String SortType, String localeCode)
+   --- End of inner exception stack trace ---
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   at System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(Object obj, Object[] parameters, Object[] arguments)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Web.UI.WebControls.ObjectDataSourceView.InvokeMethod(ObjectDataSourceMethod method, Boolean disposeInstance, Object& instance)
+   at System.Web.UI.WebControls.ObjectDataSourceView.ExecuteSelect(DataSourceSelectArguments arguments)
+   at System.Web.UI.WebControls.Repeater.GetData()
+   at System.Web.UI.WebControls.Repeater.CreateControlHierarchy(Boolean useDataSource)
+   at System.Web.UI.WebControls.Repeater.OnDataBinding(EventArgs e)
+   at System.Web.UI.WebControls.Repeater.EnsureDataBound()
+   at System.Web.UI.WebControls.Repeater.OnPreRender(EventArgs e)
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Page.ProcessRequestMain(Boolean includeStagesBeforeAsyncPoint, Boolean includeStagesAfterAsyncPoint)
+2017-11-30 12:07:48.319+05:30 [KM-SHELLBY][D:2][T:29][ERROR] DotNetNuke.Services.Exceptions.Exceptions - ~/Default.aspx?tabid=54&error=An unexpected error has occurred&content=0
+System.Reflection.TargetInvocationException: Exception has been thrown by the target of an invocation. ---> System.Data.SqlClient.SqlException: The parameterized query '(@GalleryID int,@localeCode nvarchar(20))SELECT egp.[PictureID]' expects the parameter '@localeCode', which was not supplied.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString, Boolean isInternal, Boolean forDescribeParameterEncryption)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, Boolean inRetry, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean& usedCache, Boolean asyncWrite, Boolean inRetry)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   at System.Data.Common.DbDataAdapter.FillInternal(DataSet dataset, DataTable[] datatables, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataSet dataSet, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataSet dataSet, String srcTable)
+   at EasyDNN.Modules.EasyDNNGallery.DataAcess.GetRandomImagesFromGallerySortingLocalized(Int32 PortalID, Int32 GalleryID, Boolean isRandom, String SortMethod, String SortType, String localeCode)
+   --- End of inner exception stack trace ---
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   at System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(Object obj, Object[] parameters, Object[] arguments)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Web.UI.WebControls.ObjectDataSourceView.InvokeMethod(ObjectDataSourceMethod method, Boolean disposeInstance, Object& instance)
+   at System.Web.UI.WebControls.ObjectDataSourceView.ExecuteSelect(DataSourceSelectArguments arguments)
+   at System.Web.UI.WebControls.Repeater.GetData()
+   at System.Web.UI.WebControls.Repeater.CreateControlHierarchy(Boolean useDataSource)
+   at System.Web.UI.WebControls.Repeater.OnDataBinding(EventArgs e)
+   at System.Web.UI.WebControls.Repeater.EnsureDataBound()
+   at System.Web.UI.WebControls.Repeater.OnPreRender(EventArgs e)
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Page.ProcessRequestMain(Boolean includeStagesBeforeAsyncPoint, Boolean includeStagesAfterAsyncPoint)
+2017-11-30 13:00:04.087+05:30 [KM-SHELLBY][D:2][T:44][FATAL] DotNetNuke.Framework.PageBase - An error has occurred while loading page.
+System.InvalidOperationException: SetPartialRenderingMode can only be called once.
+   at System.Web.UI.UpdatePanel.SetAsyncPostBackMode(Boolean asyncPostBackMode)
+   at System.Web.UI.PageRequestManager.ProcessUpdatePanels()
+   at System.Web.UI.PageRequestManager.RenderPageCallback(HtmlTextWriter writer, Control pageControl)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at DotNetNuke.Framework.PageBase.Render(HtmlTextWriter writer)
+   at DotNetNuke.Framework.DefaultPage.Render(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Page.ProcessRequestMain(Boolean includeStagesBeforeAsyncPoint, Boolean includeStagesAfterAsyncPoint)
+2017-11-30 13:00:04.118+05:30 [KM-SHELLBY][D:2][T:44][ERROR] DotNetNuke.Services.Exceptions.Exceptions - ~/Default.aspx?tabid=69&error=SetPartialRenderingMode+can+only+be+called+once.&content=0
+System.InvalidOperationException: SetPartialRenderingMode can only be called once.
+   at System.Web.UI.UpdatePanel.SetAsyncPostBackMode(Boolean asyncPostBackMode)
+   at System.Web.UI.PageRequestManager.ProcessUpdatePanels()
+   at System.Web.UI.PageRequestManager.RenderPageCallback(HtmlTextWriter writer, Control pageControl)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at DotNetNuke.Framework.PageBase.Render(HtmlTextWriter writer)
+   at DotNetNuke.Framework.DefaultPage.Render(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Page.ProcessRequestMain(Boolean includeStagesBeforeAsyncPoint, Boolean includeStagesAfterAsyncPoint)
+2017-11-30 13:00:27.353+05:30 [KM-SHELLBY][D:2][T:42][FATAL] DotNetNuke.Framework.PageBase - An error has occurred while loading page.
+System.InvalidOperationException: SetPartialRenderingMode can only be called once.
+   at System.Web.UI.UpdatePanel.SetAsyncPostBackMode(Boolean asyncPostBackMode)
+   at System.Web.UI.PageRequestManager.ProcessUpdatePanels()
+   at System.Web.UI.PageRequestManager.RenderPageCallback(HtmlTextWriter writer, Control pageControl)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at DotNetNuke.Framework.PageBase.Render(HtmlTextWriter writer)
+   at DotNetNuke.Framework.DefaultPage.Render(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Page.ProcessRequestMain(Boolean includeStagesBeforeAsyncPoint, Boolean includeStagesAfterAsyncPoint)
+2017-11-30 13:00:27.353+05:30 [KM-SHELLBY][D:2][T:42][ERROR] DotNetNuke.Services.Exceptions.Exceptions - ~/Default.aspx?tabid=69&error=SetPartialRenderingMode+can+only+be+called+once.&content=0
+System.InvalidOperationException: SetPartialRenderingMode can only be called once.
+   at System.Web.UI.UpdatePanel.SetAsyncPostBackMode(Boolean asyncPostBackMode)
+   at System.Web.UI.PageRequestManager.ProcessUpdatePanels()
+   at System.Web.UI.PageRequestManager.RenderPageCallback(HtmlTextWriter writer, Control pageControl)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at DotNetNuke.Framework.PageBase.Render(HtmlTextWriter writer)
+   at DotNetNuke.Framework.DefaultPage.Render(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Page.ProcessRequestMain(Boolean includeStagesBeforeAsyncPoint, Boolean includeStagesAfterAsyncPoint)
+2017-11-30 13:00:28.196+05:30 [KM-SHELLBY][D:2][T:52][FATAL] DotNetNuke.Framework.PageBase - An error has occurred while loading page.
+System.InvalidOperationException: SetPartialRenderingMode can only be called once.
+   at System.Web.UI.UpdatePanel.SetAsyncPostBackMode(Boolean asyncPostBackMode)
+   at System.Web.UI.PageRequestManager.ProcessUpdatePanels()
+   at System.Web.UI.PageRequestManager.RenderPageCallback(HtmlTextWriter writer, Control pageControl)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at DotNetNuke.Framework.PageBase.Render(HtmlTextWriter writer)
+   at DotNetNuke.Framework.DefaultPage.Render(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Page.ProcessRequestMain(Boolean includeStagesBeforeAsyncPoint, Boolean includeStagesAfterAsyncPoint)
+2017-11-30 13:00:28.196+05:30 [KM-SHELLBY][D:2][T:52][ERROR] DotNetNuke.Services.Exceptions.Exceptions - ~/Default.aspx?tabid=69&error=SetPartialRenderingMode+can+only+be+called+once.&content=0
+System.InvalidOperationException: SetPartialRenderingMode can only be called once.
+   at System.Web.UI.UpdatePanel.SetAsyncPostBackMode(Boolean asyncPostBackMode)
+   at System.Web.UI.PageRequestManager.ProcessUpdatePanels()
+   at System.Web.UI.PageRequestManager.RenderPageCallback(HtmlTextWriter writer, Control pageControl)
+   at System.Web.UI.Control.RenderChildrenInternal(HtmlTextWriter writer, ICollection children)
+   at DotNetNuke.Framework.PageBase.Render(HtmlTextWriter writer)
+   at DotNetNuke.Framework.DefaultPage.Render(HtmlTextWriter writer)
+   at System.Web.UI.Control.RenderControlInternal(HtmlTextWriter writer, ControlAdapter adapter)
+   at System.Web.UI.Page.ProcessRequestMain(Boolean includeStagesBeforeAsyncPoint, Boolean includeStagesAfterAsyncPoint)
+2017-11-30 13:01:40.087+05:30 [KM-SHELLBY][D:2][T:50][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-30 13:01:40.103+05:30 [KM-SHELLBY][D:2][T:50][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-30 13:01:40.118+05:30 [KM-SHELLBY][D:2][T:50][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-30 13:01:40.134+05:30 [KM-SHELLBY][D:2][T:50][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-30 13:01:40.150+05:30 [KM-SHELLBY][D:2][T:50][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-30 13:01:40.197+05:30 [KM-SHELLBY][D:2][T:50][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.Threading.ThreadAbortException: Thread was being aborted.
+   at System.Threading.Thread.AbortInternal()
+   at System.Threading.Thread.Abort(Object stateInfo)
+   at System.Web.HttpResponse.AbortCurrentThread()
+   at System.Web.HttpResponse.Redirect(String url, Boolean endResponse, Boolean permanent)
+   at Evoq.Content.Library.ContentEditor.ContentEditorManager.AutoSetUserMode()
+   at Evoq.Content.Library.ContentEditor.ContentEditorManager.OnInit(EventArgs e)
+   at System.Web.UI.Control.InitRecursive(Control namingContainer)
+   at System.Web.UI.Control.AddedControl(Control control, Int32 index)
+   at Evoq.Content.Library.UI.Skins.EventListeners.EvoqContentSkinEventListener.OnSkinInit(Object sender, SkinEventArgs e)
+2017-11-30 13:04:55.540+05:30 [KM-SHELLBY][D:3][T:50][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCalendar.EasyDNNnewsCalendarController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCalendar.EasyDNNnewsCalendarController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-11-30 13:04:55.572+05:30 [KM-SHELLBY][D:3][T:50][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCategories.EasyDNNnewsCategoriesMenuController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCategories.EasyDNNnewsCategoriesMenuController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-11-30 13:04:55.587+05:30 [KM-SHELLBY][D:3][T:50][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsSearch.EasyDNNnewsSearchController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsSearch.EasyDNNnewsSearchController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-11-30 13:04:55.587+05:30 [KM-SHELLBY][D:3][T:50][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsTagCloud.EasyDNNnewsTagCloudController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsTagCloud.EasyDNNnewsTagCloudController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-11-30 13:04:55.587+05:30 [KM-SHELLBY][D:3][T:50][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.Widgets.EasyDNNnewsWidgetsController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.Widgets.EasyDNNnewsWidgetsController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-11-30 13:45:04.683+05:30 [KM-SHELLBY][D:2][T:14][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCalendar.EasyDNNnewsCalendarController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCalendar.EasyDNNnewsCalendarController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-11-30 13:45:04.714+05:30 [KM-SHELLBY][D:2][T:14][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCategories.EasyDNNnewsCategoriesMenuController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCategories.EasyDNNnewsCategoriesMenuController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-11-30 13:45:04.714+05:30 [KM-SHELLBY][D:2][T:14][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsSearch.EasyDNNnewsSearchController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsSearch.EasyDNNnewsSearchController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-11-30 13:45:04.714+05:30 [KM-SHELLBY][D:2][T:14][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsTagCloud.EasyDNNnewsTagCloudController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsTagCloud.EasyDNNnewsTagCloudController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-11-30 13:45:04.714+05:30 [KM-SHELLBY][D:2][T:14][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.Widgets.EasyDNNnewsWidgetsController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.Widgets.EasyDNNnewsWidgetsController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-11-30 14:44:59.858+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCalendar.EasyDNNnewsCalendarController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCalendar.EasyDNNnewsCalendarController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-11-30 14:44:59.889+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCategories.EasyDNNnewsCategoriesMenuController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCategories.EasyDNNnewsCategoriesMenuController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-11-30 14:44:59.889+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsSearch.EasyDNNnewsSearchController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsSearch.EasyDNNnewsSearchController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-11-30 14:44:59.905+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsTagCloud.EasyDNNnewsTagCloudController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsTagCloud.EasyDNNnewsTagCloudController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-11-30 14:44:59.905+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.Widgets.EasyDNNnewsWidgetsController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.Widgets.EasyDNNnewsWidgetsController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-11-30 14:45:42.780+05:30 [KM-SHELLBY][D:2][T:21][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-30 14:45:42.780+05:30 [KM-SHELLBY][D:2][T:21][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-30 14:45:42.795+05:30 [KM-SHELLBY][D:2][T:21][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-30 14:45:42.795+05:30 [KM-SHELLBY][D:2][T:21][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-30 14:45:42.811+05:30 [KM-SHELLBY][D:2][T:21][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-30 14:45:42.827+05:30 [KM-SHELLBY][D:2][T:21][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-30 14:45:42.842+05:30 [KM-SHELLBY][D:2][T:21][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-30 14:45:42.858+05:30 [KM-SHELLBY][D:2][T:21][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-30 14:45:42.858+05:30 [KM-SHELLBY][D:2][T:21][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-30 14:45:42.873+05:30 [KM-SHELLBY][D:2][T:21][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-30 14:45:59.061+05:30 [KM-SHELLBY][D:2][T:21][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.Threading.ThreadAbortException: Thread was being aborted.
+   at System.Threading.Thread.AbortInternal()
+   at System.Threading.Thread.Abort(Object stateInfo)
+   at System.Web.HttpResponse.AbortCurrentThread()
+   at System.Web.HttpResponse.Redirect(String url, Boolean endResponse, Boolean permanent)
+   at Evoq.Content.Library.ContentEditor.ContentEditorManager.AutoSetUserMode()
+   at Evoq.Content.Library.ContentEditor.ContentEditorManager.OnInit(EventArgs e)
+   at System.Web.UI.Control.InitRecursive(Control namingContainer)
+   at System.Web.UI.Control.AddedControl(Control control, Int32 index)
+   at Evoq.Content.Library.UI.Skins.EventListeners.EvoqContentSkinEventListener.OnSkinInit(Object sender, SkinEventArgs e)
+2017-11-30 14:46:03.373+05:30 [KM-SHELLBY][D:2][T:21][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-30 14:46:03.373+05:30 [KM-SHELLBY][D:2][T:21][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-30 14:46:03.389+05:30 [KM-SHELLBY][D:2][T:21][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-30 14:46:03.389+05:30 [KM-SHELLBY][D:2][T:21][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-30 14:46:03.405+05:30 [KM-SHELLBY][D:2][T:21][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-30 14:46:03.420+05:30 [KM-SHELLBY][D:2][T:21][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-30 14:46:03.420+05:30 [KM-SHELLBY][D:2][T:21][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-30 14:46:03.436+05:30 [KM-SHELLBY][D:2][T:21][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-30 14:46:03.436+05:30 [KM-SHELLBY][D:2][T:21][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-30 14:46:03.452+05:30 [KM-SHELLBY][D:2][T:21][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-30 14:46:12.452+05:30 [KM-SHELLBY][D:2][T:21][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-30 14:46:12.483+05:30 [KM-SHELLBY][D:2][T:21][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-30 14:46:12.498+05:30 [KM-SHELLBY][D:2][T:21][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-30 14:46:12.514+05:30 [KM-SHELLBY][D:2][T:21][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-30 14:46:12.514+05:30 [KM-SHELLBY][D:2][T:21][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-30 14:46:12.530+05:30 [KM-SHELLBY][D:2][T:21][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.Threading.ThreadAbortException: Thread was being aborted.
+   at System.Threading.Thread.AbortInternal()
+   at System.Threading.Thread.Abort(Object stateInfo)
+   at System.Web.HttpResponse.AbortCurrentThread()
+   at System.Web.HttpResponse.Redirect(String url, Boolean endResponse, Boolean permanent)
+   at Evoq.Content.Library.ContentEditor.ContentEditorManager.AutoSetUserMode()
+   at Evoq.Content.Library.ContentEditor.ContentEditorManager.OnInit(EventArgs e)
+   at System.Web.UI.Control.InitRecursive(Control namingContainer)
+   at System.Web.UI.Control.AddedControl(Control control, Int32 index)
+   at Evoq.Content.Library.UI.Skins.EventListeners.EvoqContentSkinEventListener.OnSkinInit(Object sender, SkinEventArgs e)
+2017-11-30 18:26:27.148+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCalendar.EasyDNNnewsCalendarController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCalendar.EasyDNNnewsCalendarController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-11-30 18:26:27.179+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCategories.EasyDNNnewsCategoriesMenuController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCategories.EasyDNNnewsCategoriesMenuController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-11-30 18:26:27.179+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsSearch.EasyDNNnewsSearchController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsSearch.EasyDNNnewsSearchController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-11-30 18:26:27.179+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsTagCloud.EasyDNNnewsTagCloudController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsTagCloud.EasyDNNnewsTagCloudController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-11-30 18:26:27.195+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.Widgets.EasyDNNnewsWidgetsController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.Widgets.EasyDNNnewsWidgetsController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-11-30 22:25:18.206+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCalendar.EasyDNNnewsCalendarController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCalendar.EasyDNNnewsCalendarController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-11-30 22:25:18.222+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCategories.EasyDNNnewsCategoriesMenuController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCategories.EasyDNNnewsCategoriesMenuController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-11-30 22:25:18.222+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsSearch.EasyDNNnewsSearchController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsSearch.EasyDNNnewsSearchController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-11-30 22:25:18.237+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsTagCloud.EasyDNNnewsTagCloudController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsTagCloud.EasyDNNnewsTagCloudController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-11-30 22:25:18.237+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.Widgets.EasyDNNnewsWidgetsController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.Widgets.EasyDNNnewsWidgetsController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-11-30 22:26:02.175+05:30 [KM-SHELLBY][D:2][T:17][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-30 22:26:02.190+05:30 [KM-SHELLBY][D:2][T:17][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-30 22:26:02.206+05:30 [KM-SHELLBY][D:2][T:17][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-30 22:26:02.206+05:30 [KM-SHELLBY][D:2][T:17][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-30 22:26:02.222+05:30 [KM-SHELLBY][D:2][T:17][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-30 22:26:02.237+05:30 [KM-SHELLBY][D:2][T:17][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-30 22:26:02.253+05:30 [KM-SHELLBY][D:2][T:17][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-30 22:26:02.253+05:30 [KM-SHELLBY][D:2][T:17][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-30 22:26:02.269+05:30 [KM-SHELLBY][D:2][T:17][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-30 22:26:02.269+05:30 [KM-SHELLBY][D:2][T:17][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-30 22:26:35.753+05:30 [KM-SHELLBY][D:2][T:21][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-30 22:26:35.769+05:30 [KM-SHELLBY][D:2][T:21][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-30 22:26:35.769+05:30 [KM-SHELLBY][D:2][T:21][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-30 22:26:35.784+05:30 [KM-SHELLBY][D:2][T:21][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-30 22:26:35.784+05:30 [KM-SHELLBY][D:2][T:21][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-30 22:26:35.816+05:30 [KM-SHELLBY][D:2][T:21][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.Threading.ThreadAbortException: Thread was being aborted.
+   at System.Threading.Thread.AbortInternal()
+   at System.Threading.Thread.Abort(Object stateInfo)
+   at System.Web.HttpResponse.AbortCurrentThread()
+   at System.Web.HttpResponse.Redirect(String url, Boolean endResponse, Boolean permanent)
+   at Evoq.Content.Library.ContentEditor.ContentEditorManager.AutoSetUserMode()
+   at Evoq.Content.Library.ContentEditor.ContentEditorManager.OnInit(EventArgs e)
+   at System.Web.UI.Control.InitRecursive(Control namingContainer)
+   at System.Web.UI.Control.AddedControl(Control control, Int32 index)
+   at Evoq.Content.Library.UI.Skins.EventListeners.EvoqContentSkinEventListener.OnSkinInit(Object sender, SkinEventArgs e)
+2017-11-30 22:49:05.676+05:30 [KM-SHELLBY][D:5][T:51][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCalendar.EasyDNNnewsCalendarController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCalendar.EasyDNNnewsCalendarController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-11-30 22:49:05.707+05:30 [KM-SHELLBY][D:5][T:51][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCategories.EasyDNNnewsCategoriesMenuController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCategories.EasyDNNnewsCategoriesMenuController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-11-30 22:49:05.707+05:30 [KM-SHELLBY][D:5][T:51][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsSearch.EasyDNNnewsSearchController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsSearch.EasyDNNnewsSearchController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-11-30 22:49:05.707+05:30 [KM-SHELLBY][D:5][T:51][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsTagCloud.EasyDNNnewsTagCloudController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsTagCloud.EasyDNNnewsTagCloudController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-11-30 22:49:05.707+05:30 [KM-SHELLBY][D:5][T:51][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.Widgets.EasyDNNnewsWidgetsController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.Widgets.EasyDNNnewsWidgetsController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-11-30 22:50:19.098+05:30 [KM-SHELLBY][D:5][T:12][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-30 22:50:19.098+05:30 [KM-SHELLBY][D:5][T:12][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-30 22:50:19.114+05:30 [KM-SHELLBY][D:5][T:12][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-30 22:50:19.129+05:30 [KM-SHELLBY][D:5][T:12][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-30 22:50:19.129+05:30 [KM-SHELLBY][D:5][T:12][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-30 22:50:19.410+05:30 [KM-SHELLBY][D:5][T:12][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-30 22:50:19.426+05:30 [KM-SHELLBY][D:5][T:12][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-30 22:50:19.442+05:30 [KM-SHELLBY][D:5][T:12][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-30 22:50:19.442+05:30 [KM-SHELLBY][D:5][T:12][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-30 22:50:19.457+05:30 [KM-SHELLBY][D:5][T:12][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-30 22:50:19.551+05:30 [KM-SHELLBY][D:5][T:12][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-30 22:50:19.567+05:30 [KM-SHELLBY][D:5][T:12][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-30 22:50:19.567+05:30 [KM-SHELLBY][D:5][T:12][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-30 22:50:19.582+05:30 [KM-SHELLBY][D:5][T:12][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-30 22:50:19.582+05:30 [KM-SHELLBY][D:5][T:12][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-30 22:51:10.067+05:30 [KM-SHELLBY][D:5][T:10][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-30 22:51:10.082+05:30 [KM-SHELLBY][D:5][T:10][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-30 22:51:10.082+05:30 [KM-SHELLBY][D:5][T:10][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-30 22:51:10.098+05:30 [KM-SHELLBY][D:5][T:10][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-30 22:51:10.098+05:30 [KM-SHELLBY][D:5][T:10][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-30 22:51:10.348+05:30 [KM-SHELLBY][D:5][T:10][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-30 22:51:10.379+05:30 [KM-SHELLBY][D:5][T:10][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-30 22:51:10.379+05:30 [KM-SHELLBY][D:5][T:10][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-30 22:51:10.395+05:30 [KM-SHELLBY][D:5][T:10][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-30 22:51:10.395+05:30 [KM-SHELLBY][D:5][T:10][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-30 22:51:10.504+05:30 [KM-SHELLBY][D:5][T:10][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-30 22:51:10.504+05:30 [KM-SHELLBY][D:5][T:10][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-30 22:51:10.520+05:30 [KM-SHELLBY][D:5][T:10][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-30 22:51:10.520+05:30 [KM-SHELLBY][D:5][T:10][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-30 22:51:10.535+05:30 [KM-SHELLBY][D:5][T:10][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-30 22:52:28.645+05:30 [KM-SHELLBY][D:5][T:42][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-30 22:52:28.645+05:30 [KM-SHELLBY][D:5][T:42][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-30 22:52:28.661+05:30 [KM-SHELLBY][D:5][T:42][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-30 22:52:28.661+05:30 [KM-SHELLBY][D:5][T:42][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-30 22:52:28.676+05:30 [KM-SHELLBY][D:5][T:42][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-30 22:52:28.879+05:30 [KM-SHELLBY][D:5][T:42][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-30 22:52:28.879+05:30 [KM-SHELLBY][D:5][T:42][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-30 22:52:28.895+05:30 [KM-SHELLBY][D:5][T:42][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-30 22:52:28.895+05:30 [KM-SHELLBY][D:5][T:42][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-30 22:52:28.911+05:30 [KM-SHELLBY][D:5][T:42][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-30 22:52:29.004+05:30 [KM-SHELLBY][D:5][T:42][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-30 22:52:29.020+05:30 [KM-SHELLBY][D:5][T:42][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-30 22:52:29.020+05:30 [KM-SHELLBY][D:5][T:42][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-30 22:52:29.036+05:30 [KM-SHELLBY][D:5][T:42][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-30 22:52:29.036+05:30 [KM-SHELLBY][D:5][T:42][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-30 22:53:15.817+05:30 [KM-SHELLBY][D:5][T:12][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-30 22:53:15.817+05:30 [KM-SHELLBY][D:5][T:12][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-30 22:53:15.832+05:30 [KM-SHELLBY][D:5][T:12][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-30 22:53:15.832+05:30 [KM-SHELLBY][D:5][T:12][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-30 22:53:15.848+05:30 [KM-SHELLBY][D:5][T:12][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-30 22:53:15.989+05:30 [KM-SHELLBY][D:5][T:12][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-30 22:53:16.004+05:30 [KM-SHELLBY][D:5][T:12][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-30 22:53:16.004+05:30 [KM-SHELLBY][D:5][T:12][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-30 22:53:16.020+05:30 [KM-SHELLBY][D:5][T:12][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-30 22:53:16.020+05:30 [KM-SHELLBY][D:5][T:12][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-30 22:53:16.129+05:30 [KM-SHELLBY][D:5][T:12][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-30 22:53:16.145+05:30 [KM-SHELLBY][D:5][T:12][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-30 22:53:16.161+05:30 [KM-SHELLBY][D:5][T:12][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-30 22:53:16.161+05:30 [KM-SHELLBY][D:5][T:12][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-30 22:53:16.176+05:30 [KM-SHELLBY][D:5][T:12][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-30 22:54:04.426+05:30 [KM-SHELLBY][D:5][T:31][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-30 22:54:04.426+05:30 [KM-SHELLBY][D:5][T:31][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-30 22:54:04.442+05:30 [KM-SHELLBY][D:5][T:31][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-30 22:54:04.457+05:30 [KM-SHELLBY][D:5][T:31][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-30 22:54:04.457+05:30 [KM-SHELLBY][D:5][T:31][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-30 22:54:04.692+05:30 [KM-SHELLBY][D:5][T:31][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-30 22:54:04.707+05:30 [KM-SHELLBY][D:5][T:31][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-30 22:54:04.707+05:30 [KM-SHELLBY][D:5][T:31][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-30 22:54:04.723+05:30 [KM-SHELLBY][D:5][T:31][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-30 22:54:04.723+05:30 [KM-SHELLBY][D:5][T:31][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-30 22:54:04.817+05:30 [KM-SHELLBY][D:5][T:31][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-30 22:54:04.832+05:30 [KM-SHELLBY][D:5][T:31][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-30 22:54:04.832+05:30 [KM-SHELLBY][D:5][T:31][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-30 22:54:04.848+05:30 [KM-SHELLBY][D:5][T:31][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-30 22:54:04.848+05:30 [KM-SHELLBY][D:5][T:31][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-30 22:54:12.098+05:30 [KM-SHELLBY][D:5][T:42][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-30 22:54:12.098+05:30 [KM-SHELLBY][D:5][T:42][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-30 22:54:12.114+05:30 [KM-SHELLBY][D:5][T:42][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-30 22:54:12.114+05:30 [KM-SHELLBY][D:5][T:42][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-30 22:54:12.129+05:30 [KM-SHELLBY][D:5][T:42][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-30 22:54:12.286+05:30 [KM-SHELLBY][D:5][T:42][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-30 22:54:12.286+05:30 [KM-SHELLBY][D:5][T:42][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-30 22:54:12.301+05:30 [KM-SHELLBY][D:5][T:42][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-30 22:54:12.301+05:30 [KM-SHELLBY][D:5][T:42][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-30 22:54:12.317+05:30 [KM-SHELLBY][D:5][T:42][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-30 22:54:12.411+05:30 [KM-SHELLBY][D:5][T:42][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-30 22:54:12.426+05:30 [KM-SHELLBY][D:5][T:42][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-30 22:54:12.426+05:30 [KM-SHELLBY][D:5][T:42][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-30 22:54:12.442+05:30 [KM-SHELLBY][D:5][T:42][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-30 22:54:12.442+05:30 [KM-SHELLBY][D:5][T:42][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.

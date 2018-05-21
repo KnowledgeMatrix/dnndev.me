@@ -1,0 +1,229 @@
+﻿IF NOT EXISTS (SELECT 1 FROM sys.indexes
+				WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Answers_Post]')
+				AND name = N'IX_{objectQualifier}Answers_Post_Created_Parent')
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Answers_Post_Created_Parent]
+		ON {databaseOwner}[{objectQualifier}Answers_Post] ([CreatedUserId],[ParentId],[CreatedDate])
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes
+				WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Answers_Post]')
+				AND name = N'IX_{objectQualifier}Answers_Post_ParentID_Deleted_JNRIT')
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Answers_Post_ParentID_Deleted_JNRIT]
+		ON {databaseOwner}[{objectQualifier}Answers_Post] ([ParentId],[Deleted])
+		INCLUDE ([PostId],[PortalId],[GroupId],[ContentItemId],[ViewCount],[Score],[Approved],[AnswerId],[CreatedUserId],[CreatedDate],[LastModifiedDate])
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes
+				WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Answers_Post]')
+				AND name = N'IX_{objectQualifier}Answers_Post_ParentID')
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Answers_Post_ParentID]
+		ON {databaseOwner}[{objectQualifier}Answers_Post] ([ParentID])
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Answers_Question_Search]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Answers_Question_Search]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Answers_Question_Search]
+	@ModuleId INT,
+	@GroupId INT,
+	@PageSize INT,
+	@PageIndex INT,
+	@Filter INT,
+	@SortColumn NVARCHAR(32),
+	@SortAscending BIT,
+	@Keyword NVARCHAR(128),
+	@UserId INT,
+	@Tags NVARCHAR(256)
+AS
+BEGIN
+	DECLARE @TagLength AS INT;
+	DECLARE @MetID AS INT;
+
+	SET @TagLength = (SELECT LEN(@Tags) - LEN(REPLACE(@Tags, ',', '')) + 1);
+
+	SELECT @MetID = MetaDataID
+	FROM {databaseOwner}{objectQualifier}MetaData
+	WHERE MetaDataName = 'Title';
+
+	CREATE TABLE #Tags (
+		RowNumber SMALLINT,
+		RowValue NVARCHAR (50)
+	);
+
+	CREATE TABLE #Taxonomy (
+		TermID INT,
+		Name NVARCHAR (250)
+	);
+
+	INSERT INTO #Tags
+		SELECT RowNumber, RowValue
+		FROM {databaseOwner}{objectQualifier}ConvertListToTable (',', @Tags);
+
+	INSERT INTO #Taxonomy
+		SELECT TermID, Name
+		FROM {databaseOwner}{objectQualifier}Taxonomy_Terms AS TT
+			INNER JOIN #Tags AS T ON TT.Name = T.RowValue;
+
+	;WITH	QuestionSet
+	AS		(SELECT COUNT(*) OVER () AS TotalRecords,
+					PostId,
+					ParentId,
+					PortalId,
+					ViewCount,
+					Score,
+					Approved,
+					Deleted,
+					AnswerId,
+					GroupId,
+					VP.ContentItemId,
+					CreatedUserId,
+					CreatedDate,
+					TotalAnswers,
+					Content,
+					ContentTypeId,
+					TabId,
+					ModuleId,
+					ContentKey,
+					LastModifiedByUserId,
+					LastModifiedOnDate,
+					LastModifiedDate,
+					CIMD.[MetaDataValue] AS [ContentTitle]
+			FROM	{databaseOwner}{objectQualifier}vw_Answers_Posts AS VP
+						LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData AS CIMD
+						ON CIMD.ContentItemID = VP.[ContentItemID] AND CIMD.MetaDataID = @MetID
+			WHERE	VP.ModuleId = @ModuleId
+			  AND	ParentId = 0
+			  AND	Deleted = 0
+			  AND	((@GroupId < 1 AND VP.GroupId < 1) OR VP.GroupId = @GroupId)
+			  AND	((@Filter <= 0
+						AND Approved = 1)
+						OR (@Filter = 1
+							AND TotalAnswers > 0
+							AND Approved = 1)
+						OR (@Filter = 2
+							AND TotalAnswers < 1
+							AND Approved = 1)
+						OR (@Filter = 3
+							AND CreatedByUserID = @UserId)
+						OR (@Filter = 4
+							AND EXISTS (SELECT *
+										FROM {databaseOwner}{objectQualifier}Answers_Post
+										WHERE Deleted = 0
+										AND ParentId = VP.PostId
+										AND CreatedUserId = @UserId)))
+			  AND	(@Tags IS NULL
+						OR LEN(@Tags) = 0
+						OR (SELECT COUNT(*)
+							FROM {databaseOwner}{objectQualifier}ContentItems_Tags AS CIT
+								INNER JOIN #Taxonomy AS T ON CIT.TermID = T.TermID
+							WHERE CIT.ContentItemID = VP.ContentItemId ) = @TagLength)
+			), QuestionSort
+	AS		(SELECT ROW_NUMBER() OVER ( ORDER BY
+										CASE WHEN @SortColumn = 'CreatedDate'	AND @SortAscending = 1 THEN Q.CreatedDate END ASC,
+										CASE WHEN @SortColumn = 'CreatedDate'	AND @SortAscending = 0 THEN Q.CreatedDate END DESC,
+										CASE WHEN @SortColumn = 'LastActive'	AND @SortAscending = 1 THEN Q.LastModifiedOnDate END ASC,
+										CASE WHEN @SortColumn = 'LastActive'	AND @SortAscending = 0 THEN Q.LastModifiedOnDate END DESC,
+										CASE WHEN @SortColumn = 'Title'			AND @SortAscending = 1 THEN Q.ContentTitle END ASC,
+										CASE WHEN @SortColumn = 'Title'			AND @SortAscending = 0 THEN Q.ContentTitle END DESC,
+										CASE WHEN @SortColumn = 'Views'			AND @SortAscending = 0 THEN Q.ViewCount END DESC,
+										CASE WHEN @SortColumn = 'Views'			AND @SortAscending = 1 THEN Q.ViewCount END ASC,
+										CASE WHEN @SortColumn = 'Votes'			AND @SortAscending = 1 THEN Q.Score END ASC,
+										CASE WHEN @SortColumn = 'Votes'			AND @SortAscending = 0 THEN Q.Score END DESC,
+										CASE WHEN @SortColumn = 'Answers'		AND @SortAscending = 1 THEN Q.TotalAnswers END ASC,
+										CASE WHEN @SortColumn = 'Answers'		AND @SortAscending = 0 THEN Q.TotalAnswers END DESC,
+										Q.CreatedDate DESC
+									  ) AS RowNumber,
+					Q.*
+			FROM	QuestionSet AS Q)
+	SELECT	*
+	FROM	QuestionSort
+	WHERE	RowNumber BETWEEN (@PageIndex * @PageSize + 1) AND ((@PageIndex + 1) * @PageSize);
+
+	DROP TABLE #Tags;
+	DROP TABLE #Taxonomy;
+END
+GO
+
+/* Migrate Subscriptions */
+IF exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Subscriptions_Type') and OBJECTPROPERTY(id, N'IsTable') = 1)
+BEGIN
+	DECLARE @DesktopModuleId INT
+	DECLARE @NewSubscriptionTypeId INT
+
+	SET @DesktopModuleId = (SELECT ISNULL(DesktopModuleId, -1) FROM {databaseOwner}{objectQualifier}DesktopModules WHERE ModuleName = 'Answers' )
+
+	IF @DesktopModuleId > 0
+		BEGIN
+			-- Means the module is being upgraded, migrate subscriptions
+			SET @NewSubscriptionTypeId = (SELECT TOP 1 SubscriptionTypeId FROM {databaseOwner}{objectQualifier}CoreMessaging_SubscriptionTypes WHERE SubscriptionName = 'DNNCorp_Answers_Question')
+
+			IF @NewSubscriptionTypeId IS NULL
+				BEGIN
+					INSERT {databaseOwner}{objectQualifier}CoreMessaging_SubscriptionTypes
+					(SubscriptionName, FriendlyName, DesktopModuleId)
+					VALUES
+					('DNNCorp_Answers_Question', 'Answers Subscriptions', @DesktopModuleId)
+					
+					SET @NewSubscriptionTypeId = (SELECT SCOPE_IDENTITY())
+
+					-- get all subscribers and copy over
+					DECLARE @OldSubscriptionTypeId INT
+					SET @OldSubscriptionTypeId = (SELECT TOP 1 SubscriptionTypeId FROM {databaseOwner}{objectQualifier}Subscriptions_Type WHERE SubscriptionName = 'DNNCorp_Answers_Question')
+
+					IF @OldSubscriptionTypeId > 0
+						BEGIN
+							DECLARE @PortalId INT
+							DECLARE @UserId INT
+							DECLARE @CreatedOnDate DATETIME
+							DECLARE @ModuleId INT
+							DECLARE @ObjectKey NVARCHAR(255)					
+							DECLARE @ContentItemId INT
+							DECLARE @GroupId INT
+							DECLARE @Description NVARCHAR(255)
+
+							DECLARE AnswerMigrate_Cursor CURSOR
+							FOR
+								SELECT  DISTINCT ss.PortalId, ss.UserId, ss.CreatedOnDate, ss.ModuleId, ss.GroupId, ss.ContentItemId
+								FROM    {databaseOwner}{objectQualifier}Subscriptions_Subscriber ss
+										INNER JOIN {databaseOwner}{objectQualifier}Modules m ON ss.ModuleID = m.ModuleID
+								WHERE	SubscriptionTypeId = @OldSubscriptionTypeId
+
+								OPEN AnswerMigrate_Cursor
+								FETCH NEXT FROM AnswerMigrate_Cursor 
+								INTO @PortalId, @UserId, @CreatedOnDate, @ModuleId, @GroupId, @ContentItemId
+
+								WHILE @@FETCH_STATUS = 0 
+								BEGIN
+
+									BEGIN TRANSACTION
+										-- after selecting row of data in cursor
+										IF @ContentItemId > 0
+											BEGIN
+												SET @ObjectKey = 'gid=' + CONVERT(NVARCHAR(10), @GroupId) + ';cid=' + CONVERT(NVARCHAR(10), @ContentItemId)
+												SET @Description = 'Question Activity'
+											END	
+										ELSE
+											BEGIN
+												SET @ObjectKey = 'gid=' + CONVERT(NVARCHAR(10), @GroupId)
+												SET @Description = 'New Questions'
+											END		
+								
+										INSERT {databaseOwner}{objectQualifier}CoreMessaging_Subscriptions
+											(UserId, PortalId, SubscriptionTypeId, ObjectKey, CreatedOnDate, ModuleId, [Description], TabId)
+										VALUES
+											(@UserId, @PortalId, @NewSubscriptionTypeId, @ObjectKey, @CreatedOnDate, @ModuleId, @Description, 0)
+
+
+										COMMIT
+
+											FETCH NEXT FROM AnswerMigrate_Cursor INTO @PortalId, @UserId, @CreatedOnDate, @ModuleId, @GroupId, @ContentItemId
+									END
+								
+								CLOSE AnswerMigrate_Cursor
+								DEALLOCATE AnswerMigrate_Cursor
+						END
+				END
+		END
+END
+GO

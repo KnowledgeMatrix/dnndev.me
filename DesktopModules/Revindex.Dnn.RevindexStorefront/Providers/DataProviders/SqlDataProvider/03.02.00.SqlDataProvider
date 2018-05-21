@@ -1,0 +1,59 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+SET XACT_ABORT ON
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+	
+	-- Add support for Pay Trace payment gateway
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysPayTraceTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysPayTraceTestMode DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysPayTraceTestMode
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysPayTraceUsername varchar(255) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysPayTracePassword varchar(255) NULL
+	
+	-- Add support for category display image
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Gallery ADD CategoryID int NULL
+	CREATE NONCLUSTERED INDEX IX_{objectQualifier}Revindex_Storefront_Gallery_3 ON {databaseOwner}{objectQualifier}Revindex_Storefront_Gallery (CategoryID)
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Gallery ADD CONSTRAINT FK_{objectQualifier}Revindex_Storefront_Gallery_Revindex_Storefront_Category FOREIGN KEY (CategoryID) REFERENCES {databaseOwner}{objectQualifier}Revindex_Storefront_Category	(CategoryID) ON UPDATE  NO ACTION ON DELETE  NO ACTION 
+	
+	-- Add support for Cart summary
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD CartSummaryDisplayTemplate varchar(255) NULL
+	
+	-- Add support for Elavon Virtual Merchant gateway
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysElavonVirtualMerchantTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysElavonVirtualMerchantTestMode DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysElavonVirtualMerchantTestMode
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysElavonVirtualMerchantAccountID varchar(255) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysElavonVirtualMerchantUserID varchar(255) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysElavonVirtualMerchantPin varchar(255) NULL
+	
+COMMIT TRANSACTION
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+		
+		-- Upgrade default ProductList template to "Standard2"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductListDisplayTemplate = 'Standard2' WHERE ProductListDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade initial Cart Summary template to "Standard1"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CartSummaryDisplayTemplate = 'Standard1'
+		
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

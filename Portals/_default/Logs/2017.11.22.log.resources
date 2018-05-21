@@ -1,0 +1,1117 @@
+2017-11-22 08:27:30.262+05:30 [KM-SHELLBY][D:2][T:15][FATAL] DotNetNuke.Framework.PageBase - An error has occurred while loading page.
+System.Reflection.TargetInvocationException: Exception has been thrown by the target of an invocation. ---> System.Data.SqlClient.SqlException: The parameterized query '(@GalleryID int,@localeCode nvarchar(20))SELECT egp.[PictureID]' expects the parameter '@localeCode', which was not supplied.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString, Boolean isInternal, Boolean forDescribeParameterEncryption)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, Boolean inRetry, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean& usedCache, Boolean asyncWrite, Boolean inRetry)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   at System.Data.Common.DbDataAdapter.FillInternal(DataSet dataset, DataTable[] datatables, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataSet dataSet, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataSet dataSet, String srcTable)
+   at EasyDNN.Modules.EasyDNNGallery.DataAcess.GetRandomImagesFromGallerySortingLocalized(Int32 PortalID, Int32 GalleryID, Boolean isRandom, String SortMethod, String SortType, String localeCode)
+   --- End of inner exception stack trace ---
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   at System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(Object obj, Object[] parameters, Object[] arguments)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Web.UI.WebControls.ObjectDataSourceView.InvokeMethod(ObjectDataSourceMethod method, Boolean disposeInstance, Object& instance)
+   at System.Web.UI.WebControls.ObjectDataSourceView.ExecuteSelect(DataSourceSelectArguments arguments)
+   at System.Web.UI.WebControls.Repeater.GetData()
+   at System.Web.UI.WebControls.Repeater.CreateControlHierarchy(Boolean useDataSource)
+   at System.Web.UI.WebControls.Repeater.OnDataBinding(EventArgs e)
+   at System.Web.UI.WebControls.Repeater.EnsureDataBound()
+   at System.Web.UI.WebControls.Repeater.OnPreRender(EventArgs e)
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Page.ProcessRequestMain(Boolean includeStagesBeforeAsyncPoint, Boolean includeStagesAfterAsyncPoint)
+2017-11-22 08:27:30.309+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Services.Exceptions.Exceptions - ~/Default.aspx?tabid=54&error=An unexpected error has occurred&content=0
+System.Reflection.TargetInvocationException: Exception has been thrown by the target of an invocation. ---> System.Data.SqlClient.SqlException: The parameterized query '(@GalleryID int,@localeCode nvarchar(20))SELECT egp.[PictureID]' expects the parameter '@localeCode', which was not supplied.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString, Boolean isInternal, Boolean forDescribeParameterEncryption)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, Boolean inRetry, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean& usedCache, Boolean asyncWrite, Boolean inRetry)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   at System.Data.Common.DbDataAdapter.FillInternal(DataSet dataset, DataTable[] datatables, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataSet dataSet, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataSet dataSet, String srcTable)
+   at EasyDNN.Modules.EasyDNNGallery.DataAcess.GetRandomImagesFromGallerySortingLocalized(Int32 PortalID, Int32 GalleryID, Boolean isRandom, String SortMethod, String SortType, String localeCode)
+   --- End of inner exception stack trace ---
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   at System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(Object obj, Object[] parameters, Object[] arguments)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Web.UI.WebControls.ObjectDataSourceView.InvokeMethod(ObjectDataSourceMethod method, Boolean disposeInstance, Object& instance)
+   at System.Web.UI.WebControls.ObjectDataSourceView.ExecuteSelect(DataSourceSelectArguments arguments)
+   at System.Web.UI.WebControls.Repeater.GetData()
+   at System.Web.UI.WebControls.Repeater.CreateControlHierarchy(Boolean useDataSource)
+   at System.Web.UI.WebControls.Repeater.OnDataBinding(EventArgs e)
+   at System.Web.UI.WebControls.Repeater.EnsureDataBound()
+   at System.Web.UI.WebControls.Repeater.OnPreRender(EventArgs e)
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Page.ProcessRequestMain(Boolean includeStagesBeforeAsyncPoint, Boolean includeStagesAfterAsyncPoint)
+2017-11-22 08:27:32.512+05:30 [KM-SHELLBY][D:2][T:21][FATAL] DotNetNuke.Framework.PageBase - An error has occurred while loading page.
+System.Reflection.TargetInvocationException: Exception has been thrown by the target of an invocation. ---> System.Data.SqlClient.SqlException: The parameterized query '(@GalleryID int,@localeCode nvarchar(20))SELECT egp.[PictureID]' expects the parameter '@localeCode', which was not supplied.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString, Boolean isInternal, Boolean forDescribeParameterEncryption)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, Boolean inRetry, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean& usedCache, Boolean asyncWrite, Boolean inRetry)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   at System.Data.Common.DbDataAdapter.FillInternal(DataSet dataset, DataTable[] datatables, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataSet dataSet, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataSet dataSet, String srcTable)
+   at EasyDNN.Modules.EasyDNNGallery.DataAcess.GetRandomImagesFromGallerySortingLocalized(Int32 PortalID, Int32 GalleryID, Boolean isRandom, String SortMethod, String SortType, String localeCode)
+   --- End of inner exception stack trace ---
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   at System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(Object obj, Object[] parameters, Object[] arguments)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Web.UI.WebControls.ObjectDataSourceView.InvokeMethod(ObjectDataSourceMethod method, Boolean disposeInstance, Object& instance)
+   at System.Web.UI.WebControls.ObjectDataSourceView.ExecuteSelect(DataSourceSelectArguments arguments)
+   at System.Web.UI.WebControls.Repeater.GetData()
+   at System.Web.UI.WebControls.Repeater.CreateControlHierarchy(Boolean useDataSource)
+   at System.Web.UI.WebControls.Repeater.OnDataBinding(EventArgs e)
+   at System.Web.UI.WebControls.Repeater.EnsureDataBound()
+   at System.Web.UI.WebControls.Repeater.OnPreRender(EventArgs e)
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Page.ProcessRequestMain(Boolean includeStagesBeforeAsyncPoint, Boolean includeStagesAfterAsyncPoint)
+2017-11-22 08:27:32.512+05:30 [KM-SHELLBY][D:2][T:21][ERROR] DotNetNuke.Services.Exceptions.Exceptions - ~/Default.aspx?tabid=54&error=An unexpected error has occurred&content=0
+System.Reflection.TargetInvocationException: Exception has been thrown by the target of an invocation. ---> System.Data.SqlClient.SqlException: The parameterized query '(@GalleryID int,@localeCode nvarchar(20))SELECT egp.[PictureID]' expects the parameter '@localeCode', which was not supplied.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString, Boolean isInternal, Boolean forDescribeParameterEncryption)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, Boolean inRetry, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean& usedCache, Boolean asyncWrite, Boolean inRetry)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   at System.Data.Common.DbDataAdapter.FillInternal(DataSet dataset, DataTable[] datatables, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataSet dataSet, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataSet dataSet, String srcTable)
+   at EasyDNN.Modules.EasyDNNGallery.DataAcess.GetRandomImagesFromGallerySortingLocalized(Int32 PortalID, Int32 GalleryID, Boolean isRandom, String SortMethod, String SortType, String localeCode)
+   --- End of inner exception stack trace ---
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   at System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(Object obj, Object[] parameters, Object[] arguments)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Web.UI.WebControls.ObjectDataSourceView.InvokeMethod(ObjectDataSourceMethod method, Boolean disposeInstance, Object& instance)
+   at System.Web.UI.WebControls.ObjectDataSourceView.ExecuteSelect(DataSourceSelectArguments arguments)
+   at System.Web.UI.WebControls.Repeater.GetData()
+   at System.Web.UI.WebControls.Repeater.CreateControlHierarchy(Boolean useDataSource)
+   at System.Web.UI.WebControls.Repeater.OnDataBinding(EventArgs e)
+   at System.Web.UI.WebControls.Repeater.EnsureDataBound()
+   at System.Web.UI.WebControls.Repeater.OnPreRender(EventArgs e)
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Page.ProcessRequestMain(Boolean includeStagesBeforeAsyncPoint, Boolean includeStagesAfterAsyncPoint)
+2017-11-22 08:47:27.859+05:30 [KM-SHELLBY][D:2][T:30][FATAL] DotNetNuke.Framework.PageBase - An error has occurred while loading page.
+System.Reflection.TargetInvocationException: Exception has been thrown by the target of an invocation. ---> System.Data.SqlClient.SqlException: The parameterized query '(@GalleryID int,@localeCode nvarchar(20))SELECT egp.[PictureID]' expects the parameter '@localeCode', which was not supplied.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString, Boolean isInternal, Boolean forDescribeParameterEncryption)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, Boolean inRetry, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean& usedCache, Boolean asyncWrite, Boolean inRetry)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   at System.Data.Common.DbDataAdapter.FillInternal(DataSet dataset, DataTable[] datatables, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataSet dataSet, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataSet dataSet, String srcTable)
+   at EasyDNN.Modules.EasyDNNGallery.DataAcess.GetRandomImagesFromGallerySortingLocalized(Int32 PortalID, Int32 GalleryID, Boolean isRandom, String SortMethod, String SortType, String localeCode)
+   --- End of inner exception stack trace ---
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   at System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(Object obj, Object[] parameters, Object[] arguments)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Web.UI.WebControls.ObjectDataSourceView.InvokeMethod(ObjectDataSourceMethod method, Boolean disposeInstance, Object& instance)
+   at System.Web.UI.WebControls.ObjectDataSourceView.ExecuteSelect(DataSourceSelectArguments arguments)
+   at System.Web.UI.WebControls.Repeater.GetData()
+   at System.Web.UI.WebControls.Repeater.CreateControlHierarchy(Boolean useDataSource)
+   at System.Web.UI.WebControls.Repeater.OnDataBinding(EventArgs e)
+   at System.Web.UI.WebControls.Repeater.EnsureDataBound()
+   at System.Web.UI.WebControls.Repeater.OnPreRender(EventArgs e)
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Page.ProcessRequestMain(Boolean includeStagesBeforeAsyncPoint, Boolean includeStagesAfterAsyncPoint)
+2017-11-22 08:47:27.859+05:30 [KM-SHELLBY][D:2][T:30][ERROR] DotNetNuke.Services.Exceptions.Exceptions - ~/Default.aspx?tabid=54&error=An unexpected error has occurred&content=0
+System.Reflection.TargetInvocationException: Exception has been thrown by the target of an invocation. ---> System.Data.SqlClient.SqlException: The parameterized query '(@GalleryID int,@localeCode nvarchar(20))SELECT egp.[PictureID]' expects the parameter '@localeCode', which was not supplied.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString, Boolean isInternal, Boolean forDescribeParameterEncryption)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, Boolean inRetry, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean& usedCache, Boolean asyncWrite, Boolean inRetry)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   at System.Data.Common.DbDataAdapter.FillInternal(DataSet dataset, DataTable[] datatables, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataSet dataSet, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataSet dataSet, String srcTable)
+   at EasyDNN.Modules.EasyDNNGallery.DataAcess.GetRandomImagesFromGallerySortingLocalized(Int32 PortalID, Int32 GalleryID, Boolean isRandom, String SortMethod, String SortType, String localeCode)
+   --- End of inner exception stack trace ---
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   at System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(Object obj, Object[] parameters, Object[] arguments)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Web.UI.WebControls.ObjectDataSourceView.InvokeMethod(ObjectDataSourceMethod method, Boolean disposeInstance, Object& instance)
+   at System.Web.UI.WebControls.ObjectDataSourceView.ExecuteSelect(DataSourceSelectArguments arguments)
+   at System.Web.UI.WebControls.Repeater.GetData()
+   at System.Web.UI.WebControls.Repeater.CreateControlHierarchy(Boolean useDataSource)
+   at System.Web.UI.WebControls.Repeater.OnDataBinding(EventArgs e)
+   at System.Web.UI.WebControls.Repeater.EnsureDataBound()
+   at System.Web.UI.WebControls.Repeater.OnPreRender(EventArgs e)
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Page.ProcessRequestMain(Boolean includeStagesBeforeAsyncPoint, Boolean includeStagesAfterAsyncPoint)
+2017-11-22 11:09:36.775+05:30 [KM-SHELLBY][D:2][T:18][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 11:09:36.822+05:30 [KM-SHELLBY][D:2][T:18][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 11:09:36.837+05:30 [KM-SHELLBY][D:2][T:18][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 11:09:36.837+05:30 [KM-SHELLBY][D:2][T:18][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 11:09:36.853+05:30 [KM-SHELLBY][D:2][T:18][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-22 11:09:37.087+05:30 [KM-SHELLBY][D:2][T:18][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 11:09:37.103+05:30 [KM-SHELLBY][D:2][T:18][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 11:09:37.103+05:30 [KM-SHELLBY][D:2][T:18][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 11:09:37.119+05:30 [KM-SHELLBY][D:2][T:18][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 11:09:37.119+05:30 [KM-SHELLBY][D:2][T:18][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-22 11:28:26.279+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.Threading.ThreadAbortException: Thread was being aborted.
+   at System.Threading.Thread.AbortInternal()
+   at System.Threading.Thread.Abort(Object stateInfo)
+   at System.Web.HttpResponse.AbortCurrentThread()
+   at System.Web.HttpResponse.Redirect(String url, Boolean endResponse, Boolean permanent)
+   at Evoq.Content.Library.ContentEditor.ContentEditorManager.AutoSetUserMode()
+   at Evoq.Content.Library.ContentEditor.ContentEditorManager.OnInit(EventArgs e)
+   at System.Web.UI.Control.InitRecursive(Control namingContainer)
+   at System.Web.UI.Control.AddedControl(Control control, Int32 index)
+   at Evoq.Content.Library.UI.Skins.EventListeners.EvoqContentSkinEventListener.OnSkinInit(Object sender, SkinEventArgs e)
+2017-11-22 11:28:47.989+05:30 [KM-SHELLBY][D:2][T:52][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 11:28:47.989+05:30 [KM-SHELLBY][D:2][T:52][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 11:28:48.005+05:30 [KM-SHELLBY][D:2][T:52][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 11:28:48.036+05:30 [KM-SHELLBY][D:2][T:52][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 11:28:48.067+05:30 [KM-SHELLBY][D:2][T:52][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-22 11:28:48.224+05:30 [KM-SHELLBY][D:2][T:52][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 11:28:48.224+05:30 [KM-SHELLBY][D:2][T:52][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 11:28:48.239+05:30 [KM-SHELLBY][D:2][T:52][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 11:28:48.239+05:30 [KM-SHELLBY][D:2][T:52][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 11:28:48.255+05:30 [KM-SHELLBY][D:2][T:52][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-22 11:49:41.267+05:30 [KM-SHELLBY][D:2][T:65][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 11:49:41.283+05:30 [KM-SHELLBY][D:2][T:65][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 11:49:41.314+05:30 [KM-SHELLBY][D:2][T:65][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 11:49:41.314+05:30 [KM-SHELLBY][D:2][T:65][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 11:49:41.330+05:30 [KM-SHELLBY][D:2][T:65][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-22 11:49:41.548+05:30 [KM-SHELLBY][D:2][T:65][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 11:49:41.564+05:30 [KM-SHELLBY][D:2][T:65][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 11:49:41.564+05:30 [KM-SHELLBY][D:2][T:65][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 11:49:41.611+05:30 [KM-SHELLBY][D:2][T:65][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 11:49:41.627+05:30 [KM-SHELLBY][D:2][T:65][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-22 11:51:28.930+05:30 [KM-SHELLBY][D:2][T:35][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 11:51:28.930+05:30 [KM-SHELLBY][D:2][T:35][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 11:51:28.946+05:30 [KM-SHELLBY][D:2][T:35][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 11:51:28.977+05:30 [KM-SHELLBY][D:2][T:35][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 11:51:28.977+05:30 [KM-SHELLBY][D:2][T:35][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-22 11:51:29.165+05:30 [KM-SHELLBY][D:2][T:35][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 11:51:29.165+05:30 [KM-SHELLBY][D:2][T:35][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 11:51:29.180+05:30 [KM-SHELLBY][D:2][T:35][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 11:51:29.180+05:30 [KM-SHELLBY][D:2][T:35][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 11:51:29.211+05:30 [KM-SHELLBY][D:2][T:35][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-22 11:51:44.165+05:30 [KM-SHELLBY][D:2][T:58][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 11:51:44.165+05:30 [KM-SHELLBY][D:2][T:58][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 11:51:44.180+05:30 [KM-SHELLBY][D:2][T:58][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 11:51:44.180+05:30 [KM-SHELLBY][D:2][T:58][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 11:51:44.196+05:30 [KM-SHELLBY][D:2][T:58][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-22 11:51:44.399+05:30 [KM-SHELLBY][D:2][T:58][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 11:51:44.399+05:30 [KM-SHELLBY][D:2][T:58][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 11:51:44.415+05:30 [KM-SHELLBY][D:2][T:58][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 11:51:44.415+05:30 [KM-SHELLBY][D:2][T:58][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 11:51:44.430+05:30 [KM-SHELLBY][D:2][T:58][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-22 12:01:23.776+05:30 [KM-SHELLBY][D:2][T:41][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 12:01:23.792+05:30 [KM-SHELLBY][D:2][T:41][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 12:01:23.823+05:30 [KM-SHELLBY][D:2][T:41][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 12:01:23.823+05:30 [KM-SHELLBY][D:2][T:41][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 12:01:23.839+05:30 [KM-SHELLBY][D:2][T:41][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-22 12:01:23.948+05:30 [KM-SHELLBY][D:2][T:41][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.Threading.ThreadAbortException: Thread was being aborted.
+   at System.Threading.Thread.AbortInternal()
+   at System.Threading.Thread.Abort(Object stateInfo)
+   at System.Web.HttpResponse.AbortCurrentThread()
+   at System.Web.HttpResponse.Redirect(String url, Boolean endResponse, Boolean permanent)
+   at Evoq.Content.Library.ContentEditor.ContentEditorManager.AutoSetUserMode()
+   at Evoq.Content.Library.ContentEditor.ContentEditorManager.OnInit(EventArgs e)
+   at System.Web.UI.Control.InitRecursive(Control namingContainer)
+   at System.Web.UI.Control.AddedControl(Control control, Int32 index)
+   at Evoq.Content.Library.UI.Skins.EventListeners.EvoqContentSkinEventListener.OnSkinInit(Object sender, SkinEventArgs e)
+2017-11-22 12:06:03.025+05:30 [KM-SHELLBY][D:2][T:46][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 12:06:03.057+05:30 [KM-SHELLBY][D:2][T:46][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 12:06:03.072+05:30 [KM-SHELLBY][D:2][T:46][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 12:06:03.072+05:30 [KM-SHELLBY][D:2][T:46][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 12:06:03.088+05:30 [KM-SHELLBY][D:2][T:46][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-22 12:06:03.244+05:30 [KM-SHELLBY][D:2][T:46][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 12:06:03.244+05:30 [KM-SHELLBY][D:2][T:46][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 12:06:03.275+05:30 [KM-SHELLBY][D:2][T:46][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 12:06:03.291+05:30 [KM-SHELLBY][D:2][T:46][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 12:06:03.291+05:30 [KM-SHELLBY][D:2][T:46][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-22 12:06:52.228+05:30 [KM-SHELLBY][D:2][T:52][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 12:06:52.228+05:30 [KM-SHELLBY][D:2][T:52][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 12:06:52.244+05:30 [KM-SHELLBY][D:2][T:52][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 12:06:52.260+05:30 [KM-SHELLBY][D:2][T:52][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 12:06:52.275+05:30 [KM-SHELLBY][D:2][T:52][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-22 12:06:52.541+05:30 [KM-SHELLBY][D:2][T:52][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 12:06:52.557+05:30 [KM-SHELLBY][D:2][T:52][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 12:06:52.557+05:30 [KM-SHELLBY][D:2][T:52][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 12:06:52.572+05:30 [KM-SHELLBY][D:2][T:52][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 12:06:52.572+05:30 [KM-SHELLBY][D:2][T:52][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-22 12:07:02.088+05:30 [KM-SHELLBY][D:2][T:52][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 12:07:02.103+05:30 [KM-SHELLBY][D:2][T:52][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 12:07:02.103+05:30 [KM-SHELLBY][D:2][T:52][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 12:07:02.119+05:30 [KM-SHELLBY][D:2][T:52][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 12:07:02.135+05:30 [KM-SHELLBY][D:2][T:52][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-22 12:07:02.307+05:30 [KM-SHELLBY][D:2][T:52][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 12:07:02.307+05:30 [KM-SHELLBY][D:2][T:52][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 12:07:02.322+05:30 [KM-SHELLBY][D:2][T:52][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 12:07:02.322+05:30 [KM-SHELLBY][D:2][T:52][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 12:07:02.338+05:30 [KM-SHELLBY][D:2][T:52][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-22 12:08:30.126+05:30 [KM-SHELLBY][D:2][T:52][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 12:08:30.126+05:30 [KM-SHELLBY][D:2][T:52][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 12:08:30.141+05:30 [KM-SHELLBY][D:2][T:52][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 12:08:30.157+05:30 [KM-SHELLBY][D:2][T:52][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 12:08:30.220+05:30 [KM-SHELLBY][D:2][T:52][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-22 12:08:46.345+05:30 [KM-SHELLBY][D:2][T:33][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 12:08:46.345+05:30 [KM-SHELLBY][D:2][T:33][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 12:08:46.360+05:30 [KM-SHELLBY][D:2][T:33][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 12:08:46.376+05:30 [KM-SHELLBY][D:2][T:33][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 12:08:46.407+05:30 [KM-SHELLBY][D:2][T:33][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-22 12:08:46.548+05:30 [KM-SHELLBY][D:2][T:33][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.Threading.ThreadAbortException: Thread was being aborted.
+   at System.Threading.Thread.AbortInternal()
+   at System.Threading.Thread.Abort(Object stateInfo)
+   at System.Web.HttpResponse.AbortCurrentThread()
+   at System.Web.HttpResponse.Redirect(String url, Boolean endResponse, Boolean permanent)
+   at Evoq.Content.Library.ContentEditor.ContentEditorManager.AutoSetUserMode()
+   at Evoq.Content.Library.ContentEditor.ContentEditorManager.OnInit(EventArgs e)
+   at System.Web.UI.Control.InitRecursive(Control namingContainer)
+   at System.Web.UI.Control.AddedControl(Control control, Int32 index)
+   at Evoq.Content.Library.UI.Skins.EventListeners.EvoqContentSkinEventListener.OnSkinInit(Object sender, SkinEventArgs e)
+2017-11-22 12:57:14.841+05:30 [KM-SHELLBY][D:2][T:37][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 12:57:14.856+05:30 [KM-SHELLBY][D:2][T:37][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 12:57:14.872+05:30 [KM-SHELLBY][D:2][T:37][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 12:57:14.888+05:30 [KM-SHELLBY][D:2][T:37][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 12:57:14.903+05:30 [KM-SHELLBY][D:2][T:37][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-22 12:57:24.341+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 12:57:24.356+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 12:57:24.356+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 12:57:24.372+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 12:57:24.388+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-22 12:57:24.559+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 12:57:24.559+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 12:57:24.575+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 12:57:24.575+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 12:57:24.591+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-22 12:57:29.372+05:30 [KM-SHELLBY][D:2][T:37][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 12:57:29.403+05:30 [KM-SHELLBY][D:2][T:37][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 12:57:29.419+05:30 [KM-SHELLBY][D:2][T:37][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 12:57:29.434+05:30 [KM-SHELLBY][D:2][T:37][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 12:57:37.544+05:30 [KM-SHELLBY][D:2][T:37][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 12:57:37.559+05:30 [KM-SHELLBY][D:2][T:37][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 12:57:37.575+05:30 [KM-SHELLBY][D:2][T:37][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 12:57:37.591+05:30 [KM-SHELLBY][D:2][T:37][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 12:57:43.513+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 12:57:43.528+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 12:57:43.528+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 12:57:43.544+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 12:57:45.841+05:30 [KM-SHELLBY][D:2][T:37][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 12:57:45.841+05:30 [KM-SHELLBY][D:2][T:37][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 12:57:45.856+05:30 [KM-SHELLBY][D:2][T:37][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 12:57:45.856+05:30 [KM-SHELLBY][D:2][T:37][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 12:58:11.450+05:30 [KM-SHELLBY][D:2][T:37][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 12:58:11.466+05:30 [KM-SHELLBY][D:2][T:37][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 12:58:11.497+05:30 [KM-SHELLBY][D:2][T:37][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 12:58:11.513+05:30 [KM-SHELLBY][D:2][T:37][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 12:58:11.513+05:30 [KM-SHELLBY][D:2][T:37][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-22 12:58:11.684+05:30 [KM-SHELLBY][D:2][T:37][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 12:58:11.684+05:30 [KM-SHELLBY][D:2][T:37][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 12:58:11.700+05:30 [KM-SHELLBY][D:2][T:37][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 12:58:11.700+05:30 [KM-SHELLBY][D:2][T:37][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 12:58:11.716+05:30 [KM-SHELLBY][D:2][T:37][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-22 12:58:24.856+05:30 [KM-SHELLBY][D:2][T:20][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 12:58:24.872+05:30 [KM-SHELLBY][D:2][T:20][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 12:58:24.888+05:30 [KM-SHELLBY][D:2][T:20][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 12:58:24.903+05:30 [KM-SHELLBY][D:2][T:20][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 12:58:24.919+05:30 [KM-SHELLBY][D:2][T:20][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-22 12:58:25.138+05:30 [KM-SHELLBY][D:2][T:20][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 12:58:25.138+05:30 [KM-SHELLBY][D:2][T:20][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 12:58:25.153+05:30 [KM-SHELLBY][D:2][T:20][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 12:58:25.153+05:30 [KM-SHELLBY][D:2][T:20][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 12:58:25.169+05:30 [KM-SHELLBY][D:2][T:20][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-22 12:58:52.208+05:30 [KM-SHELLBY][D:2][T:41][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 12:58:52.223+05:30 [KM-SHELLBY][D:2][T:41][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 12:58:52.223+05:30 [KM-SHELLBY][D:2][T:41][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 12:58:52.239+05:30 [KM-SHELLBY][D:2][T:41][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 12:58:52.239+05:30 [KM-SHELLBY][D:2][T:41][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-22 12:58:52.442+05:30 [KM-SHELLBY][D:2][T:41][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 12:58:52.458+05:30 [KM-SHELLBY][D:2][T:41][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 12:58:52.458+05:30 [KM-SHELLBY][D:2][T:41][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 12:58:52.473+05:30 [KM-SHELLBY][D:2][T:41][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 12:58:52.473+05:30 [KM-SHELLBY][D:2][T:41][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-22 12:58:57.880+05:30 [KM-SHELLBY][D:2][T:20][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 12:58:57.895+05:30 [KM-SHELLBY][D:2][T:20][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 12:58:57.895+05:30 [KM-SHELLBY][D:2][T:20][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 12:58:57.911+05:30 [KM-SHELLBY][D:2][T:20][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 12:59:05.270+05:30 [KM-SHELLBY][D:2][T:20][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 12:59:05.286+05:30 [KM-SHELLBY][D:2][T:20][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 12:59:05.302+05:30 [KM-SHELLBY][D:2][T:20][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 12:59:05.317+05:30 [KM-SHELLBY][D:2][T:20][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 12:59:09.692+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 12:59:09.708+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 12:59:09.708+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 12:59:09.723+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 12:59:11.302+05:30 [KM-SHELLBY][D:2][T:20][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 12:59:11.317+05:30 [KM-SHELLBY][D:2][T:20][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 12:59:11.317+05:30 [KM-SHELLBY][D:2][T:20][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 12:59:11.333+05:30 [KM-SHELLBY][D:2][T:20][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 12:59:11.333+05:30 [KM-SHELLBY][D:2][T:20][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-22 12:59:11.520+05:30 [KM-SHELLBY][D:2][T:20][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 12:59:11.536+05:30 [KM-SHELLBY][D:2][T:20][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 12:59:11.536+05:30 [KM-SHELLBY][D:2][T:20][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 12:59:11.552+05:30 [KM-SHELLBY][D:2][T:20][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 12:59:11.552+05:30 [KM-SHELLBY][D:2][T:20][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-22 12:59:11.802+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 12:59:11.802+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 12:59:11.817+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 12:59:11.817+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 12:59:18.473+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 12:59:18.473+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 12:59:18.489+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 12:59:18.489+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 12:59:18.911+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 12:59:18.927+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 12:59:18.927+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 12:59:18.942+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 12:59:18.942+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-22 12:59:19.114+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 12:59:19.161+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 12:59:19.161+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 12:59:19.177+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 12:59:19.177+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-22 12:59:45.083+05:30 [KM-SHELLBY][D:2][T:57][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 12:59:45.083+05:30 [KM-SHELLBY][D:2][T:57][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 12:59:45.098+05:30 [KM-SHELLBY][D:2][T:57][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 12:59:45.098+05:30 [KM-SHELLBY][D:2][T:57][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 12:59:45.114+05:30 [KM-SHELLBY][D:2][T:57][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-22 12:59:45.302+05:30 [KM-SHELLBY][D:2][T:57][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 12:59:45.302+05:30 [KM-SHELLBY][D:2][T:57][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 12:59:45.317+05:30 [KM-SHELLBY][D:2][T:57][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 12:59:45.317+05:30 [KM-SHELLBY][D:2][T:57][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 12:59:45.333+05:30 [KM-SHELLBY][D:2][T:57][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-22 13:00:40.130+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 13:00:40.145+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 13:00:40.177+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 13:00:40.192+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 13:00:40.208+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-22 13:00:40.348+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 13:00:40.364+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 13:00:40.364+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 13:00:40.380+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 13:00:40.380+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-22 13:00:40.505+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-11-22 13:00:40.505+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-11-22 13:00:40.520+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-11-22 13:00:40.520+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-11-22 13:00:40.536+05:30 [KM-SHELLBY][D:2][T:39][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-11-22 18:08:17.735+05:30 [KM-SHELLBY][D:2][T:15][FATAL] DotNetNuke.Framework.PageBase - An error has occurred while loading page.
+System.Reflection.TargetInvocationException: Exception has been thrown by the target of an invocation. ---> System.Data.SqlClient.SqlException: The parameterized query '(@GalleryID int,@localeCode nvarchar(20))SELECT egp.[PictureID]' expects the parameter '@localeCode', which was not supplied.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString, Boolean isInternal, Boolean forDescribeParameterEncryption)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, Boolean inRetry, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean& usedCache, Boolean asyncWrite, Boolean inRetry)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   at System.Data.Common.DbDataAdapter.FillInternal(DataSet dataset, DataTable[] datatables, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataSet dataSet, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataSet dataSet, String srcTable)
+   at EasyDNN.Modules.EasyDNNGallery.DataAcess.GetRandomImagesFromGallerySortingLocalized(Int32 PortalID, Int32 GalleryID, Boolean isRandom, String SortMethod, String SortType, String localeCode)
+   --- End of inner exception stack trace ---
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   at System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(Object obj, Object[] parameters, Object[] arguments)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Web.UI.WebControls.ObjectDataSourceView.InvokeMethod(ObjectDataSourceMethod method, Boolean disposeInstance, Object& instance)
+   at System.Web.UI.WebControls.ObjectDataSourceView.ExecuteSelect(DataSourceSelectArguments arguments)
+   at System.Web.UI.WebControls.Repeater.GetData()
+   at System.Web.UI.WebControls.Repeater.CreateControlHierarchy(Boolean useDataSource)
+   at System.Web.UI.WebControls.Repeater.OnDataBinding(EventArgs e)
+   at System.Web.UI.WebControls.Repeater.EnsureDataBound()
+   at System.Web.UI.WebControls.Repeater.OnPreRender(EventArgs e)
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Page.ProcessRequestMain(Boolean includeStagesBeforeAsyncPoint, Boolean includeStagesAfterAsyncPoint)
+2017-11-22 18:08:18.016+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Services.Exceptions.Exceptions - ~/Default.aspx?tabid=54&error=An unexpected error has occurred&content=0
+System.Reflection.TargetInvocationException: Exception has been thrown by the target of an invocation. ---> System.Data.SqlClient.SqlException: The parameterized query '(@GalleryID int,@localeCode nvarchar(20))SELECT egp.[PictureID]' expects the parameter '@localeCode', which was not supplied.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString, Boolean isInternal, Boolean forDescribeParameterEncryption)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, Boolean inRetry, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean& usedCache, Boolean asyncWrite, Boolean inRetry)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   at System.Data.Common.DbDataAdapter.FillInternal(DataSet dataset, DataTable[] datatables, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataSet dataSet, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataSet dataSet, String srcTable)
+   at EasyDNN.Modules.EasyDNNGallery.DataAcess.GetRandomImagesFromGallerySortingLocalized(Int32 PortalID, Int32 GalleryID, Boolean isRandom, String SortMethod, String SortType, String localeCode)
+   --- End of inner exception stack trace ---
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   at System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(Object obj, Object[] parameters, Object[] arguments)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Web.UI.WebControls.ObjectDataSourceView.InvokeMethod(ObjectDataSourceMethod method, Boolean disposeInstance, Object& instance)
+   at System.Web.UI.WebControls.ObjectDataSourceView.ExecuteSelect(DataSourceSelectArguments arguments)
+   at System.Web.UI.WebControls.Repeater.GetData()
+   at System.Web.UI.WebControls.Repeater.CreateControlHierarchy(Boolean useDataSource)
+   at System.Web.UI.WebControls.Repeater.OnDataBinding(EventArgs e)
+   at System.Web.UI.WebControls.Repeater.EnsureDataBound()
+   at System.Web.UI.WebControls.Repeater.OnPreRender(EventArgs e)
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Control.PreRenderRecursiveInternal()
+   at System.Web.UI.Page.ProcessRequestMain(Boolean includeStagesBeforeAsyncPoint, Boolean includeStagesAfterAsyncPoint)

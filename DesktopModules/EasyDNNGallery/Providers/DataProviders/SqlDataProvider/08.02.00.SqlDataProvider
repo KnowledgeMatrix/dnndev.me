@@ -1,0 +1,58 @@
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryCategory' AND column_name = 'CategoryDescription')
+BEGIN
+ ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryCategory] ALTER COLUMN CategoryDescription NVARCHAR(MAX);
+END
+GO
+
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGallery' AND column_name = 'GalleryDescription')
+BEGIN
+ ALTER TABLE {databaseOwner}[{objectQualifier}EasyGallery] ALTER COLUMN GalleryDescription NVARCHAR(MAX);
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryGravityGallerySettings' AND column_name = 'DisplayMode')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryGravityGallerySettings] ADD DisplayMode TINYINT CONSTRAINT DF_{objectQualifier}EasyGalleryGravityGallerySettings_DisplayMode DEFAULT (0) NOT NULL
+END
+GO
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryGravityGallerySettings' AND column_name = 'LoadContentOnHover')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryGravityGallerySettings] ADD LoadContentOnHover BIT CONSTRAINT DF_{objectQualifier}EasyGalleryGravityGallerySettings_LoadContentOnHover DEFAULT (0) NOT NULL
+END
+GO
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryGravityGallerySettings' AND column_name = 'ShowGalleryFilter')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryGravityGallerySettings] ADD ShowGalleryFilter BIT CONSTRAINT DF_{objectQualifier}EasyGalleryGravityGallerySettings_ShowGalleryFilter DEFAULT (0) NOT NULL
+END
+GO
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryGravityGallerySettings' AND column_name = 'IsPaginationEnabled')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryGravityGallerySettings] ADD IsPaginationEnabled BIT CONSTRAINT DF_{objectQualifier}EasyGalleryGravityGallerySettings_IsPaginationEnabled DEFAULT (1) NOT NULL
+END
+GO
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryGravityGallerySettings' AND column_name = 'Overlay')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryGravityGallerySettings] ADD Overlay NVARCHAR(250) NULL
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_TYPE = 'PRIMARY KEY' AND TABLE_NAME = '{objectQualifier}EasyGalleryData' )
+BEGIN
+	DELETE FROM {databaseOwner}[{objectQualifier}EasyGalleryData] WHERE EntryID IS NULL;
+	WITH cte AS (
+		SELECT EntryID, 
+		row_number() OVER(PARTITION BY EntryID ORDER BY EntryID) AS [rn]
+		FROM {databaseOwner}[{objectQualifier}EasyGalleryData]
+	)
+	DELETE cte WHERE [rn] > 1
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryData] ADD EntryIDTemp INT NOT NULL DEFAULT(0) 
+	EXEC('UPDATE {databaseOwner}[{objectQualifier}EasyGalleryData] SET EntryIDTemp = EntryID')
+	EXEC('ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryData] ADD CONSTRAINT [PK_{objectQualifier}EasyGalleryData] PRIMARY KEY NONCLUSTERED ([EntryIDTemp] ASC) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF)')
+	IF EXISTS (SELECT name FROM sys.indexes WHERE name = N'IX_{objectQualifier}EasyGalleryData_EntryID')
+	BEGIN
+		DROP INDEX IX_{objectQualifier}EasyGalleryData_EntryID ON {databaseOwner}[{objectQualifier}EasyGalleryData];
+		ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryData] DROP COLUMN EntryID
+	END
+	EXEC sp_rename '{objectQualifier}EasyGalleryData.[EntryIDTemp]' , 'EntryID', 'COLUMN'
+END
+GO

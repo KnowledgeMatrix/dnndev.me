@@ -1,0 +1,24 @@
+﻿@using Revindex.Dnn.RevindexStorefront.Models;
+@using Revindex.Web.Mvc.Dnn.Helpers;
+@inherits Revindex.Dnn.RevindexStorefront.Views.DistributorWebViewPage<DistributorViewModel>
+
+<div class="rvdsf rvdsf-distributor-container">
+    <nav class="navbar navbar-default visible-xs">
+        <div class="navbar-header">
+            <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#rvdsfDistributorList">
+                <i class="glyphicon glyphicon-align-justify"></i>
+            </button>
+            <a class="navbar-brand">@Html.LocalizeString("Header")</a>
+        </div>
+    </nav>
+    <div id="rvdsfDistributorList" class="collapse-xs">
+        <ul class="list-group">
+            @foreach (var d in Model.AvailableDistributors)
+            {
+                <li class="list-group-item @(d.DistributorID == Model.DistributorID ? "node-selected active" : "node-" )">
+                    <a href="@d.ProductList.TabUrl" style="color: inherit">@d.Name</a>
+                </li>
+            }
+        </ul>
+    </div>
+</div>

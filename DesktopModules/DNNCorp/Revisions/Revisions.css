@@ -1,0 +1,179 @@
+﻿.revision-changesets {
+    padding: 20px;
+    width: 100%;
+}
+
+.revision-changesets-table {
+    padding: 5px 0 5px 0;
+    width: 100%;
+}
+
+    .revision-changesets-table .version-cell {
+        width: 60px;
+    }
+
+    .revision-changesets-table th,
+    .revision-changesets-table td {
+        text-align: left;
+    }
+
+    .revision-changesets-table table {
+        margin-top: 15px;
+    }
+
+.revision-changesets-actions {
+    margin-top: 20px;
+}
+
+.revision-changesets-results {
+    font-weight: bold;
+    float: right;
+}
+
+    .revision-changesets-results > span {
+        padding: 0 5px 0 0;
+    }
+
+    .revision-changesets-results > select {
+        font-weight: normal;
+    }
+
+tr.revision-selected {
+    background-color: #4169e1;
+}
+
+    tr.revision-selected td {
+        color: #fff;
+    }
+
+.revision-compare-container {
+    display: none;
+    margin-top: 20px;
+}
+
+.revision-compact-compare-container {
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgb(208, 208, 208);
+    display: none;
+    float: left;
+    padding: 20px;
+    position: fixed;
+    height: auto;
+    max-width: 90%;
+    min-width: 175px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+    .revision-compact-compare-container .revision-id {
+        position: absolute;
+        right: 10px;
+        color: rgba(0, 0, 0, 0.25);
+        top: 10px;
+        font-weight: bold;
+        font-size: 115%;
+    }
+
+.compare-container {
+    width: 100%;
+}
+
+.revision-left {
+    display: inline-block;
+    float: left;
+    width: 400px;
+}
+
+.revision-right {
+    display: inline-block;
+    float: right;
+    width: 400px;
+}
+
+.revision-compare-area {
+    display: block;
+    height: 350px;
+    overflow: auto;
+    padding: 8px;
+}
+
+    .revision-compare-area > p,
+    .revision-compare-area > div,
+    .revision-compare-area > ul,
+    .revision-compare-area > ol,
+    .revision-compare-area > table,
+    .revision-compare-area  img,
+    .revision-compare-area  iframe {
+        max-width: 100% !important;
+    }
+
+ins {
+    background-color: rgb(0, 223, 0);
+    text-decoration: none;
+    display: inline-block;
+}
+
+del {
+    background-color: rgb(255, 134, 134);
+    display: inline-block;
+}
+
+mod {
+    background-color: yellow;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.revision-selector {
+    background-color: rgba(0, 0, 0, 0.10);
+    width: 392px;
+    padding: 4px;
+}
+
+.revision-invalid-compare {
+    display: block;
+    height: 150px;
+    width: 100%;
+    vertical-align: middle;
+    text-align: center;
+}
+
+a.revision-rollback-link {
+    display: inline-block;
+    vertical-align: top;
+    background-image: url(../../../icons/sigma/rollback_16X16_Standard.png);
+    background-repeat: no-repeat;
+    background-position: center center;
+    width: 16px;
+    height: 16px;
+}
+
+a.revision-reject-link {
+    display: inline-block;
+    vertical-align: top;
+    background-image: url(../../../icons/sigma/Reject_16X16_Standard.png);
+    background-repeat: no-repeat;
+    background-position: center center;
+    width: 16px;
+    height: 16px;
+}
+
+a.revision-delete-link {
+    display: inline-block;
+    vertical-align: top;
+    background-image: url(../../../icons/sigma/delete_16X16_Standard.png);
+    background-repeat: no-repeat;
+    background-position: center center;
+    width: 16px;
+    height: 16px;
+}
+
+a.revision-publish-link {
+    display: inline-block;
+    vertical-align: top;
+    background-image: url(../../../icons/sigma/Approve_16X16_Standard.png);
+    background-repeat: no-repeat;
+    background-position: center center;
+    width: 16px;
+    height: 16px;
+}

@@ -1,0 +1,902 @@
+﻿IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Warehouse_AddTagsAndTagGroup]', 'P') IS NOT NULL
+    DROP PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Warehouse_AddTagsAndTagGroup]
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_AddTagsAndTagGroup
+	@CommaSeparatedTags NVARCHAR(MAX),
+	@TagGroupId INT OUTPUT
+AS
+BEGIN
+	DECLARE @TagCount INT
+	DECLARE @NewTagCount INT
+
+	
+	DECLARE @Terms TABLE
+	(
+		Id INT IDENTITY(1,1) PRIMARY KEY,
+		Term NVARCHAR(MAX)
+	)
+
+	DECLARE @NewTerms TABLE
+	(
+		Id INT IDENTITY(1,1) PRIMARY KEY,
+		Term NVARCHAR(MAX)
+	)
+
+	INSERT INTO @Terms (Term) (SELECT val FROM {databaseOwner}{objectQualifier}Analytics_CsvSplit(@CommaSeparatedTags, ','));
+	--Determine the terms that are not in the db yet
+	INSERT INTO @NewTerms (Term) SELECT Term FROM @Terms terms
+	WHERE NOT EXISTS (SELECT * FROM {databaseOwner}{objectQualifier}Analytics_Dim_Tag tags WHERE tags.Term = terms.Term)
+
+	SET @TagCount = (SELECT COUNT(*) FROM @Terms)
+	SET @NewTagCount = (SELECT COUNT(*) FROM @NewTerms)
+
+	IF @NewTagCount = 0
+	BEGIN
+		--See if there is an existing group with exactly these terms
+		SET @TagGroupId = (SELECT TOP 1 tg.TagGroupId FROM {databaseOwner}{objectQualifier}Analytics_Dim_TagGroup tg
+			INNER JOIN {databaseOwner}{objectQualifier}Analytics_Dim_Bridge_TagGroup_Tag b ON tg.TagGroupId = b.TagGroupId 
+			INNER JOIN {databaseOwner}{objectQualifier}Analytics_Dim_Tag t ON b.TagId = t.TagId	
+			WHERE tg.TagCount = @TagCount AND t.Term IN (SELECT Term FROM @Terms)
+		EXCEPT 
+		SELECT  tg.TagGroupId FROM {databaseOwner}{objectQualifier}Analytics_Dim_TagGroup tg
+			INNER JOIN {databaseOwner}{objectQualifier}Analytics_Dim_Bridge_TagGroup_Tag b ON tg.TagGroupId = b.TagGroupId 
+			INNER JOIN {databaseOwner}{objectQualifier}Analytics_Dim_Tag t ON b.TagId = t.TagId	
+			WHERE tg.TagCount = @TagCount AND t.Term NOT IN (SELECT Term FROM @Terms))
+	END
+	ELSE
+	BEGIN
+		--Add the new terms first
+		INSERT INTO {databaseOwner}{objectQualifier}Analytics_Dim_Tag (Term) SELECT Term FROM @NewTerms	
+	END
+
+	IF @TagGroupId IS NULL
+	BEGIN
+		--We need to create a new group and link it to the new grouping of terms
+		DECLARE @temp table 
+		(
+			Id INT PRIMARY KEY
+		)
+		INSERT INTO {databaseOwner}{objectQualifier}Analytics_Dim_TagGroup (TagCount) OUTPUT INSERTED.TagGroupId INTO @temp VALUES (@TagCount)
+		SELECT @TagGroupId = Id FROM @temp
+		INSERT INTO {databaseOwner}{objectQualifier}Analytics_Dim_Bridge_TagGroup_Tag (TagGroupId,TagId) 
+			SELECT @TagGroupId, dimTags.TagId 
+			FROM {databaseOwner}{objectQualifier}Analytics_Dim_Tag dimTags 
+			INNER JOIN @Terms t ON dimTags.Term = t.Term
+	END
+END
+GO
+
+IF OBJECT_ID('{databaseOwner}{objectQualifier}Analytics_GetAllDates', 'TF') IS NOT NULL
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_GetAllDates
+GO
+
+CREATE FUNCTION {databaseOwner}{objectQualifier}Analytics_GetAllDates
+(	
+	@StartDate SMALLDATETIME,
+	@EndDate SMALLDATETIME,	
+	@Grouping CHAR(1)
+)
+RETURNS @ResultsTable TABLE 
+(
+	StartDate SMALLDATETIME,
+	EndDate SMALLDATETIME
+)
+AS
+BEGIN
+	DECLARE @Count INT = 1
+	DECLARE @MinDate SMALLDATETIME = @StartDate
+	DECLARE @MaxDate SMALLDATETIME = {databaseOwner}{objectQualifier}Analytics_IncrementDate(@StartDate, @EndDate, @Count, @Grouping)
+
+	WHILE @MinDate < @EndDate
+	BEGIN
+		INSERT INTO @ResultsTable (StartDate, EndDate) 
+		VALUES (@MinDate, @MaxDate)
+		
+		SET @MinDate = @MaxDate
+		SET @Count = @Count + 1
+		SET @MaxDate = {databaseOwner}{objectQualifier}Analytics_IncrementDate(@StartDate, @EndDate, @Count, @Grouping)
+	END	
+
+	RETURN
+END
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_GetUserPageWithinFriends]', 'P') IS NOT NULL
+    DROP PROCEDURE {databaseOwner}[{objectQualifier}Analytics_GetUserPageWithinFriends]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Analytics_GetUserPageWithinFriends]
+	@PortalId INT,
+    @UserId INT,
+    @PageSize INT,
+    @SearchText NVARCHAR(255) = '',
+	@StartDate DATE,
+	@EffectivePortalId INT
+AS
+BEGIN
+    SET NOCOUNT ON
+
+	DECLARE @Date INT = CAST(convert(varchar, @StartDate, 112) as int);
+
+    DECLARE @FriendsRelationshipId INT 
+	SELECT @FriendsRelationshipId = RelationshipId 
+	FROM {databaseOwner}{objectQualifier}Relationships 
+	WHERE Name = 'Friends' AND PortalId = @EffectivePortalId;
+
+	WITH Friends AS
+	(
+		SELECT UserId 
+		FROM {databaseOwner}{objectQualifier}UserRelationships
+		WHERE RelationshipID = @FriendsRelationshipId AND RelatedUserID = @UserId AND Status = 2 -- ONLY ACCEPTED FRIENDS
+		UNION
+		SELECT RelatedUserId 
+		FROM {databaseOwner}{objectQualifier}UserRelationships
+		WHERE RelationshipID = @FriendsRelationshipId AND UserID = @UserId AND Status = 2 -- ONLY ACCEPTED FRIENDS
+		UNION
+		SELECT @UserId
+	)
+	,ActiveFriends AS (
+		SELECT u.UserId
+		FROM Friends f
+			JOIN {databaseOwner}{objectQualifier}Users u ON f.UserID = u.UserID
+            JOIN {databaseOwner}{objectQualifier}UserPortals up ON u.UserId = up.UserID
+		WHERE (@SearchText IS NULL OR LEN(@SearchText) = 0 OR u.DisplayName LIKE '%' + @SearchText + '%')
+		  AND up.PortalId = @EffectivePortalId
+          AND up.IsDeleted = 0 AND up.Authorised = 1
+          AND u.IsDeleted = 0
+	)
+	,Scoring AS
+    (
+        SELECT ru.UserId, SUM(ReputationPoints) AS ReputationPoints
+        FROM {databaseOwner}{objectQualifier}Analytics_Fact_UserScoringLogRollup ru
+			JOIN ActiveFriends f ON ru.UserId = f.UserID
+		WHERE PortalId = @PortalId
+			AND (@Date IS NULL OR Date >= @Date OR Date IS NULL)
+		GROUP BY ru.UserId
+	)
+	,Leaders AS
+	(
+		SELECT u.UserId, ISNULL(s.ReputationPoints, 0) ReputationPoints, 
+			ROW_NUMBER() OVER (ORDER BY ReputationPoints DESC, u.UserId ASC) AS [Rank]
+		FROM ActiveFriends u
+			LEFT JOIN Scoring s ON u.UserId = s.UserId
+	)
+	,UserPage AS
+	(
+		SELECT ([Rank] / @PageSize * @PageSize) UserRank
+		FROM Leaders WHERE UserId = @UserId
+	)
+    SELECT TOP (@PageSize) u.UserId, ReputationPoints, [Rank], u.CreatedOnDate MemberSince, 
+		(SELECT COUNT(*) FROM Leaders) TotalLeaders
+	FROM Leaders l
+		JOIN {databaseOwner}{objectQualifier}Users u on l.UserId = u.UserId
+    WHERE [Rank] >= ISNULL((SELECT UserRank FROM UserPage), 0)
+    ORDER BY [Rank] ASC
+END
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_GetLeadersWithinFriends]', 'P') IS NOT NULL
+    DROP PROCEDURE {databaseOwner}[{objectQualifier}Analytics_GetLeadersWithinFriends]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Analytics_GetLeadersWithinFriends]
+	@PortalId INT,
+    @UserId INT,    
+    @PageIndex INT,
+    @PageSize INT,
+    @SearchText NVARCHAR(255) = '',
+	@StartDate DATE,
+	@EffectivePortalId INT
+AS
+BEGIN
+    DECLARE
+        @PageLowerBound INT, 
+        @PageUpperBound INT, 
+        @RowsToReturn int
+
+	DECLARE @Date INT = CAST(convert(varchar, @StartDate, 112) as int);
+
+    exec {databaseOwner}{objectQualifier}CalculatePagingInformation @PageIndex, @PageSize, @RowsToReturn output, @PageLowerBound output, @PageUpperBound output
+
+    IF @PageLowerBound > 0
+        SELECT @PageLowerBound = @PageLowerBound + 1
+
+    IF @RowsToReturn > @PageSize
+        SET @RowsToReturn = @PageSize
+
+    DECLARE @FriendsRelationshipId INT 
+	SELECT @FriendsRelationshipId = RelationshipId 
+	FROM {databaseOwner}{objectQualifier}Relationships WHERE Name = 'Friends' AND PortalId = @EffectivePortalId;
+
+	WITH Friends AS
+	(
+		SELECT UserId 
+		FROM {databaseOwner}{objectQualifier}UserRelationships
+		WHERE RelationshipID = @FriendsRelationshipId AND RelatedUserID = @UserId AND Status = 2 -- ONLY ACCEPTED FRIENDS
+		UNION
+		SELECT RelatedUserId 
+		FROM {databaseOwner}{objectQualifier}UserRelationships
+		WHERE RelationshipID = @FriendsRelationshipId AND UserID = @UserId AND Status = 2 -- ONLY ACCEPTED FRIENDS
+		UNION
+		SELECT @UserId
+	)
+	,ActiveFriends AS (
+		SELECT u.UserId
+		FROM Friends f
+			JOIN {databaseOwner}{objectQualifier}Users u ON f.UserID = u.UserID
+            JOIN {databaseOwner}{objectQualifier}UserPortals up ON u.UserId = up.UserID
+		WHERE (@SearchText IS NULL OR LEN(@SearchText) = 0 OR u.DisplayName LIKE '%' + @SearchText + '%')
+		  AND up.PortalId = @EffectivePortalId
+          AND up.IsDeleted = 0 AND up.Authorised = 1
+          AND u.IsDeleted = 0		
+	)
+	,Scoring AS
+    (
+        SELECT ru.UserId, SUM(ReputationPoints) AS ReputationPoints
+        FROM {databaseOwner}{objectQualifier}Analytics_Fact_UserScoringLogRollup ru
+			JOIN ActiveFriends f ON ru.UserId = f.UserID
+		WHERE PortalId = @PortalId
+			AND (@Date IS NULL OR Date >= @Date OR Date IS NULL)
+		GROUP BY ru.UserId
+	)
+	,Leaders AS
+	(
+		SELECT u.UserId, ISNULL(s.ReputationPoints, 0) ReputationPoints, 
+			ROW_NUMBER() OVER (ORDER BY ReputationPoints DESC, u.UserId ASC) AS [Rank]
+		FROM ActiveFriends u
+			LEFT JOIN Scoring s ON u.UserId = s.UserId
+	)
+    SELECT TOP (@PageSize) u.UserId, ISNULL(ReputationPoints, 0) ReputationPoints, u.CreatedOnDate MemberSince, 
+		(SELECT COUNT(*) FROM Leaders) TotalLeaders
+	FROM Leaders l
+		JOIN {databaseOwner}{objectQualifier}Users u on l.UserId = u.UserId
+    WHERE [Rank] >= @PageLowerBound
+    ORDER BY [Rank] ASC
+END
+GO
+
+-- DROP PROCEDURE NOT USED ANY MORE
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Calculate_UserIfOlderThan]', 'P') IS NOT NULL
+    DROP PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Calculate_UserIfOlderThan]
+GO
+
+--DROP COLUMNS OF TABLE Analytics_Users
+IF COL_LENGTH('{databaseOwner}[{objectQualifier}Analytics_Users]', 'Contribution') IS NOT NULL
+	ALTER TABLE {databaseOwner}[{objectQualifier}Analytics_Users]
+	DROP COLUMN Contribution
+GO
+
+IF COL_LENGTH('{databaseOwner}[{objectQualifier}Analytics_Users]', 'Login') IS NOT NULL
+	ALTER TABLE {databaseOwner}[{objectQualifier}Analytics_Users]
+	DROP COLUMN Login
+GO
+
+IF COL_LENGTH('{databaseOwner}[{objectQualifier}Analytics_Users]', 'Influence') IS NOT NULL
+	ALTER TABLE {databaseOwner}[{objectQualifier}Analytics_Users]
+	DROP COLUMN Influence
+GO
+
+
+--DROP FUNCTIONS NOT USED ANY MORE
+IF OBJECT_ID('{databaseOwner}{objectQualifier}Analytics_Generate_Contribution_TimeSeries', 'TF') IS NOT NULL
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_Generate_Contribution_TimeSeries
+GO
+
+IF OBJECT_ID('{databaseOwner}{objectQualifier}Analytics_Calculate_User_Contribution', 'TF') IS NOT NULL
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_Calculate_User_Contribution
+GO
+
+IF OBJECT_ID('{databaseOwner}{objectQualifier}Analytics_Generate_Login_TimeSeries', 'TF') IS NOT NULL
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_Generate_Login_TimeSeries
+GO
+
+IF OBJECT_ID('{databaseOwner}{objectQualifier}Analytics_Calculate_User_Login', 'TF') IS NOT NULL
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_Calculate_User_Login
+GO
+
+/********************************************************
+ * SPROC: Analytics_Calculate_User
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Calculate_User]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Calculate_User] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Calculate_User]
+	@PortalId int,
+	@UserId int,
+	@InfluenceGoal int
+AS
+BEGIN
+	DECLARE @TotalSeconds bigint
+	DECLARE @Engagement xml
+
+	DECLARE @ExistingEngagement xml
+
+	DECLARE @InfluenceDaily INT
+	DECLARE @InfluenceWeekly INT
+	DECLARE @InfluenceMonthly INT
+	DECLARE @InfluenceYearly INT
+
+	DECLARE @LowerDaily DATETIME
+	DECLARE @UpperDaily DATETIME
+	DECLARE @LowerWeekly DATETIME
+	DECLARE @LowerMonthly DATETIME
+	DECLARE @LowerYearly DATETIME	
+
+	SET @UpperDaily = getutcdate()
+	SET @LowerDaily = dateadd(day, -1, @UpperDaily)
+	SET @LowerWeekly = dateadd(day, -7, @UpperDaily)
+	SET @LowerMonthly = dateadd(month, -1, @UpperDaily)
+	SET @LowerYearly = dateadd(year, -1, @UpperDaily)
+
+	-- Get all the Influence Data
+	DECLARE @ReputationPoints INT
+	SELECT @ReputationPoints = [ReputationPoints]
+	FROM {databaseOwner}[{objectQualifier}Mechanics_UserScoring]
+	WHERE [UserId] = @UserId AND [PortalId] = @PortalId
+
+	IF COALESCE(@ReputationPoints, 0) > 0
+		BEGIN
+			SELECT	@InfluenceYearly = {databaseOwner}{objectQualifier}Analytics_Calculate_User_Influence(@PortalId, @UserId, @LowerYearly, @UpperDaily)
+		END
+	ELSE
+		BEGIN
+			SELECT	@InfluenceYearly = 0
+		END
+
+	--Convert to Percentage
+	IF @InfluenceGoal = 0
+		SET @InfluenceGoal = 2000
+
+	SET @InfluenceDaily = 0
+	SET @InfluenceWeekly = 0
+	SET @InfluenceMonthly = 0
+	SET @InfluenceYearly = (@InfluenceYearly * 100) / @InfluenceGoal
+
+	SELECT	@TotalSeconds = COALESCE(SUM(CONVERT(bigint,COALESCE(TimeOnPage, 0))), 0)
+	FROM	{databaseOwner}[{objectQualifier}Analytics_Fact_Users]
+	WHERE	[PortalId] = @PortalId AND [UserId] = @UserId
+
+	-- Generate user time series XML documents
+	SELECT	@Engagement = {databaseOwner}{objectQualifier}Analytics_Generate_Engagement_TimeSeries(@PortalId, @UserId)
+
+	SELECT	@ExistingEngagement = N'<TimeSeries>' + CONVERT(NVARCHAR(MAX), @Engagement) + N'</TimeSeries>';
+	IF EXISTS(
+			SELECT	UserSampleId
+			FROM	{databaseOwner}[{objectQualifier}Analytics_Users] WITH(NOLOCK)
+			WHERE	[PortalId] = @PortalId AND [UserId] = @UserId)
+	BEGIN
+		UPDATE {databaseOwner}[{objectQualifier}Analytics_Users]
+			SET
+				[ProcessDate] = GETUTCDATE(),
+				[TotalSeconds] = @TotalSeconds,
+				[Engagement] = @ExistingEngagement,
+				[LastModified] = GETUTCDATE()
+		WHERE	[PortalId] = @PortalId AND [UserId] = @UserId
+	END
+	ELSE
+	BEGIN
+		INSERT INTO {databaseOwner}[{objectQualifier}Analytics_Users]
+			([PortalId],
+			 [UserId],
+			 [ProcessDate],
+			 [TotalSeconds],
+			 [Engagement],
+			 [LastModified])
+		VALUES
+			(@PortalId,
+			 @UserId,
+			 GETUTCDATE(),
+			 @TotalSeconds,
+			 @ExistingEngagement,
+			 GETUTCDATE())
+	END
+
+	IF EXISTS (SELECT * FROM {databaseOwner}{objectQualifier}Analytics_UserInfluenceRollup WITH(NOLOCK)
+				WHERE PortalId = @PortalId AND UserId = @UserId)
+		BEGIN
+			UPDATE {databaseOwner}{objectQualifier}Analytics_UserInfluenceRollup
+			SET InfluenceDaily = @InfluenceDaily,
+				InfluenceWeekly = @InfluenceWeekly,
+				InfluenceMonthly = @InfluenceMonthly,
+				InfluenceYearly = @InfluenceYearly
+			WHERE PortalId = @PortalId AND UserId = @UserId
+		END
+	ELSE
+		BEGIN
+			INSERT {databaseOwner}{objectQualifier}Analytics_UserInfluenceRollup(PortalId, UserId, InfluenceDaily, InfluenceWeekly, InfluenceMonthly, InfluenceYearly)
+			VALUES (@PortalId, @UserId, @InfluenceDaily, @InfluenceWeekly, @InfluenceMonthly, @InfluenceYearly)
+		END	
+END
+GO
+
+/********************************************************
+ * SPROC: Analytics_Get_User
+ ********************************************************/
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Get_User') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_User
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Get_User]
+	@PortalId int,
+	@UserId int
+AS
+BEGIN
+	SELECT	[UserSampleId],
+			[PortalId],
+			[UserId],
+			[ProcessDate],
+			[TotalSeconds],
+			[Engagement] AS [EngagementDocument],
+			[Activity] AS [ActivityDocument]
+	FROM	{databaseOwner}[{objectQualifier}Analytics_Users] WITH (NOLOCK)
+	WHERE	[PortalId] = @PortalId AND [UserId] = @UserId
+
+	SELECT InfluenceDaily, InfluenceWeekly, InfluenceMonthly, InfluenceYearly
+	FROM  {databaseOwner}{objectQualifier}Analytics_UserInfluenceRollup
+	WHERE PortalId = @PortalId AND UserId = @UserId
+END
+GO
+
+/********************************************************
+ * VIEW: Fact_Content
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}vw_Analytics_Warehouse_Fact_Content]', N'V') IS NOT NULL
+	DROP VIEW {databaseOwner}[{objectQualifier}vw_Analytics_Warehouse_Fact_Content]
+GO
+
+CREATE VIEW {databaseOwner}[{objectQualifier}vw_Analytics_Warehouse_Fact_Content]
+AS	
+	SELECT ContentId, UserId, CreateDate, DeleteDate
+	FROM {databaseOwner}{objectQualifier}Analytics_Fact_Answers
+	UNION
+	SELECT ContentId, UserId, CreateDate, DeleteDate
+	FROM {databaseOwner}{objectQualifier}Analytics_Fact_Blogs
+	UNION
+	SELECT ContentId, UserId, CreateDate, DeleteDate
+	FROM {databaseOwner}{objectQualifier}Analytics_Fact_Discussions
+	UNION
+	SELECT ContentId, UserId, CreateDate, DeleteDate
+	FROM {databaseOwner}{objectQualifier}Analytics_Fact_Events
+	UNION
+	SELECT ContentId, UserId, CreateDate, DeleteDate
+	FROM {databaseOwner}{objectQualifier}Analytics_Fact_Ideas
+	UNION
+	SELECT ContentId, UserId, CreateDate, DeleteDate
+	FROM {databaseOwner}{objectQualifier}Analytics_Fact_Wiki
+	UNION
+	SELECT ContentId, UserId, CreateDate, DeleteDate
+	FROM {databaseOwner}{objectQualifier}Analytics_Fact_Challenges
+GO
+
+IF OBJECT_ID(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_Calculate_TrendingTags', 'P') IS NOT NULL
+    DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Calculate_TrendingTags
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Warehouse_Calculate_TrendingTags]
+	@PortalId INT,
+	@LocalDate DATE,
+	@StartUtcDate DATETIME,
+	@EndUtcDate DATETIME
+AS 
+BEGIN
+	;WITH TrendingTags (DesktopModuleId, TermId, TermCount) AS
+	(
+		SELECT f.DesktopModuleId  as DesktopModuleId, tt.TermID as TermId, COUNT(tt.Name) AS TermCount
+		FROM  {databaseOwner}{objectQualifier}Analytics_Fact_UserScoringLog f
+			INNER JOIN {databaseOwner}{objectQualifier}Analytics_Dim_ActionType at ON f.ActionTypeId = at.ActionTypeId
+			INNER JOIN {databaseOwner}{objectQualifier}vw_Analytics_Warehouse_Fact_Content fc ON fc.ContentId = f.ContentId AND (fc.DeleteDate IS NULL OR fc.DeleteDate >= @EndUtcDate)
+			INNER JOIN {databaseOwner}{objectQualifier}ContentItems_Tags ct ON ct.ContentItemID = f.ContentId
+			INNER JOIN {databaseOwner}{objectQualifier}Taxonomy_Terms tt ON tt.TermID = ct.TermID AND tt.Name <> '' 
+		WHERE 
+			f.PortalId = @PortalId 
+			AND f.DesktopModuleId > 0
+			AND	f.[TimeStamp] >= @StartUtcDate AND f.[TimeStamp] < @EndUtcDate 
+			AND at.ActionType NOT IN ('Flagged', 'Deleted', 'Moderated')
+		GROUP BY f.DesktopModuleId, tt.TermID
+	)	
+	MERGE {databaseOwner}[{objectQualifier}Analytics_Fact_TrendingTags_Rollup] t
+		USING TrendingTags s
+		ON (t.PortalId = @PortalId AND t.DesktopModuleId = s.DesktopModuleId AND t.[Date] = @LocalDate AND t.TermId = s.TermId)
+	WHEN NOT MATCHED BY TARGET THEN
+		INSERT (PortalId, DesktopModuleId, [Date], TermId, TermCount)
+		VALUES (@PortalId, s.DesktopModuleId, @LocalDate, s.TermId, s.TermCount)
+	WHEN NOT MATCHED BY SOURCE AND t.TermCount <> 0  and t.[Date] = @LocalDate AND t.PortalId = @PortalId THEN
+		DELETE 
+	WHEN MATCHED THEN
+		UPDATE SET t.TermCount = s.TermCount;	
+END
+GO
+
+IF OBJECT_ID(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_Calculate_PopularContent', 'P') IS NOT NULL
+    DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Calculate_PopularContent
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Warehouse_Calculate_PopularContent]
+	@PortalId INT,
+	@LocalDate DATE,
+	@StartUtcDate DATETIME,
+	@EndUtcDate DATETIME
+AS 
+BEGIN
+	WITH PopularContent AS
+	(				
+		SELECT 
+			f.DesktopModuleId as DesktopModuleId,
+			f.ContentId as ContentItemId, 
+			COUNT(DISTINCT(CASE WHEN at.ActionType = 'Viewed' THEN -f.UserId ELSE f.UserScoringLogId END)) as ContentCount			
+		FROM {databaseOwner}{objectQualifier}Analytics_Fact_UserScoringLog f 
+			INNER JOIN {databaseOwner}{objectQualifier}Analytics_Dim_ActionType at ON f.ActionTypeId = at.ActionTypeId
+			INNER JOIN {databaseOwner}{objectQualifier}vw_Analytics_Warehouse_Fact_Content v ON f.ContentId = v.ContentId
+		WHERE at.ActionType NOT IN ('Flagged','Deleted','Moderated')
+			AND f.PortalId = @PortalId
+			AND f.DesktopModuleId > 0
+            AND f.[TimeStamp] >= @StartUtcDate AND f.[TimeStamp] < @EndUtcDate
+			AND v.CreateDate <= CONVERT(SMALLDATETIME, f.[TimeStamp])
+			AND (v.DeleteDate IS NULL OR v.DeleteDate >= @EndUtcDate)
+		GROUP BY f.DesktopModuleId, f.ContentId
+	)
+	MERGE {databaseOwner}[{objectQualifier}Analytics_Fact_PopularContent_Rollup] t
+		USING PopularContent s
+		ON (t.PortalId = @PortalId AND t.DesktopModuleId = s.DesktopModuleId AND t.[Date] = @LocalDate AND t.[ContentItemId] = s.[ContentItemId])
+	WHEN NOT MATCHED BY TARGET THEN
+		INSERT (PortalId,DesktopModuleId,Date,ContentItemId,ContentCount)
+		VALUES (@PortalId, s.[DesktopModuleId], @LocalDate, s.[ContentItemId], s.[ContentCount])
+	WHEN NOT MATCHED BY SOURCE AND t.ContentCount <> 0 and t.[Date] = @LocalDate AND t.PortalId = @PortalId THEN
+		DELETE 	
+	WHEN MATCHED THEN
+		UPDATE SET t.ContentCount = s.ContentCount;	
+END
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Get_Portal_Aggregate_PageTime]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Get_Portal_Aggregate_PageTime] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Get_Portal_Aggregate_PageTime]
+	@PortalId int,
+	@StartDateUtc SMALLDATETIME,
+	@EndDateUtc SMALLDATETIME,
+	@LocalDate DATETIME,
+	@Grouping CHAR(1)
+AS
+BEGIN
+	DECLARE @Results AS Table
+	(
+		[PortalId] INT,
+		[StartDate] DATETIME,
+		[EndDate] DATETIME,
+		[TabId] INT,
+		[AnonymousViews] BIGINT,
+		[AnonymousTotalSeconds] BIGINT,
+		[RegisteredViews] BIGINT,
+		[RegisteredTotalSeconds] BIGINT,
+		[TotalViews] BIGINT,
+		[TotalSeconds] BIGINT
+	)
+
+	DECLARE @Count INT = 1
+	DECLARE @MinDate DATETIME = @StartDateUtc 
+	DECLARE @MaxDate DATETIME = {databaseOwner}{objectQualifier}Analytics_IncrementDate(@StartDateUtc, @EndDateUtc, @Count, @Grouping)	
+
+	DECLARE @LocalDateDiff INT = DATEDIFF(minute, @EndDateUtc, @LocalDate)
+	DECLARE @MaxLocalDate DATETIME = DATEADD(minute, @LocalDateDiff, @EndDateUtc)	
+	DECLARE @LocalMinDate DATETIME = DATEADD(minute, @LocalDateDiff, @MinDate)
+	DECLARE @LocalMaxDate DATETIME = DATEADD(minute, @LocalDateDiff, @MaxDate)
+
+	WHILE @EndDateUtc > @MinDate 
+	BEGIN
+		DECLARE @MinDateId INT = DATEPART(year, @MinDate) * 1000000 + DATEPART(month, @MinDate) * 10000 + DATEPART(day, @MinDate) * 100 + DATEPART(hour, @MinDate)
+		DECLARE @MaxDateId INT = DATEPART(year, @MaxDate) * 1000000 + DATEPART(month, @MaxDate) * 10000 + DATEPART(day, @MaxDate) * 100 + DATEPART(hour, @MaxDate)
+
+		INSERT INTO @Results
+			SELECT @PortalId, @MinDate, @MaxDate, -1 AS [TabId],
+					COALESCE(SUM(CASE WHEN UserId <= 0 THEN PageViews ELSE 0 END), 0), -- @AnonymousViews
+					COALESCE(SUM(CASE WHEN UserId <= 0 THEN CONVERT(BIGINT,TimeOnPage) ELSE 0 END), 0), -- @AnonymousTotalSeconds
+					COALESCE(SUM(CASE WHEN UserId >  0 THEN PageViews ELSE 0 END), 0), -- @RegisteredViews
+					COALESCE(SUM(CASE WHEN UserId >  0 THEN CONVERT(BIGINT,TimeOnPage) ELSE 0 END), 0), -- @RegisteredTotalSeconds
+					COALESCE(SUM(PageViews), 0), -- TotalViews
+					COALESCE(SUM(CONVERT(BIGINT,TimeOnPage)), 0) -- @TotalSeconds
+			FROM {databaseOwner}[{objectQualifier}Analytics_Fact_Users] WITH (NOLOCK)
+			WHERE   [PortalId] = @PortalId
+				AND	([DateId] >= @MinDateId AND [DateId] < @MaxDateId)
+		OPTION (RECOMPILE);
+
+		-- INSERT ZERO VALUES
+		INSERT INTO @Results
+			SELECT @PortalId,  @MinDate, @MaxDate, -1 AS [TabId],
+			0, 0, 0, 0, 0, 0
+			WHERE NOT EXISTS (SELECT * FROM @Results r
+								WHERE r.[PortalId] = @PortalId AND
+								r.[StartDate] = @MinDate AND
+								r.[EndDate] = @MaxDate AND
+								r.[TabId] = -1)
+		OPTION (RECOMPILE);
+
+		SET @Count = @Count + 1
+		SET @MinDate = @MaxDate		
+		SET @MaxDate = {databaseOwner}{objectQualifier}Analytics_IncrementDate(@StartDateUtc, @EndDateUtc, @Count, @Grouping)	
+		
+		SET @LocalMinDate = @LocalMaxDate		
+		SET @LocalMaxDate = {databaseOwner}{objectQualifier}Analytics_IncrementDate(@LocalDate, @EndDateUtc, @Count, @Grouping)
+
+	END
+
+	SELECT * FROM @Results ORDER BY [StartDate]
+END
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Get_Module_Aggregate_PageTime]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Get_Module_Aggregate_PageTime] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Get_Module_Aggregate_PageTime]
+	@PortalId INT,
+	@StartDateUtc SMALLDATETIME,
+	@EndDateUtc SMALLDATETIME,
+	@LocalDate DATETIME,
+	@Grouping CHAR(1),
+	@ModuleTabs NVARCHAR(MAX)
+AS
+BEGIN
+
+	DECLARE @Results AS Table
+	(
+		[PortalId] INT,
+		[StartDate] DATETIME,
+		[EndDate] DATETIME,
+		[TabId] INT,
+		[AnonymousViews] BIGINT,
+		[AnonymousTotalSeconds] BIGINT,
+		[RegisteredViews] BIGINT,
+		[RegisteredTotalSeconds] BIGINT,
+		[TotalViews] BIGINT,
+		[TotalSeconds] BIGINT
+	)
+
+	DECLARE @Tabs AS TABLE (TabId INT)
+	INSERT INTO @Tabs (TabId)
+		SELECT val FROM {databaseOwner}{objectQualifier}Analytics_CsvSplit(@ModuleTabs, ',')
+	OPTION (RECOMPILE);
+
+	DECLARE @Count INT = 1
+	DECLARE @MinDate DATETIME = @StartDateUtc 
+	DECLARE @MaxDate DATETIME = {databaseOwner}{objectQualifier}Analytics_IncrementDate(@StartDateUtc, @EndDateUtc, @Count, @Grouping)	
+
+	DECLARE @LocalDateDiff INT = DATEDIFF(minute, @EndDateUtc, @LocalDate)
+	DECLARE @MaxLocalDate DATETIME = DATEADD(minute, @LocalDateDiff, @EndDateUtc)
+	DECLARE @LocalMinDate DATETIME = DATEADD(minute, @LocalDateDiff, @MinDate)
+	DECLARE @LocalMaxDate DATETIME = DATEADD(minute, @LocalDateDiff, @MaxDate)	
+
+	WHILE @EndDateUtc > @MinDate
+	BEGIN
+		DECLARE @MinDateId INT = DATEPART(year, @MinDate) * 1000000 + DATEPART(month, @MinDate) * 10000 + DATEPART(day, @MinDate) * 100 + DATEPART(hour, @MinDate)
+		DECLARE @MaxDateId INT = DATEPART(year, @MaxDate) * 1000000 + DATEPART(month, @MaxDate) * 10000 + DATEPART(day, @MaxDate) * 100 + DATEPART(hour, @MaxDate)
+
+		INSERT INTO @Results
+			SELECT @PortalId, @MinDate, @MaxDate, -1 AS [TabId],
+					COALESCE(SUM(CASE WHEN UserId <= 0 THEN PageViews ELSE 0 END), 0), -- @AnonymousViews
+					COALESCE(SUM(CASE WHEN UserId <= 0 THEN CONVERT(BIGINT,TimeOnPage) ELSE 0 END), 0), -- @AnonymousTotalSeconds
+					COALESCE(SUM(CASE WHEN UserId >  0 THEN PageViews ELSE 0 END), 0), -- @RegisteredViews
+					COALESCE(SUM(CASE WHEN UserId >  0 THEN CONVERT(BIGINT,TimeOnPage) ELSE 0 END), 0), -- @RegisteredTotalSeconds
+					COALESCE(SUM(PageViews), 0), -- TotalViews
+					COALESCE(SUM(CONVERT(BIGINT,TimeOnPage)), 0) -- @TotalSeconds
+			FROM {databaseOwner}[{objectQualifier}Analytics_Fact_Users] WITH (NOLOCK)
+			WHERE   [PortalId] = @PortalId
+				AND	([DateId] >= @MinDateId AND [DateId] < @MaxDateId)
+				AND	[PageId] IN (SELECT TabId FROM @Tabs)
+		OPTION (RECOMPILE);
+
+		-- INSERT ZERO VALUES
+		IF NOT EXISTS (
+			SELECT * FROM @Results r
+			WHERE r.[PortalId] = @PortalId AND
+			      r.[StartDate] = @MinDate AND
+				  r.[EndDate] = @MaxDate)
+			INSERT INTO @Results
+				SELECT @PortalId,  @MinDate, @MaxDate, -1,
+				0, 0, 0, 0, 0, 0
+
+		SET @Count = @Count + 1
+		SET @MinDate = @MaxDate		
+		SET @MaxDate = {databaseOwner}{objectQualifier}Analytics_IncrementDate(@StartDateUtc, @EndDateUtc, @Count, @Grouping)
+
+		SET @LocalMinDate = @LocalMaxDate		
+		SET @LocalMaxDate = {databaseOwner}{objectQualifier}Analytics_IncrementDate(@LocalDate, @EndDateUtc, @Count, @Grouping)
+
+	END
+
+	SELECT [PortalId], [StartDate], [EndDate], MIN([TabId]) AS [TabId],
+		COALESCE(SUM([AnonymousViews]), 0) AS [AnonymousViews],
+		COALESCE(SUM([AnonymousTotalSeconds]), 0) AS [AnonymousTotalSeconds],
+		COALESCE(SUM([RegisteredViews]), 0) AS [RegisteredViews],
+		COALESCE(SUM([RegisteredTotalSeconds]), 0) AS [RegisteredTotalSeconds],
+		COALESCE(SUM([TotalViews]), 0) AS [TotalViews],
+		COALESCE(SUM([TotalSeconds]), 0) AS [TotalSeconds]
+	FROM @Results
+	GROUP BY [PortalId], [StartDate], [EndDate]
+	ORDER BY [StartDate]
+END
+GO
+
+IF  EXISTS (SELECT 1 FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Users]')
+				AND name = N'IX_{objectQualifier}Analytics_Users_ProcessDate')
+	DROP INDEX IX_{objectQualifier}Analytics_Users_ProcessDate ON {databaseOwner}[{objectQualifier}Analytics_Users]
+GO
+
+IF  EXISTS (SELECT 1 FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Users]')
+				AND name = N'IX_{objectQualifier}Analytics_Users_PortalId_ProcessDate')
+	DROP INDEX IX_{objectQualifier}Analytics_Users_PortalId_ProcessDate ON {databaseOwner}[{objectQualifier}Analytics_Users]
+GO
+
+CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Analytics_Users_PortalId_ProcessDate] ON {databaseOwner}[{objectQualifier}Analytics_Users]
+(
+	[PortalId] ASC,
+	[ProcessDate] ASC
+)
+INCLUDE ([UserId], [LastModified])
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Get_DueUserTasks]', 'P') IS NOT NULL
+    DROP PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Get_DueUserTasks]
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_DueUserTasks
+	@PortalId int,
+	@BatchSize int
+AS
+BEGIN	
+	DECLARE @Pending int
+	DECLARE @beginDate DATETIME
+
+	--This code that check for less than 100 users to select them regardless of the time since the last update is for demo purposes
+	SELECT @Pending = Count(*) FROM {databaseOwner}[{objectQualifier}Analytics_Users] WITH (NOLOCK) WHERE [ProcessDate] IS NULL 
+	IF @Pending > 100
+		SET @beginDate = DATEADD(hour,-8,GETUTCDATE())
+	ELSE
+		SET @beginDate = GETUTCDATE()	
+
+	SELECT TOP (@BatchSize) [PortalId], [UserId]
+	FROM {databaseOwner}[{objectQualifier}Analytics_Users]  WITH (NOLOCK) 
+	WHERE	[PortalId] = @PortalId 
+		AND ([ProcessDate] IS NULL OR LastModified IS NULL OR LastModified < @beginDate)
+	ORDER BY LastModified
+END
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Get_DueUserCount]', 'P') IS NOT NULL
+    DROP PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Get_DueUserCount]
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_DueUserCount
+AS
+BEGIN
+	SELECT COUNT(*) AS Pending
+	FROM {databaseOwner}[{objectQualifier}Analytics_Users] WITH (NOLOCK) 
+	WHERE ([ProcessDate] IS NULL OR LastModified IS NULL OR LastModified < DATEADD(hour,-8,GETUTCDATE()))
+END
+GO
+
+IF OBJECT_ID(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_MigrateUserScoringLogEntry', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_MigrateUserScoringLogEntry
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_MigrateUserScoringLogEntry
+	@UserScoringLogId INT,    
+	@UserId INT,
+	@PortalId INT,
+	@ContentItemId INT,
+	@ScoringActionDefId INT,
+	@ExperiencePoints INT,
+	@ReputationPoints INT,
+	@CreatedOnDate DATETIME,
+	@GroupId INT			
+AS
+BEGIN					
+	DECLARE @ActionName NVARCHAR(50)
+	DECLARE @DesktopModuleId INT	
+	DECLARE @ActionType NVARCHAR(50)	
+	DECLARE @ActionTypeId INT
+	DECLARE @CommaSeparatedTags NVARCHAR(MAX) 
+	DECLARE @ContentType NVARCHAR(50)
+	DECLARE @TagGroupId INT
+	DECLARE @ContentTypeId INT
+	DECLARE @TagsTable TABLE
+	(
+		TagName NVARCHAR(50),
+		ContentType NVARCHAR(50)
+	);
+	SELECT @ActionName = ActionName, @DesktopModuleId = DesktopModuleId, @ActionTypeId = ActionType
+		FROM {databaseOwner}{objectQualifier}Mechanics_ScoringActionDefinition
+		WHERE ScoringActionDefId = @ScoringActionDefId
+
+	INSERT INTO @TagsTable (TagName,ContentType)
+	SELECT REPLACE(tt.Name,',',' '), ct.ContentType
+	FROM {databaseOwner}{objectQualifier}Taxonomy_Terms tt 
+		INNER JOIN {databaseOwner}{objectQualifier}ContentItems_Tags cit ON tt.TermID = cit.TermID 
+		INNER JOIN {databaseOwner}{objectQualifier}ContentItems ci ON cit.ContentItemID = ci.ContentItemID 
+		INNER JOIN {databaseOwner}{objectQualifier}ContentTypes ct ON ci.ContentTypeID = ct.ContentTypeID
+		WHERE ci.ContentItemID = @ContentItemId
+	SELECT @CommaSeparatedTags = STUFF((SELECT  ',' + TagName FROM @TagsTable FOR XML PATH('')), 1, 1, '')
+	SELECT TOP(1) @ContentType = ContentType FROM @TagsTable
+	SET @ContentType = COALESCE(@ContentType,'');
+	SET @CommaSeparatedTags = COALESCE(@CommaSeparatedTags,'');
+
+	--Ensure action definition dimension exists
+	EXECUTE {databaseOwner}{objectQualifier}Analytics_Warehouse_AddActionDefinition
+		@ScoringActionDefId,
+		@ActionName,
+		@DesktopModuleId;
+
+	--Ensure content type dimension exists
+	EXECUTE {databaseOwner}{objectQualifier}Analytics_Warehouse_AddContentType
+		@ContentType,
+		@ContentTypeId OUTPUT
+
+	--Ensure tag group dimension exists
+	EXECUTE {databaseOwner}{objectQualifier}Analytics_Warehouse_AddTagsAndTagGroup
+		@CommaSeparatedTags,
+		@TagGroupId OUTPUT;
+
+	INSERT INTO {databaseOwner}{objectQualifier}Analytics_Fact_UserScoringLog (
+		UserScoringLogId, 
+		UserId,
+		ActionDefinitionId,
+		TimeStamp,
+		ContentId,
+		DesktopModuleId,
+		TagGroupId,
+		PortalId,
+		ActionTypeId,
+		ContentTypeId,
+		GroupId,
+		ExperiencePoints,
+		ReputationPoints)
+	VALUES(
+		@UserScoringLogId, 
+		@UserId,
+		@ScoringActionDefId,
+		@CreatedOnDate,
+		@ContentItemId,
+		@DesktopModuleId,
+		@TagGroupId,
+		@PortalId,
+		@ActionTypeId,
+		@ContentTypeId,
+		@GroupId,
+		@ExperiencePoints,
+		@ReputationPoints);
+
+	--Clear Process Flag in Analytics_Users table
+	DECLARE @UserSampleId INT
+	DECLARE @ProcessDate DATETIME
+	SELECT @UserSampleId = UserSampleId, @ProcessDate = ProcessDate 
+	FROM {databaseOwner}[{objectQualifier}Analytics_Users]
+	WHERE PortalId = @PortalId AND UserId = @UserId
+
+	IF @UserSampleId IS NULL
+	BEGIN
+		INSERT INTO {databaseOwner}[{objectQualifier}Analytics_Users]([PortalId], [UserId], [ProcessDate], [TotalSeconds], [Engagement], [Activity], [LastModified])
+		VALUES (@PortalId, @UserId, NULL, 0, NULL, NULL, GETUTCDATE())
+	END
+
+	IF @UserSampleId IS NOT NULL AND @ProcessDate IS NOT NULL
+	BEGIN
+		UPDATE {databaseOwner}[{objectQualifier}Analytics_Users]
+		SET ProcessDate = NULL
+		WHERE UserSampleId = @UserSampleId
+	END
+END
+GO
+
+--Remove data from Activity column by dropping and adding it again, which is very fast
+IF COL_LENGTH('{databaseOwner}[{objectQualifier}Analytics_Users]', 'Activity') IS NOT NULL
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}Analytics_Users]
+	DROP COLUMN [Activity]
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Analytics_Users] 
+	ADD [Activity] xml NULL
+END
+GO

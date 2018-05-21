@@ -1,0 +1,50 @@
+﻿@inherits DotNetNuke.Web.Razor.DotNetNukeWebPage<EasyDNNSolutions.WebApi.EasyDNNsimpleForum.Models.CategoryViewMeta>
+@using EasyDNNSolutions.WebApi.EasyDNNsimpleForum.Models;
+
+<tr class="edsf_color_@Model.Category.Color@(@Model.CanEdit ? @Html.Raw(" edsf_canEdit") : null)">
+	<td class="edsf_name edsf_textLeft">
+		@if (@Model.CanEdit)
+		{
+			<a class="edsf_editButton" data-eds_linkinfo="@Model.EditLinkInfo.ToJson()" href="@Model.EditLinkInfo.Url">@Html.GetLocalizedString("edit.Text")</a>
+		}
+		<div class="edsf_icons">
+			@if(@Model.Category.LockType != LockType.Disabled)
+			{
+				if (@Model.Category.HasViewPermissions)
+				{
+					<span class="edsf_locked">@Html.GetLocalizedString("unlockedCategory.Text")<i class="fa fa-unlock-alt"></i></span>
+				}
+				else
+				{
+					<span class="edsf_locked">@Html.GetLocalizedString("lockedCategory.Text")<i class="fa fa-lock"></i></span>
+				}
+			}
+			<a class="edsf_rssLink" target="_blank" href="@Model.RssFeedUrl"><i class="fa fa-rss-square"></i>@Html.GetLocalizedString("rss.Text")</a>
+		</div>
+		<div class="edsf_titleDescriptionWrapper">
+			<h3 class="edsf_itemTitle"><a data-eds_linkinfo="@Model.ViewLinkInfo.ToJson()" href="@Model.ViewLinkInfo.Url">@Model.Category.Name</a></h3>
+			<div class="edsf_itemDescription">
+				@Html.Raw(@Model.Category.Description)
+			</div>
+		</div>
+		@if (@Model.CanEdit)
+		{
+			<span class="edsf__draggableIndicator edsf_dragIcon"></span>
+		}
+	</td>
+	<td class="edsf_topicsCount">
+		<strong class="edsf_visibleMdInline">@Html.GetLocalizedString("topics.Text"): </strong>@Html.Raw(Model.TopicsCount.ToString())
+	</td>
+	<td class="edsf_commentsCount">
+		<strong class="edsf_visibleMdInline">@Html.GetLocalizedString("comments.Text"): </strong>@Html.Raw(Model.CommentsCount.ToString())
+	</td>
+	<td class="edsf_activity">
+		@if (@Model.LastActivity != null)
+		{
+			<strong class="edsf_visibleMdInline">@Html.GetLocalizedString("activity.Text"): </strong><span data-activityTimestampInfo="@Model.ActivityTimestampInfo.ToJson()"><span>time</span></span>
+		} else {
+			<strong class="edsf_visibleMdInline">@Html.GetLocalizedString("activity.Text"): </strong><span>@Html.GetLocalizedString("noActivity.Text")</span>
+		}
+	</td>
+</tr>
+

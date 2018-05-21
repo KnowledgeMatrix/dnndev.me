@@ -1,0 +1,20 @@
+﻿/* Group Mode setting migration to make it reentrant */
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Settings_GetUpgradeTransfer') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Settings_GetUpgradeTransfer
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Blogs_Settings_GetUpgradeTransfer]
+AS 
+	INSERT INTO {databaseOwner}{objectQualifier}ModuleSettings 
+		(ModuleID, SettingName, SettingValue, CreatedByUserID, CreatedOnDate, LastModifiedByUserID, LastModifiedOnDate)
+	SELECT 
+		ModuleID, 'BLOG_FILTERMODE', '1', -1, GETUTCDATE(), -1, GETUTCDATE()
+	FROM    {databaseOwner}{objectQualifier}Blogs_Setting BS
+		INNER JOIN {databaseOwner}{objectQualifier}TabModules TM ON BS.TabId = TM.TabID
+		AND		[Key] = 'BLOG_FILTERMODE'
+		AND		[Value] = '1'
+	WHERE NOT EXISTS (SELECT [ModuleID] FROM {databaseOwner}[{objectQualifier}ModuleSettings] ms2 WHERE ms2.ModuleID = TM.ModuleID AND ms2.SettingName = 'BLOG_FILTERMODE')
+
+	DELETE FROM    {databaseOwner}{objectQualifier}Blogs_Setting
+		WHERE  [KEY] IN ('EnablePlusOne', 'EnableTwitter', 'EnableLinkedIn', 'FacebookAppId', 'SocialSharingMode', 'ShowSeoFriendlyUrl')
+GO

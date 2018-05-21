@@ -1,0 +1,43 @@
+﻿@using System
+@inherits DotNetNuke.Web.Razor.DotNetNukeWebPage<EasyDNNSolutions.WebApi.EasyDNNsimpleForum.Common.ForumViewMeta>
+
+<div class="edsf_headerActions">
+	<div class="edsf__styledSearch">
+		<span class="edsf__searchTrigger"><i class="edsf_open fa fa-search"></i><i class="edsf_close fa fa-times"></i></span>
+		<div>
+			<input type="search" name="search" placeholder="@Html.GetLocalizedString("search.Placeholder")" id="@Model.SearchAction.InputId">
+			<label for="@Model.SearchAction.InputId">@Html.GetLocalizedString("search.Text")</label>
+			<button type="button" data-eds_linkinfo="@Model.SearchAction.ToJson()">@Html.GetLocalizedString("search.Text")</button>
+		</div>
+	</div>
+	@Html.Raw(@Model.DropDownListCategorySelection)
+	<div class="edsf_headerButtonActions">
+		<a class="edsf_button edsf_smallWide edsf_green edsf__latestButton" data-eds_linkinfo="@Model.LatestTopicsAction.ToJson()" href="#">@Html.GetLocalizedString("latest.Text")</a>
+		<a class="edsf_button edsf_smallWide edsf_blue edsf__topButton" data-eds_linkinfo="@Model.TopTopicsAction.ToJson()" href="#">@Html.GetLocalizedString("top.Text")</a>
+		<a class="edsf_button edsf_smallWide edsf_orange edsf_icon edsf_categoriesButton" data-eds_linkinfo="@Model.CategoriesLinkInfo.ToJson()" href="@Model.CategoriesLinkInfo.Url"><i class="fa fa-bars"></i>@Html.GetLocalizedString("categories.Text")</a>
+		@if (@Model.CanAddCategory)
+		{
+			<a class="edsf_button edsf_icon edsf_smallWide edsf_green edsf_addCategoryAdminButton" data-eds_linkinfo="@Model.CategoryEditorLinkInfo.ToJson()" href="@Model.CategoryEditorLinkInfo.Url"><i class="fa fa-plus"></i>@Html.GetLocalizedString("addCategory.Text")</a>
+		}
+		@if (@Model.CanAddTopic)
+		{
+			<a class="edsf_button edsf_smallWide edsf_icon edsf_addTopicCanAddButton" data-eds_linkinfo="@Model.TopicEditorLinkInfo.ToJson()" href="@Model.TopicEditorLinkInfo.Url"><i class="fa fa-plus"></i>@Html.GetLocalizedString("addTopic.Text")</a>
+		}
+		@if (@Model.CanEditSettings)
+		{
+			<a class="edsf_button edsf_icon edsf_smallWide edsf_noText edsf_grey edsf_settingsAdminButton" data-eds_linkinfo="@Model.SettingsEditorLinkInfo.ToJson()" href="@Model.SettingsEditorLinkInfo.Url"><i class="fa fa-cog"></i>@Html.GetLocalizedString("settings.Text")</a>
+		}
+	</div>
+</div>
+
+<table class="edsf_table edsf_topics">
+	<thead>
+		<tr>
+			<th class="edsf_name edsf_textLeft">@Html.GetLocalizedString("topics.Text")</th>
+			<th class="edsf_topicsUsers">@Html.GetLocalizedString("topicUsers.Text")</th>
+			<th class="edsf_views">@Html.GetLocalizedString("views.Text")</th>
+			<th class="edsf_commentsCount">@Html.GetLocalizedString("comments.Text")</th>
+			<th class="edsf_activity">@Html.GetLocalizedString("activity.Text")</th>
+		</tr>
+	</thead>
+	<tbody class="edsf__topicListWrapper">

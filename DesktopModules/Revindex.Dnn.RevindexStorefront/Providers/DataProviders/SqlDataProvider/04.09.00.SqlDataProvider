@@ -1,0 +1,263 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+SET XACT_ABORT ON
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+	
+	-- Support gift registry	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_WishList ADD Published bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_WishList_Published DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_WishList DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_WishList_Published
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_WishList ADD WishListType int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_WishList_WishListType DEFAULT 1
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_WishList DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_WishList_WishListType
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_WishList DROP COLUMN WishListDate
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_WishList ADD
+		EventDate datetime NULL,
+		PersonalMessage xml NULL,
+		EventCity nvarchar(50) NULL,
+		EventSubdivisionCode varchar(6) NULL,
+		EventCountryCode varchar(2) NULL,
+		RegistrantFirstName nvarchar(50) NULL,
+		RegistrantLastName nvarchar(50) NULL,
+		Registrant2FirstName nvarchar(50) NULL,
+		Registrant2LastName nvarchar(50) NULL,
+		ShippingFirstName nvarchar(50) NULL,
+		ShippingLastName nvarchar(50) NULL,
+		ShippingCompany nvarchar(50) NULL,
+		ShippingStreet nvarchar(200) NULL,
+		ShippingCity nvarchar(50) NULL,
+		ShippingSubdivisionCode varchar(6) NULL,
+		ShippingPostalCode varchar(10) NULL,
+		ShippingCountryCode varchar(2) NULL,
+		ShippingPhone varchar(50) NULL,
+		ShippingEmail nvarchar(256) NULL
+		
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_WishListDetail ADD DesiredQuantity int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_WishListDetail_DesiredQuantity DEFAULT 1
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_WishListDetail DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_WishListDetail_DesiredQuantity
+		
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder ADD WishListID int NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder ADD CONSTRAINT FK_{objectQualifier}Revindex_Storefront_SalesOrder_Revindex_Storefront_WishList FOREIGN KEY (WishListID) REFERENCES {databaseOwner}{objectQualifier}Revindex_Storefront_WishList (WishListID) ON UPDATE NO ACTION ON DELETE NO ACTION 
+	
+	CREATE NONCLUSTERED INDEX IX_{objectQualifier}Revindex_Storefront_SalesOrder_5 ON {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder (WishListID) 
+	
+	-- Support public wish list module control
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD WishListDisplayTemplate varchar(255) NULL
+	
+	-- Allow NULL in SKU
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrderDetail ALTER COLUMN SKU VARCHAR(50) NULL
+	
+	-- Support Authorization or Purchase mode for credit card checkout. Defaults to Purchase.
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentMethodsCreditCardTransactionType int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsCreditCardTransactionType DEFAULT 2
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsCreditCardTransactionType
+	
+	-- Support Chase Paymentech Orbital Gateway Salem implementation
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysChasePaymentechOGBin varchar(255) NULL
+	
+	-- Custom product detail page by product
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Product ADD	ProductDetailUrl varchar(255) NULL
+	
+COMMIT TRANSACTION
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+		
+		-- Upgrade default Cart template to "Standard7"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CartDisplayTemplate = 'Standard7' WHERE CartDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default Checkout template to "Standard13"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CheckoutDisplayTemplate = 'Standard13' WHERE CheckoutDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default Confirmation template to "Standard8"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ConfirmationDisplayTemplate = 'Standard8' WHERE ConfirmationDisplayTemplate LIKE 'Standard%'
+		
+		-- Set WishList default template "Standard1"
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration SET WishListDisplayTemplate = 'Standard1'
+		
+		-- Initialize WishList data
+		UPDATE wl
+		SET wl.RegistrantFirstName = u.FirstName, 
+			wl.RegistrantLastName = u.LastName, 
+			wl.ShippingCity = '',
+			wl.ShippingCompany = '',
+			wl.ShippingCountryCode = 'US', 
+			wl.ShippingEmail = '',
+			wl.ShippingFirstName = u.FirstName,
+			wl.ShippingLastName = u.LastName,
+			wl.ShippingPhone = '',
+			wl.ShippingStreet = '',
+			wl.ShippingSubdivisionCode = NULL
+		FROM {databaseOwner}{objectQualifier}Revindex_Storefront_WishList wl
+		JOIN {databaseOwner}{objectQualifier}Users u
+		ON u.UserID = wl.UserID 
+		
+		-- Update report to handle Declined payment status
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ReportDefinition 
+		SET DefinitionRule = N'<rule version="1.0" type="data">&lt;data method="ReportDefinition" version="1.0"&gt;
+		  &lt;dataSources&gt;
+			&lt;sqlDataSource&gt;
+			  &lt;query&gt;SELECT 
+			so.OrderDate,
+			so.SalesOrderID,
+			CASE so.Status
+				WHEN 1 THEN ''Pending''
+				WHEN 2 THEN ''Ordered''
+				WHEN 3 THEN ''Processing''
+				WHEN 4 THEN ''Completed''
+				WHEN 5 THEN ''Cancelled''
+				WHEN 6 THEN ''Declined''
+				ELSE ''Unknown''
+			END AS [Status],
+			CASE so.SalesPaymentStatus
+				WHEN 1 THEN ''Pending''
+				WHEN 2 THEN ''Paid''
+				WHEN 3 THEN ''Cancelled''
+				WHEN 4 THEN ''Refunded''
+				WHEN 5 THEN ''Declined''
+				ELSE ''Unknown''
+			END AS [SalesPaymentStatus],
+			CASE so.ShippingStatus
+				WHEN 1 THEN ''Not required''
+				WHEN 2 THEN ''Not shipped''
+				WHEN 3 THEN ''Shipped''
+				WHEN 4 THEN ''Undeliverable''
+				ELSE ''Unknown''
+			END AS [ShippingStatus],
+			so.SubTotalAmount, 
+			so.ShippingAmount + so.ShippingDiscountAmount AS ShippingAmount, 
+			so.HandlingAmount + so.HandlingDiscountAmount AS HandlingAmount, 
+			so.TaxAmount1 + so.TaxAmount2 + so.TaxAmount3 + so.TaxAmount3 + so.TaxAmount4 + so.TaxAmount5 + so.TaxDiscountAmount AS TaxAmount, 
+			so.TotalAmount
+		FROM {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder so
+		WHERE PortalID = @PortalID AND OrderDate BETWEEN @StartDate AND @StopDate
+		ORDER BY so.OrderDate&lt;/query&gt;
+			  &lt;parameters&gt;
+				&lt;controlParameter&gt;
+				  &lt;name&gt;@StartDate&lt;/name&gt;
+				  &lt;dataType&gt;6&lt;/dataType&gt;
+				  &lt;field&gt;
+					&lt;datePicker&gt;
+					  &lt;id&gt;StartDateDatePicker&lt;/id&gt;
+					  &lt;inputControlHeight&gt;&lt;/inputControlHeight&gt;
+					  &lt;inputControlWidth&gt;&lt;/inputControlWidth&gt;
+					  &lt;label&gt;
+						&lt;locale en-US="Start date:" /&gt;
+					  &lt;/label&gt;
+					  &lt;required&gt;True&lt;/required&gt;
+					  &lt;selectedDates /&gt;
+					  &lt;validatorText&gt;
+						&lt;locale en-US="Start date is required." /&gt;
+					  &lt;/validatorText&gt;
+					&lt;/datePicker&gt;
+				  &lt;/field&gt;
+				&lt;/controlParameter&gt;
+				&lt;controlParameter&gt;
+				  &lt;name&gt;@StopDate&lt;/name&gt;
+				  &lt;dataType&gt;6&lt;/dataType&gt;
+				  &lt;field&gt;
+					&lt;datePicker&gt;
+					  &lt;id&gt;StopDateDatePicker&lt;/id&gt;
+					  &lt;inputControlHeight&gt;&lt;/inputControlHeight&gt;
+					  &lt;inputControlWidth&gt;&lt;/inputControlWidth&gt;
+					  &lt;label&gt;
+						&lt;locale en-US="Stop date:" /&gt;
+					  &lt;/label&gt;
+					  &lt;required&gt;True&lt;/required&gt;
+					  &lt;selectedDates /&gt;
+					  &lt;validatorText&gt;
+						&lt;locale en-US="Stop date is required." /&gt;
+					  &lt;/validatorText&gt;
+					&lt;/datePicker&gt;
+				  &lt;/field&gt;
+				&lt;/controlParameter&gt;
+				&lt;variableParameter&gt;
+				  &lt;name&gt;@PortalID&lt;/name&gt;
+				  &lt;dataType&gt;11&lt;/dataType&gt;
+				  &lt;variableName&gt;Portal:PortalID&lt;/variableName&gt;
+				&lt;/variableParameter&gt;
+			  &lt;/parameters&gt;
+			&lt;/sqlDataSource&gt;
+		  &lt;/dataSources&gt;
+		  &lt;visualizers&gt;
+			&lt;htmlVisualizer&gt;
+			  &lt;html&gt;&amp;lt;table cellspacing="0" cellpadding="3" bgcolor="#eeeeee" style="width: 100%; border-top: 1px solid #cccccc; border-left: 1px solid #cccccc; border-right: 1px solid #cccccc;"&amp;gt;
+			&amp;lt;colgroup&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;/colgroup&amp;gt;
+			&amp;lt;tbody&amp;gt;
+				&amp;lt;tr&amp;gt;
+					&amp;lt;td style="width: 10%;"&amp;gt;&amp;lt;strong&amp;gt;Date&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%;"&amp;gt;&amp;lt;strong&amp;gt;Order ID&amp;lt;br /&amp;gt;
+					&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%;"&amp;gt;&amp;lt;strong&amp;gt;Status&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%;"&amp;gt;&amp;lt;strong&amp;gt;Payment status&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%;"&amp;gt;&amp;lt;strong&amp;gt;Shipping status &amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%;"&amp;gt;&amp;lt;strong&amp;gt;Sub-total amount&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%;"&amp;gt;&amp;lt;strong&amp;gt;Shipping amount&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%;"&amp;gt;&amp;lt;strong&amp;gt;Handling amount&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%;"&amp;gt;&amp;lt;strong&amp;gt;Tax amount&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%;"&amp;gt;&amp;lt;strong&amp;gt;Total amount &amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+				&amp;lt;/tr&amp;gt;
+			&amp;lt;/tbody&amp;gt;
+		&amp;lt;/table&amp;gt;
+		[[xsl:for-each select="/in/dataSet/dataTable/dataRow" ]]
+		&amp;lt;table cellspacing="0" cellpadding="3" style="width: 100%;"&amp;gt;
+			&amp;lt;colgroup&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;/colgroup&amp;gt;
+			&amp;lt;tbody&amp;gt;
+				&amp;lt;tr&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="substring(OrderDate,1,10)" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="SalesOrderID" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="Status" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="SalesPaymentStatus" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="ShippingStatus" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(SubTotalAmount, ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(ShippingAmount, ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(HandlingAmount, ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(TaxAmount, ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(TotalAmount, ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+				&amp;lt;/tr&amp;gt;
+			&amp;lt;/tbody&amp;gt;
+		&amp;lt;/table&amp;gt;
+		[[/xsl:for-each]]
+		&amp;lt;table cellspacing="0" cellpadding="3" style="width: 100%; border-top: 4px double black;"&amp;gt;
+			&amp;lt;colgroup&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;/colgroup&amp;gt;
+			&amp;lt;tbody&amp;gt;
+				&amp;lt;tr&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt; &amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt; &amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt; &amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt; &amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt; &amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(sum(/in/dataSet/dataTable/dataRow/SubTotalAmount), ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(sum(/in/dataSet/dataTable/dataRow/ShippingAmount), ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(sum(/in/dataSet/dataTable/dataRow/HandlingAmount), ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(sum(/in/dataSet/dataTable/dataRow/TaxAmount), ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 10%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(sum(/in/dataSet/dataTable/dataRow/TotalAmount), ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+				&amp;lt;/tr&amp;gt;
+			&amp;lt;/tbody&amp;gt;
+		&amp;lt;/table&amp;gt;&lt;/html&gt;
+			&lt;/htmlVisualizer&gt;
+		  &lt;/visualizers&gt;
+		&lt;/data&gt;</rule>'
+		WHERE ReportDefinitionGUID = N'476bc7cb-7a24-4875-8c0f-c812cbb10566'
+		
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

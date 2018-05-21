@@ -1,0 +1,65 @@
+@using System.Dynamic; 
+@using CartViper.Modules.Store.Catalog; 
+@using CartViper.Modules.Store.Catalog.Templates;
+@using DotNetNuke.Common;
+@using CartViper.Modules.Store.Admin;
+@using CartViper.Modules.Store.WebControls;
+@using System.Web.UI.HtmlControls;
+@using CartViper.Modules.Store.Extensions;
+
+@inherits DotNetNuke.Web.Razor.DotNetNukeWebPage<dynamic>
+
+@{
+	//get access to the head and set the canonical url so we don't
+	//lose SEO
+	try{
+		if(Model.Category != null || Model.Product != null){
+			var catNav = new CatalogNavigation(Request.QueryString);
+			
+			var canonicalUrl = catNav.CanonicalUrl();
+			if(canonicalUrl != null){
+				HtmlLink ctrlCanonical = new HtmlLink();
+				ctrlCanonical.Attributes.Add("rel", "canonical");
+				ctrlCanonical.Attributes.Add("href", canonicalUrl);
+				
+				this.Head().Controls.Add(ctrlCanonical);
+			}
+			
+			//are we paging in a category?
+			//if we are lets add some code to allow crawlers to
+			//to find the next and prev page in the chain
+			if(this.ModelHasProperty("CurrentPage") &&
+				this.ModelHasProperty("TotalPages"))
+			{
+				//we have some paging, so lets get output
+				//the prev and next links as required
+                //paging is zero index based
+				int currentPage = int.Parse(Model.CurrentPage);
+				int totalPages = int.Parse(Model.TotalPages);
+				
+                //make the currentPage one based since this
+                //is what we use in the urls
+                currentPage++;
+                                
+				if(currentPage > 1){
+					//show prev link
+					HtmlLink ctrlCanonical = new HtmlLink();
+					ctrlCanonical.Attributes.Add("rel", "prev");
+					ctrlCanonical.Attributes.Add("href", CategoryPagingHelper.GeneratePagingUrl(Dnn.Portal.PortalId, Dnn.Tab.TabID, currentPage - 1));
+					
+					this.Head().Controls.Add(ctrlCanonical);
+				}
+				
+				if(currentPage < totalPages){
+					//show next link
+					HtmlLink ctrlCanonical = new HtmlLink();
+					ctrlCanonical.Attributes.Add("rel", "next");
+					ctrlCanonical.Attributes.Add("href", CategoryPagingHelper.GeneratePagingUrl(Dnn.Portal.PortalId, Dnn.Tab.TabID, currentPage + 1));
+					
+					this.Head().Controls.Add(ctrlCanonical);
+				}
+			}
+		}
+	}catch(Exception){
+	}
+}	

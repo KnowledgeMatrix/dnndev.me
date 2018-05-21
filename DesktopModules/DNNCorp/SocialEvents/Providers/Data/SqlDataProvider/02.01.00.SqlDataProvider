@@ -1,0 +1,70 @@
+﻿/********************************************************
+ * INDEX: SocialEvents_Guest_EventId
+ ********************************************************/
+ IF NOT EXISTS (SELECT 1 FROM sys.indexes
+				WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SocialEvents_Guest]')
+				AND name = N'IX_{objectQualifier}SocialEvents_Guest_EventId')
+    CREATE NONCLUSTERED INDEX [IX_{objectQualifier}SocialEvents_Guest_EventId]
+		ON {databaseOwner}[{objectQualifier}SocialEvents_Guest] ([EventId])
+GO
+
+/********************************************************
+ * INDEX: SocialEvents_Guest_UserId
+ ********************************************************/
+ IF NOT EXISTS (SELECT 1 FROM sys.indexes
+				WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SocialEvents_Guest]')
+				AND name = N'IX_{objectQualifier}SocialEvents_Guest_UserId')
+    CREATE NONCLUSTERED INDEX [IX_{objectQualifier}SocialEvents_Guest_UserId]
+		ON {databaseOwner}[{objectQualifier}SocialEvents_Guest] ([UserId])
+GO
+
+/********************************************************
+ * SPROC: SocialEvents_Guest_RemoveByUserId
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}SocialEvents_Guest_RemoveByUserId]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Guest_RemoveByUserId] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Guest_RemoveByUserId]
+	@PortalId INT,
+	@UserId INT
+AS
+BEGIN
+	
+	Update {databaseOwner}{objectQualifier}SocialEvents_Event
+	Set Attending = Attending - 1
+	Where EventId IN (
+				SELECT DISTINCT e.EventId FROM {databaseOwner}{objectQualifier}SocialEvents_Guest g WITH(NOLOCK)
+					INNER JOIN {databaseOwner}{objectQualifier}SocialEvents_Event e WITH(NOLOCK)
+						ON g.EventId = e.EventId AND e.PortalId = @PortalId
+				WHERE g.UserId = @UserId AND g.RsvpStatus = 1
+		)
+
+	Update {databaseOwner}{objectQualifier}SocialEvents_Event
+	Set MayAttend = MayAttend - 1
+	Where EventId IN (
+				SELECT DISTINCT e.EventId FROM {databaseOwner}{objectQualifier}SocialEvents_Guest g WITH(NOLOCK)
+					INNER JOIN {databaseOwner}{objectQualifier}SocialEvents_Event e WITH(NOLOCK)
+						ON g.EventId = e.EventId AND e.PortalId = @PortalId
+				WHERE g.UserId = @UserId AND g.RsvpStatus = 2
+		)
+
+	Update {databaseOwner}{objectQualifier}SocialEvents_Event
+	Set NotAttending = NotAttending - 1
+	Where EventId IN (
+				SELECT DISTINCT e.EventId FROM {databaseOwner}{objectQualifier}SocialEvents_Guest g WITH(NOLOCK)
+					INNER JOIN {databaseOwner}{objectQualifier}SocialEvents_Event e WITH(NOLOCK)
+						ON g.EventId = e.EventId AND e.PortalId = @PortalId
+				WHERE g.UserId = @UserId AND g.RsvpStatus = 3
+		)
+	
+	DELETE FROM {databaseOwner}{objectQualifier}SocialEvents_Guest
+	WHERE	UserId = @UserId
+	  AND	EventId IN (
+				SELECT DISTINCT e.EventId FROM {databaseOwner}{objectQualifier}SocialEvents_Guest g WITH(NOLOCK)
+					INNER JOIN {databaseOwner}{objectQualifier}SocialEvents_Event e WITH(NOLOCK)
+						ON g.EventId = e.EventId AND e.PortalId = @PortalId
+				WHERE g.UserId = @UserId
+			)
+END
+GO

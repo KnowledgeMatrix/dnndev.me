@@ -1,0 +1,49 @@
+﻿/********************************************************
+ * SPROC: Wiki_RemoveObsoletePermissions
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Wiki_RemoveObsoletePermissions]', N'P') IS NULL
+    EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Wiki_RemoveObsoletePermissions] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Wiki_RemoveObsoletePermissions]
+   @DesktopModuleId int,
+   @PrivilegeName nvarchar(100),
+   @PermissionCode nvarchar(100),
+   @PermissionKey nvarchar(100)
+AS
+BEGIN TRY
+	BEGIN TRANSACTION
+
+	UPDATE {databaseOwner}{objectQualifier}Mechanics_PrivilegeDefinition
+	SET DefaultReputationPoints = 10
+	WHERE DesktopModuleId = @DesktopModuleId
+		AND PrivilegeName = @PrivilegeName
+		AND DefaultReputationPoints = 0
+
+	DECLARE @PermissionID int
+
+	SELECT @PermissionID = PermissionID FROM {databaseOwner}{objectQualifier}Permission
+	WHERE PermissionCode = @PermissionCode
+		AND PermissionKey = @PermissionKey
+
+	IF @PermissionID IS NOT NULL
+	BEGIN
+		DELETE FROM {databaseOwner}{objectQualifier}ModulePermission
+		WHERE PermissionID = @PermissionID
+
+		DELETE FROM {databaseOwner}{objectQualifier}DesktopModulePermission
+		WHERE PermissionID = @PermissionID
+
+		DELETE FROM {databaseOwner}{objectQualifier}Permission
+		WHERE PermissionID = @PermissionID
+	END
+
+	COMMIT TRANSACTION
+	SELECT @@ROWCOUNT AS [TotalDeleted]
+END TRY
+BEGIN CATCH
+	ROLLBACK TRANSACTION
+	RAISERROR('Unable to delete permissions with code%s and key=%s', @PermissionCode, @PermissionKey)
+END CATCH
+
+GO

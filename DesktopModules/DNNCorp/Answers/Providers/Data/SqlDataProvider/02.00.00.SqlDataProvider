@@ -1,0 +1,223 @@
+﻿
+/* Update mechanics action types (for upgrades) */
+DECLARE @DesktopModuleId INT
+SET @DesktopModuleId = ( SELECT DesktopModuleID FROM {databaseOwner}[{objectQualifier}DesktopModules] WHERE  ModuleName = 'Answers' AND FolderName = 'DNNCorp/Answers')
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 9
+	WHERE ActionName = 'ApprovedPost' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 12
+	WHERE ActionName = 'AskedQuestionUpVoted' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 5
+	WHERE ActionName = 'AskedQuestionDownVoted' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 12
+	WHERE ActionName = 'ProvidedAcceptedAnswer' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 2
+	WHERE ActionName = 'ProvidedAnswer' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 5
+	WHERE ActionName = 'ProvidedAnswerDownVoted' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 12
+	WHERE ActionName = 'ProvidedAnswerUpVoted' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 5
+	WHERE ActionName = 'DownVotedAnswer' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 5
+	WHERE ActionName = 'DownVotedQuestion' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 12
+	WHERE ActionName = 'AcceptedQuestionAnswer' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 9
+	WHERE ActionName = 'ProtectedQuestion' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 7
+	WHERE ActionName = 'BookmarkedQuestion' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 7
+	WHERE ActionName = 'SubscribedToQuestion' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 7
+	WHERE ActionName = 'SubscribedToAllQuestions' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 9
+	WHERE ActionName = 'DeletedPostComment' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 8
+	WHERE ActionName = 'UnsubscribedFromQuestion' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 8
+	WHERE ActionName = 'UnsubscribedFromAllQuestions' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 9
+	WHERE ActionName = 'DeletedPostComment' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 7
+	WHERE ActionName = 'LikedQuestion' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 8
+	WHERE ActionName = 'UnLikedQuestion' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 7
+	WHERE ActionName = 'LikedQuestionComment' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 8
+	WHERE ActionName = 'UnLikedQuestionComment' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 12
+	WHERE ActionName = 'ProvidedLikedQuestion' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 13
+	WHERE ActionName = 'ProvidedUnLikedQuestion' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 12
+	WHERE ActionName = 'ProvidedLikedQuestionComment' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 13
+	WHERE ActionName = 'ProvidedUnLikedQuestionComment' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 7
+	WHERE ActionName = 'LikedAnswer' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 8
+	WHERE ActionName = 'UnLikedAnswer' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 12
+	WHERE ActionName = 'ProvidedLikedAnswer' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 13
+	WHERE ActionName = 'ProvidedUnLikedAnswer' AND DesktopModuleId = @DesktopModuleId
+GO
+
+/********************************************************
+ * SPROC: Answers_Post_SoftDelete
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Answers_Post_SoftDelete]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Answers_Post_SoftDelete
+GO
+
+
+/********************************************************
+ * SPROC: Answers_Post_GetPostsByUserId
+ ********************************************************/
+ IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Answers_Post_GetPostsByUserId]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Answers_Post_GetPostsByUserId
+GO
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Answers_Post_GetPostsByUserId]
+	@PortalId INT,
+	@UserId INT	
+AS
+BEGIN
+	SELECT  PostId ,
+			Body ,
+			ParentId ,
+			PortalId ,
+			GroupId ,
+			ViewCount ,
+			Score ,
+			Approved ,
+			Deleted ,
+			AnswerId ,
+			Closed ,
+			Protected ,
+			CreatedUserId ,
+			CreatedDate ,
+			LastModifiedUserId ,
+			LastModifiedDate ,
+			vp.ContentItemId ,
+			Content ,
+			ContentTypeID ,
+			TabID ,
+			ModuleID ,
+			ContentKey ,
+			Indexed ,
+			CreatedByUserId ,
+			CreatedOnDate ,
+			LastModifiedByUserID ,
+			LastModifiedOnDate ,
+			CIMD.[MetaDataValue] AS [ContentTitle] ,
+			( SELECT    COUNT(PostId)
+			  FROM      {databaseOwner}{objectQualifier}Answers_Post
+			  WHERE     ( ParentId = vp.PostId )
+						AND ( ParentId <> 0 )
+						AND ( Approved = 1 )
+						AND ( Deleted = 0 )
+			) AS TotalAnswers ,
+			( SELECT    COUNT(PostId)
+			  FROM      {databaseOwner}{objectQualifier}Answers_Vote
+			  WHERE     PostID = vp.PostID
+						AND VoteTypeID = 1
+			) AS UpVotes ,
+			( SELECT    COUNT(PostId)
+			  FROM      {databaseOwner}{objectQualifier}Answers_Vote
+			  WHERE     PostID = vp.PostID
+						AND VoteTypeID = -1
+			) AS DownVotes ,
+			1 AS TotalRecords
+	FROM    {databaseOwner}{objectQualifier}vw_Answers_Posts VP
+			LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD ON CIMD.ContentItemID = VP.[ContentItemID]
+															  AND CIMD.MetaDataID = ( SELECT
+															  MetaDataID
+															  FROM
+															  {databaseOwner}[{objectQualifier}MetaData]
+															  WHERE
+															  MetaDataName = 'Title'
+															  )
+	WHERE	CreatedUserID = @UserId
+			AND PortalId = @PortalId
+END
+GO
+
+
+ /********************************************************
+ * SPROC: Answers_Vote_GetVotesByUserId
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Answers_Vote_GetVotesByUserId]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Answers_Vote_GetVotesByUserId
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Answers_Vote_GetVotesByUserId]
+	@PortalId INT,
+	@UserId INT	
+AS
+BEGIN
+	SELECT V.*
+	FROM {databaseOwner}{objectQualifier}Answers_Vote V
+	WHERE V.PortalId = @PortalId AND V.CreatedByUserId = @UserId
+END
+GO

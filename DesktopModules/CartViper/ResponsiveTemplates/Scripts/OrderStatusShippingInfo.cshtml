@@ -1,0 +1,29 @@
+@using System.Dynamic;
+@using CartViper.Modules.Store.Customer;
+@using CartViper.Modules.Store.Catalog;
+@using CartViper.Modules.Store.Extensions;
+
+@inherits DotNetNuke.Web.Razor.DotNetNukeWebPage<dynamic>
+
+@{
+
+// load it onto orderStatusChangeEmail.htm with the below:
+//[RAZOR:OrderStatusShippingInfo.cshtml,ORDERID]
+//will out shipping method and tracking number if the status is "shipped"
+var order = new OrderController().GetOrder(int.Parse(Model.ORDERID));
+}
+
+@if(order.OrderStatusID == 5){
+@:Shipping method: @order.ShippingDescription <br />
+@:Shipping tracking number: @order.ShippingTrackingNumber
+}
+
+
+
+
+
+																 
+
+
+
+

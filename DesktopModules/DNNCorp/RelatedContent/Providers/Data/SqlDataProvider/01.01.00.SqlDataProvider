@@ -1,0 +1,135 @@
+﻿
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}vw_RelatedContent_Terms') and OBJECTPROPERTY(id, N'IsView') = 1)
+	DROP VIEW {databaseOwner}{objectQualifier}vw_RelatedContent_Terms
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}RelatedContent_Terms_GetByContentType]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}RelatedContent_Terms_GetByContentType]
+GO
+
+CREATE VIEW {databaseOwner}[{objectQualifier}vw_RelatedContent_Terms]
+AS
+	SELECT  TT.TermID,
+			TT.Name,
+			TT.ParentTermID,
+			TT.Description,
+			CI.CreatedOnDate,
+			TV.Name AS VocabularyName,
+			TV.VocabularyID,
+			CI.TabID,
+			CI.ModuleID,
+			CI.ContentTypeID,
+			CI.ContentItemID,
+			T.PortalID,
+			TT.Weight,
+			TT.TermLeft,
+			TT.TermRight
+	FROM    {databaseOwner}{objectQualifier}Taxonomy_Vocabularies AS TV
+			INNER JOIN {databaseOwner}{objectQualifier}Taxonomy_Terms AS TT ON TV.VocabularyID = TT.VocabularyID
+			INNER JOIN {databaseOwner}{objectQualifier}ContentItems_Tags AS CIT ON TT.TermID = CIT.TermID
+			INNER JOIN {databaseOwner}{objectQualifier}ContentItems AS CI ON CIT.ContentItemID = CI.ContentItemID
+			INNER JOIN {databaseOwner}{objectQualifier}Tabs AS T ON CI.TabID = T.TabID
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}RelatedContent_Terms_GetByContentType]
+    @ContentTypeId INT ,
+    @TabId INT ,
+    @VocabularyId INT ,
+    @PageIndex INT ,
+    @PageSize INT
+AS 
+    WITH    TermResults
+              AS ( SELECT   TermID ,
+                            Name ,
+                            ParentTermID ,
+                            [Description] ,
+                            [Weight] ,
+                            ( SELECT    CreatedOnDate
+                              FROM      {databaseOwner}{objectQualifier}Taxonomy_Terms T
+                              WHERE     VRT.TermID = T.TermID
+                            ) AS CreatedOnDate ,
+                            ( SELECT    CreatedByUserId
+                              FROM      {databaseOwner}{objectQualifier}Taxonomy_Terms T
+                              WHERE     VRT.TermID = T.TermID
+                            ) AS CreatedByUserId ,
+                            ( SELECT    LastModifiedOnDate
+                              FROM      {databaseOwner}{objectQualifier}Taxonomy_Terms T
+                              WHERE     VRT.TermID = T.TermID
+                            ) AS LastModifiedOnDate ,
+                            ( SELECT    LastModifiedByUserId
+                              FROM      {databaseOwner}{objectQualifier}Taxonomy_Terms T
+                              WHERE     VRT.TermID = T.TermID
+                            ) AS LastModifiedByUserId ,
+                            VocabularyID ,
+                            TermLeft ,
+                            TermRight ,
+                            ( SELECT    COUNT(TermID)
+                              FROM      {databaseOwner}{objectQualifier}vw_RelatedContent_Terms T
+                              WHERE     TermID = VRT.TermID
+                                        AND ( ( @ContentTypeId < 1 )
+                                              OR ( ContentTypeID = @ContentTypeId )
+                                            )
+                                        AND T.TabID = @TabId
+                            ) AS TotalTermUsage ,
+                            ( SELECT    COUNT(TermID)
+                              FROM      {databaseOwner}{objectQualifier}vw_RelatedContent_Terms T
+                              WHERE     TermID = VRT.TermID
+                                        AND ( ( @ContentTypeId < 1 )
+                                              OR ( ContentTypeID = @ContentTypeId )
+                                            )
+                                        AND T.TabID = @TabId
+                                        AND CreatedOnDate > DATEADD(day, -30,
+                                                              GETDATE())
+                            ) AS MonthTermUsage ,
+                            ( SELECT    COUNT(TermID)
+                              FROM      {databaseOwner}{objectQualifier}vw_RelatedContent_Terms T
+                              WHERE     TermID = VRT.TermID
+                                        AND ( ( @ContentTypeId < 1 )
+                                              OR ( ContentTypeID = @ContentTypeId )
+                                            )
+                                        AND T.TabID = @TabId
+                                        AND CreatedOnDate > DATEADD(day, -7,
+                                                              GETDATE())
+                            ) AS WeekTermUsage ,
+                            ( SELECT    COUNT(TermID)
+                              FROM      {databaseOwner}{objectQualifier}vw_RelatedContent_Terms T
+                              WHERE     TermID = VRT.TermID
+                                        AND ( ( @ContentTypeId < 1 )
+                                              OR ( ContentTypeID = @ContentTypeId )
+                                            )
+                                        AND T.TabID = @TabId
+                                        AND CreatedOnDate > DATEADD(day, -1,
+                                                              GETDATE())
+                            ) AS DayTermUsage ,
+                            COUNT(*) OVER ( ) AS TotalRecords ,
+                            ROW_NUMBER() OVER ( ORDER BY ( SELECT
+                                                              COUNT(TermID)
+                                                           FROM
+                                                              {databaseOwner}{objectQualifier}vw_RelatedContent_Terms T
+                                                           WHERE
+                                                              TermID = VRT.TermID
+                                                              AND ( ( @ContentTypeId < 1 )
+                                                              OR ( ContentTypeID = @ContentTypeId )
+                                                              )
+                                                              AND T.TabID = @TabId
+                                                         ) DESC ) AS RowNumber
+                   FROM     {databaseOwner}{objectQualifier}vw_RelatedContent_Terms VRT
+                   WHERE    VRT.TabID = @TabId
+                            AND VocabularyID = @VocabularyId
+                            AND ( ( @ContentTypeId < 1 )
+                                  OR ( ContentTypeID = @ContentTypeId )
+                                )
+                   GROUP BY TermID ,
+                            Name ,
+                            ParentTermID ,
+                            [Description] ,
+                            [Weight] ,
+                            VocabularyID ,
+                            TermLeft ,
+                            TermRight
+                 )
+        SELECT  *
+        FROM    TermResults
+        WHERE   RowNumber BETWEEN ( @PageIndex * @PageSize + 1 )
+                          AND     ( ( @PageIndex + 1 ) * @PageSize )
+GO

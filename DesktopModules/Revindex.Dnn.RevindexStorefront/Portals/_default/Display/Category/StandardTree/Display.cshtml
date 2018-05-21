@@ -1,0 +1,94 @@
+﻿@using Revindex.Dnn.RevindexStorefront.Models;
+@using Revindex.Web.Mvc.Dnn.Helpers;
+@inherits Revindex.Dnn.RevindexStorefront.Views.CategoryWebViewPage<CategoryViewModel>
+
+@*
+    The following category uses the Bootstrap treeview, which normally takes a javascript object.
+    We render the unordered list in HTML first and convert to object later for extra SEO points.
+    https://github.com/jonmiles/bootstrap-treeview
+*@
+@functions
+{
+    public HtmlString RenderTreeNodes(int? parentCategoryID)
+    {
+        string htmlOutput = string.Empty;
+
+        var categories = Model.Categories.Where(cm => cm.ParentCategoryID == parentCategoryID);
+        if (categories.Count() > 0)
+        {
+            htmlOutput += "<ul>";
+            foreach (var c in categories)
+            {
+                htmlOutput += "<li data-state-selected=\"" + (Model.CategoryID == c.CategoryID ? "true" : "") + "\"> ";
+                htmlOutput += "<a href=\"" + HttpUtility.HtmlEncode(c.ProductList.TabUrl) + "\" >" + HttpUtility.HtmlEncode(c.Name) + "</a>";
+                htmlOutput += RenderTreeNodes(c.CategoryID);
+                htmlOutput += "</li>";
+            }
+            htmlOutput += "</ul>";
+        }
+
+        return new HtmlString(htmlOutput);
+    }
+}
+
+<div class="rvdsf rvdsf-category-container">
+    <nav class="navbar navbar-default visible-xs">
+        <div class="navbar-header">
+            <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#rvdsfCategoryTree">
+                <i class="glyphicon glyphicon-align-justify"></i>
+            </button>
+            <a class="navbar-brand">@Html.LocalizeString("Header")</a>
+        </div>
+    </nav>
+    <div id="rvdsfCategoryTree" class="collapse-xs rvdsf-category-treeview">
+        @RenderTreeNodes(null);
+    </div>
+</div>
+
+@* Uses Bootstrap Tree View. See https://github.com/jonmiles/bootstrap-treeview *@
+<script src="~/DesktopModules/Revindex.Dnn.RevindexStorefront/Scripts/bootstrap-treeview/bootstrap-treeview.min.js"></script>
+<script type="text/javascript">
+    function convertUnorderedListToObject(jUL, obj) {
+            jUL.children("li").map(function () {
+                try {
+                    var li = {
+                    text: $(this).children("a")[0].text,
+                    href: $(this).children("a")[0].href,
+                    state: {
+                        expanded: false,
+                        selected: Boolean(this.dataset.stateSelected),
+                    },
+                    selectable: false,
+                }
+                obj.push(li);
+
+                $(this).children("ul").map(function () {
+                    li.nodes = [];
+                    convertUnorderedListToObject($(this), li.nodes);
+                });
+            }
+            catch (e) {
+                console.log(e)
+            }
+        })
+    }
+
+
+    var categoryObjects = [];
+    convertUnorderedListToObject($('.rvdsf-category-treeview > ul'), categoryObjects);
+
+    $('.rvdsf-category-treeview').treeview({
+        collapseIcon: "glyphicon glyphicon-chevron-down",
+        data: categoryObjects,
+        enableLinks: true,
+        expandIcon: "glyphicon glyphicon-chevron-right",
+    });
+
+    // Reveal our selected category
+    var selectedNodes = $('.rvdsf-category-treeview').treeview('getSelected');
+    if (selectedNodes.length > 0) {
+        $('.rvdsf-category-treeview').treeview('revealNode', selectedNodes[0]);
+        $('.rvdsf-category-treeview').treeview('expandNode', selectedNodes[0]);
+    }
+
+</script>

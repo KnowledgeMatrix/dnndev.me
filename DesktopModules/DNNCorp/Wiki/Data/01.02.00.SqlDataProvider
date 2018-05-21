@@ -1,0 +1,201 @@
+﻿IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_Article_List') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_List
+GO
+
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_Article_Search') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_Search
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Wiki_Article_Search]
+	@ModuleId INT,
+	@GroupId INT,
+	@PageSize INT,
+	@PageIndex INT,
+	@SortColumn VARCHAR(32),
+	@SortAscending BIT,
+	@UserId INT,
+	@Tags NVARCHAR(256),
+	@draftOnly BIT
+AS
+BEGIN
+
+	DECLARE @MetaDataID int
+	SELECT @MetaDataID=MetaDataID FROM {databaseOwner}{objectQualifier}MetaData WITH ( NOLOCK ) WHERE MetaDataName = 'Title'
+
+	;WITH OrderedSet
+	AS (
+		SELECT
+				COUNT(*) OVER () AS TotalRecords,
+				ArticleId,
+				ArticleTypeId,
+				A.ContentItemId,
+				SummaryContentItemId,
+				PortalId,
+				GroupId,
+				ViewCount,
+				Approved,
+				Protected,
+				Elements,
+				S.Content AS [Summary],
+				CI.Content,
+				CI.ContentTypeID,
+				CI.TabID,
+				CI.ModuleID,
+				CI.ContentKey,
+				CI.Indexed,
+				CI.CreatedByUserID,
+				CI.[CreatedOnDate],
+				CI.LastModifiedByUserID,
+				CI.[LastModifiedOnDate],
+				CIMD.[MetaDataValue] AS [ContentTitle],
+				ROW_NUMBER() OVER (
+					ORDER BY
+						CASE WHEN @SortColumn = 'CreatedDate' AND @SortAscending = 1 THEN CI.CreatedOnDate END ASC,
+						CASE WHEN @SortColumn = 'CreatedDate' AND @SortAscending = 0 THEN CI.CreatedOnDate END DESC,
+						CASE WHEN @SortColumn = 'LastActive' AND @SortAscending = 1 THEN CI.LastModifiedOnDate END ASC,
+						CASE WHEN @SortColumn = 'LastActive' AND @SortAscending = 0 THEN CI.LastModifiedOnDate END DESC,
+						CASE WHEN @SortColumn = 'Title' AND @SortAscending = 1 THEN MetaDataValue END ASC,
+						CASE WHEN @SortColumn = 'Title' AND @SortAscending = 0 THEN MetaDataValue END DESC,
+						CASE WHEN @SortColumn = 'Views' AND @SortAscending = 0 THEN ViewCount END DESC,
+						CASE WHEN @SortColumn = 'Views' AND @SortAscending = 1 THEN ViewCount END ASC
+					) AS [RowNumber]
+		FROM {databaseOwner}{objectQualifier}Wiki_Article A WITH ( NOLOCK )
+					INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI WITH ( NOLOCK ) ON CI.ContentItemID = A.ContentItemID
+					INNER JOIN {databaseOwner}{objectQualifier}Users U WITH ( NOLOCK ) ON U.UserID = CI.CreatedByUserID
+					INNER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD WITH ( NOLOCK )
+						ON CIMD.ContentItemID = A.ContentItemID
+					LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems S WITH (NOLOCK) ON A.SummaryContentItemId = S.ContentItemID
+		WHERE (ArticleTypeId > 0)
+		  AND (CIMD.MetaDataID = @MetaDataID)
+		  AND ((@GroupId < 1 AND A.GroupId < 1) OR A.GroupId = @GroupId)
+		  AND (
+				(@DraftOnly = 1 AND @UserID < 1 AND NOT EXISTS(
+					SELECT 1 FROM {databaseOwner}{objectQualifier}Revisions R WITH (NOLOCK)
+					WHERE R.ContentItemID = A.ContentItemID AND R.State = 2)
+				)
+				OR
+				(@DraftOnly = 0 AND @UserID < 1 AND
+					EXISTS(SELECT 1 FROM {databaseOwner}{objectQualifier}Revisions R WITH (NOLOCK) WHERE R.ContentItemID = A.ContentItemID AND R.State = 2)
+				)
+				OR
+				(CI.CreatedByUserID = @UserId)
+			)
+		AND	(@Tags IS NULL OR LEN(@Tags) = 0 OR
+			(SELECT COUNT(*)
+				FROM   {databaseOwner}{objectQualifier}ContentItems_Tags CIT WITH ( NOLOCK )
+				INNER JOIN {databaseOwner}{objectQualifier}Taxonomy_Terms TT WITH ( NOLOCK ) ON CIT.TermID = TT.TermID
+				INNER JOIN {databaseOwner}{objectQualifier}ConvertListToTable(',', @Tags) T ON TT.Name = T.RowValue
+				WHERE  CIT.ContentItemID = A.ContentItemId) = ( SELECT LEN(@Tags) - LEN(REPLACE(@Tags, ',', '')) + 1))
+	)
+
+	SELECT	TOP (@PageSize) *
+	FROM    OrderedSet
+	WHERE   RowNumber >= (@PageIndex * @PageSize) + 1
+END
+GO
+
+/* Migrate Subscriptions */
+IF exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Subscriptions_Type') and OBJECTPROPERTY(id, N'IsTable') = 1)
+BEGIN
+	DECLARE @DesktopModuleId INT
+	DECLARE @NewSubscriptionTypeId INT
+
+	SET @DesktopModuleId = (SELECT ISNULL(DesktopModuleId, -1) FROM {databaseOwner}{objectQualifier}DesktopModules WHERE ModuleName = 'Wiki' )
+	--SELECT  @DesktopModuleId
+
+	IF @DesktopModuleId > 0
+	BEGIN
+		-- Means the module is being upgraded, migrate subscriptions
+		SET @NewSubscriptionTypeId = (SELECT TOP 1 SubscriptionTypeId FROM {databaseOwner}{objectQualifier}CoreMessaging_SubscriptionTypes WHERE SubscriptionName = 'DNNCorp_Wiki_Page')
+		--SELECT @NewSubscriptionTypeId
+
+		IF @NewSubscriptionTypeId IS NULL
+			BEGIN
+				INSERT {databaseOwner}{objectQualifier}CoreMessaging_SubscriptionTypes
+				(SubscriptionName, FriendlyName, DesktopModuleId)
+				VALUES
+				('DNNCorp_Wiki_Page', 'Wiki Subscriptions', @DesktopModuleId)
+					
+				SET @NewSubscriptionTypeId = (SELECT SCOPE_IDENTITY())
+
+				-- get all subscribers and copy over
+				DECLARE @OldSubscriptionTypeId INT
+				SET @OldSubscriptionTypeId = (SELECT TOP 1 SubscriptionTypeId FROM {databaseOwner}{objectQualifier}Subscriptions_Type WHERE SubscriptionName = 'DNNCorp_Wiki_Page')
+
+				IF @OldSubscriptionTypeId > 0
+					BEGIN
+						DECLARE @PortalId INT
+						DECLARE @UserId INT
+						DECLARE @CreatedOnDate DATETIME
+						DECLARE @ModuleId INT
+						DECLARE @ObjectKey NVARCHAR(255)
+						DECLARE @ContentItemId INT
+						DECLARE @GroupId INT
+						DECLARE @Description NVARCHAR(255)
+
+						DECLARE WikiMigrate_Cursor CURSOR
+						FOR
+							SELECT  DISTINCT ss.PortalId, ss.UserId, ss.CreatedOnDate, ss.ModuleId, ss.GroupId, ss.ContentItemId
+							FROM    {databaseOwner}{objectQualifier}Subscriptions_Subscriber ss
+									INNER JOIN {databaseOwner}{objectQualifier}Modules m ON ss.ModuleID = m.ModuleID
+							WHERE	SubscriptionTypeId = @OldSubscriptionTypeId
+
+							OPEN WikiMigrate_Cursor
+							FETCH NEXT FROM WikiMigrate_Cursor
+							INTO @PortalId, @UserId, @CreatedOnDate, @ModuleId, @GroupId, @ContentItemId
+
+							WHILE @@FETCH_STATUS = 0
+							BEGIN
+								BEGIN TRANSACTION
+									-- after selecting row of data in cursor
+									IF @ContentItemId > 0
+										BEGIN
+											SET @ObjectKey = 'gid=' + CONVERT(NVARCHAR(10), @GroupId) + ';cid=' + CONVERT(NVARCHAR(10), @ContentItemId)
+											SET @Description = 'Wiki Article Activity'
+										END
+									ELSE
+										BEGIN
+											SET @ObjectKey = 'gid=' + CONVERT(NVARCHAR(10), @GroupId)
+											SET @Description = 'New Wiki Articles'
+										END
+
+									INSERT {databaseOwner}{objectQualifier}CoreMessaging_Subscriptions
+										(UserId, PortalId, SubscriptionTypeId, ObjectKey, CreatedOnDate, ModuleId, [Description], TabId)
+									VALUES
+										(@UserId, @PortalId, @NewSubscriptionTypeId, @ObjectKey, @CreatedOnDate, @ModuleId, @Description, 0)
+
+								COMMIT
+
+								FETCH NEXT FROM WikiMigrate_Cursor INTO @PortalId, @UserId, @CreatedOnDate, @ModuleId, @GroupId, @ContentItemId
+							END
+								
+							CLOSE WikiMigrate_Cursor
+							DEALLOCATE WikiMigrate_Cursor
+						END
+				END
+		END
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Wiki_Article_GetByRange') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_GetByRange
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Wiki_Article_GetByRange]
+    @StartingArticleId INT,	
+	@RecordsToReturn INT
+AS
+BEGIN
+    SELECT  TOP (@RecordsToReturn) A.ArticleId
+    FROM    {databaseOwner}[{objectQualifier}Wiki_Article] A
+	INNER JOIN {databaseOwner}[{objectQualifier}ContentItems] CI
+		ON A.ContentItemId = CI.ContentItemId
+	INNER JOIN {databaseOwner}[{objectQualifier}ContentTypes] CT
+		ON CT.ContentTypeId = CI.ContentTypeId
+    WHERE   
+		ArticleId > @StartingArticleId    
+		AND CT.ContentType = 'DNNCorp_Wiki_Page'
+    ORDER BY A.ArticleId ASC
+END
+GO

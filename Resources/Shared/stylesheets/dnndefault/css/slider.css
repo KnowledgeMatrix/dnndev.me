@@ -1,0 +1,99 @@
+/* Full Screen slider
+======================================================== */
+
+.rolandthemes-fullscreen-slider{
+	height:100%;
+	position:relative;
+}
+	
+.rolandthemes-fullscreen-slider .carousel,
+.rolandthemes-fullscreen-slider .item{
+	height:100%;
+	background-attachment:fixed;
+	background-size:cover;
+}
+.rolandthemes-fullscreen-slider .carousel-inner {
+    height: 100%;
+}
+
+.rolandthemes-fullscreen-slider .fill {
+	width:100%;
+	position:absolute;
+	text-align:center;
+	color:#333;
+	height:100%;
+	background-attachment:fixed;
+}
+
+.rolandthemes-fullscreen-slider .right,
+.rolandthemes-fullscreen-slider .left{
+	background-image:none;		
+}
+
+.rolandthemes-fullscreen-slider .fill h1{
+	-webkit-animation-duration: 0.9s;
+  	-webkit-animation-delay: 0.5s;
+	-moz-animation-duration: 0.9s;
+  	-moz-animation-delay: 0.5s;
+	-o-animation-duration: 0.9s;
+  	-o-animation-delay: 0.5s;
+	animation-duration: 0.9s;
+  	animation-delay: 0.5s;
+	margin:0;
+	font-size:200px;
+	text-transform:uppercase;
+	color:#fff;
+	position: relative;
+	font-weight:bold;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.rolandthemes-fullscreen-slider .fill h3{
+	margin:0;
+	font-size:48px;
+	-webkit-animation-duration: 0.8s;
+  	-webkit-animation-delay: 0.5s;
+	-moz-animation-duration: 0.8s;
+  	-moz-animation-delay: 0.5s;
+	-o-animation-duration: 0.8s;
+  	-o-animation-delay: 0.5s;
+	animation-duration: 0.8s;
+  	animation-delay: 0.5s;
+	position: relative;
+    top: 40%;
+	color:#fff;
+}
+
+.rolandthemes-fullscreen-slider .carousel-indicators a{
+	background-color:transparent;
+	color:#fff;	
+	font-size:36px;
+}
+	
+.carousel-control .glyphicon, .carousel-control .glyphicon {
+    position: absolute;
+    top: 50%;
+    z-index: 5;
+    display: inline-block;
+    margin-top: -10px;
+	font-size:48px;
+}
+@media (max-width: 992px) {
+	.rolandthemes-fullscreen-slider .fill h1{
+		font-size:90px;
+	}
+	.rolandthemes-fullscreen-slider .fill h3{
+		font-size:48px;
+	}
+}
+@media (max-width: 767px) {
+	.rolandthemes-fullscreen-slider .fill h1{
+		font-size:48px;
+	}
+	.rolandthemes-fullscreen-slider .fill h3{
+		font-size:24px;
+		top: 40%;
+    	transform: translateY(-40%);
+	}
+}

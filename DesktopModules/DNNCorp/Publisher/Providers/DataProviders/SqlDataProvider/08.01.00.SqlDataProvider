@@ -1,0 +1,422 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+/***** Create Post Table *****/
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Publisher_Posts]') AND type in (N'U'))
+BEGIN   
+	CREATE TABLE {databaseOwner}[{objectQualifier}Publisher_Posts]
+	(
+		[PostId] [int] IDENTITY(1,1) NOT NULL,
+		[PortalId] [int] NOT NULL,
+		[GroupId] [int] NULL,
+		[ContentItemId] [int] NOT NULL,
+		[Published] [bit] NOT NULL,
+		[AllowedComments] [bit] NOT NULL,
+		[Featured] [bit] NOT NULL,
+		[AuthorUserId] [int] NOT NULL,
+		[MetadataTitle] [nvarchar](max) NOT NULL,
+		[IsCustomMetadataTitle] [bit] NOT NULL default(0),
+		[MetadataDescription] [nvarchar](max) NOT NULL,
+		[IsCustomMetadataDescription] [bit] NOT NULL default(0),
+		[PublishedOnDate] [datetime] NULL,
+		[CreatedOnDate] [datetime] NOT NULL,
+		[LastModifiedOnDate] [datetime] NULL,
+		CONSTRAINT [PK_{objectQualifier}Publisher_Posts] PRIMARY KEY CLUSTERED ([PostId] ASC)
+	) ON [PRIMARY]
+
+	CREATE INDEX [IX_{objectQualifier}Publisher_Posts_ContentItem]
+		ON {databaseOwner}[{objectQualifier}Publisher_Posts] ([ContentItemId], [PortalId])
+
+	CREATE INDEX [IX_{objectQualifier}Publisher_Posts_PublishedFeatured]
+		ON {databaseOwner}[{objectQualifier}Publisher_Posts] ([PublishedOnDate], [Published], [Featured])
+END
+GO
+
+IF object_id(N'{databaseOwner}{objectQualifier}Publisher_SearchPosts', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Publisher_SearchPosts
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Publisher_SearchPosts]
+	@ModuleId INT,
+	@GroupId INT,
+	@StartIndex INT,
+	@EndIndex INT,
+	@ExcludePostIds VARCHAR(MAX)
+AS
+BEGIN
+	DECLARE @TitleMetID AS INT = (SELECT MetaDataID
+									FROM {databaseOwner}{objectQualifier}MetaData
+									WHERE MetaDataName = 'Title');
+	
+	DECLARE @ImagesMetID AS INT = (SELECT MetaDataID
+									FROM {databaseOwner}{objectQualifier}MetaData
+									WHERE MetaDataName = 'Images');
+
+	DECLARE @ExcludeIdTable AS TABLE (value INT NOT NULL);
+	INSERT INTO @ExcludeIdTable 
+		SELECT * FROM {databaseOwner}{objectQualifier}CsvSplit(@ExcludePostIds, ',');
+
+	WITH	PostSet
+	AS		(SELECT
+					P.PostId,
+					P.PortalId,
+					P.GroupId,
+					P.ContentItemId,
+					P.Published,
+					P.AuthorUserId,
+					P.AllowedComments,
+					P.Featured,
+					P.MetadataTitle,
+					P.MetadataDescription,
+					P.PublishedOnDate,
+					P.CreatedOnDate,
+					P.LastModifiedOnDate,
+					CI.Content AS [Body],
+					CI.TabId,
+					CI.ModuleId,
+					CI.LastModifiedByUserId AS [ModifiedByUserId],
+					CI.CreatedByUserID AS [CreatedByUserId],
+					CIMDT.MetaDataValue AS [Title],
+					REPLACE(REPLACE(CIMDI.MetaDataValue, '[', ''), ']', '') AS MainImageFileId,
+					ROW_NUMBER() OVER (ORDER BY P.PublishedOnDate DESC) AS RowNumber
+			
+			FROM	{databaseOwner}{objectQualifier}Publisher_Posts AS P
+					INNER JOIN {databaseOwner}{objectQualifier}ContentItems AS CI 
+						ON P.ContentItemId = CI.ContentItemID
+					LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData AS CIMDT 
+						ON CIMDT.ContentItemID = CI.ContentItemID AND CIMDT.MetaDataID = @TitleMetID
+					LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData AS CIMDI
+						ON CIMDI.ContentItemID = CI.ContentItemID AND CIMDI.MetaDataID = @ImagesMetID
+			
+			WHERE	CI.ModuleId = @ModuleId
+					AND	(@GroupId is null OR P.GroupId = @GroupId)
+					AND	P.Published = 1
+					AND P.PostId NOT IN (SELECT * FROM @ExcludeIdTable)
+			)
+
+	SELECT	*
+	FROM	PostSet
+	WHERE	RowNumber BETWEEN @StartIndex AND @EndIndex;
+END
+GO
+
+IF object_id(N'{databaseOwner}{objectQualifier}Publisher_SearchPostsByDate', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Publisher_SearchPostsByDate
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Publisher_SearchPostsByDate]
+	@ModuleId INT,
+	@BeginDate DATETIME
+AS
+BEGIN
+	DECLARE @TitleMetID AS INT = (SELECT MetaDataID
+									FROM {databaseOwner}{objectQualifier}MetaData
+									WHERE MetaDataName = 'Title');
+	SELECT
+		P.PostId,
+		P.PortalId,
+		P.GroupId,
+		P.ContentItemId,
+		P.Published,
+		P.AuthorUserId,
+		P.AllowedComments,
+		P.Featured,
+		P.MetadataTitle,
+		P.MetadataDescription,
+		P.PublishedOnDate,
+		P.CreatedOnDate,
+		P.LastModifiedOnDate,
+		CI.Content AS [Body],
+		CI.TabId,
+		CI.ModuleId,
+		CI.LastModifiedByUserId AS [ModifiedByUserId],
+		CI.CreatedByUserID AS [CreatedByUserId],
+		CIMDT.MetaDataValue AS [Title]
+	FROM	{databaseOwner}{objectQualifier}Publisher_Posts AS P
+		INNER JOIN {databaseOwner}{objectQualifier}ContentItems AS CI 
+			ON P.ContentItemId = CI.ContentItemID
+		LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData AS CIMDT 
+			ON CIMDT.ContentItemID = CI.ContentItemID AND CIMDT.MetaDataID = @TitleMetID
+	WHERE	CI.ModuleId = @ModuleId
+			AND	P.Published = 1
+			AND ((P.LastModifiedOnDate IS NOT NULL AND P.LastModifiedOnDate > @BeginDate) OR P.CreatedOnDate > @BeginDate);
+END
+GO
+
+IF object_id(N'{databaseOwner}{objectQualifier}Publisher_GetFeaturedPosts', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Publisher_GetFeaturedPosts
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Publisher_GetFeaturedPosts]
+	@ModuleId INT,
+	@GroupId INT
+AS
+BEGIN
+	DECLARE @TitleMetID AS INT = (SELECT MetaDataID
+									FROM {databaseOwner}{objectQualifier}MetaData
+									WHERE MetaDataName = 'Title');
+	
+	DECLARE @ImagesMetID AS INT = (SELECT MetaDataID
+									FROM {databaseOwner}{objectQualifier}MetaData
+									WHERE MetaDataName = 'Images');
+
+	WITH	PostSet
+	AS		(SELECT
+					P.PostId,
+					P.PortalId,
+					P.GroupId,
+					P.ContentItemId,
+					P.Published,
+					P.AuthorUserId,
+					P.AllowedComments,
+					P.Featured,
+					P.MetadataTitle,
+					P.MetadataDescription,
+					P.PublishedOnDate,
+					P.CreatedOnDate,
+					P.LastModifiedOnDate,
+					CI.Content AS [Body],
+					CI.TabId,
+					CI.ModuleId,
+					CI.LastModifiedByUserId AS [ModifiedByUserId],
+					CI.CreatedByUserID AS [CreatedByUserId],
+					CIMDT.MetaDataValue AS [Title],
+					REPLACE(REPLACE(CIMDI.MetaDataValue, '[', ''), ']', '') AS MainImageFileId,
+					ROW_NUMBER() OVER (ORDER BY PublishedOnDate DESC) AS RowNumber
+			
+			FROM	{databaseOwner}{objectQualifier}Publisher_Posts AS P
+					INNER JOIN {databaseOwner}{objectQualifier}ContentItems AS CI 
+						ON P.ContentItemId = CI.ContentItemID
+					LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData AS CIMDT 
+						ON CIMDT.ContentItemID = CI.ContentItemID AND CIMDT.MetaDataID = @TitleMetID
+					LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData AS CIMDI
+						ON CIMDI.ContentItemID = CI.ContentItemID AND CIMDI.MetaDataID = @ImagesMetID
+			
+			WHERE	CI.ModuleId = @ModuleId
+					AND	(@GroupId is null OR P.GroupId = @GroupId)
+					AND P.Published = 1
+					AND P.Featured = 1
+			)
+
+	SELECT	*
+	FROM	PostSet
+	WHERE	RowNumber BETWEEN 1 AND 2;
+END
+GO
+
+IF object_id(N'{databaseOwner}{objectQualifier}Publisher_GetSitemapPosts', 'P') IS NOT NULL
+    DROP PROCEDURE {databaseOwner}{objectQualifier}Publisher_GetSitemapPosts
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Publisher_GetSitemapPosts]
+    @PortalId INT
+AS
+BEGIN
+    DECLARE @TitleMetID AS INT = (SELECT MetaDataID
+                                    FROM {databaseOwner}{objectQualifier}MetaData
+                                    WHERE MetaDataName = 'Title');
+    
+    DECLARE @ImagesMetID AS INT = (SELECT MetaDataID
+                                    FROM {databaseOwner}{objectQualifier}MetaData
+                                    WHERE MetaDataName = 'Images');
+
+    SELECT
+        P.PostId,
+        P.PortalId,
+        P.GroupId,
+        P.ContentItemId,
+        P.Published,
+        P.AuthorUserId,
+        P.AllowedComments,
+        P.Featured,
+        P.MetadataTitle,
+        P.MetadataDescription,
+        P.PublishedOnDate,
+        P.CreatedOnDate,
+        P.LastModifiedOnDate,
+        CI.Content AS [Body],
+        CI.TabId,
+        CI.ModuleId,
+        CI.LastModifiedByUserId AS [ModifiedByUserId],
+        CI.CreatedByUserID AS [CreatedByUserId],
+        CIMDT.MetaDataValue AS [Title],
+        REPLACE(REPLACE(CIMDI.MetaDataValue, '[', ''), ']', '') AS MainImageFileId
+    FROM    {databaseOwner}{objectQualifier}Publisher_Posts AS P
+        INNER JOIN {databaseOwner}{objectQualifier}ContentItems AS CI 
+            ON P.ContentItemId = CI.ContentItemID
+        LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData AS CIMDT 
+            ON CIMDT.ContentItemID = CI.ContentItemID AND CIMDT.MetaDataID = @TitleMetID
+        LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData AS CIMDI
+            ON CIMDI.ContentItemID = CI.ContentItemID AND CIMDI.MetaDataID = @ImagesMetID
+    WHERE   (GroupId IS NULL OR GroupId < 1)
+			AND P.PortalId = @PortalId
+            AND P.Published = 1;
+END
+GO
+
+IF object_id(N'{databaseOwner}{objectQualifier}Publisher_GetUnpublishedPosts', 'P') IS NOT NULL
+    DROP PROCEDURE {databaseOwner}{objectQualifier}Publisher_GetUnpublishedPosts
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Publisher_GetUnpublishedPosts]
+    @ModuleId INT,
+	@GroupId INT,
+	@Limit INT
+AS
+BEGIN
+	DECLARE @TitleMetID AS INT = (SELECT MetaDataID
+								FROM {databaseOwner}{objectQualifier}MetaData
+								WHERE MetaDataName = 'Title');
+								
+    SELECT TOP (@Limit) 
+        P.PostId,
+        P.ContentItemId,
+        P.AuthorUserId,
+        P.CreatedOnDate,
+        CIMDT.MetaDataValue AS [Title]
+    FROM    {databaseOwner}{objectQualifier}Publisher_Posts AS P
+        INNER JOIN {databaseOwner}{objectQualifier}ContentItems AS CI 
+            ON P.ContentItemId = CI.ContentItemID
+        LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData AS CIMDT 
+            ON CIMDT.ContentItemID = CI.ContentItemID AND CIMDT.MetaDataID = @TitleMetID
+    WHERE   CI.ModuleId = @ModuleId
+			AND (@GroupId is null OR P.GroupId = @GroupId)
+            AND P.Published = 0
+	ORDER BY P.CreatedOnDate DESC
+END
+GO
+
+
+/* CRUD OPERATIONS */
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Publisher_Post_Add') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Publisher_Post_Add
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Publisher_Post_Add]
+	@PortalId int,
+	@GroupId int,
+	@ContentItemId int,
+	@Published bit,
+	@AllowedComments bit,
+	@Featured bit,
+	@AuthorUserId int,
+	@MetadataTitle nvarchar(max),
+	@IsCustomMetadataTitle bit,
+	@MetadataDescription nvarchar(max),
+	@IsCustomMetadataDescription bit,
+	@PublishedOnDate datetime
+AS 
+	INSERT INTO {databaseOwner}{objectQualifier}Publisher_Posts
+           ([PortalId]
+           ,[GroupId]
+           ,[ContentItemId]
+           ,[Published]
+           ,[AllowedComments]
+           ,[Featured]
+           ,[AuthorUserId]
+           ,[MetadataTitle]
+           ,[IsCustomMetadataTitle]
+           ,[MetadataDescription]
+           ,[IsCustomMetadataDescription]
+           ,[PublishedOnDate]
+           ,[CreatedOnDate]
+           ,[LastModifiedOnDate])
+     VALUES
+           (@PortalId,
+           @GroupId,
+           @ContentItemId,
+           @Published,
+           @AllowedComments,
+           @Featured,
+           @AuthorUserId,
+           @MetadataTitle,
+           @IsCustomMetadataTitle,
+           @MetadataDescription,
+           @IsCustomMetadataDescription,
+           @PublishedOnDate,
+           GETUTCDATE(),
+           GETUTCDATE())
+
+	SELECT  SCOPE_IDENTITY()
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Publisher_Post_Delete') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Publisher_Post_Delete
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Publisher_Post_Delete]
+	@PortalId int,
+	@PostId INT
+AS 
+	DELETE  FROM {databaseOwner}{objectQualifier}Publisher_Posts
+	WHERE PortalId = @PortalId AND PostId = @PostId
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Publisher_Post_GetByContentItemId') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Publisher_Post_GetByContentItemId
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Publisher_Post_GetByContentItemId]
+	@PortalId int,
+	@ContentItemId INT
+AS 
+	SELECT [PostId]
+      ,[PortalId]
+      ,[GroupId]
+      ,[ContentItemId]
+      ,[Published]
+      ,[AllowedComments]
+      ,[Featured]
+      ,[AuthorUserId]
+      ,[MetadataTitle]
+      ,[IsCustomMetadataTitle]
+      ,[MetadataDescription]
+      ,[IsCustomMetadataDescription]
+      ,[PublishedOnDate]
+      ,[CreatedOnDate]
+      ,[LastModifiedOnDate]
+	FROM    {databaseOwner}{objectQualifier}Publisher_Posts
+	WHERE   PortalId = @PortalId 
+		AND ContentItemId = @ContentItemId
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Publisher_Post_Update') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Publisher_Post_Update
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Publisher_Post_Update]
+	@PortalId int,
+	@GroupId int,
+	@ContentItemId int,
+	@Published bit,
+	@AllowedComments bit,
+	@Featured bit,
+	@AuthorUserId int,
+	@MetadataTitle nvarchar(max),
+	@IsCustomMetadataTitle bit,
+	@MetadataDescription nvarchar(max),
+	@IsCustomMetadataDescription bit,
+	@PublishedOnDate datetime
+AS 
+	UPDATE {databaseOwner}{objectQualifier}Publisher_Posts
+	SET GroupId = @GroupId,
+		Published = @Published,
+		AllowedComments = @AllowedComments,
+		Featured = @Featured,
+		AuthorUserId = @AuthorUserId,
+		MetadataTitle = @MetadataTitle,
+		IsCustomMetadataTitle = @IsCustomMetadataTitle,
+		MetadataDescription = @MetadataDescription,
+		IsCustomMetadataDescription = @IsCustomMetadataDescription,
+		PublishedOnDate = @PublishedOnDate,
+		LastModifiedOnDate = GETUTCDATE()
+	WHERE PortalId = @PortalId 
+		AND ContentItemId = @ContentItemId
+GO

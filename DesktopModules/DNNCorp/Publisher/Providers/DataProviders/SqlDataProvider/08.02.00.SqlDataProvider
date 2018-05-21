@@ -1,0 +1,216 @@
+﻿IF object_id(N'{databaseOwner}{objectQualifier}Publisher_GetFeaturedPosts', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Publisher_GetFeaturedPosts
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Publisher_GetFeaturedPosts]
+	@ModuleId INT,
+	@GroupId INT,
+	@MaxNumberOfPosts INT
+AS
+BEGIN
+	DECLARE @TitleMetID AS INT = (SELECT MetaDataID
+									FROM {databaseOwner}{objectQualifier}MetaData
+									WHERE MetaDataName = 'Title');
+	
+	DECLARE @ImagesMetID AS INT = (SELECT MetaDataID
+									FROM {databaseOwner}{objectQualifier}MetaData
+									WHERE MetaDataName = 'Images');
+
+	WITH	PostSet
+	AS		(SELECT
+					P.PostId,
+					P.PortalId,
+					P.GroupId,
+					P.ContentItemId,
+					P.Published,
+					P.AuthorUserId,
+					P.AllowedComments,
+					P.Featured,
+					P.MetadataTitle,
+					P.MetadataDescription,
+					P.PublishedOnDate,
+					P.CreatedOnDate,
+					P.LastModifiedOnDate,
+					CI.Content AS [Body],
+					CI.TabId,
+					CI.ModuleId,
+					CI.LastModifiedByUserId AS [ModifiedByUserId],
+					CI.CreatedByUserID AS [CreatedByUserId],
+					CIMDT.MetaDataValue AS [Title],
+					REPLACE(REPLACE(CIMDI.MetaDataValue, '[', ''), ']', '') AS MainImageFileId,
+					ROW_NUMBER() OVER (ORDER BY PublishedOnDate DESC) AS RowNumber
+			
+			FROM	{databaseOwner}{objectQualifier}Publisher_Posts AS P
+					INNER JOIN {databaseOwner}{objectQualifier}ContentItems AS CI 
+						ON P.ContentItemId = CI.ContentItemID
+					LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData AS CIMDT 
+						ON CIMDT.ContentItemID = CI.ContentItemID AND CIMDT.MetaDataID = @TitleMetID
+					LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData AS CIMDI
+						ON CIMDI.ContentItemID = CI.ContentItemID AND CIMDI.MetaDataID = @ImagesMetID
+			
+			WHERE	CI.ModuleId = @ModuleId
+					AND	(@GroupId is null OR P.GroupId = @GroupId)
+					AND P.Published = 1
+					AND P.Featured = 1
+			)
+
+	SELECT	*
+	FROM	PostSet
+	WHERE	RowNumber BETWEEN 1 AND @MaxNumberOfPosts;
+END
+GO
+
+IF object_id(N'{databaseOwner}{objectQualifier}Publisher_SearchPostsByDate', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Publisher_SearchPostsByDate
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Publisher_SearchPostsByDate]
+	@ModuleId INT,
+	@BeginDate DATETIME
+AS
+BEGIN
+	DECLARE @TitleMetID AS INT = (SELECT MetaDataID
+									FROM {databaseOwner}{objectQualifier}MetaData
+									WHERE MetaDataName = 'Title');
+
+	DECLARE @ImagesMetID AS INT = (SELECT MetaDataID
+									FROM {databaseOwner}{objectQualifier}MetaData
+									WHERE MetaDataName = 'Images');
+
+	SELECT
+		P.PostId,
+		P.PortalId,
+		P.GroupId,
+		P.ContentItemId,
+		P.Published,
+		P.AuthorUserId,
+		P.AllowedComments,
+		P.Featured,
+		P.MetadataTitle,
+		P.MetadataDescription,
+		P.PublishedOnDate,
+		P.CreatedOnDate,
+		P.LastModifiedOnDate,
+		CI.Content AS [Body],
+		CI.TabId,
+		CI.ModuleId,
+		CI.LastModifiedByUserId AS [ModifiedByUserId],
+		CI.CreatedByUserID AS [CreatedByUserId],
+		CIMDT.MetaDataValue AS [Title],
+		REPLACE(REPLACE(CIMDI.MetaDataValue, '[', ''), ']', '') AS MainImageFileId
+	FROM	{databaseOwner}{objectQualifier}Publisher_Posts AS P
+		INNER JOIN {databaseOwner}{objectQualifier}ContentItems AS CI 
+			ON P.ContentItemId = CI.ContentItemID
+		LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData AS CIMDT 
+			ON CIMDT.ContentItemID = CI.ContentItemID AND CIMDT.MetaDataID = @TitleMetID
+		LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData AS CIMDI
+			ON CIMDI.ContentItemID = CI.ContentItemID AND CIMDI.MetaDataID = @ImagesMetID
+	WHERE	CI.ModuleId = @ModuleId
+			AND	P.Published = 1
+			AND ((P.LastModifiedOnDate IS NOT NULL AND P.LastModifiedOnDate > @BeginDate) OR P.CreatedOnDate > @BeginDate);
+END
+GO
+
+IF object_id(N'{databaseOwner}{objectQualifier}Publisher_GetTopTags', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Publisher_GetTopTags
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Publisher_GetTopTags
+	@ModuleId INT,
+	@StartIndex INT,
+	@EndIndex INT
+AS
+BEGIN
+	DECLARE @ContentTypeId INT = (SELECT ContentTypeID FROM  {databaseOwner}{objectQualifier}ContentTypes WHERE ContentType = 'Evoq Publisher Post');
+
+	WITH Tags AS (
+		SELECT ct.TermID, COUNT(*) Count, 
+			ROW_NUMBER() OVER (ORDER BY COUNT(*) DESC) AS RowNumber
+		FROM {databaseOwner}{objectQualifier}ContentItems_Tags ct
+			JOIN {databaseOwner}{objectQualifier}ContentItems ci ON ct.ContentItemID = ci.ContentItemID
+			JOIN {databaseOwner}{objectQualifier}Publisher_Posts p ON ci.ContentItemID = p.ContentItemId
+		WHERE p.Published = 1
+			AND ci.ModuleID = @ModuleId
+			AND ci.ContentTypeID = @ContentTypeId 
+		GROUP BY ct.TermID
+	) 
+	SELECT 
+		t.TermId [Key],
+		x.Name Name,
+		t.Count Count
+	FROM Tags t
+		JOIN {databaseOwner}{objectQualifier}Taxonomy_Terms x ON t.TermID = x.TermID
+	WHERE RowNumber BETWEEN @StartIndex AND @EndIndex;
+END
+GO
+
+IF object_id(N'{databaseOwner}{objectQualifier}Publisher_GetTagCount', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Publisher_GetTagCount
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Publisher_GetTagCount
+	@ModuleId INT
+AS
+BEGIN
+	DECLARE @ContentTypeId INT = (SELECT ContentTypeID FROM  {databaseOwner}{objectQualifier}ContentTypes WHERE ContentType = 'Evoq Publisher Post');
+
+	SELECT COUNT(DISTINCT ct.TermID) Count
+	FROM {databaseOwner}{objectQualifier}ContentItems_Tags ct
+		JOIN {databaseOwner}{objectQualifier}ContentItems ci ON ct.ContentItemID = ci.ContentItemID
+		JOIN {databaseOwner}{objectQualifier}Publisher_Posts p ON ci.ContentItemID = p.ContentItemId
+	WHERE p.Published = 1
+		AND ci.ModuleID = @ModuleId
+		AND ci.ContentTypeID = @ContentTypeId 
+END
+GO
+
+IF object_id(N'{databaseOwner}{objectQualifier}Publisher_GetTopAuthors', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Publisher_GetTopAuthors
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Publisher_GetTopAuthors
+	@ModuleId INT,
+	@StartIndex INT,
+	@EndIndex INT
+AS
+BEGIN
+	DECLARE @ContentTypeId INT = (SELECT ContentTypeID FROM  {databaseOwner}{objectQualifier}ContentTypes WHERE ContentType = 'Evoq Publisher Post');
+
+	WITH Authors AS (
+		SELECT AuthorUserId, COUNT(AuthorUserId) Count, 
+			ROW_NUMBER() OVER (ORDER BY COUNT(*) DESC) AS RowNumber
+		FROM {databaseOwner}{objectQualifier}Publisher_Posts p
+			JOIN {databaseOwner}{objectQualifier}ContentItems ci ON p.ContentItemID = ci.ContentItemID
+			WHERE p.Published = 1
+				AND ci.ModuleID = @ModuleId
+				AND ci.ContentTypeID = @ContentTypeId 
+		GROUP BY AuthorUserId
+	) 
+	SELECT 
+		a.AuthorUserId [Key],
+		u.DisplayName Name,
+		a.Count Count
+	FROM Authors a
+		JOIN {databaseOwner}{objectQualifier}Users u ON a.AuthorUserId = u.UserId
+	WHERE RowNumber BETWEEN @StartIndex AND @EndIndex;
+END
+GO
+
+IF object_id(N'{databaseOwner}{objectQualifier}Publisher_GetAuthorCount', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Publisher_GetAuthorCount
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Publisher_GetAuthorCount
+	@ModuleId INT
+AS
+BEGIN
+	DECLARE @ContentTypeId INT = (SELECT ContentTypeID FROM  {databaseOwner}{objectQualifier}ContentTypes WHERE ContentType = 'Evoq Publisher Post');
+
+	SELECT COUNT(DISTINCT AuthorUserId) Count
+	FROM {databaseOwner}{objectQualifier}Publisher_Posts p
+		JOIN {databaseOwner}{objectQualifier}ContentItems ci ON p.ContentItemID = ci.ContentItemID
+	WHERE p.Published = 1
+		AND ci.ModuleID = @ModuleId
+		AND ci.ContentTypeID = @ContentTypeId 
+END
+GO

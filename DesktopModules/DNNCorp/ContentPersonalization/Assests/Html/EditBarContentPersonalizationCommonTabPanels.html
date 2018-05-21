@@ -1,0 +1,78 @@
+﻿<div id="personalizedPagesContainer" class="pageHistoryContainer PersonalizedPagesPanel"
+     data-bind="inOutVisible: visible">
+    <div class="title">
+        <h2 data-bind="text: resx.panel.title" />
+    </div>
+    <!-- View with no personalized tabs -->
+    <div class="NoPages" data-bind="visible: getNumberOfPersonalizedPages() == 0"><div data-bind="text: resx.panel.labels.noPersonalizedTabsCreatedYet"></div></div>
+
+    <!-- View with personalized tabs -->
+    <div class="tableContainer">
+        <table class="historytbl" data-bind="visible: getNumberOfPersonalizedPages() > 0">
+            <thead>
+                <tr>
+                    <td data-bind="text: resx.panel.headers.versionName" />
+                    <td data-bind="text: resx.panel.headers.date" />
+                    <td data-bind="text: resx.panel.headers.published" />
+                    <td data-bind="text: resx.panel.headers.actions" />
+                    <td data-bind="text: resx.panel.headers.priority" />
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: personalizedTabs, visible: getNumberOfPersonalizedPages() > 0">
+                <tr data-bind="attr: {'id': 'personalizedTab' + $index()}">
+                    <td><span data-bind="text: name" /> <span data-bind="text: $root.resx.panel.labels.labelDefaultView, visible: isMasterPage" class="disableMessage" /></td>
+                    <td data-bind="text: createdOnDate" class="bolder"></td>
+                    <td data-bind="text: hasBeenPublished"></td>
+                    <td>
+                        <ul data-bind="visible: !isMasterPage">
+                            <!-- Edit rules of a personalized page -->
+                            <li href="#" data-bind="click: $root.editPersonalizedPage, attr: {title: $root.resx.panel.buttons.editRulesPersonalizedTab}" class="versionAction editRules" />
+                            <!-- Edit a personalized page -->
+                            <li href="#" data-bind="click: $root.goToPageInEditMode, attr: {title: $root.resx.panel.buttons.editPersonalizedTab}" class="versionAction showEditVersion" />
+                            <!-- Go to personalized page -->
+                            <li href="#" data-bind="click: $root.goToPageInViewMode, attr: {title: $root.resx.panel.buttons.viewPersonalizedTab}" class="versionAction showVersion" />
+                            <!-- Delete -->
+                            <li href="#" data-bind="click: $root.deletePersonalizedTab, attr: {title: $root.resx.panel.buttons.deletePersonalizedTab}, visible: $root.currentTabId != tabId" class="versionAction deleteVersion" />
+                        </ul>
+                        <ul data-bind="visible: isMasterPage">
+                            <!-- Edit rules of a personalized page disabled -->
+                            <li href="#" class="versionAction editRules lock" />
+                            <!-- Edit a personalized page disabled -->
+                            <li href="#" data-bind="click: $root.goToPageInEditMode, attr: {title: $root.resx.panel.buttons.editMasterTab}" class="versionAction showEditVersion" />
+                            <!-- Go to personalized page -->
+                            <li href="#" data-bind="click: $root.goToPageInViewMode, attr: {title: $root.resx.panel.buttons.viewMasterTab}" class="versionAction showVersion" />
+                            <!-- Delete disabled -->
+                            <li href="#" class="versionAction deleteVersion lock" />
+                        </ul>
+                    </td>
+                    <td>
+                        <div data-bind="visible: $parent.personalizedTabs().length > 1 && !isMasterPage">
+                            <!-- Move UP -->
+                            <div class="item" data-bind="visible: $index() !== 0">
+                                <div class="icon moveUp" data-bind="click: function(data, event) {$root.changePersonalizedPagePriority(data, priority - 1)}"></div>
+                            </div>
+                            <!-- Move DOWN -->
+                            <div class="item" data-bind="visible: $index() !== ($parent.personalizedTabs().length - 2)">
+                                <div class="icon moveDown" data-bind="click: function(data, event) {$root.changePersonalizedPagePriority(data, priority + 1)}, css: {first: $index() === 0}"></div>
+                            </div>
+                        </div>
+                        <div data-bind="visible: $parent.personalizedTabs().length > 1 && isMasterPage">
+                            <div class="item">
+                                <div href="#" class="icon lock"></div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div>
+            <button data-bind="click: addNewPersonalizedTab, enable: canAddNewPersonalizedTab">
+                <span data-bind="text: resx.panel.buttons.addNew" />
+                <div class="maxNumberAllowedMessage" data-bind="visible:  !canAddNewPersonalizedTab()">
+                    <span class="bolder" data-bind="text: resx.panel.labels.maxNumberAllowed"></span>
+                </div>
+            </button>
+        </div>
+        <div data-bind="click: togglePersonalizedTabsPanel, attr: {title: resx.panel.buttons.close}" class="historyClose" />
+    </div>
+</div>

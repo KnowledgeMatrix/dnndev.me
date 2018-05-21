@@ -1,0 +1,135 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+UPDATE {databaseOwner}[{objectQualifier}PersonaBarMenu]
+        SET Controller = 'Evoq.PersonaBar.Users.MenuControllers.UsersMenuController, Evoq.PersonaBar.Users'
+        WHERE Identifier = 'Dnn.Users'
+GO
+
+
+/********************************************************
+ * SPROC: PersonaBar_GetUserActivityDetail
+ ********************************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}PersonaBar_GetUserActivityDetail') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}PersonaBar_GetUserActivityDetail
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}PersonaBar_GetUserActivityDetail (
+	@PortalId INT,
+	@UserId INT
+) AS
+BEGIN
+	--Basic Details
+	SELECT UP.PortalID, U.UserID,
+		COALESCE(us.ContentCreatedCount, 0) AS [TotalContribution], US.LastModifiedOnDate,
+		COALESCE(us.ReputationPoints, 0) AS [Reputation],	
+		COALESCE(us.ExperiencePoints, 0) AS [Experience]
+	FROM {databaseOwner}{objectQualifier}Users U WITH (NOLOCK)
+		INNER JOIN {databaseOwner}{objectQualifier}UserPortals UP WITH (NOLOCK)
+			ON U.UserID = UP.UserId
+		LEFT OUTER JOIN {databaseOwner}[{objectQualifier}Mechanics_UserScoring] US 
+			ON US.UserId = U.UserID AND UP.PortalId = US.PortalId
+	WHERE UP.PortalId = @PortalId
+		AND U.UserID = @UserID
+		AND UP.PortalId = @PortalId
+
+	--Rank
+	DECLARE @RP INT
+	SELECT @RP = US.ReputationPoints
+	FROM {databaseOwner}[{objectQualifier}Mechanics_UserScoring] US WITH (NOLOCK)
+	WHERE US.UserID = @UserID
+	AND US.PortalId = @PortalId
+		
+	IF @RP IS NOT NULL
+	BEGIN
+		SELECT @RP = COUNT(*) + 1 
+		FROM {databaseOwner}[{objectQualifier}Mechanics_UserScoring] US WITH (NOLOCK)
+		WHERE US.PortalId = @PortalId
+			AND US.ReputationPoints > @RP 
+	END
+	SELECT COALESCE(@RP, -1) As Rank
+
+	--Optimal Engagement
+	IF EXISTS(SELECT * FROM dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Get_Optimal_Score') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	BEGIN
+		DECLARE @SprocResults TABLE ([OptimalEngagementScore] DECIMAL(18,0))
+		INSERT INTO @SprocResults
+		EXEC {databaseOwner}{objectQualifier}Analytics_Get_Optimal_Score @PortalId, 'Engagement'
+
+		SELECT TOP 1 CONVERT(INT, [OptimalEngagementScore]) OptimalEngagementScore FROM @SprocResults
+	END
+	ELSE
+		SELECT 0 OptimalEngagementScore
+
+	--Engagement (available in Social only)
+	IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Users]') AND type in (N'U'))
+    BEGIN
+		SELECT TOP 1 Engagement
+		FROM {databaseOwner}[{objectQualifier}Analytics_Users]
+		WHERE UserID = @UserID
+		AND PortalId = @PortalId	
+    END
+	ELSE
+		SELECT CAST('' AS XML)
+
+	--Influence (available in Social only)
+	IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_UserInfluenceRollup]') AND type in (N'U'))
+    BEGIN
+		SELECT InfluenceYearly Influence
+		FROM {databaseOwner}{objectQualifier}Analytics_UserInfluenceRollup
+		WHERE UserID = @UserID AND PortalId = @PortalId
+    END
+	ELSE
+		SELECT -1 Influence
+
+	--User Activity
+ 	EXEC  {databaseOwner}{objectQualifier}PersonaBar_GetUserRecentActivities @PortalId, @UserId, 0, 10
+END
+GO
+
+/********************************************************
+ * SPROC: PersonaBar_GetUserRecentActivities
+ ********************************************************/
+IF EXISTS (SELECT * FROM dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}PersonaBar_GetUserRecentActivities') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}PersonaBar_GetUserRecentActivities
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}PersonaBar_GetUserRecentActivities (
+	@PortalId INT,
+	@UserId INT,
+	@PageIndex INT,
+	@PageSize INT
+) AS
+BEGIN
+	;WITH RecentActivities
+	AS
+	(	
+	--User Activity
+	SELECT SAD.FriendlyName AS Area, USL.CreatedOnDate, SAD.ScoringActionDefId,
+	"Title" = CASE WHEN CIMD.MetaDataValue <> '' THEN CIMD.MetaDataValue ELSE CI.Content END,
+	ROW_NUMBER() OVER ( ORDER BY USL.UserScoringLogId DESC) AS RowNumber,
+	ROW_NUMBER() OVER ( ORDER BY USL.UserScoringLogId ASC) AS RowNumberReverse 
+	FROM {databaseOwner}[{objectQualifier}Mechanics_UserScoringLog] USL WITH (NOLOCK)
+	INNER JOIN {databaseOwner}[{objectQualifier}vw_Mechanics_ScoringActionDefinitions] SAD
+		ON USL.ScoringActionDefId = SAD.ScoringActionDefId
+	LEFT OUTER JOIN {databaseOwner}[{objectQualifier}ContentItems] CI
+        ON USL.ContentItemId = CI.ContentItemId
+	LEFT OUTER JOIN	{databaseOwner}{objectQualifier}ContentItems_MetaData CIMD WITH (NOLOCK)
+		ON CIMD.ContentItemID = USL.ContentItemId
+		  AND CIMD.MetaDataID = (SELECT MetaDataID FROM {databaseOwner}{objectQualifier}MetaData WITH (NOLOCK) WHERE MetaDataName = 'Title')
+	WHERE USL.UserId =  @UserID
+		AND USL.PortalId = @PortalId
+		AND SAD.ActionType IN(0,2,7,11) -- Interacted = 0, Created = 2, FormedRelationship = 7, Shared = 11
+	)
+	SELECT * FROM RecentActivities
+	WHERE RowNumber BETWEEN (@PageIndex * @PageSize + 1) AND ((@PageIndex + 1) * @PageSize);
+END
+GO

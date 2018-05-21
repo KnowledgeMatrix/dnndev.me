@@ -1,0 +1,95 @@
+﻿
+.evoq-onoffswitch {
+    position: relative;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    width: 110px;
+}
+
+.evoq-onoffswitch-checkbox {
+    display: none;
+}
+
+.evoq-onoffswitch-label {
+    display: block;
+    overflow: hidden;
+    cursor: pointer;
+    border: 2px solid #FFFFF;
+    border-radius: 8px;
+}
+
+.evoq-onoffswitch-inner {
+    display: block;
+    width: 200%;
+    margin-left: -100%;
+    transition: margin 0.3s ease-in 0s;
+}
+
+    .evoq-onoffswitch-inner:before, .evoq-onoffswitch-inner:after {
+        display: block;
+        float: left;
+        width: 50%;
+        height: 32px;
+        padding: 0;
+        line-height: 32px;
+        font-size: 16px;
+        color: white;
+        font-family: Trebuchet, Arial, sans-serif;
+        font-weight: bold;
+        box-sizing: border-box;
+    }
+
+    .evoq-onoffswitch-inner:before {
+        content: "ON";
+        padding-left: 15px;
+        background-color: #1688C4;
+        color: #FFFFFF;
+    }
+
+    .evoq-onoffswitch-inner:after {
+        content: "OFF";
+        padding-right: 15px;
+        background-color: #cacaca;
+        color: #FFFFFF;
+        text-align: right;
+    }
+
+.evoq-onoffswitch-switch {
+    display: block;
+    width: 18px;
+    margin: 7px;
+    background: #FFFFFF;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 74px;
+    border: 2px solid #FFFFF;
+    border-radius: 8px;
+    transition: all 0.3s ease-in 0s;
+}
+
+.evoq-onoffswitch-checkbox:checked + .evoq-onoffswitch-label .evoq-onoffswitch-inner {
+    margin-left: 0;
+}
+
+.evoq-onoffswitch-checkbox:checked + .evoq-onoffswitch-label .evoq-onoffswitch-switch {
+    right: 0px;
+}
+
+
+.evoq-onoffswitch.small {
+    width: 75px;
+}
+
+    .evoq-onoffswitch.small .evoq-onoffswitch-switch {
+        right: 44px;
+        width: 13px;
+    }
+
+
+    .evoq-onoffswitch.small .evoq-onoffswitch-inner:before, .evoq-onoffswitch.small .evoq-onoffswitch-inner:after {
+        font-size: 14px;
+        height: 26px;
+        line-height: 26px;
+    }

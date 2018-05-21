@@ -1,0 +1,46 @@
+﻿<div id="{0}" class="contentPersonalizationPageVisitedRule">
+    <span data-bind="text: resx.RulesPageVisitedName" class="caption" style="margin-top: -22px;"></span>
+    <div class="page floating dnnDropDownList"
+         data-bind="attr: {'id': pageListId},
+         	pagePicker: {
+         		koElement: $data,
+    			selectPageCallback: selectPage,
+    			selectedPage: selectedPage,
+                containerSelector: '.personalizedPageDialog',
+    			options: {
+	    			selectedItemCss: 'selected-item',
+	                internalStateFieldId: 'PersonalizedPage_PageList_state',
+	                selectItemDefaultText: firstItem.value,
+		            itemList: {
+		                sortAscendingButtonTitle: resx.RulesPageVisitedSortAscendingButtonTitle,
+		                unsortedOrderButtonTooltip: resx.RulesPageVisitedUnsortedOrderButtonTooltip,
+		                sortAscendingButtonTooltip: resx.RulesPageVisitedSortAscendingButtonTooltip,
+		                sortDescendingButtonTooltip: resx.RulesPageVisitedSortDescendingButtonTooltip,
+		                selectedItemExpandTooltip: resx.RulesPageVisitedSelectedItemExpandTooltip,
+		                selectedItemCollapseTooltip: resx.RulesPageVisitedSelectedItemCollapseTooltip,
+		                searchInputPlaceHolder: resx.RulesPageVisitedSearchInputPlaceHolder,
+		                clearButtonTooltip: resx.RulesPageVisitedClearButtonTooltip,
+		                searchButtonTooltip: resx.RulesPageVisitedSearchButtonTooltip,
+		                loadingResultText: resx.RulesPageVisitedLoadingResultText,
+		                resultsText: resx.RulesPageVisitedResultsText,
+		                firstItem: firstItem,
+		                disableUnspecifiedOrder: false
+		            }
+            	}
+            },
+            visible: pagePickerVisible">
+        <div class="selected-item">
+            <a href="javascript:void(0);" title="" class="selected-value">&lt;None Specified&gt;</a>
+        </div>
+        <input type="hidden" name="PersonalizedPage$PageList$state"
+               data-bind="attr: {'id': pageListId + '_state'}"
+               value="{&quot;selectedItem&quot;:{&quot;key&quot;:&quot;&quot;,&quot;value&quot;:&quot;<None Specified>&quot;}}" aria-label="State">
+    </div>
+    <div class="listPlaceHolder dnnDropDownList" data-bind="attr: {'id': pageListPlaceHolderId}">
+        <div class=" selected-item">
+        <a href="javascript:void(0);" title="" class="selected-value" data-bind="text: internalSelectedPage, click: showPagePicker">&lt;None Specified&gt;</a>
+    </div>
+    </div>
+    <span class="rulesValidationMessage" data-bind="validationMessage: anyPageSelected" />
+    <div data-bind="text: resx.RulesRemoveRule, click: remove" class="deleteRule"></div>
+</div>

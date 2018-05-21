@@ -1,0 +1,44 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+SET XACT_ABORT ON
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+	
+	-- Single transaction on confirmation
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD ConfirmationSingleTransaction bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ConfirmationDisplayUnique DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ConfirmationDisplayUnique
+
+	-- Limit product search results
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD ProductSearchResultsMax int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductSearchResultsMax DEFAULT 100
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductSearchResultsMax
+
+COMMIT TRANSACTION
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+
+		-- Change USPS service name
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'USPS:FIRST-CLASS MAIL&LT;SUP&GT;&#174;&LT;/SUP&GT; STAMPED LETTER' WHERE UniversalServiceName = 'USPS:FIRST-CLASS MAIL&LT;SUP&GT;&#174;&LT;/SUP&GT; LETTER'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder SET ShippingUniversalServiceName = 'USPS:FIRST-CLASS MAIL&LT;SUP&GT;&#174;&LT;/SUP&GT; STAMPED LETTER' WHERE ShippingUniversalServiceName = 'USPS:FIRST-CLASS MAIL&LT;SUP&GT;&#174;&LT;/SUP&GT; LETTER'
+
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

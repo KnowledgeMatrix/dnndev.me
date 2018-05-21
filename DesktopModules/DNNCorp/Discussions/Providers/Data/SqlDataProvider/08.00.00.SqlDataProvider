@@ -1,0 +1,48 @@
+﻿IF OBJECT_ID(N'{databaseOwner}{objectQualifier}Discussions_Topic_GetById', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Discussions_Topic_GetById
+GO            
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Discussions_Topic_GetById
+	@TopidId INT
+AS
+BEGIN
+	SELECT  TopicId ,
+			T.ContentItemId ,
+			GroupId ,
+			PortalId ,
+			ViewCount ,
+			Approved ,
+			ApprovedDate ,
+			Deleted ,
+			Closed ,
+			ClosedDate ,
+			Protected ,
+			ProtectedDate ,
+			Pinned ,
+			PinnedDate ,
+			Content ,
+			ContentTypeID ,
+			TabID ,
+			ModuleID ,
+			ContentKey ,
+			Indexed ,
+			CreatedByUserId ,
+			CreatedOnDate ,
+			LastModifiedByUserID ,
+			LastModifiedOnDate ,
+			CIMD.MetaDataValue AS ContentTitle ,
+			1 AS TotalRecords
+	FROM    {databaseOwner}{objectQualifier}Discussions_Topic T
+			INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI ON T.ContentItemId = CI.ContentItemID
+			LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD ON CIMD.ContentItemID = T.ContentItemID
+															  AND CIMD.MetaDataID = ( SELECT
+															  MetaDataID
+															  FROM
+															  {databaseOwner}[{objectQualifier}MetaData]
+															  WHERE
+															  MetaDataName = 'Title'
+															  )
+	WHERE   T.TopicId = @TopidId
+			AND Deleted = 0
+END
+GO

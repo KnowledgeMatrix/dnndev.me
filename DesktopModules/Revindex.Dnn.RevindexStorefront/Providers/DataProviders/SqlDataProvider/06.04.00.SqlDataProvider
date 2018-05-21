@@ -1,0 +1,61 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+SET XACT_ABORT ON
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+
+	-- Support different transaction type for Authorize.net CIM
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentMethodsAuthorizeNetCIMTransactionType int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsAuthorizeNetCIMTransactionType DEFAULT 2
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsAuthorizeNetCIMTransactionType
+	
+	-- Add CurrencyCultureCode to SalesOrder table
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder ADD CurrencyCultureCode varchar(20) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrder_UICultureCode DEFAULT 'en-US'
+
+	-- Support Virtual Card Services
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		PaymentGatewaysVirtualCardServicesPayTerminalID varchar(255) NULL,
+		PaymentGatewaysVirtualCardServicesPayMD5Key varchar(255) NULL,
+		PaymentGatewaysVirtualCardServicesPayUsername varchar(255) NULL,
+		PaymentGatewaysVirtualCardServicesPayPassword varchar(255) NULL,
+		PaymentMethodsVirtualCardServicesPayActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsVirtualCardServicesPayActive DEFAULT 0,
+		PaymentMethodsVirtualCardServicesPayAvailabilityRule xml NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsVirtualCardServicesPayActive
+
+	-- Support PaymentNumber returned by gateway
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesPayment ADD
+		PaymentGatewayProfileNumber varchar(100) NULL,
+		PaymentGatewayPaymentNumber varchar(100) NULL,
+		PaymentGatewayPaymentHint varchar(100) NULL
+
+COMMIT TRANSACTION
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+
+		-- Update CurrencyCultureCode
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder SET CurrencyCultureCode = CultureCode
+
+		-- Upgrade default Checkout template to "Standard20"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CheckoutDisplayTemplate = 'Standard20' WHERE CheckoutDisplayTemplate LIKE 'Standard%'
+
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

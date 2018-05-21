@@ -1,0 +1,615 @@
+2017-12-06 00:38:47.028+05:30 [KM-SHELLBY][D:2][T:17][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCalendar.EasyDNNnewsCalendarController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCalendar.EasyDNNnewsCalendarController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 00:38:47.059+05:30 [KM-SHELLBY][D:2][T:17][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCategories.EasyDNNnewsCategoriesMenuController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCategories.EasyDNNnewsCategoriesMenuController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 00:38:47.059+05:30 [KM-SHELLBY][D:2][T:17][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsSearch.EasyDNNnewsSearchController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsSearch.EasyDNNnewsSearchController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 00:38:47.059+05:30 [KM-SHELLBY][D:2][T:17][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsTagCloud.EasyDNNnewsTagCloudController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsTagCloud.EasyDNNnewsTagCloudController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 00:38:47.075+05:30 [KM-SHELLBY][D:2][T:17][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.Widgets.EasyDNNnewsWidgetsController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.Widgets.EasyDNNnewsWidgetsController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 03:59:32.224+05:30 [KM-SHELLBY][D:2][T:38][ERROR] DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl - Search Document error: Portal ID: 0, Tab ID: 54, Module ID: 554, Mod. Def.ID: 207, Url: , Unique Key: 21M554, Last Modified: 2017-12-04T05:42:34.1530000, Culture: en-US, Search Type: 1
+Lucene.Net.Store.AlreadyClosedException: this IndexWriter is closed
+   at Lucene.Net.Index.IndexWriter.EnsureOpen(Boolean includePendingClose)
+   at Lucene.Net.Index.IndexWriter.EnsureOpen()
+   at Lucene.Net.Index.IndexWriter.DeleteDocuments(Query query)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.DeleteSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocuments(IEnumerable`1 searchDocuments)
+2017-12-06 03:59:32.255+05:30 [KM-SHELLBY][D:2][T:38][ERROR] DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl - Search Document error: Portal ID: 0, Tab ID: 54, Module ID: 554, Mod. Def.ID: 207, Url: , Unique Key: 22M554, Last Modified: 2017-12-04T05:42:35.5600000, Culture: en-US, Search Type: 1
+System.ObjectDisposedException: Cannot access a disposed object.
+Object name: 'LuceneController is disposed and cannot be used anymore'.
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.CheckDisposed()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.get_Writer()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.Delete(Query query)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.DeleteSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocuments(IEnumerable`1 searchDocuments)
+2017-12-06 03:59:32.255+05:30 [KM-SHELLBY][D:2][T:38][ERROR] DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl - Search Document error: Portal ID: 0, Tab ID: 54, Module ID: 554, Mod. Def.ID: 207, Url: , Unique Key: 23M554, Last Modified: 2017-12-04T05:42:37.0930000, Culture: en-US, Search Type: 1
+System.ObjectDisposedException: Cannot access a disposed object.
+Object name: 'LuceneController is disposed and cannot be used anymore'.
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.CheckDisposed()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.get_Writer()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.Delete(Query query)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.DeleteSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocuments(IEnumerable`1 searchDocuments)
+2017-12-06 03:59:32.255+05:30 [KM-SHELLBY][D:2][T:38][ERROR] DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl - Search Document error: Portal ID: 0, Tab ID: 54, Module ID: 554, Mod. Def.ID: 207, Url: , Unique Key: 24M554, Last Modified: 2017-12-04T05:42:38.6530000, Culture: en-US, Search Type: 1
+System.ObjectDisposedException: Cannot access a disposed object.
+Object name: 'LuceneController is disposed and cannot be used anymore'.
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.CheckDisposed()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.get_Writer()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.Delete(Query query)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.DeleteSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocuments(IEnumerable`1 searchDocuments)
+2017-12-06 03:59:32.255+05:30 [KM-SHELLBY][D:2][T:38][ERROR] DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl - Search Document error: Portal ID: 0, Tab ID: 54, Module ID: 554, Mod. Def.ID: 207, Url: , Unique Key: 25M554, Last Modified: 2017-12-04T05:42:40.0300000, Culture: en-US, Search Type: 1
+System.ObjectDisposedException: Cannot access a disposed object.
+Object name: 'LuceneController is disposed and cannot be used anymore'.
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.CheckDisposed()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.get_Writer()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.Delete(Query query)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.DeleteSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocuments(IEnumerable`1 searchDocuments)
+2017-12-06 03:59:32.255+05:30 [KM-SHELLBY][D:2][T:38][ERROR] DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl - Search Document error: Portal ID: 0, Tab ID: 54, Module ID: 554, Mod. Def.ID: 207, Url: , Unique Key: 26M554, Last Modified: 2017-12-04T05:42:41.1700000, Culture: en-US, Search Type: 1
+System.ObjectDisposedException: Cannot access a disposed object.
+Object name: 'LuceneController is disposed and cannot be used anymore'.
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.CheckDisposed()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.get_Writer()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.Delete(Query query)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.DeleteSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocuments(IEnumerable`1 searchDocuments)
+2017-12-06 03:59:32.271+05:30 [KM-SHELLBY][D:2][T:38][ERROR] DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl - Search Document error: Portal ID: 0, Tab ID: 54, Module ID: 554, Mod. Def.ID: 207, Url: , Unique Key: 27M554, Last Modified: 2017-12-04T05:42:42.3730000, Culture: en-US, Search Type: 1
+System.ObjectDisposedException: Cannot access a disposed object.
+Object name: 'LuceneController is disposed and cannot be used anymore'.
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.CheckDisposed()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.get_Writer()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.Delete(Query query)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.DeleteSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocuments(IEnumerable`1 searchDocuments)
+2017-12-06 03:59:32.271+05:30 [KM-SHELLBY][D:2][T:38][ERROR] DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl - Search Document error: Portal ID: 0, Tab ID: 54, Module ID: 554, Mod. Def.ID: 207, Url: , Unique Key: 28M554, Last Modified: 2017-12-04T05:42:43.8570000, Culture: en-US, Search Type: 1
+System.ObjectDisposedException: Cannot access a disposed object.
+Object name: 'LuceneController is disposed and cannot be used anymore'.
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.CheckDisposed()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.get_Writer()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.Delete(Query query)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.DeleteSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocuments(IEnumerable`1 searchDocuments)
+2017-12-06 03:59:32.271+05:30 [KM-SHELLBY][D:2][T:38][ERROR] DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl - Search Document error: Portal ID: 0, Tab ID: 54, Module ID: 554, Mod. Def.ID: 207, Url: , Unique Key: 29M554, Last Modified: 2017-12-04T05:42:45.1700000, Culture: en-US, Search Type: 1
+System.ObjectDisposedException: Cannot access a disposed object.
+Object name: 'LuceneController is disposed and cannot be used anymore'.
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.CheckDisposed()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.get_Writer()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.Delete(Query query)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.DeleteSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocuments(IEnumerable`1 searchDocuments)
+2017-12-06 03:59:32.271+05:30 [KM-SHELLBY][D:2][T:38][ERROR] DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl - Search Document error: Portal ID: 0, Tab ID: 54, Module ID: 554, Mod. Def.ID: 207, Url: , Unique Key: 30M554, Last Modified: 2017-12-04T05:42:46.5770000, Culture: en-US, Search Type: 1
+System.ObjectDisposedException: Cannot access a disposed object.
+Object name: 'LuceneController is disposed and cannot be used anymore'.
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.CheckDisposed()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.get_Writer()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.Delete(Query query)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.DeleteSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocuments(IEnumerable`1 searchDocuments)
+2017-12-06 03:59:32.271+05:30 [KM-SHELLBY][D:2][T:38][ERROR] DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl - Search Document error: Portal ID: 0, Tab ID: 61, Module ID: 558, Mod. Def.ID: 207, Url: , Unique Key: 59M558, Last Modified: 2017-12-04T06:36:52.5800000, Culture: en-US, Search Type: 1
+System.ObjectDisposedException: Cannot access a disposed object.
+Object name: 'LuceneController is disposed and cannot be used anymore'.
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.CheckDisposed()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.get_Writer()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.Delete(Query query)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.DeleteSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocuments(IEnumerable`1 searchDocuments)
+2017-12-06 03:59:32.286+05:30 [KM-SHELLBY][D:2][T:38][ERROR] DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl - Search Document error: Portal ID: 0, Tab ID: 61, Module ID: 558, Mod. Def.ID: 207, Url: , Unique Key: 60M558, Last Modified: 2017-12-04T06:36:52.6730000, Culture: en-US, Search Type: 1
+System.ObjectDisposedException: Cannot access a disposed object.
+Object name: 'LuceneController is disposed and cannot be used anymore'.
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.CheckDisposed()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.get_Writer()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.Delete(Query query)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.DeleteSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocuments(IEnumerable`1 searchDocuments)
+2017-12-06 03:59:32.286+05:30 [KM-SHELLBY][D:2][T:38][ERROR] DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl - Search Document error: Portal ID: 0, Tab ID: 61, Module ID: 558, Mod. Def.ID: 207, Url: , Unique Key: 61M558, Last Modified: 2017-12-04T06:36:52.7500000, Culture: en-US, Search Type: 1
+System.ObjectDisposedException: Cannot access a disposed object.
+Object name: 'LuceneController is disposed and cannot be used anymore'.
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.CheckDisposed()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.get_Writer()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.Delete(Query query)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.DeleteSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocuments(IEnumerable`1 searchDocuments)
+2017-12-06 03:59:32.286+05:30 [KM-SHELLBY][D:2][T:38][ERROR] DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl - Search Document error: Portal ID: 0, Tab ID: 61, Module ID: 558, Mod. Def.ID: 207, Url: , Unique Key: 62M558, Last Modified: 2017-12-04T06:36:52.7670000, Culture: en-US, Search Type: 1
+System.ObjectDisposedException: Cannot access a disposed object.
+Object name: 'LuceneController is disposed and cannot be used anymore'.
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.CheckDisposed()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.get_Writer()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.Delete(Query query)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.DeleteSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocuments(IEnumerable`1 searchDocuments)
+2017-12-06 03:59:32.286+05:30 [KM-SHELLBY][D:2][T:38][ERROR] DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl - Search Document error: Portal ID: 0, Tab ID: 74, Module ID: 556, Mod. Def.ID: 207, Url: , Unique Key: 45M556, Last Modified: 2017-12-04T06:22:06.7030000, Culture: en-US, Search Type: 1
+System.ObjectDisposedException: Cannot access a disposed object.
+Object name: 'LuceneController is disposed and cannot be used anymore'.
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.CheckDisposed()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.get_Writer()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.Delete(Query query)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.DeleteSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocuments(IEnumerable`1 searchDocuments)
+2017-12-06 03:59:32.302+05:30 [KM-SHELLBY][D:2][T:38][ERROR] DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl - Search Document error: Portal ID: 0, Tab ID: 74, Module ID: 556, Mod. Def.ID: 207, Url: , Unique Key: 46M556, Last Modified: 2017-12-04T06:22:06.7500000, Culture: en-US, Search Type: 1
+System.ObjectDisposedException: Cannot access a disposed object.
+Object name: 'LuceneController is disposed and cannot be used anymore'.
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.CheckDisposed()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.get_Writer()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.Delete(Query query)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.DeleteSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocuments(IEnumerable`1 searchDocuments)
+2017-12-06 03:59:32.302+05:30 [KM-SHELLBY][D:2][T:38][ERROR] DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl - Search Document error: Portal ID: 0, Tab ID: 74, Module ID: 556, Mod. Def.ID: 207, Url: , Unique Key: 47M556, Last Modified: 2017-12-04T06:22:06.7970000, Culture: en-US, Search Type: 1
+System.ObjectDisposedException: Cannot access a disposed object.
+Object name: 'LuceneController is disposed and cannot be used anymore'.
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.CheckDisposed()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.get_Writer()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.Delete(Query query)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.DeleteSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocuments(IEnumerable`1 searchDocuments)
+2017-12-06 03:59:32.302+05:30 [KM-SHELLBY][D:2][T:38][ERROR] DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl - Search Document error: Portal ID: 0, Tab ID: 74, Module ID: 556, Mod. Def.ID: 207, Url: , Unique Key: 48M556, Last Modified: 2017-12-04T06:22:06.8300000, Culture: en-US, Search Type: 1
+System.ObjectDisposedException: Cannot access a disposed object.
+Object name: 'LuceneController is disposed and cannot be used anymore'.
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.CheckDisposed()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.get_Writer()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.Delete(Query query)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.DeleteSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocuments(IEnumerable`1 searchDocuments)
+2017-12-06 03:59:32.302+05:30 [KM-SHELLBY][D:2][T:38][ERROR] DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl - Search Document error: Portal ID: 0, Tab ID: 74, Module ID: 556, Mod. Def.ID: 207, Url: , Unique Key: 49M556, Last Modified: 2017-12-04T06:22:06.8600000, Culture: en-US, Search Type: 1
+System.ObjectDisposedException: Cannot access a disposed object.
+Object name: 'LuceneController is disposed and cannot be used anymore'.
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.CheckDisposed()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.get_Writer()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.Delete(Query query)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.DeleteSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocuments(IEnumerable`1 searchDocuments)
+2017-12-06 03:59:32.302+05:30 [KM-SHELLBY][D:2][T:38][ERROR] DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl - Search Document error: Portal ID: 0, Tab ID: 74, Module ID: 556, Mod. Def.ID: 207, Url: , Unique Key: 50M556, Last Modified: 2017-12-04T06:22:06.9230000, Culture: en-US, Search Type: 1
+System.ObjectDisposedException: Cannot access a disposed object.
+Object name: 'LuceneController is disposed and cannot be used anymore'.
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.CheckDisposed()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.get_Writer()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.Delete(Query query)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.DeleteSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocuments(IEnumerable`1 searchDocuments)
+2017-12-06 03:59:32.317+05:30 [KM-SHELLBY][D:2][T:38][ERROR] DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl - Search Document error: Portal ID: 0, Tab ID: 54, Module ID: 557, Mod. Def.ID: 207, Url: , Unique Key: 51M557, Last Modified: 2017-12-04T06:30:51.4370000, Culture: en-US, Search Type: 1
+System.ObjectDisposedException: Cannot access a disposed object.
+Object name: 'LuceneController is disposed and cannot be used anymore'.
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.CheckDisposed()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.get_Writer()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.Delete(Query query)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.DeleteSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocuments(IEnumerable`1 searchDocuments)
+2017-12-06 03:59:32.317+05:30 [KM-SHELLBY][D:2][T:38][ERROR] DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl - Search Document error: Portal ID: 0, Tab ID: 54, Module ID: 557, Mod. Def.ID: 207, Url: , Unique Key: 52M557, Last Modified: 2017-12-04T06:30:51.4700000, Culture: en-US, Search Type: 1
+System.ObjectDisposedException: Cannot access a disposed object.
+Object name: 'LuceneController is disposed and cannot be used anymore'.
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.CheckDisposed()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.get_Writer()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.Delete(Query query)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.DeleteSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocuments(IEnumerable`1 searchDocuments)
+2017-12-06 03:59:32.317+05:30 [KM-SHELLBY][D:2][T:38][ERROR] DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl - Search Document error: Portal ID: 0, Tab ID: 54, Module ID: 557, Mod. Def.ID: 207, Url: , Unique Key: 53M557, Last Modified: 2017-12-04T06:30:51.5000000, Culture: en-US, Search Type: 1
+System.ObjectDisposedException: Cannot access a disposed object.
+Object name: 'LuceneController is disposed and cannot be used anymore'.
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.CheckDisposed()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.get_Writer()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.Delete(Query query)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.DeleteSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocuments(IEnumerable`1 searchDocuments)
+2017-12-06 03:59:32.317+05:30 [KM-SHELLBY][D:2][T:38][ERROR] DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl - Search Document error: Portal ID: 0, Tab ID: 54, Module ID: 557, Mod. Def.ID: 207, Url: , Unique Key: 54M557, Last Modified: 2017-12-04T06:30:51.5330000, Culture: en-US, Search Type: 1
+System.ObjectDisposedException: Cannot access a disposed object.
+Object name: 'LuceneController is disposed and cannot be used anymore'.
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.CheckDisposed()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.get_Writer()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.Delete(Query query)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.DeleteSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocuments(IEnumerable`1 searchDocuments)
+2017-12-06 03:59:32.317+05:30 [KM-SHELLBY][D:2][T:38][ERROR] DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl - Search Document error: Portal ID: 0, Tab ID: 54, Module ID: 557, Mod. Def.ID: 207, Url: , Unique Key: 55M557, Last Modified: 2017-12-04T06:30:51.5800000, Culture: en-US, Search Type: 1
+System.ObjectDisposedException: Cannot access a disposed object.
+Object name: 'LuceneController is disposed and cannot be used anymore'.
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.CheckDisposed()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.get_Writer()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.Delete(Query query)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.DeleteSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocuments(IEnumerable`1 searchDocuments)
+2017-12-06 03:59:32.317+05:30 [KM-SHELLBY][D:2][T:38][ERROR] DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl - Search Document error: Portal ID: 0, Tab ID: 54, Module ID: 557, Mod. Def.ID: 207, Url: , Unique Key: 56M557, Last Modified: 2017-12-04T06:30:51.6100000, Culture: en-US, Search Type: 1
+System.ObjectDisposedException: Cannot access a disposed object.
+Object name: 'LuceneController is disposed and cannot be used anymore'.
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.CheckDisposed()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.get_Writer()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.Delete(Query query)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.DeleteSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocuments(IEnumerable`1 searchDocuments)
+2017-12-06 03:59:32.317+05:30 [KM-SHELLBY][D:2][T:38][ERROR] DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl - Search Document error: Portal ID: 0, Tab ID: 54, Module ID: 557, Mod. Def.ID: 207, Url: , Unique Key: 57M557, Last Modified: 2017-12-04T06:30:51.6730000, Culture: en-US, Search Type: 1
+System.ObjectDisposedException: Cannot access a disposed object.
+Object name: 'LuceneController is disposed and cannot be used anymore'.
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.CheckDisposed()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.get_Writer()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.Delete(Query query)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.DeleteSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocuments(IEnumerable`1 searchDocuments)
+2017-12-06 03:59:32.317+05:30 [KM-SHELLBY][D:2][T:38][ERROR] DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl - Search Document error: Portal ID: 0, Tab ID: 54, Module ID: 557, Mod. Def.ID: 207, Url: , Unique Key: 58M557, Last Modified: 2017-12-04T06:30:51.7030000, Culture: en-US, Search Type: 1
+System.ObjectDisposedException: Cannot access a disposed object.
+Object name: 'LuceneController is disposed and cannot be used anymore'.
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.CheckDisposed()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.get_Writer()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.Delete(Query query)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.DeleteSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocuments(IEnumerable`1 searchDocuments)
+2017-12-06 03:59:32.333+05:30 [KM-SHELLBY][D:2][T:38][ERROR] DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl - Search Document error: Portal ID: 0, Tab ID: 62, Module ID: 559, Mod. Def.ID: 207, Url: , Unique Key: 63M559, Last Modified: 2017-12-04T07:01:58.2200000, Culture: en-US, Search Type: 1
+System.ObjectDisposedException: Cannot access a disposed object.
+Object name: 'LuceneController is disposed and cannot be used anymore'.
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.CheckDisposed()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.get_Writer()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.Delete(Query query)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.DeleteSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocuments(IEnumerable`1 searchDocuments)
+2017-12-06 03:59:32.333+05:30 [KM-SHELLBY][D:2][T:38][ERROR] DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl - Search Document error: Portal ID: 0, Tab ID: 62, Module ID: 559, Mod. Def.ID: 207, Url: , Unique Key: 64M559, Last Modified: 2017-12-04T07:01:58.2830000, Culture: en-US, Search Type: 1
+System.ObjectDisposedException: Cannot access a disposed object.
+Object name: 'LuceneController is disposed and cannot be used anymore'.
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.CheckDisposed()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.get_Writer()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.Delete(Query query)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.DeleteSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocuments(IEnumerable`1 searchDocuments)
+2017-12-06 03:59:32.333+05:30 [KM-SHELLBY][D:2][T:38][ERROR] DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl - Search Document error: Portal ID: 0, Tab ID: 62, Module ID: 559, Mod. Def.ID: 207, Url: , Unique Key: 65M559, Last Modified: 2017-12-04T07:01:58.3130000, Culture: en-US, Search Type: 1
+System.ObjectDisposedException: Cannot access a disposed object.
+Object name: 'LuceneController is disposed and cannot be used anymore'.
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.CheckDisposed()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.get_Writer()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.Delete(Query query)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.DeleteSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocuments(IEnumerable`1 searchDocuments)
+2017-12-06 03:59:32.333+05:30 [KM-SHELLBY][D:2][T:38][ERROR] DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl - Search Document error: Portal ID: 0, Tab ID: 62, Module ID: 559, Mod. Def.ID: 207, Url: , Unique Key: 66M559, Last Modified: 2017-12-04T07:01:58.3630000, Culture: en-US, Search Type: 1
+System.ObjectDisposedException: Cannot access a disposed object.
+Object name: 'LuceneController is disposed and cannot be used anymore'.
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.CheckDisposed()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.get_Writer()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.Delete(Query query)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.DeleteSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocuments(IEnumerable`1 searchDocuments)
+2017-12-06 03:59:32.333+05:30 [KM-SHELLBY][D:2][T:38][ERROR] DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl - Search Document error: Portal ID: 0, Tab ID: 62, Module ID: 559, Mod. Def.ID: 207, Url: , Unique Key: 67M559, Last Modified: 2017-12-04T07:01:58.3930000, Culture: en-US, Search Type: 1
+System.ObjectDisposedException: Cannot access a disposed object.
+Object name: 'LuceneController is disposed and cannot be used anymore'.
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.CheckDisposed()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.get_Writer()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.Delete(Query query)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.DeleteSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocuments(IEnumerable`1 searchDocuments)
+2017-12-06 03:59:32.333+05:30 [KM-SHELLBY][D:2][T:38][ERROR] DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl - Search Document error: Portal ID: 0, Tab ID: 62, Module ID: 559, Mod. Def.ID: 207, Url: , Unique Key: 68M559, Last Modified: 2017-12-04T07:01:58.4230000, Culture: en-US, Search Type: 1
+System.ObjectDisposedException: Cannot access a disposed object.
+Object name: 'LuceneController is disposed and cannot be used anymore'.
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.CheckDisposed()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.get_Writer()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.Delete(Query query)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.DeleteSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocuments(IEnumerable`1 searchDocuments)
+2017-12-06 03:59:32.349+05:30 [KM-SHELLBY][D:2][T:38][ERROR] DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl - Search Document error: Portal ID: 0, Tab ID: 62, Module ID: 560, Mod. Def.ID: 207, Url: , Unique Key: 69M560, Last Modified: 2017-12-04T07:02:14.3130000, Culture: en-US, Search Type: 1
+System.ObjectDisposedException: Cannot access a disposed object.
+Object name: 'LuceneController is disposed and cannot be used anymore'.
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.CheckDisposed()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.get_Writer()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.Delete(Query query)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.DeleteSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocuments(IEnumerable`1 searchDocuments)
+2017-12-06 03:59:32.349+05:30 [KM-SHELLBY][D:2][T:38][ERROR] DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl - Search Document error: Portal ID: 0, Tab ID: 62, Module ID: 560, Mod. Def.ID: 207, Url: , Unique Key: 70M560, Last Modified: 2017-12-04T07:02:14.4100000, Culture: en-US, Search Type: 1
+System.ObjectDisposedException: Cannot access a disposed object.
+Object name: 'LuceneController is disposed and cannot be used anymore'.
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.CheckDisposed()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.get_Writer()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.Delete(Query query)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.DeleteSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocuments(IEnumerable`1 searchDocuments)
+2017-12-06 03:59:32.349+05:30 [KM-SHELLBY][D:2][T:38][ERROR] DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl - Search Document error: Portal ID: 0, Tab ID: 62, Module ID: 560, Mod. Def.ID: 207, Url: , Unique Key: 71M560, Last Modified: 2017-12-04T07:02:14.4570000, Culture: en-US, Search Type: 1
+System.ObjectDisposedException: Cannot access a disposed object.
+Object name: 'LuceneController is disposed and cannot be used anymore'.
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.CheckDisposed()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.get_Writer()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.Delete(Query query)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.DeleteSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocuments(IEnumerable`1 searchDocuments)
+2017-12-06 03:59:32.349+05:30 [KM-SHELLBY][D:2][T:38][ERROR] DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl - Search Document error: Portal ID: 0, Tab ID: 62, Module ID: 560, Mod. Def.ID: 207, Url: , Unique Key: 72M560, Last Modified: 2017-12-04T07:02:14.4870000, Culture: en-US, Search Type: 1
+System.ObjectDisposedException: Cannot access a disposed object.
+Object name: 'LuceneController is disposed and cannot be used anymore'.
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.CheckDisposed()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.get_Writer()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.Delete(Query query)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.DeleteSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocuments(IEnumerable`1 searchDocuments)
+2017-12-06 03:59:32.349+05:30 [KM-SHELLBY][D:2][T:38][ERROR] DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl - Search Document error: Portal ID: 0, Tab ID: 62, Module ID: 560, Mod. Def.ID: 207, Url: , Unique Key: 73M560, Last Modified: 2017-12-04T07:02:14.5170000, Culture: en-US, Search Type: 1
+System.ObjectDisposedException: Cannot access a disposed object.
+Object name: 'LuceneController is disposed and cannot be used anymore'.
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.CheckDisposed()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.get_Writer()
+   at DotNetNuke.Services.Search.Internals.LuceneControllerImpl.Delete(Query query)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.DeleteSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocumentInternal(SearchDocument searchDocument, Boolean autoCommit)
+   at DotNetNuke.Services.Search.Internals.InternalSearchControllerImpl.AddSearchDocuments(IEnumerable`1 searchDocuments)
+2017-12-06 04:39:45.021+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCalendar.EasyDNNnewsCalendarController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCalendar.EasyDNNnewsCalendarController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 04:39:45.037+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCategories.EasyDNNnewsCategoriesMenuController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCategories.EasyDNNnewsCategoriesMenuController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 04:39:45.053+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsSearch.EasyDNNnewsSearchController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsSearch.EasyDNNnewsSearchController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 04:39:45.053+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsTagCloud.EasyDNNnewsTagCloudController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsTagCloud.EasyDNNnewsTagCloudController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 04:39:45.053+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.Widgets.EasyDNNnewsWidgetsController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.Widgets.EasyDNNnewsWidgetsController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 05:44:55.915+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCalendar.EasyDNNnewsCalendarController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCalendar.EasyDNNnewsCalendarController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 05:44:55.946+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCategories.EasyDNNnewsCategoriesMenuController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCategories.EasyDNNnewsCategoriesMenuController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 05:44:55.946+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsSearch.EasyDNNnewsSearchController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsSearch.EasyDNNnewsSearchController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 05:44:55.962+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsTagCloud.EasyDNNnewsTagCloudController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsTagCloud.EasyDNNnewsTagCloudController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 05:44:55.962+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.Widgets.EasyDNNnewsWidgetsController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.Widgets.EasyDNNnewsWidgetsController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 07:54:11.718+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCalendar.EasyDNNnewsCalendarController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCalendar.EasyDNNnewsCalendarController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 07:54:11.734+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCategories.EasyDNNnewsCategoriesMenuController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCategories.EasyDNNnewsCategoriesMenuController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 07:54:11.750+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsSearch.EasyDNNnewsSearchController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsSearch.EasyDNNnewsSearchController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 07:54:11.750+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsTagCloud.EasyDNNnewsTagCloudController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsTagCloud.EasyDNNnewsTagCloudController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 07:54:11.750+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.Widgets.EasyDNNnewsWidgetsController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.Widgets.EasyDNNnewsWidgetsController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 08:38:24.252+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCalendar.EasyDNNnewsCalendarController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCalendar.EasyDNNnewsCalendarController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 08:38:24.283+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCategories.EasyDNNnewsCategoriesMenuController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCategories.EasyDNNnewsCategoriesMenuController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 08:38:24.283+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsSearch.EasyDNNnewsSearchController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsSearch.EasyDNNnewsSearchController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 08:38:24.283+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsTagCloud.EasyDNNnewsTagCloudController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsTagCloud.EasyDNNnewsTagCloudController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 08:38:24.283+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.Widgets.EasyDNNnewsWidgetsController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.Widgets.EasyDNNnewsWidgetsController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 11:22:05.494+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCalendar.EasyDNNnewsCalendarController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCalendar.EasyDNNnewsCalendarController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 11:22:05.525+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCategories.EasyDNNnewsCategoriesMenuController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCategories.EasyDNNnewsCategoriesMenuController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 11:22:05.525+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsSearch.EasyDNNnewsSearchController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsSearch.EasyDNNnewsSearchController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 11:22:05.525+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsTagCloud.EasyDNNnewsTagCloudController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsTagCloud.EasyDNNnewsTagCloudController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 11:22:05.525+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.Widgets.EasyDNNnewsWidgetsController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.Widgets.EasyDNNnewsWidgetsController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 11:22:35.369+05:30 [KM-SHELLBY][D:2][T:23][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-12-06 11:22:35.385+05:30 [KM-SHELLBY][D:2][T:23][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-12-06 11:22:35.400+05:30 [KM-SHELLBY][D:2][T:23][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-12-06 11:22:35.400+05:30 [KM-SHELLBY][D:2][T:23][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-12-06 11:22:35.416+05:30 [KM-SHELLBY][D:2][T:23][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-12-06 11:22:35.697+05:30 [KM-SHELLBY][D:2][T:23][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-12-06 11:22:35.713+05:30 [KM-SHELLBY][D:2][T:23][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-12-06 11:22:35.713+05:30 [KM-SHELLBY][D:2][T:23][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-12-06 11:22:35.728+05:30 [KM-SHELLBY][D:2][T:23][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-12-06 11:22:35.728+05:30 [KM-SHELLBY][D:2][T:23][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-12-06 11:22:35.838+05:30 [KM-SHELLBY][D:2][T:23][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Add Tabs).
+The statement has been terminated.
+2017-12-06 11:22:35.869+05:30 [KM-SHELLBY][D:2][T:23][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Update Tabs).
+The statement has been terminated.
+2017-12-06 11:22:35.869+05:30 [KM-SHELLBY][D:2][T:23][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Remove Tabs).
+The statement has been terminated.
+2017-12-06 11:22:35.885+05:30 [KM-SHELLBY][D:2][T:23][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 196, Manage Options).
+The statement has been terminated.
+2017-12-06 11:22:35.885+05:30 [KM-SHELLBY][D:2][T:23][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MANDEEPS_WORKFLOW_LIBRARY, -1, Review Content).
+The statement has been terminated.
+2017-12-06 15:56:56.960+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCalendar.EasyDNNnewsCalendarController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCalendar.EasyDNNnewsCalendarController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 15:56:56.992+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCategories.EasyDNNnewsCategoriesMenuController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCategories.EasyDNNnewsCategoriesMenuController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 15:56:57.007+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsSearch.EasyDNNnewsSearchController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsSearch.EasyDNNnewsSearchController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 15:56:57.007+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsTagCloud.EasyDNNnewsTagCloudController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsTagCloud.EasyDNNnewsTagCloudController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 15:56:57.007+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.Widgets.EasyDNNnewsWidgetsController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.Widgets.EasyDNNnewsWidgetsController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 17:02:25.620+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCalendar.EasyDNNnewsCalendarController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCalendar.EasyDNNnewsCalendarController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 17:02:25.651+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCategories.EasyDNNnewsCategoriesMenuController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCategories.EasyDNNnewsCategoriesMenuController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 17:02:25.667+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsSearch.EasyDNNnewsSearchController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsSearch.EasyDNNnewsSearchController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 17:02:25.667+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsTagCloud.EasyDNNnewsTagCloudController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsTagCloud.EasyDNNnewsTagCloudController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 17:02:25.682+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.Widgets.EasyDNNnewsWidgetsController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.Widgets.EasyDNNnewsWidgetsController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 18:38:03.921+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCalendar.EasyDNNnewsCalendarController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCalendar.EasyDNNnewsCalendarController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 18:38:03.952+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCategories.EasyDNNnewsCategoriesMenuController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCategories.EasyDNNnewsCategoriesMenuController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 18:38:03.952+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsSearch.EasyDNNnewsSearchController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsSearch.EasyDNNnewsSearchController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 18:38:03.952+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsTagCloud.EasyDNNnewsTagCloudController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsTagCloud.EasyDNNnewsTagCloudController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 18:38:03.968+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.Widgets.EasyDNNnewsWidgetsController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.Widgets.EasyDNNnewsWidgetsController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 19:54:01.987+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCalendar.EasyDNNnewsCalendarController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCalendar.EasyDNNnewsCalendarController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 19:54:02.019+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCategories.EasyDNNnewsCategoriesMenuController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCategories.EasyDNNnewsCategoriesMenuController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 19:54:02.019+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsSearch.EasyDNNnewsSearchController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsSearch.EasyDNNnewsSearchController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 19:54:02.034+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsTagCloud.EasyDNNnewsTagCloudController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsTagCloud.EasyDNNnewsTagCloudController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 19:54:02.034+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.Widgets.EasyDNNnewsWidgetsController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.Widgets.EasyDNNnewsWidgetsController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 23:10:43.059+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCalendar.EasyDNNnewsCalendarController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCalendar.EasyDNNnewsCalendarController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 23:10:43.091+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCategories.EasyDNNnewsCategoriesMenuController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsCategories.EasyDNNnewsCategoriesMenuController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 23:10:43.091+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsSearch.EasyDNNnewsSearchController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsSearch.EasyDNNnewsSearchController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 23:10:43.091+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsTagCloud.EasyDNNnewsTagCloudController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.EasyDNNNewsTagCloud.EasyDNNnewsTagCloudController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)
+2017-12-06 23:10:43.091+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Framework.Reflection - EasyDNNSolutions.Modules.EasyDNNNews.Widgets.EasyDNNnewsWidgetsController
+System.Web.HttpException (0x80004005): Could not load type 'EasyDNNSolutions.Modules.EasyDNNNews.Widgets.EasyDNNnewsWidgetsController'.
+   at System.Web.Compilation.BuildManager.GetType(String typeName, Boolean throwOnError, Boolean ignoreCase)
+   at DotNetNuke.Framework.Reflection.CreateType(String TypeName, String CacheKey, Boolean UseCache, Boolean IgnoreErrors)

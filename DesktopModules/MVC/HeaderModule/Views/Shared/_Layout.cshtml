@@ -1,0 +1,18 @@
+﻿@using DotNetNuke.Web.Client.ClientResourceManagement;
+@inherits DotNetNuke.Web.Mvc.Framework.DnnWebViewPage<dynamic>
+@using Newtonsoft.Json;
+
+@{
+    ClientResourceManager.RegisterScript(Dnn.DnnPage, "~/DesktopModules/MVC/HeaderModule/Scripts/angular.min.js", 100, "DnnPageHeaderProvider");
+
+    ClientResourceManager.RegisterScript(Dnn.DnnPage, "~/DesktopModules/MVC/HeaderModule/Scripts/HeaderModule.CategoryList.js", 102, "DnnPageHeaderProvider");
+}
+
+<div ng-app="HeaderModule" ng-controller="categoryCtrl as catList">
+    <div id="mvcContainer-@Dnn.ActiveModule.ModuleID" ng-init="catList.init(@JsonConvert.SerializeObject(Model))">
+        @RenderBody()
+    </div>
+
+</div>
+
+

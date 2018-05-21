@@ -1,0 +1,310 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+SET XACT_ABORT ON
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+
+	-- Add ShippingStatus to SalesOrderDetail table
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrderDetail ADD ShippingStatus int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrderDetail_ShippingStatus DEFAULT 1
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrderDetail DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrderDetail_ShippingStatus
+
+	-- Support Shipwire shipping gateway
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		ShippingGatewaysShipwireUsername varchar(255) NULL,
+		ShippingGatewaysShipwirePassword varchar(255) NULL,
+		ShippingGatewaysShipwireTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ShippingGatewaysShipwireTestMode DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ShippingGatewaysShipwireTestMode	
+	
+	-- Support Google Analytics
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD AnalyticsGoogleActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_AnalyticsGoogleActive DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_AnalyticsGoogleActive
+	
+	-- Support Authorize.Net SIM payment gateway
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysAuthorizeNetSIMLogin varchar(255) NULL, PaymentGatewaysAuthorizeNetSIMTranKey varchar(255) NULL, PaymentGatewaysAuthorizeNetSIMMD5Hash varchar(255) NULL, PaymentGatewaysAuthorizeNetSIMTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysAuthorizeNetSIMTestMode DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysAuthorizeNetSIMTestMode	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentMethodsAuthorizeNetSIMActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsAuthorizeNetSIMActive DEFAULT 0, PaymentMethodsAuthorizeNetSIMAvailabilityRule xml NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsAuthorizeNetSIMActive
+
+	-- Support role security configuration
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD SecurityAllowedProductRole varchar(8000) NULL
+
+	-- Support product search
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD ProductSearchDisplayTemplate varchar(255) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductSearchDisplayTemplate DEFAULT 'Standard1'
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductSearchDisplayTemplate
+
+	-- Support recurring max repeat
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant ADD RecurringMaxRepeat int NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_RecurringSalesOrder ADD	MaxRepeat int NULL,	RepeatCount int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_RecurringSalesOrder_RepeatCount DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_RecurringSalesOrder	DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_RecurringSalesOrder_RepeatCount
+	
+	-- Support optional subdivision in checkout
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD GeneralProfileSubdivisionRequired bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_GeneralProfileSubdivisionRequired DEFAULT 1
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_GeneralProfileSubdivisionRequired
+	
+	-- Remove unused columns
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder DROP COLUMN ShippingMethodRateRule, ShippingTaxRateRule, SalesOrderDetailPromotionRuleSet, ShippingPromotionRuleSet, HandlingPromotionRuleSet, TaxPromotionRuleSet, HandlingMethodRateRule, HandlingTaxRateRule
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrderDetail DROP COLUMN TaxRateRule
+	
+	-- Support MasterCard Internet Gateway Service (MIGS) payment gateway
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		PaymentGatewaysMasterCardIGSHostedMerchantID varchar(255) NULL,
+		PaymentGatewaysMasterCardIGSHostedAccessCode varchar(255) NULL,
+		PaymentGatewaysMasterCardIGSHostedTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysMasterCardIGSHostedTestMode DEFAULT 0,
+		PaymentGatewaysMasterCardIGSHostedSecureHashSecret varchar(255) NULL
+		
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysMasterCardIGSHostedTestMode
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		PaymentMethodsMasterCardIGSHostedActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsMasterCardIGSHostedActive DEFAULT 0,
+		PaymentMethodsMasterCardIGSHostedAvailabilityRule xml NULL
+		
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsMasterCardIGSHostedActive
+	
+	-- Create ProductVariantGroup table
+	CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariantGroup](
+		[ProductVariantGroupID] [int] IDENTITY(1,1) NOT NULL,
+		[ProductID] [int] NOT NULL,
+		[Name] [xml] NULL,
+		[HelpText] [xml] NULL,
+		[DisplayOrder] [int] NOT NULL,
+		[CreateDate] [datetime] NOT NULL,
+		[UpdateDate] [datetime] NOT NULL,
+		[RowVersion] [timestamp] NOT NULL,
+		[FieldType] [int] NOT NULL,
+	 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_ProductVariantGroup] PRIMARY KEY CLUSTERED 
+	(
+		[ProductVariantGroupID] ASC
+	) 
+	) 
+
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_ProductVariantGroup] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariantGroup] 
+	(
+		[ProductID] ASC
+	) 
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariantGroup]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductVariantGroup_Revindex_Storefront_Product] FOREIGN KEY([ProductID])
+	REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_Product] ([ProductID])
+	ON DELETE CASCADE
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariantGroup] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductVariantGroup_Revindex_Storefront_Product]
+
+	-- Create ProductVariantGroupOption table
+	CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariantGroupOption](
+		[ProductVariantGroupOptionID] [int] IDENTITY(1,1) NOT NULL,
+		[ProductVariantGroupID] [int] NOT NULL,
+		[Name] [xml] NULL,
+		[DisplayOrder] [int] NOT NULL,
+		[CreateDate] [datetime] NOT NULL,
+		[UpdateDate] [datetime] NOT NULL,
+		[RowVersion] [timestamp] NOT NULL,
+	 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_ProductVariantGroupOption] PRIMARY KEY CLUSTERED 
+	(
+		[ProductVariantGroupOptionID] ASC
+	) 
+	) 
+
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_ProductVariantGroupOption] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariantGroupOption] 
+	(
+		[ProductVariantGroupID] ASC
+	) 
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariantGroupOption]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductVariantGroupOption_Revindex_Storefront_ProductVariantGroup] FOREIGN KEY([ProductVariantGroupID])
+	REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariantGroup] ([ProductVariantGroupID])
+	ON DELETE CASCADE
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariantGroupOption] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductVariantGroupOption_Revindex_Storefront_ProductVariantGroup]
+
+	-- Create ProductVariantOption table
+	CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariantOption](
+		[ProductVariantOptionID] [int] IDENTITY(1,1) NOT NULL,
+		[ProductVariantID] [int] NOT NULL,
+		[ProductVariantGroupOptionID] [int] NOT NULL,
+		[UpdateDate] [datetime] NOT NULL,
+		[CreateDate] [datetime] NOT NULL,
+		[RowVersion] [timestamp] NOT NULL,
+	 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_ProductVariantOption] PRIMARY KEY CLUSTERED 
+	(
+		[ProductVariantOptionID] ASC
+	) 
+	) 
+
+	CREATE UNIQUE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_ProductVariantOption] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariantOption] 
+	(
+		[ProductVariantID] ASC,
+		[ProductVariantGroupOptionID] ASC
+	) 
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariantOption]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductVariantOption_Revindex_Storefront_ProductVariant] FOREIGN KEY([ProductVariantID])
+	REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant] ([ProductVariantID])
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariantOption] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductVariantOption_Revindex_Storefront_ProductVariant]
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariantOption]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductVariantOption_Revindex_Storefront_ProductVariantGroupOption] FOREIGN KEY([ProductVariantGroupOptionID])
+	REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariantGroupOption] ([ProductVariantGroupOptionID])
+	ON DELETE CASCADE
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariantOption] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductVariantOption_Revindex_Storefront_ProductVariantGroupOption]
+	
+	-- Support gallery zoom
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD GalleryProductsZoomActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_GalleryProductsZoomActive DEFAULT 1
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_GalleryProductsZoomActive
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD GalleryProductsZoomWidth int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_GalleryProductsZoomWidth DEFAULT 240
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_GalleryProductsZoomWidth
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD GalleryProductsZoomEffect varchar(50) NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_GalleryProductsZoomEffect DEFAULT 'standard'
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_GalleryProductsZoomEffect
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD GalleryProductsZoomPosition varchar(50) NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_GalleryProductsZoomPosition DEFAULT 'right'
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_GalleryProductsZoomPosition
+
+	
+COMMIT TRANSACTION
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+
+		-- Upgrade default Checkout template to "Standard12"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CheckoutDisplayTemplate = 'Standard12' WHERE CheckoutDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default ProductDetail template to "Standard10"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductDetailDisplayTemplate = 'Standard10' WHERE ProductDetailDisplayTemplate LIKE 'Standard%'
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Product] SET DisplayTemplate = 'Standard10' WHERE DisplayTemplate LIKE 'Standard%'
+
+		-- Update SalesOrderDetail.ShippingStatus
+		UPDATE sod
+		SET sod.ShippingStatus = so.ShippingStatus
+		FROM {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrderDetail AS sod
+		JOIN {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder AS so
+		ON so.SalesOrderID = sod.SalesOrderID
+		
+		-- Update report
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_ReportDefinition] 
+		SET [DefinitionRule] = 
+		N'<rule version="1.0" type="data">&lt;data method="ReportDefinition" version="1.0"&gt;
+		  &lt;dataSources&gt;
+			&lt;sqlDataSource&gt;
+			  &lt;query&gt;SELECT
+			so.SalesOrderID, 
+			so.TotalAmount AS TotalAmount,
+			COALESCE(SUM(
+						CASE 
+							WHEN sp.TransactionType = 3 OR sp.TransactionType = 4 THEN sp.Amount * -1
+							ELSE sp.Amount
+						END
+						), 0) AS TotalPayments
+		FROM {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder so
+		LEFT JOIN {databaseOwner}{objectQualifier}Revindex_Storefront_SalesPayment sp 
+		ON sp.SalesOrderID = so.SalesOrderID
+		WHERE so.PortalID = @PortalID 
+			AND (so.OrderDate BETWEEN @StartDate AND @StopDate)
+			AND ((sp.PaymentGateway IS NULL OR sp.PaymentGateway = '''') OR (sp.PaymentGatewayResponseCode = 1))
+			AND sp.TransactionType = 2 OR sp.TransactionType = 3 OR sp.TransactionType = 4 OR sp.TransactionType = 6
+		GROUP BY so.SalesOrderID, so.TotalAmount
+		ORDER BY so.SalesOrderID&lt;/query&gt;
+			  &lt;parameters&gt;
+				&lt;controlParameter&gt;
+				  &lt;name&gt;@StartDate&lt;/name&gt;
+				  &lt;dataType&gt;6&lt;/dataType&gt;
+				  &lt;field&gt;
+					&lt;datePicker&gt;
+					  &lt;id&gt;StartDateDatePicker&lt;/id&gt;
+					  &lt;inputControlHeight&gt;&lt;/inputControlHeight&gt;
+					  &lt;inputControlWidth&gt;&lt;/inputControlWidth&gt;
+					  &lt;label&gt;
+						&lt;locale en-US="Start date:" /&gt;
+					  &lt;/label&gt;
+					  &lt;required&gt;True&lt;/required&gt;
+					  &lt;selectedDates /&gt;
+					  &lt;validatorText&gt;
+						&lt;locale en-US="Start date is required." /&gt;
+					  &lt;/validatorText&gt;
+					&lt;/datePicker&gt;
+				  &lt;/field&gt;
+				&lt;/controlParameter&gt;
+				&lt;controlParameter&gt;
+				  &lt;name&gt;@StopDate&lt;/name&gt;
+				  &lt;dataType&gt;6&lt;/dataType&gt;
+				  &lt;field&gt;
+					&lt;datePicker&gt;
+					  &lt;id&gt;StopDateDatePicker&lt;/id&gt;
+					  &lt;inputControlHeight&gt;&lt;/inputControlHeight&gt;
+					  &lt;inputControlWidth&gt;&lt;/inputControlWidth&gt;
+					  &lt;label&gt;
+						&lt;locale en-US="Stop date:" /&gt;
+					  &lt;/label&gt;
+					  &lt;required&gt;True&lt;/required&gt;
+					  &lt;selectedDates /&gt;
+					  &lt;validatorText&gt;
+						&lt;locale en-US="Stop date is required." /&gt;
+					  &lt;/validatorText&gt;
+					&lt;/datePicker&gt;
+				  &lt;/field&gt;
+				&lt;/controlParameter&gt;
+				&lt;variableParameter&gt;
+				  &lt;name&gt;@PortalID&lt;/name&gt;
+				  &lt;dataType&gt;11&lt;/dataType&gt;
+				  &lt;variableName&gt;Portal:PortalID&lt;/variableName&gt;
+				&lt;/variableParameter&gt;
+			  &lt;/parameters&gt;
+			&lt;/sqlDataSource&gt;
+		  &lt;/dataSources&gt;
+		  &lt;visualizers&gt;
+			&lt;htmlVisualizer&gt;
+			  &lt;html&gt;&amp;lt;table cellspacing="0" cellpadding="3" bgcolor="#eeeeee" style="width: 100%; border-top: 1px solid #cccccc; border-left: 1px solid #cccccc; border-right: 1px solid #cccccc;"&amp;gt;
+			&amp;lt;colgroup&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;/colgroup&amp;gt;
+			&amp;lt;tbody&amp;gt;
+				&amp;lt;tr&amp;gt;
+					&amp;lt;td style="width: 20%;"&amp;gt;&amp;lt;strong&amp;gt;Order ID&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 40%;"&amp;gt;&amp;lt;strong&amp;gt;Total amount&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 40%;"&amp;gt;&amp;lt;strong&amp;gt;Total payments&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+				&amp;lt;/tr&amp;gt;
+			&amp;lt;/tbody&amp;gt;
+		&amp;lt;/table&amp;gt;
+		[[xsl:for-each select="/in/dataSet/dataTable/dataRow" ]]
+		&amp;lt;table cellspacing="0" cellpadding="3" style="width: 100%;"&amp;gt;
+			&amp;lt;colgroup&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;/colgroup&amp;gt;
+			&amp;lt;tbody&amp;gt;
+				&amp;lt;tr&amp;gt;
+					&amp;lt;td style="width: 20%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="SalesOrderID" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 40%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(TotalAmount, ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 40%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(TotalPayments, ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+				&amp;lt;/tr&amp;gt;
+			&amp;lt;/tbody&amp;gt;
+		&amp;lt;/table&amp;gt;
+		[[/xsl:for-each]]
+		&amp;lt;table cellspacing="0" cellpadding="3" style="width: 100%; border-top: 4px double black;"&amp;gt;
+			&amp;lt;colgroup&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;/colgroup&amp;gt;
+			&amp;lt;tbody&amp;gt;
+				&amp;lt;tr&amp;gt;
+					&amp;lt;td style="width: 20%; border: 1px solid #cccccc;"&amp;gt; &amp;lt;br /&amp;gt;
+					&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 40%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(sum(/in/dataSet/dataTable/dataRow/TotalAmount), ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+					&amp;lt;td style="width: 40%; border: 1px solid #cccccc;"&amp;gt;[[xsl:value-of select="format-number(sum(/in/dataSet/dataTable/dataRow/TotalPayments), ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+				&amp;lt;/tr&amp;gt;
+			&amp;lt;/tbody&amp;gt;
+		&amp;lt;/table&amp;gt;&lt;/html&gt;
+			&lt;/htmlVisualizer&gt;
+		  &lt;/visualizers&gt;
+		&lt;/data&gt;</rule>',
+		[UpdateDate] = GetDate()
+		WHERE [ReportDefinitionGUID] = N'e9186684-51f4-4b99-ac49-27b43b286b0b'
+		
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

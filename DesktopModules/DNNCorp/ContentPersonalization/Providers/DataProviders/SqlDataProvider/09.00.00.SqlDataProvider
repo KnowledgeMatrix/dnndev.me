@@ -1,0 +1,239 @@
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+/********************************************************
+ * TABLE: ContentPersonalization_PageVisited
+ ********************************************************/
+IF NOT EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}ContentPersonalization_PageVisited_Visitors') AND OBJECTPROPERTY(id, N'IsTable') = 1)
+	BEGIN
+		CREATE TABLE {databaseOwner}{objectQualifier}ContentPersonalization_PageVisited
+			(
+				[Id] [INT] IDENTITY(1,1) NOT NULL,
+				[PortalId] [INT] NOT NULL,
+                [PageId] [INT] NOT NULL,
+                [UserId] [INT] NOT NULL DEFAULT(-1),
+				[VisitorId] [UNIQUEIDENTIFIER] NOT NULL DEFAULT('00000000-0000-0000-0000-000000000000'),
+                [ContentItemId] int NOT NULL DEFAULT (-1),
+				CONSTRAINT [PK_{objectQualifier}ContentPersonalization_PageVisited_Visitors] PRIMARY KEY CLUSTERED ( [Id] ASC )
+			)
+			
+		CREATE NONCLUSTERED INDEX IX_{objectQualifier}ContentPersonalization_PageVisited ON {databaseOwner}{objectQualifier}ContentPersonalization_PageVisited 
+			([PortalId],[PageId],[UserId],[VisitorId],[ContentItemId])
+	END
+GO
+
+/********************************************************
+ * TABLE: ContentPersonalization_LinkClicked
+ ********************************************************/
+IF NOT EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}ContentPersonalization_LinkClicked') AND OBJECTPROPERTY(id, N'IsTable') = 1)
+	BEGIN
+		CREATE TABLE {databaseOwner}{objectQualifier}ContentPersonalization_LinkClicked
+			(
+				[Id] [INT] IDENTITY(1,1) NOT NULL,
+				[PortalId] [INT] NOT NULL,
+				[PageId] [INT] NOT NULL,
+				[Link] NVARCHAR(2000) NOT NULL,
+				[UserId] [INT] NOT NULL,
+				[VisitorId] [UNIQUEIDENTIFIER] NOT NULL,
+                [ContentItemId] int NOT NULL DEFAULT (-1),
+				CONSTRAINT [PK_{objectQualifier}ContentPersonalization_LinkClicked] PRIMARY KEY CLUSTERED ( [Id] ASC )
+			)
+
+        CREATE NONCLUSTERED INDEX IX_{objectQualifier}ContentPersonalization_LinkClicked ON {databaseOwner}{objectQualifier}ContentPersonalization_LinkClicked 
+			([PageId], [ContentItemId], [PortalId], [UserId], [VisitorId], [Link])
+	END
+GO
+
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}ContentPersonalization_ProcessPageViews]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}ContentPersonalization_ProcessPageViews]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}ContentPersonalization_ProcessPageViews]
+	@FirstPageId		INT,
+	@BatchSize			INT
+AS
+BEGIN
+	DECLARE @LastPageId BIGINT
+	--Find LastPageId based on batch size
+	;WITH PageViews AS
+	(
+	    SELECT TOP (@BatchSize) PageViewId FROM {databaseOwner}{objectQualifier}Analytics_PageViews
+            WHERE PageViewId > @FirstPageId ORDER BY PageViewId
+	)
+	SELECT @LastPageId = MAX(PageViewId) FROM PageViews
+	IF @LastPageId IS NULL
+	BEGIN
+		SELECT @FirstPageId
+		RETURN
+	END
+	SELECT @LastPageId
+
+	--Process Page Visited
+	;WITH Source as (
+		SELECT pv.PortalId, pv.TabId, pv.ContentItemId, pv.VisitorGuid
+		FROM {databaseOwner}{objectQualifier}Analytics_PageViews pv WITH (NOLOCK)
+		WHERE UserId = -1 AND PageviewId > @FirstPageId AND PageViewId <=  @LastPageId
+		GROUP BY pv.PortalId, pv.TabId, pv.ContentItemId, pv.VisitorGuid
+	) 
+	MERGE {databaseOwner}{objectQualifier}ContentPersonalization_PageVisited AS f
+	USING Source AS s
+		ON (f.PortalId = s.PortalId
+		AND f.PageId    = s.TabId
+		AND f.ContentItemId = s.ContentItemId
+		AND f.VisitorId = s.VisitorGuid) 
+	WHEN NOT MATCHED BY TARGET 
+		THEN INSERT(PortalId, PageId, ContentItemId, VisitorId) 
+			VALUES(s.PortalId, s.TabId, s.ContentItemId, s.VisitorGuid);
+
+	--Process Users
+	;WITH Source as (
+		SELECT pv.PortalId, pv.TabId, pv.ContentItemId, pv.UserId
+		FROM {databaseOwner}{objectQualifier}Analytics_PageViews pv WITH (NOLOCK)
+		WHERE UserId > -1 AND PageviewId > @FirstPageId AND PageViewId <=  @LastPageId
+		AND UserId > 0
+		GROUP BY pv.PortalId, pv.TabId, pv.ContentItemId, pv.UserId
+	) 
+	MERGE {databaseOwner}{objectQualifier}ContentPersonalization_PageVisited AS f
+	USING Source AS s
+		ON (f.PortalId = s.PortalId
+		AND f.PageId   = s.TabId
+		AND f.ContentItemId = s.ContentItemId
+		AND f.UserId   = s.UserId) 
+	WHEN NOT MATCHED BY TARGET 
+		THEN INSERT(PortalId, PageId, ContentItemId, UserId) 
+			VALUES(s.PortalId, s.TabId, s.ContentItemId, s.UserId);
+END
+GO
+
+/********************************************************
+ * PROCEDURE: Analytics_ProcessEventData
+ ********************************************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}ContentPersonalization_ProcessEventData]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}ContentPersonalization_ProcessEventData]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}ContentPersonalization_ProcessEventData]
+	@FirstEventId		INT,
+	@BatchSize			INT
+AS
+BEGIN
+	DECLARE @LastEventId BIGINT
+	--Find LastEventId based on batch size
+	;WITH Events AS
+	(
+	SELECT top (@BatchSize) EventDataId from {databaseOwner}{objectQualifier}Analytics_EventData where EventDataId > @FirstEventId
+	)
+	SELECT @LastEventId = MAX(EventDataId) from Events
+	IF @LastEventId IS NULL
+	BEGIN
+		SELECT @FirstEventId
+		RETURN
+	END
+	SELECT @LastEventId
+
+	--Process LinkClick
+	;WITH Source as (
+		SELECT PortalId, TabId, UserId, VisitorId, ContentItemId, EventName, EventValue
+		FROM {databaseOwner}{objectQualifier}Analytics_EventData WITH (NOLOCK)
+		WHERE EventDataId > @FirstEventId AND EventDataId <=  @LastEventId
+		AND EventName = 'LinkClicked'
+		GROUP BY PortalId, TabId, UserId, VisitorId, ContentItemId, EventName, EventValue
+	) 
+	MERGE {databaseOwner}{objectQualifier}ContentPersonalization_LinkClicked AS f
+	USING Source AS s
+		ON (f.PortalId = s.PortalId
+		AND f.PageId    = s.TabId
+		AND f.ContentItemId =  s.ContentItemId
+		AND f.UserId =  s.UserId
+		AND f.VisitorId =  s.VisitorId
+		AND f.Link   = s.EventValue)
+	WHEN NOT MATCHED BY TARGET 
+		THEN INSERT(PortalId, PageId, UserId, VisitorId, ContentItemId, Link) 
+			VALUES(s.PortalId, s.TabId, s.UserId, s.VisitorId, s.ContentItemId, s.EventValue);
+
+END
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}ContentPersonalization_CleanAnalyticsData]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}ContentPersonalization_CleanAnalyticsData]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}ContentPersonalization_CleanAnalyticsData]
+AS
+BEGIN
+    DELETE FROM {databaseOwner}{objectQualifier}Analytics_PageViews
+        WHERE DATEDIFF(DD, CreatedOnDate, GETDATE()) > 90
+
+    DELETE FROM {databaseOwner}{objectQualifier}Analytics_EventData
+        WHERE DATEDIFF(DD, EventDate, GETDATE()) > 90
+END
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}ContentPersonalization_UpdateSupportStatus]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}ContentPersonalization_UpdateSupportStatus]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}ContentPersonalization_UpdateSupportStatus]
+	@PortalId		INT
+AS
+BEGIN
+	IF EXISTS(SELECT PortalId FROM {databaseOwner}[{objectQualifier}ContentPersonalization_PersonalizedTabs]
+                 WHERE PortalId = @PortalId
+                        AND (Rules.value('(/RulesCollection/Rule/@type)[1]', 'varchar(100)') LIKE '%PageVisitedRule%'
+	                            OR Rules.value('(/RulesCollection/Rule/@type)[1]', 'varchar(100)') LIKE '%LinkClickedRule%'))
+    BEGIN
+        IF NOT EXISTS(SELECT PortalSettingId FROM {databaseOwner}[{objectQualifier}PortalSettings]
+                        WHERE PortalID = @PortalId AND SettingName = 'ContentPersonalizationNeedPageViews')
+        BEGIN
+            INSERT INTO {databaseOwner}[{objectQualifier}PortalSettings]
+                ( PortalID ,
+                  SettingName ,
+                  SettingValue ,
+                  CreatedByUserID ,
+                  CreatedOnDate ,
+                  LastModifiedByUserID ,
+                  LastModifiedOnDate
+                )
+            SELECT @PortalId, 'ContentPersonalizationNeedPageViews', 'Y', -1, GETDATE(), -1, GETDATE()
+        END
+    END
+    ELSE
+    BEGIN
+        DELETE FROM {databaseOwner}[{objectQualifier}PortalSettings]
+            WHERE PortalId = @PortalId AND SettingName = 'ContentPersonalizationNeedPageViews'
+    END
+END
+GO
+
+
+/***** ADD ContentPersonlization Status *****/
+DECLARE @CurrentTime DATETIME = GETDATE()
+INSERT INTO {databaseOwner}[{objectQualifier}PortalSettings]
+        ( PortalID ,
+          SettingName ,
+          SettingValue ,
+          CreatedByUserID ,
+          CreatedOnDate ,
+          LastModifiedByUserID ,
+          LastModifiedOnDate
+        )
+SELECT DISTINCT t.PortalId, 'ContentPersonalizationNeedPageViews', 'Y', -1, @CurrentTime, -1, @CurrentTime
+    FROM {databaseOwner}[{objectQualifier}ContentPersonalization_PersonalizedTabs] t
+    LEFT JOIN {databaseOwner}[{objectQualifier}PortalSettings] ps ON ps.PortalID = t.PortalId AND ps.SettingName = 'ContentPersonalizationNeedPageViews'
+    WHERE ps.PortalSettingID IS NULL 
+		AND (Rules.value('(/RulesCollection/Rule/@type)[1]', 'varchar(100)') LIKE '%PageVisitedRule%'
+	            OR Rules.value('(/RulesCollection/Rule/@type)[1]', 'varchar(100)') LIKE '%LinkClickedRule%')
+GO
+
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/

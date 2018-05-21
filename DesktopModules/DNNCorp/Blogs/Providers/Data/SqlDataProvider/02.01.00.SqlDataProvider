@@ -1,0 +1,153 @@
+﻿/********************************************************
+ * SPROC: Blogs_Entry_Search
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Blogs_Entry_Search]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Blogs_Entry_Search] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}{objectQualifier}Blogs_Entry_Search
+	@UserID INT ,
+	@ModuleId INT ,
+	@BlogID INT ,
+	@StartDate DATETIME ,
+	@EndDate DATETIME ,
+	@Tags NVARCHAR(1024) ,
+	@PageSize INT ,
+	@PageIndex INT ,
+	@ShowUnpublished BIT ,
+	@Filter INT ,
+	@GroupId INT ,
+	@AuthorId INT  = -1
+AS
+BEGIN
+	DECLARE @Today datetime = getutcdate();
+	DECLARE @TitleMetaDataID int =
+		(SELECT TOP 1 MetaDataID FROM {databaseOwner}[{objectQualifier}MetaData] WITH (NOLOCK) WHERE MetaDataName = 'Title');
+
+	DECLARE @tblResult TABLE (RowNumber INT, TotalRecords INT, EntryId INT)
+	DECLARE @tblTaxonomy TABLE (ContentItemID INT);
+	DECLARE @tblComments TABLE (ContentItemID INT);
+
+	--extract the ContentItems matching "my comments"
+	IF @Filter=2
+	BEGIN
+		INSERT INTO @tblComments(ContentItemID)
+		SELECT j.ContentItemId FROM {databaseOwner}{objectQualifier}Journal AS j WITH (NOLOCK)
+			INNER JOIN {databaseOwner}{objectQualifier}Journal_Comments AS jc WITH (NOLOCK) ON jc.JournalId = j.JournalId AND jc.UserId = @UserID
+	END
+
+	--If tags, match the tags on ContentItems
+	IF @Tags IS NOT NULL AND LEN(@Tags)> 0
+	BEGIN
+		INSERT INTO @tblTaxonomy(ContentItemID)
+		SELECT CIT.ContentItemID from {databaseOwner}[{objectQualifier}ContentItems_Tags] CIT WITH (NOLOCK)
+			INNER JOIN {databaseOwner}[{objectQualifier}Taxonomy_Terms] TT with (NOLOCK) ON CIT.TermID = TT.TermID
+			INNER JOIN {databaseOwner}[{objectQualifier}ConvertListToTable](',', @Tags) T ON TT.Name = T.RowValue
+
+		IF (SELECT COUNT(*) FROM @tblTaxonomy) > 0 --There are content items to match the tags
+		BEGIN
+			WITH EntrySet
+			AS ( SELECT ROW_NUMBER() OVER ( ORDER BY E.Pinned DESC, E.PublishOnDate DESC ) AS RowNumber ,
+						COUNT(*) OVER () AS [TotalRecords],
+						E.EntryId
+
+				FROM    {databaseOwner}{objectQualifier}Blogs_Blog B WITH (NOLOCK)
+							INNER JOIN {databaseOwner}{objectQualifier}Blogs_Entry E WITH (NOLOCK) ON B.BlogId = E.BlogId
+							INNER JOIN @tblTaxonomy X ON X.ContentItemId = E.ContentItemId
+							INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI WITH (NOLOCK) ON E.ContentItemId = CI.ContentItemID
+
+				WHERE   CI.ModuleID = @ModuleId
+						AND ( @GroupId < 1 OR B.GroupId = @GroupId )
+						AND
+						(
+						  -- filter by date range
+							(@Filter = 0 AND E.PublishOnDate BETWEEN @StartDate AND @EndDate)
+						  OR
+						  -- filter by blog
+							(@Filter = 1 AND B.BlogId = @BlogId)
+						  OR
+						  -- filter by my comments
+							(@Filter = 2 AND E.ContentItemId IN (SELECT ContentItemID FROM @tblComments))
+						  OR
+						  -- filter by author
+							(@Filter = 3 AND CI.CreatedByUserID = @AuthorId)
+						  OR
+						  -- filter by my blog entries
+							(@Filter = 4 AND B.BlogId IN (SELECT BlogId FROM {databaseOwner}{objectQualifier}Blogs_Blog BL WITH (NOLOCK) WHERE BL.UserId = @UserID))
+						)
+						AND ( @ShowUnpublished = 1 OR E.PublishOnDate > @Today OR (Authorized = 1 AND E.Approved = 1) )
+				)
+				INSERT INTO @tblResult(RowNumber, Totalrecords, EntryId)
+				SELECT * FROM EntrySet
+				WHERE   RowNumber BETWEEN ( @PageIndex * @PageSize + 1 ) AND  ( ( @PageIndex + 1 ) * @PageSize )
+		END
+	END
+	ELSE
+	BEGIN
+		WITH  EntrySet
+		AS ( SELECT ROW_NUMBER() OVER ( ORDER BY E.Pinned DESC, E.PublishOnDate DESC ) AS RowNumber ,
+					COUNT(*) OVER () AS [TotalRecords],
+					E.EntryId
+
+			FROM    {databaseOwner}{objectQualifier}Blogs_Blog B WITH (NOLOCK)
+						INNER JOIN {databaseOwner}{objectQualifier}Blogs_Entry E WITH (NOLOCK) ON B.BlogId = E.BlogId
+						INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI WITH (NOLOCK) ON E.ContentItemId = CI.ContentItemID
+
+			WHERE    CI.ModuleID = @ModuleId
+					AND ( @GroupId < 1 OR B.GroupId = @GroupId )
+					AND ( @ShowUnpublished = 1 OR E.PublishOnDate > @Today OR (Authorized = 1 AND E.Approved = 1) )
+					AND
+					(
+						-- filter by date range
+						(@Filter = 0 AND E.PublishOnDate BETWEEN @StartDate AND @EndDate)
+					  OR
+						-- filter by blog
+						(@Filter = 1 AND B.BlogId = @BlogId)
+					  OR
+						-- filter by my comments
+						(@Filter = 2 AND E.ContentItemId IN (SELECT ContentItemID FROM @tblComments))
+					  OR
+						-- filter by author
+						(@Filter = 3 AND CI.CreatedByUserID = @AuthorId)
+					  OR
+						-- filter by my blog entries
+						(@Filter = 4 AND B.BlogId IN (SELECT BlogId FROM {databaseOwner}{objectQualifier}Blogs_Blog BL WITH (NOLOCK) WHERE BL.UserId = @UserID))
+					)
+		)
+
+		INSERT INTO @tblResult(RowNumber, Totalrecords, EntryId)
+		SELECT * FROM EntrySet
+		WHERE RowNumber BETWEEN ( @PageIndex * @PageSize + 1 ) AND ( ( @PageIndex + 1 ) * @PageSize )
+	END
+
+	-- extract all data for the page selected
+	SELECT	T.RowNumber,
+			T.TotalRecords,
+			E.* ,
+			B.PortalId ,
+			B.UserId ,
+			B.Authorized ,
+			B.GroupId,
+			B.AuthorMode,
+			CI.Content ,
+			CI.ContentTypeID ,
+			CI.TabID ,
+			CI.ModuleID ,
+			CI.ContentKey ,
+			CI.Indexed ,
+			CI.CreatedByUserID ,
+			CI.[CreatedOnDate] ,
+			CI.LastModifiedByUserID ,
+			CI.[LastModifiedOnDate],
+			CIMD.[MetaDataValue] AS ContentTitle
+
+	FROM @tblResult T
+			INNER JOIN {databaseOwner}{objectQualifier}Blogs_Entry E WITH (NOLOCK) ON T.EntryId = E.EntryId
+			INNER JOIN {databaseOwner}{objectQualifier}Blogs_Blog B WITH (NOLOCK) ON B.BlogId = E.BlogId
+			INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI WITH (NOLOCK) ON E.ContentItemId = CI.ContentItemID
+			LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD WITH (NOLOCK)
+					ON CI.[ContentItemID] = CIMD.ContentItemID AND CIMD.MetaDataID = @TitleMetaDataID
+
+END
+
+GO

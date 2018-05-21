@@ -1,0 +1,156 @@
+/********************************************************
+ * SPROC: Social_Bookmark_GetUserByPortal
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_Bookmark_GetUserByPortal]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_Bookmark_GetUserByPortal] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Social_Bookmark_GetUserByPortal]
+	@PortalId INT,
+	@UserId INT,
+    @PageIndex int = 0,
+    @PageSize int = 50
+AS
+BEGIN
+    ;WITH SelectedRows
+	AS (
+		SELECT	ROW_NUMBER() OVER(ORDER BY F.CreatedOnDate ASC) AS [RowNumber],
+				F.[BookmarkId],
+				F.[UserTitle],
+				F.[ContentItemId],
+				F.[UserId],
+				F.[CreatedOnDate],
+				F.[PortalId],
+				CI.[TabId],
+				CI.[ModuleId],
+				CI.[ContentKey]
+		FROM	{databaseOwner}[{objectQualifier}Social_Bookmark] F WITH (NOLOCK)
+					INNER JOIN {databaseOwner}[{objectQualifier}ContentItems] CI WITH (NOLOCK)
+						ON F.[ContentItemId] = CI.[ContentItemId]
+		WHERE	F.[UserId] = @UserId AND F.[PortalId] = @PortalId
+	   )
+	SELECT	TOP (@PageSize) *
+	FROM	SelectedRows
+	WHERE	RowNumber >= (@PageIndex * @PageSize) + 1
+END
+GO
+
+/********************************************************
+ * SPROC: Social_Bookmark_GetUserCount
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_Bookmark_GetUserCount]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_Bookmark_GetUserCount] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Social_Bookmark_GetUserCount]
+	@PortalId INT,
+	@UserId INT
+AS
+BEGIN
+	SELECT	COUNT(F.[BookmarkId])
+	FROM	{databaseOwner}[{objectQualifier}Social_Bookmark] F WITH (NOLOCK)
+				INNER JOIN {databaseOwner}[{objectQualifier}ContentItems] CI WITH (NOLOCK)
+					ON F.[ContentItemId] = CI.[ContentItemId]
+	WHERE	F.[UserId] = @UserId AND F.[PortalId] = @PortalId
+END
+GO
+
+
+/********************************************************
+ * SPROC: Social_Group_GetGroup
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_Group_GetGroup]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_Group_GetGroup
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_Group_GetGroup]
+	@PortalId INT,
+	@GroupId INT,
+	@UserId INT	
+AS
+BEGIN
+	DECLARE @AdminRoleId INT
+
+	SELECT @AdminRoleId = roleId FROM {databaseOwner}{objectQualifier}Roles WHERE RoleName='Administrators' AND PortalId = @PortalId 
+	
+	SELECT	R.PortalID As PortalId,
+			R.RoleID AS GroupId,
+			R.RoleName AS GroupName,
+			R.Description,
+			R.IsPublic,
+			R.IconFile,
+			R.Status,
+			R.SecurityMode,
+			R.IsSystemRole,
+			R.CreatedByUserID,
+			R.CreatedOnDate,
+			R.LastModifiedOnDate,
+			(SELECT CAST ((SELECT RoleId FROM {databaseOwner}{objectQualifier}UserRoles WHERE RoleId = @GroupId AND UserId = @UserId ) AS BIT)) AS IsMember,
+			(SELECT CAST ((SELECT RoleId FROM {databaseOwner}{objectQualifier}UserRoles WHERE RoleId = @GroupId AND UserId = @UserId AND Status = -1) AS BIT)) AS MembershipPending,
+			(SELECT CAST ((SELECT SettingValue FROM {databaseOwner}{objectQualifier}RoleSettings WHERE RoleId = R.RoleId AND SettingName = 'ReviewMembers') AS BIT)) AS ReviewMembers,
+			(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}UserRoles U WHERE U.RoleID = R.RoleID AND U.Status = 1) AS MemberCount
+	FROM    
+			{databaseOwner}{objectQualifier}Roles AS R			
+	WHERE
+			R.RoleId = @GroupId
+			AND
+			R.SecurityMode IN (1, 2)
+			AND (	R.IsPublic = 1
+					OR
+					-- Super User
+					(EXISTS (SELECT UserID FROM {databaseOwner}{objectQualifier}Users WHERE @UserId = UserID AND IsSuperUser = 1))
+					OR
+					-- Admin
+					(EXISTS (SELECT UserID FROM {databaseOwner}{objectQualifier}UserRoles WHERE @AdminRoleId = RoleID AND @UserId = UserID))
+					OR
+					(IsPublic = 0 AND EXISTS (SELECT RoleID FROM {databaseOwner}{objectQualifier}UserRoles WHERE R.RoleID = RoleID AND @UserId = UserID))
+				)
+							
+END
+GO
+
+/********************************************************
+ * SPROC: Social_Group_GetGroupTags
+ ********************************************************/
+ IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_Group_GetGroupTags]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_Group_GetGroupTags
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_Group_GetGroupTags]
+	@GroupId INT 
+AS
+BEGIN
+
+	DECLARE @ContentItemId INT;
+	DECLARE @ContentTypeId INT;
+	DECLARE @VocabularyId INT; 
+	SELECT @ContentTypeId = ContentTypeId FROM {databaseOwner}{objectQualifier}ContentTypes WHERE ContentType = 'Group'
+	SELECT @VocabularyId = VocabularyID FROM {databaseOwner}{objectQualifier}Taxonomy_Vocabularies WHERE Name = 'Tags'
+
+	SELECT @ContentItemId = ContentItemId FROM {databaseOwner}{objectQualifier}ContentItems WHERE ContentKey = ('groupid=' +  CAST( @GroupId AS VARCHAR(10)))
+
+	SELECT	TermID,
+			Name,
+			[Description],
+			VocabularyID,                            
+			ROW_NUMBER() OVER ( ORDER BY (	SELECT COUNT(TermID)
+											FROM
+												{databaseOwner}{objectQualifier}vw_RelatedContent_Terms T
+											WHERE
+												TermID = RT.TermID
+												AND ( ( @ContentTypeId < 1 )
+												OR ( ContentTypeID = @ContentTypeId ))
+											) DESC ) AS RowNumber
+	FROM	{databaseOwner}{objectQualifier}vw_RelatedContent_Terms RT
+	WHERE	RT.ContentItemID = @ContentItemId
+			AND RT.ContentTypeID = @ContentTypeId
+			AND VocabularyID = @VocabularyId
+			AND ( ( @ContentTypeId < 1 )
+			OR ( ContentTypeID = @ContentTypeId ))
+    GROUP BY
+			TermID,
+			Name ,
+			[Description] ,
+			VocabularyID
+END
+GO

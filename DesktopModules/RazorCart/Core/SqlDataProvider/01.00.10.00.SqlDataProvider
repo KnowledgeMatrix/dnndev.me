@@ -1,0 +1,824 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****               Create Tables                      *****/
+/************************************************************/
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ProductLocalization') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_ProductLocalization
+	(
+		[ProductID] [INT] NOT NULL,
+		[LanguageLocale] [NVARCHAR](20) NULL,
+		[ModelName] [NVARCHAR](200) NOT NULL,
+		[Summary] [NVARCHAR](1000) NULL,
+		[TabName1] [NVARCHAR](50) NULL,
+		[Description] [NTEXT] NULL,
+		[TabName2] [NVARCHAR](50) NULL,
+		[Description2] [NTEXT] NULL,
+		[TabName3] [NVARCHAR](50) NULL,
+		[Description3] [NTEXT] NULL,
+		[TabName4] [NVARCHAR](50) NULL,
+		[Description4] [NTEXT] NULL,
+		[TabName5] [NVARCHAR](50) NULL,
+		[Description5] [NTEXT] NULL
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_PayHistImages') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_PayHistImages
+	(
+		[ID] [INT] IDENTITY(1,1) NOT NULL,
+		[PayHistID] [INT] NOT NULL,
+		[SignatureData] [NVARCHAR](MAX) NULL,
+		[CreatedDate] [DATETIME] NULL,
+		[CreatedByUser] [NVARCHAR](100) NULL,
+		[ModifiedDate] [DATETIME] NULL,
+		[ModifiedByUser] [NVARCHAR](100) NULL,
+		[PortalID] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_PayHistImages] PRIMARY KEY CLUSTERED
+		(
+			[ID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_CustomerWallet') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_CustomerWallet
+	(
+		[ID] [INT] IDENTITY(1,1) NOT NULL,
+		[CustomerID] [INT] NOT NULL,
+		[BillingName] [NVARCHAR](50) NULL,
+		[Address1] [NVARCHAR](50) NULL,
+		[Address2] [NVARCHAR](50) NULL,
+		[City] [NVARCHAR](50) NULL,
+		[State] [NVARCHAR](50) NULL,
+		[Zip] [VARCHAR](50) NULL,
+		[Country] [NVARCHAR](50) NULL,
+		[WalletName] [NVARCHAR](150) NULL,
+		[PayType] [VARCHAR](50) NULL,
+		[AcctNo] [VARCHAR](64) NULL,
+		[ExpRoute] [VARCHAR](50) NULL,
+		[DNNLogin] [VARCHAR](50) NULL,
+		[PortalID] [INT] NULL,
+		[DNNRole] [NVARCHAR](50) NULL DEFAULT (''),
+		CONSTRAINT [PK_{objectQualifier}Smith_CustomerWallet] PRIMARY KEY CLUSTERED
+		(
+			[ID] ASC
+		)
+	)
+END
+GO
+
+
+
+/************************************************************/
+/*****                  Alter Tables                    *****/
+/************************************************************/
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ProductLocalization') AND type in (N'U'))
+BEGIN
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ProductLocalization') AND name = N'Summary')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_ProductLocalization
+		ADD
+			[Summary] [NVARCHAR](1000)
+	END
+	IF EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ProductLocalization') AND name = N'ModelName')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_ProductLocalization
+		ALTER COLUMN
+			[ModelName] [NVARCHAR](200)
+	END
+	IF EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ProductLocalization') AND name = N'TabName1')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_ProductLocalization
+		ALTER COLUMN
+			[TabName1] [NVARCHAR](50)
+	END
+	IF EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ProductLocalization') AND name = N'TabName2')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_ProductLocalization
+		ALTER COLUMN
+			[TabName2] [NVARCHAR](50)
+	END
+	IF EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ProductLocalization') AND name = N'TabName3')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_ProductLocalization
+		ALTER COLUMN
+			[TabName3] [NVARCHAR](50)
+	END
+	IF EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ProductLocalization') AND name = N'TabName4')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_ProductLocalization
+		ALTER COLUMN
+			[TabName4] [NVARCHAR](50)
+	END
+	IF EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ProductLocalization') AND name = N'TabName5')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_ProductLocalization
+		ALTER COLUMN
+			[TabName5] [NVARCHAR](50)
+	END
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ShoppingCart') AND type in (N'U'))
+BEGIN
+	IF EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ShoppingCart') AND name = N'ProductName')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_ShoppingCart
+		ALTER COLUMN
+			[ProductName] [NVARCHAR](255)
+	END
+END
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_SavedCartDetail') AND type in (N'U'))
+BEGIN
+	IF EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_SavedCartDetail') AND name = N'ProductName')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_SavedCartDetail
+		ALTER COLUMN
+			[ProductName] [NVARCHAR](255)
+	END
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_CustomerWallet') AND type in (N'U'))
+BEGIN
+	IF EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_CustomerWallet') AND name = N'AcctNo')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_CustomerWallet
+		ALTER COLUMN
+			[AcctNo] [VARCHAR](64)
+	END
+END
+GO
+
+
+
+/************************************************************/
+/*****                Drop Sprocs                       *****/
+/************************************************************/
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_SaveProductLocalization') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_SaveProductLocalization
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_GetProductLocalization') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_GetProductLocalization
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_CreateShoppingCartItem') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateShoppingCartItem
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_SaveShoppingCartItem') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_SaveShoppingCartItem
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_CreateCustomerWalletItem') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateCustomerWalletItem
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_GetCustomerWalletItemByID') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_GetCustomerWalletItemByID
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListCustomerWalletItems') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListCustomerWalletItems
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_UpdateCustomerWalletItem') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateCustomerWalletItem
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_DeleteCustomerWalletItem') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_DeleteCustomerWalletItem
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListAdvancedSearchProducts') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListAdvancedSearchProducts
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListTodaySubscriptions') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListTodaySubscriptions
+GO
+
+
+
+/************************************************************/
+/*****               Create Sprocs                      *****/
+/************************************************************/
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_SaveProductLocalization
+	@ProductID INT = NULL,
+	@LanguageLocale NVARCHAR(20) = NULL,
+	@ModelName NVARCHAR(200) = NULL,
+	@Summary NVARCHAR(1000) = NULL,
+	@TabName1 NVARCHAR(50) = NULL,
+	@Description NTEXT = NULL,
+	@TabName2 NVARCHAR(50) = NULL,
+	@Description2 NTEXT = NULL,
+	@TabName3 NVARCHAR(50) = NULL,
+	@Description3 NTEXT = NULL,
+	@TabName4 NVARCHAR(50) = NULL,
+	@Description4 NTEXT = NULL,
+	@TabName5 NVARCHAR(50) = NULL,
+	@Description5 NTEXT = NULL
+AS
+BEGIN
+	SET NOCOUNT ON;
+	MERGE
+		{databaseOwner}{objectQualifier}Smith_ProductLocalization AS TARGET
+	USING
+	(
+		SELECT
+			@ProductID AS [ProductID], @LanguageLocale AS [LanguageLocale],
+			@ModelName AS [ModelName], @Summary AS [Summary],
+			@TabName1 AS [TabName1], @Description AS [Description],
+			@TabName2 AS [TabName2], @Description2 AS [Description2],
+			@TabName3 AS [TabName3], @Description3 AS [Description3],
+			@TabName4 AS [TabName4], @Description4 AS [Description4],
+			@TabName5 AS [TabName5], @Description5 AS [Description5]
+	) AS SOURCE
+	ON
+	(
+		TARGET.[ProductID] = SOURCE.[ProductID]
+		AND TARGET.[LanguageLocale] = SOURCE.[LanguageLocale]
+	)
+	WHEN MATCHED THEN
+		UPDATE SET
+			[ModelName] = SOURCE.[ModelName],
+			[Summary] = SOURCE.[Summary],
+			[TabName1] = SOURCE.[TabName1],
+			[Description] = SOURCE.[Description],
+			[TabName2] = SOURCE.[TabName2],
+			[Description2] = SOURCE.[Description2],
+			[TabName3] = SOURCE.[TabName3],
+			[Description3] = SOURCE.[Description3],
+			[TabName4] = SOURCE.[TabName4],
+			[Description4] = SOURCE.[Description4],
+			[TabName5] = SOURCE.[TabName5],
+			[Description5] = SOURCE.[Description5]
+	WHEN NOT MATCHED THEN
+		INSERT
+			([ProductID]
+			,[LanguageLocale]
+			,[ModelName]
+			,[Summary]
+			,[TabName1]
+			,[Description]
+			,[TabName2]
+			,[Description2]
+			,[TabName3]
+			,[Description3]
+			,[TabName4]
+			,[Description4]
+			,[TabName5]
+			,[Description5])
+		VALUES
+			(SOURCE.[ProductID]
+			,SOURCE.[LanguageLocale]
+			,SOURCE.[ModelName]
+			,SOURCE.[Summary]
+			,SOURCE.[TabName1]
+			,SOURCE.[Description]
+			,SOURCE.[TabName2]
+			,SOURCE.[Description2]
+			,SOURCE.[TabName3]
+			,SOURCE.[Description3]
+			,SOURCE.[TabName4]
+			,SOURCE.[Description4]
+			,SOURCE.[TabName5]
+			,SOURCE.[Description5]);
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_GetProductLocalization
+	@ProductID INT = NULL,
+	@LanguageLocale NVARCHAR(20) = NULL
+AS
+BEGIN
+	SELECT TOP 1
+		PL.*
+	FROM
+		{databaseOwner}{objectQualifier}Smith_ProductLocalization PL
+	WHERE
+		PL.[ProductID] = @ProductID
+		AND PL.[LanguageLocale] = @LanguageLocale
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateShoppingCartItem
+	@Persistent VARCHAR(16) = NULL,
+	@ProductID INT = NULL,
+	@ProductName NVARCHAR(255) = NULL,
+	@ProductSku VARCHAR(50) = NULL,
+	@Quantity DECIMAL(10, 2) = NULL,
+	@UnitCost MONEY = NULL,
+	@CartCookie VARCHAR(100) = NULL,
+	@IsRequired BIT = NULL,
+	@PriceClass VARCHAR(20) = NULL,
+	@VariantCost DECIMAL(10, 2) = NULL,
+	@ImageName VARCHAR(200) = NULL,
+	@BundleID INT = NULL,
+	@DNNLogin NVARCHAR(100) = NULL,
+	@Email NVARCHAR(256) = NULL,
+	@Weight DECIMAL(12,2) = NULL,
+	@CreateDate DATETIME = NULL,
+	@OtherCartFields NVARCHAR(MAX) = NULL,
+	@IsBooking BIT = NULL,
+	@PortalID INT = NULL,
+	@StoreID INT = NULL
+AS
+BEGIN
+	DECLARE @CartID [INT],
+			@CartVariantID [INT]
+
+	SELECT
+		@CartID = SC.[CartID]
+	FROM
+		{databaseOwner}{objectQualifier}Smith_ShoppingCart SC
+	WHERE
+		SC.[ProductID] = @ProductID
+		AND SC.[ProductName] = @ProductName
+		AND SC.[ProductSku] = @ProductSku
+		AND (SC.[CartCookie] = @CartCookie OR (@Persistent <> 'Machine' AND @DNNLogin <> ''))
+		AND (SC.[DNNLogin] = @DNNLogin OR @Persistent <> 'User')
+		AND SC.[StoreID] = @StoreID
+		AND SC.[PortalID] = @PortalID
+
+	SELECT
+		@CartVariantID = SCV.[CartVariantID]
+	FROM
+		{databaseOwner}{objectQualifier}Smith_ShoppingCartVariant SCV
+	WHERE
+		SCV.[CartID] = @CartID
+
+	IF (@CartID IS NOT NULL) AND (@CartVariantID IS NULL AND @IsBooking <> 1)
+		BEGIN
+			UPDATE
+				{databaseOwner}{objectQualifier}Smith_ShoppingCart
+			SET
+				[Quantity] += @Quantity,
+				[UnitCost] = @UnitCost
+			WHERE
+				[CartID] = @CartID
+			SELECT @CartID
+		END
+	ELSE
+		BEGIN
+			INSERT INTO {databaseOwner}{objectQualifier}Smith_ShoppingCart
+				([ProductID]
+				,[ProductName]
+				,[ProductSku]
+				,[Quantity]
+				,[UnitCost]
+				,[CartCookie]
+				,[IsRequired]
+				,[PriceClass]
+				,[VariantCost]
+				,[ImageName]
+				,[BundleID]
+				,[DNNLogin]
+				,[Email]
+				,[Weight]
+				,[CreateDate]
+				,[OtherCartFields]
+				,[PortalID]
+				,[StoreID])
+			 VALUES
+				(@ProductID
+				,@ProductName
+				,@ProductSku
+				,@Quantity
+				,@UnitCost
+				,@CartCookie
+				,@IsRequired
+				,@PriceClass
+				,@VariantCost
+				,@ImageName
+				,@BundleID
+				,@DNNLogin
+				,@Email
+				,@Weight
+				,@CreateDate
+				,@OtherCartFields
+				,@PortalID
+				,@StoreID)
+			SELECT SCOPE_IDENTITY()
+		END
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_SaveShoppingCartItem
+	@CartID INT = NULL,
+	@ProductID INT = NULL,
+	@Manufacturer VARCHAR(50) = NULL,
+	@ModelName VARCHAR(255) = NULL,
+	@UnitCost MONEY = NULL,
+	@QuantityOnHand INT = NULL,
+	@Quantity INT = NULL,
+	@Weight DECIMAL(18,0) = NULL,
+	@ProductName NVARCHAR(255) = NULL,
+	@ProductSku VARCHAR(50) = NULL,
+	@IsRequired BIT = NULL,
+	@BundleID INT = NULL,
+	@AddDnnRole VARCHAR(50) = NULL,
+	@Recurring BIT = NULL,
+	@RequireLogin BIT = NULL,
+	@UsePriPriceWght BIT = NULL,
+	@MasterBundleID INT = NULL,
+	@LineItem INT = NULL,
+	@RoleExpireDays VARCHAR(50) = NULL,
+	@MemberPrice MONEY = NULL,
+	@TaxExempt BIT = NULL,
+	@ShipCodes VARCHAR(100) = NULL,
+	@ShipText VARCHAR(500) = NULL,
+	@ShipCost MONEY = NULL,
+	@PriceClass VARCHAR(20) = NULL,
+	@VariantCost MONEY = NULL,
+	@RemoveDNNRole VARCHAR(70) = NULL,
+	@IsBooking BIT = NULL
+AS
+BEGIN
+	DECLARE @CartDetailID [INT],
+			@DetailVariantID [INT]
+
+	SELECT
+		@CartDetailID = SCD.[CartDetailID]
+	FROM
+		{databaseOwner}{objectQualifier}Smith_SavedCartDetail SCD
+	WHERE
+		SCD.[CartID] = @CartID
+		AND SCD.[ProductID] = @ProductID
+		AND SCD.[ModelName] = @ModelName
+		AND SCD.[ProductName] = @ProductName
+		AND SCD.[ProductSku] = @ProductSku
+
+	SELECT
+		@DetailVariantID = SCDV.[DetailVariantID]
+	FROM
+		{databaseOwner}{objectQualifier}Smith_SavedCartDetailVariant SCDV
+	WHERE
+		SCDV.[CartDetailID] = @CartDetailID
+
+	IF (@CartDetailID IS NOT NULL) AND (@DetailVariantID IS NULL AND @IsBooking <> 1)
+		BEGIN
+			UPDATE
+				{databaseOwner}{objectQualifier}Smith_SavedCartDetail
+			SET
+				[Quantity] = @Quantity
+			WHERE
+				[CartDetailID] = @CartDetailID
+			SELECT @CartDetailID
+		END
+	ELSE
+		BEGIN
+			INSERT INTO {databaseOwner}{objectQualifier}Smith_SavedCartDetail
+				([CartID]
+				,[ProductID]
+				,[Manufacturer]
+				,[ModelName]
+				,[UnitCost]
+				,[QuantityOnHand]
+				,[Quantity]
+				,[Weight]
+				,[ProductName]
+				,[ProductSku]
+				,[IsRequired]
+				,[BundleID]
+				,[AddDnnRole]
+				,[Recurring]
+				,[RequireLogin]
+				,[UsePriPriceWght]
+				,[MasterBundleID]
+				,[LineItem]
+				,[RoleExpireDays]
+				,[MemberPrice]
+				,[TaxExempt]
+				,[ShipCodes]
+				,[ShipText]
+				,[ShipCost]
+				,[PriceClass]
+				,[VariantCost]
+				,[RemoveDNNRole])
+			 VALUES
+				(@CartID
+				,@ProductID
+				,@Manufacturer
+				,@ModelName
+				,@UnitCost
+				,@QuantityOnHand
+				,@Quantity
+				,@Weight
+				,@ProductName
+				,@ProductSku
+				,@IsRequired
+				,@BundleID
+				,@AddDnnRole
+				,@Recurring
+				,@RequireLogin
+				,@UsePriPriceWght
+				,@MasterBundleID
+				,@LineItem
+				,@RoleExpireDays
+				,@MemberPrice
+				,@TaxExempt
+				,@ShipCodes
+				,@ShipText
+				,@ShipCost
+				,@PriceClass
+				,@VariantCost
+				,@RemoveDNNRole)
+			SELECT SCOPE_IDENTITY()
+		END
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateCustomerWalletItem
+	@CustomerID INT = NULL,
+	@BillingName NVARCHAR(50) = NULL,
+	@Address1 NVARCHAR(50) = NULL,
+	@Address2 NVARCHAR(50) = NULL,
+	@City NVARCHAR(50) = NULL,
+	@State NVARCHAR(50) = NULL,
+	@Zip VARCHAR(50) = NULL,
+	@Country NVARCHAR(50) = NULL,
+	@WalletName NVARCHAR(150) = NULL,
+	@PayType VARCHAR(50) = NULL,
+	@AcctNo VARCHAR(64) = NULL,
+	@ExpRoute VARCHAR(50) = NULL,
+	@DNNLogin VARCHAR(50) = NULL,
+	@DNNRole NVARCHAR(50) = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	INSERT INTO
+		{databaseOwner}{objectQualifier}Smith_CustomerWallet
+		([CustomerID]
+		,[BillingName]
+		,[Address1]
+		,[Address2]
+		,[City]
+		,[State]
+		,[Zip]
+		,[Country]
+		,[WalletName]
+		,[PayType]
+		,[AcctNo]
+		,[ExpRoute]
+		,[DNNLogin]
+		,[DNNRole]
+		,[PortalID])
+	VALUES
+		(@CustomerID
+		,@BillingName
+		,@Address1
+		,@Address2
+		,@City
+		,@State
+		,@Zip
+		,@Country
+		,@WalletName
+		,@PayType
+		,@AcctNo
+		,@ExpRoute
+		,@DNNLogin
+		,@DNNRole
+		,@PortalID)
+	SELECT SCOPE_IDENTITY()
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_GetCustomerWalletItemByID
+	@ID INT = NULL,
+	@CustomerID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SELECT
+		CW.*
+	FROM
+		{databaseOwner}{objectQualifier}Smith_CustomerWallet CW
+	WHERE
+		CW.[ID] = @ID
+		AND CW.[CustomerID] = @CustomerID
+		AND CW.[PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListCustomerWalletItems
+	@CustomerID INT = NULL,
+	@DNNLogin VARCHAR(50) = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SELECT
+		CW.*
+	FROM
+		{databaseOwner}{objectQualifier}Smith_CustomerWallet CW
+	WHERE
+		CW.[CustomerID] = @CustomerID
+		AND CW.[DNNLogin] = @DNNLogin
+		AND CW.[PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateCustomerWalletItem
+	@ID INT = NULL,
+	@CustomerID INT = NULL,
+	@BillingName NVARCHAR(50) = NULL,
+	@Address1 NVARCHAR(50) = NULL,
+	@Address2 NVARCHAR(50) = NULL,
+	@City NVARCHAR(50) = NULL,
+	@State NVARCHAR(50) = NULL,
+	@Zip VARCHAR(50) = NULL,
+	@Country NVARCHAR(50) = NULL,
+	@WalletName NVARCHAR(150) = NULL,
+	@PayType VARCHAR(50) = NULL,
+	@AcctNo VARCHAR(64) = NULL,
+	@ExpRoute VARCHAR(50) = NULL,
+	@DNNLogin VARCHAR(50) = NULL,
+	@DNNRole NVARCHAR(50) = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	UPDATE
+		{databaseOwner}{objectQualifier}Smith_CustomerWallet
+	SET
+		[CustomerID] = @CustomerID,
+		[BillingName] = @BillingName,
+		[Address1] = @Address1,
+		[Address2] = @Address2,
+		[City] = @City,
+		[State] = @State,
+		[Zip] = @Zip,
+		[Country] = @Country,
+		[WalletName] = @WalletName,
+		[PayType] = @PayType,
+		[AcctNo] = @AcctNo,
+		[ExpRoute] = @ExpRoute,
+		[DNNLogin] = @DNNLogin,
+		[DNNRole] = @DNNRole,
+		[PortalID] = @PortalID
+	WHERE
+		[ID] = @ID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_DeleteCustomerWalletItem
+	@ID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	DELETE FROM
+		{databaseOwner}{objectQualifier}Smith_CustomerWallet
+	WHERE
+		[ID] = @ID
+		AND [PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListAdvancedSearchProducts
+	@MinPrice DECIMAL = NULL,
+	@MaxPrice DECIMAL = NULL,
+	@Keywords NVARCHAR(MAX) = '',
+	@CatList NVARCHAR(MAX) = '',
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	DECLARE @KeywordsTable TABLE
+	(
+		[Keyword] NVARCHAR(250)
+	)
+	INSERT INTO
+		@KeywordsTable ([Keyword])
+	SELECT
+		LTRIM(RTRIM([Value]))
+	FROM
+		{databaseOwner}{objectQualifier}RZC_FxSplit(@Keywords, ',')
+	DELETE FROM
+		@KeywordsTable
+	WHERE
+		[Keyword] IS NULL
+		OR [Keyword] = ''
+
+	DECLARE @KeyCount INT = (SELECT COUNT(DISTINCT Keyword) FROM @KeywordsTable)
+
+	DECLARE @CatListTable TABLE
+	(
+		[CategoryID] INT
+	)
+	INSERT INTO
+		@CatListTable ([CategoryID])
+	SELECT
+		CONVERT(INT, LTRIM(RTRIM([Value])))
+	FROM
+		{databaseOwner}{objectQualifier}RZC_FxSplit(@CatList, ',')
+	DELETE FROM
+		@CatListTable
+	WHERE
+		[CategoryID] IS NULL
+		OR [CategoryID] < 1
+
+	DECLARE @CatCount INT = (SELECT COUNT(DISTINCT CategoryID) FROM @CatListTable)
+
+	SELECT
+		P.[ProductID]
+	FROM
+		{databaseOwner}{objectQualifier}Smith_Products P
+	LEFT JOIN
+	(
+		SELECT S1.[ProductID]
+		FROM @KeywordsTable T1
+		LEFT JOIN {databaseOwner}{objectQualifier}Smith_SearchKeys S1
+		ON S1.[SearchTerm] LIKE '%' + T1.[Keyword] + '%'
+		UNION
+		SELECT P1.[ProductID]
+		FROM @KeywordsTable T1
+		LEFT JOIN {databaseOwner}{objectQualifier}Smith_Products P1
+		ON	P1.[ModelName] LIKE '%' + T1.[Keyword] + '%'
+			OR P1.[ModelNumber] LIKE '%' + T1.[Keyword] + '%'
+			OR P1.[Description] Like '%' + T1.[Keyword] + '%'
+			OR P1.[Summary] Like '%' + T1.[Keyword] + '%'
+	) S2
+	ON S2.[ProductID] = P.[ProductID]
+	LEFT JOIN
+	(
+		SELECT CP1.[ProductID]
+		FROM @CatListTable CT
+		INNER JOIN {databaseOwner}{objectQualifier}Smith_CategoryProduct CP1
+		ON CP1.[CategoryID] = CT.[CategoryID]
+		GROUP BY CP1.[ProductID]
+		HAVING COUNT(DISTINCT CT.[CategoryID]) = @CatCount
+	) CP2
+	ON CP2.[ProductID] = P.[ProductID]
+	WHERE
+		(P.[PortalID] = @PortalID)
+		AND (P.[StoreID] = @StoreID OR P.[TabModuleId] = @StoreID OR P.[Share] = 1)
+		AND (P.[LogicallyDeleted] <> 1 AND P.[Archived] <> 1 AND P.[HideProduct] <> 1)
+		AND (P.[UnitCost] >= @MinPrice OR @MinPrice = -1)
+		AND (P.[UnitCost] <= @MaxPrice OR @MaxPrice = -1)
+		AND (S2.[ProductID] IS NOT NULL OR @KeyCount < 1)
+		AND (CP2.[ProductID] IS NOT NULL OR @CatCount < 1)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListTodaySubscriptions
+	@Suspend SMALLINT,
+	@StoreID INT,
+	@PortalID INT
+AS
+BEGIN
+	DECLARE @TodayDate DATE = CONVERT(DATE, GETDATE())
+SELECT
+	S.*
+FROM
+	{databaseOwner}{objectQualifier}Smith_SubscriptionSC S
+WHERE
+	S.[PortalID] = @PortalID
+	AND (S.[StoreID] = @StoreID OR S.[TabModuleId] = @StoreID)
+	AND S.[Active] = 1
+	AND S.[Suspend] < @Suspend
+	AND S.[NextPaymentDate] <= @TodayDate
+	AND (S.[Occurrences] = 9999 OR S.[Occurrences] - (
+		SELECT
+			COUNT(PH.[PayHistID])
+		FROM
+			{databaseOwner}{objectQualifier}Smith_PayHist PH
+		WHERE
+			PH.[OrderID] = S.[OrderID]
+			AND PH.[SubscriptionID] = S.[SubscriptionID]
+			AND PH.[Success] = 1) > 0
+	)
+	AND NOT EXISTS (
+		SELECT
+			PH.[PayHistID]
+		FROM
+			{databaseOwner}{objectQualifier}Smith_PayHist PH
+		WHERE
+			PH.[OrderID] = S.[OrderID]
+			AND PH.[SubscriptionID] = S.[SubscriptionID]
+			AND PH.[Success] = 1
+			AND CONVERT(DATE, PH.[PayDate]) >= S.[NextPaymentDate]
+	)
+END
+GO
+
+
+/************************************************************/
+/*****               End of Script                      *****/
+/************************************************************/

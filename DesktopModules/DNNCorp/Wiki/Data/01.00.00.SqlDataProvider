@@ -1,0 +1,877 @@
+﻿IF NOT EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Wiki_ArticleTypes') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Wiki_ArticleTypes
+	(
+		[ArticleTypeId] [int] IDENTITY(1,1) NOT NULL,
+		[PortalId] [int] NOT NULL,
+		[Name] [nvarchar](64) NOT NULL,
+		[LocalizationKey] [nvarchar](128) NOT NULL,
+		CONSTRAINT [PK_{objectQualifier}Wiki_ArticleTypes] PRIMARY KEY CLUSTERED (ArticleTypeId DESC)
+	)
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Wiki') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Wiki
+	(
+		[ModuleId] [int] NOT NULL,
+		[ArticleId] [int] NULL,
+		CONSTRAINT [PK_{objectQualifier}Wiki] PRIMARY KEY CLUSTERED (ModuleId ASC)
+	)
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Wiki_Article]') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}Wiki_Article]
+	(
+		[ArticleId] [int] IDENTITY(1,1) NOT NULL,
+		[ArticleTypeId] [int] NOT NULL,
+		[ContentItemId] [int] NOT NULL,
+		[SummaryContentItemId] [int] NULL,
+		[PortalId] [int] NOT NULL,
+		[GroupId] [int] NULL,
+		[ViewCount] [int] NOT NULL,
+		[Approved] [bit] NOT NULL,
+		[Protected] [bit] NOT NULL,
+		[Elements] [int] NULL,
+		CONSTRAINT [PK_{objectQualifier}Wiki_Article] PRIMARY KEY CLUSTERED (ArticleId DESC)
+	)
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Wiki_Article] 
+		WITH NOCHECK ADD CONSTRAINT [FK_{objectQualifier}Wiki_Article_{objectQualifier}Portals]
+		FOREIGN KEY (PortalId) REFERENCES {databaseOwner}[{objectQualifier}Portals] (PortalID) ON DELETE CASCADE
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Wiki_Article] 
+		WITH NOCHECK ADD CONSTRAINT [FK_{objectQualifier}Wiki_Article_{objectQualifier}ArticleTypeId]
+		FOREIGN KEY (ArticleTypeId) REFERENCES {databaseOwner}[{objectQualifier}Wiki_ArticleTypes] (ArticleTypeId) ON DELETE CASCADE
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Wiki_MetaData_Settings') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Wiki_MetaData_Settings
+	(
+		[SettingId] [int] IDENTITY(1,1) NOT NULL,
+		[ModuleId] [int] NOT NULL,
+		[ArticleTypeId] [int] NOT NULL,
+		[FieldType] [int] NOT NULL,
+		[Key] [nvarchar](64) NOT NULL,
+		[Enabled] [bit] NOT NULL,
+		CONSTRAINT [PK_{objectQualifier}Wiki_MetaData_Settings] PRIMARY KEY CLUSTERED (SettingId ASC)
+	)
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_GetPrimaryArticle') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_GetPrimaryArticle
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Wiki_GetPrimaryArticle]
+	@ModuleId int
+AS
+BEGIN
+	IF NOT EXISTS(
+			SELECT	*
+			FROM	{databaseOwner}{objectQualifier}Wiki
+			WHERE	ModuleId = @ModuleId)
+		SELECT -1 AS [ArticleId]
+	ELSE
+		SELECT	ArticleId
+		FROM	{databaseOwner}{objectQualifier}Wiki
+		WHERE	ModuleId = @ModuleId
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_SetPrimaryArticle') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_SetPrimaryArticle
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Wiki_SetPrimaryArticle]
+	@ModuleId int,
+	@ArticleId int
+AS
+BEGIN
+	IF NOT EXISTS(
+			SELECT	*
+			FROM	{databaseOwner}{objectQualifier}Wiki
+			WHERE	ModuleId = @ModuleId)
+		INSERT INTO {databaseOwner}{objectQualifier}Wiki (ModuleId, ArticleId) VALUES (@ModuleId, @ArticleId)
+	ELSE
+		UPDATE {databaseOwner}{objectQualifier}Wiki SET ArticleId = @ArticleId WHERE ModuleId = @ModuleId
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_Article_Add') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_Add
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Wiki_Article_Add]
+	@ArticleTypeId int,
+	@ContentItemId int,
+	@SummaryContentItemId int,
+	@PortalId int,
+	@GroupId int,
+	@Approved bit,
+	@Protected bit,
+	@Elements int
+AS 
+	INSERT INTO {databaseOwner}{objectQualifier}Wiki_Article
+		   (ArticleTypeId,
+			ContentItemId,
+			SummaryContentItemId,
+			PortalId,
+			GroupId,
+			ViewCount,
+			Approved,
+			Protected,
+			Elements)
+	VALUES (@ArticleTypeId,
+			@ContentItemId,
+			@SummaryContentItemId,
+			@PortalId,
+			@GroupId,
+			0,
+			@Approved,
+			@Protected,
+			@Elements)
+
+	SELECT SCOPE_IDENTITY()
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_Article_GetSearchable') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_GetSearchable
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Wiki_Article_GetSearchable]
+	@ModuleId INT,
+	@StartDate DATETIME,
+	@EndDate DATETIME
+AS 
+	DECLARE @StartDateUTC AS DateTime
+	DECLARE @EndDateUTC AS DateTime 
+	SET @StartDateUTC = DATEADD(second, DATEDIFF(second, GETDATE(), GETUTCDATE()), @startdate)
+	SET @EndDateUTC = DATEADD(second, DATEDIFF(second, GETDATE(), GETUTCDATE()), @enddate)
+	
+	SELECT  ArticleId,
+			ArticleTypeId,
+			A.ContentItemId,
+			SummaryContentItemId,
+			GroupId,
+			PortalId,
+			ViewCount,
+			Approved,
+			Protected,
+			Elements,
+			S.Content AS [Summary],
+			CI.Content,
+			CI.ContentTypeID,
+			CI.TabID,
+			CI.ModuleID,
+			CI.ContentKey,
+			CI.Indexed,
+			CI.CreatedByUserId,
+			CI.CreatedOnDate,
+			CI.LastModifiedByUserID,
+			CI.LastModifiedOnDate,
+			CIMD.MetaDataValue AS [ContentTitle],
+			1 AS TotalRecords
+	FROM    {databaseOwner}{objectQualifier}Wiki_Article A
+			INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI WITH (NOLOCK) ON A.ContentItemId = CI.ContentItemID
+			LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems S WITH (NOLOCK) ON A.SummaryContentItemId = S.ContentItemID
+			LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD WITH (NOLOCK) ON CIMD.ContentItemID = A.ContentItemId
+				AND CIMD.MetaDataID = (SELECT MetaDataID FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Title')
+	WHERE   Approved = 1
+			AND CI.ModuleID = @ModuleID
+			AND ((GroupId IS NULL) OR (GroupId < 1))
+			AND
+			-- Comments have been added or updated within the given time frame
+			(
+			  (CI.LastModifiedOnDate >= @StartDate OR S.LastModifiedOnDate >= @StartDate)
+			  AND (CI.LastModifiedOnDate <= @EndDate OR S.LastModifiedOnDate <= @EndDate)
+			  OR
+			  (										
+			    (SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}Journal_Comments JC 
+				 WHERE JC.[JournalId] IN (SELECT JournalId FROM {databaseOwner}{objectQualifier}Journal J WHERE J.[ContentItemId] = A.[ContentItemId]) 
+				  AND 
+				  ((JC.[DateCreated] >= @StartDateUTC AND JC.[DateCreated] <= @EndDateUTC)
+				    OR
+				  (JC.[DateUpdated] >= @StartDateUTC AND JC.[DateUpdated] <= @EndDateUTC)
+				  )
+				) > 0 
+			  )
+			)
+			
+
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_Article_List') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_List
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_List
+	@ModuleId int,
+	@UserId int,
+	@PageIndex int,
+	@PageSize int,
+	@GroupId int,
+	@SortMode int,
+	@ExclusionList varchar(MAX),
+	@Tags nvarchar(MAX)
+AS
+BEGIN
+	IF @ModuleId < 0
+		SET @ModuleId = NULL
+
+	;WITH OrderedSet AS(
+		SELECT
+			ArticleId,
+			ArticleTypeId,
+			A.ContentItemId,
+			SummaryContentItemId,
+			GroupId,
+			PortalId,
+			ViewCount,
+			Approved,
+			Protected,
+			Elements,
+			S.Content AS [Summary],
+			CI.Content,
+			CI.ContentTypeID,
+			CI.TabID,
+			CI.ModuleID,
+			CI.ContentKey,
+			CI.Indexed,
+			CI.CreatedByUserId,
+			CI.CreatedOnDate,
+			CI.LastModifiedByUserID,
+			CI.LastModifiedOnDate,
+			CIMD.MetaDataValue AS [ContentTitle],
+			ROW_NUMBER() OVER (
+				ORDER BY
+					CASE WHEN @SortMode = 0 THEN CI.CreatedOnDate END DESC,
+					CASE WHEN @SortMode = 1 THEN CI.LastModifiedOnDate END DESC,
+					A.ArticleId DESC) AS RowNumber,
+			COUNT(*) OVER () AS TotalRecords
+		FROM			{databaseOwner}{objectQualifier}Wiki_Article A WITH (NOLOCK)
+		INNER JOIN		{databaseOwner}{objectQualifier}ContentItems CI WITH (NOLOCK) ON A.ContentItemId = CI.ContentItemID
+		LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems S WITH (NOLOCK) ON A.SummaryContentItemId = S.ContentItemID
+		LEFT OUTER JOIN	{databaseOwner}{objectQualifier}ContentItems_MetaData CIMD WITH (NOLOCK)
+			ON CIMD.ContentItemID = A.ContentItemID AND CIMD.MetaDataID = (SELECT MetaDataID FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Title')
+
+		-- match tags (if specified)
+		WHERE 	(@Tags IS NULL OR LEN(@Tags) = 0 OR
+			(SELECT		COUNT(*)
+						FROM		{databaseOwner}{objectQualifier}ContentItems_Tags CIT WITH (NOLOCK)
+						INNER JOIN	{databaseOwner}{objectQualifier}Taxonomy_Terms TT WITH (NOLOCK) ON CIT.TermID = TT.TermID
+						INNER JOIN	{databaseOwner}[{objectQualifier}ConvertListToTable](',', @Tags) T ON TT.Name = T.RowValue
+						WHERE		CIT.ContentItemID = A.ContentItemId) = (SELECT LEN(@Tags) - LEN(REPLACE(@Tags, ',', '')) + 1))
+
+		AND
+			(CI.ModuleID = COALESCE(@ModuleId, CI.ModuleID)) AND
+			(@ExclusionList IS NULL OR NOT (ArticleId IN (SELECT RowValue FROM {databaseOwner}{objectQualifier}ConvertListToTable(' ', @ExclusionList)))))
+
+	SELECT	TOP (@PageSize) *
+	FROM	OrderedSet
+	WHERE	RowNumber >= (@PageIndex * @PageSize) + 1
+	ORDER BY RowNumber ASC
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_Article_GetByContentItem') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_GetByContentItem
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Wiki_Article_GetByContentItem]
+	@ContentItemId INT,
+	@ModuleId INT
+AS 
+	SELECT  ArticleId,
+			ArticleTypeId,
+			A.ContentItemId,
+			SummaryContentItemId,
+			GroupId,
+			PortalId,
+			ViewCount,
+			Approved,
+			Protected,
+			Elements,
+			S.[Content] AS [Summary],
+			CI.Content,
+			CI.ContentTypeID,
+			CI.TabID,
+			CI.ModuleID,
+			CI.ContentKey,
+			CI.Indexed,
+			CI.CreatedByUserId,
+			CI.CreatedOnDate,
+			CI.LastModifiedByUserID,
+			CI.LastModifiedOnDate,
+			CIMD.MetaDataValue AS [ContentTitle],
+			1 AS TotalRecords
+	FROM    {databaseOwner}{objectQualifier}Wiki_Article A
+			INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI ON A.ContentItemId = CI.ContentItemID
+			LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems S WITH (NOLOCK) ON A.SummaryContentItemId = S.ContentItemID
+			LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD ON CIMD.ContentItemID = A.ContentItemID
+								AND CIMD.MetaDataID = (SELECT MetaDataID FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Title')
+	WHERE   A.ContentItemID = @ContentItemId AND CI.ModuleID = @ModuleId
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_Article_Delete') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_Delete
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Wiki_Article_Delete]
+	@ArticleId INT,
+	@PortalId INT
+AS 
+	BEGIN
+		DELETE {databaseOwner}{objectQualifier}Wiki_Article
+		WHERE   PortalId = @PortalId
+				AND ArticleId = @ArticleId
+	END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_Article_UpdateViewCount') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_UpdateViewCount
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Wiki_Article_UpdateViewCount]
+	@ContentItemId INT,
+	@PortalId INT
+AS 
+	UPDATE {databaseOwner}{objectQualifier}Wiki_Article
+	SET     ViewCount = ViewCount + 1
+	WHERE   PortalID = @PortalId
+			AND ContentItemId = @ContentItemId
+			AND Approved = 1
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_Article_Search') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_Search
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Wiki_Article_Search]
+	@ModuleId INT,
+	@GroupId INT,
+	@PageSize INT,
+	@PageIndex INT,
+	@Keyword NVARCHAR(64) = NULL,
+	@SortColumn VARCHAR(32),
+	@SortAscending BIT,
+	@UserId INT,
+	@Tags NVARCHAR(256)
+AS 
+	BEGIN
+		WITH OrderedSet
+		  AS (
+			SELECT COUNT(*) OVER () AS TotalRecords,
+			ArticleId,
+			ArticleTypeId,
+			A.ContentItemId,
+			SummaryContentItemId,
+			PortalId,
+			GroupId,
+			ViewCount,
+			Approved,
+			Protected,
+			Elements,
+			S.Content AS [Summary],
+			CI.Content,
+			CI.ContentTypeID,
+			CI.TabID,
+			CI.ModuleID,
+			CI.ContentKey,
+			CI.Indexed,
+			CI.CreatedByUserID,
+			CI.[CreatedOnDate],
+			CI.LastModifiedByUserID,
+			CI.[LastModifiedOnDate],
+			CIMD.[MetaDataValue] AS [ContentTitle],
+			ROW_NUMBER() OVER (
+				ORDER BY CASE
+							WHEN @SortColumn = 'CreatedDate' AND @SortAscending = 1 THEN CI.CreatedOnDate END ASC,
+							CASE WHEN @SortColumn = 'CreatedDate' AND @SortAscending = 0 THEN CI.CreatedOnDate END DESC,
+							CASE WHEN @SortColumn = 'LastActive' AND @SortAscending = 1 THEN CI.LastModifiedOnDate END ASC,
+							CASE WHEN @SortColumn = 'LastActive' AND @SortAscending = 0 THEN CI.LastModifiedOnDate END DESC,
+							CASE WHEN @SortColumn = 'Title' AND @SortAscending = 1 THEN MetaDataValue END ASC,
+							CASE WHEN @SortColumn = 'Title' AND @SortAscending = 0 THEN MetaDataValue END DESC,
+							CASE WHEN @SortColumn = 'Views' AND @SortAscending = 0 THEN ViewCount END DESC,
+							CASE WHEN @SortColumn = 'Views' AND @SortAscending = 1 THEN ViewCount END ASC) AS [RowNumber]
+		FROM {databaseOwner}{objectQualifier}Wiki_Article A WITH ( NOLOCK )
+		INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI WITH ( NOLOCK ) ON CI.ContentItemID = A.ContentItemID
+		INNER JOIN {databaseOwner}{objectQualifier}Users U WITH ( NOLOCK ) ON U.UserID = CI.CreatedByUserID
+		INNER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD WITH ( NOLOCK ) ON CIMD.ContentItemID = A.ContentItemID
+						AND CIMD.MetaDataID = (SELECT MetaDataID FROM {databaseOwner}{objectQualifier}MetaData WITH ( NOLOCK ) WHERE MetaDataName = 'Title')
+		LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems S WITH (NOLOCK) ON A.SummaryContentItemId = S.ContentItemID
+
+		-- match all tags specified
+		WHERE       (@Tags IS NULL OR LEN(@Tags) = 0 OR
+			(SELECT COUNT(*)
+			 FROM   {databaseOwner}{objectQualifier}ContentItems_Tags CIT
+			 INNER JOIN {databaseOwner}{objectQualifier}Taxonomy_Terms TT ON CIT.TermID = TT.TermID
+			 INNER JOIN {databaseOwner}{objectQualifier}ConvertListToTable(',', @Tags) T ON TT.Name = T.RowValue
+			 WHERE  CIT.ContentItemID = A.ContentItemId) = ( SELECT LEN(@Tags) - LEN(REPLACE(@Tags, ',', '')) + 1))
+
+		-- match title (if specified)
+		AND (@Keyword IS NULL OR LEN(@Keyword) = 0 OR MetaDataValue LIKE '%'	+ @Keyword + '%')
+		AND (Approved = 1))
+	SELECT	TOP (@PageSize) *
+	FROM    OrderedSet
+	WHERE   RowNumber >= (@PageIndex * @PageSize) + 1
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_Article_Update') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_Update
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Wiki_Article_Update]
+	@ArticleId INT,
+	@ContentItemId INT,
+	@PortalId INT,
+	@GroupId INT,
+	@Approved BIT,
+	@Protected BIT,
+	@Elements int
+AS 
+	UPDATE  {databaseOwner}{objectQualifier}Wiki_Article
+	SET     GroupId = @GroupId,
+			Approved = @Approved,
+			Protected = @Protected,
+			Elements = @Elements
+	WHERE   ContentItemId = @ContentItemId
+			AND ArticleId = @ArticleId
+			AND PortalId = @PortalId
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_Article_GetTypes') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_GetTypes
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_GetTypes
+	@PortalId int
+AS
+BEGIN
+	SELECT	*
+	FROM	{databaseOwner}{objectQualifier}Wiki_ArticleTypes
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_Article_Get') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_Get
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_Get
+	@ArticleId int
+AS
+BEGIN
+	SELECT
+		a.[ArticleId],
+		a.[ArticleTypeId],
+		a.[ContentItemId],
+		a.[SummaryContentItemId],
+		a.[PortalId],
+		a.[GroupId],
+		a.[ViewCount],
+		a.[Approved],
+		a.[Protected],
+		s.[Content] AS [Summary],
+		c.[Content],
+		c.[ContentTypeID],
+		c.[TabID],
+		c.[ModuleID],
+		c.[ContentKey],
+		c.[Indexed],
+		c.[CreatedByUserID],
+		c.[CreatedOnDate],
+		c.[LastModifiedByUserID],
+		c.[LastModifiedOnDate],
+		c.[StateID],
+		m.[MetaDataValue] AS [ContentTitle],
+		u.DisplayName
+	FROM		{databaseOwner}{objectQualifier}Wiki_Article a WITH (NOLOCK)
+	INNER JOIN	{databaseOwner}{objectQualifier}ContentItems c WITH (NOLOCK) ON a.ContentItemId = c.ContentItemID
+	INNER JOIN {databaseOwner}[{objectQualifier}Users] u WITH (NOLOCK) ON U.UserID = c.CreatedByUserID
+	INNER JOIN {databaseOwner}[{objectQualifier}ContentItems_MetaData] m WITH (NOLOCK) ON m.ContentItemID = a.[ContentItemId] AND m.MetaDataID =
+		(SELECT	[MetaDataID]
+		 FROM   {databaseOwner}[{objectQualifier}MetaData] WITH (NOLOCK)
+		 WHERE  [MetaDataName] = 'Title')	
+	LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems S WITH (NOLOCK) ON A.SummaryContentItemId = S.ContentItemID
+	WHERE		a.ArticleId = @ArticleId
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_MetaData_GetTypes') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_MetaData_GetTypes
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Wiki_MetaData_GetTypes
+	@ModuleId int,
+	@ArticleTypeId int
+AS
+BEGIN
+	SELECT	*
+	FROM	{databaseOwner}{objectQualifier}Wiki_MetaData_Settings
+	WHERE	(ModuleId < 0 OR ModuleId = @ModuleId) AND ArticleTypeId = @ArticleTypeId
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_MetaData_Get') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_MetaData_Get
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Wiki_MetaData_Get
+	@SettingId int
+AS
+BEGIN
+	SELECT	*
+	FROM	{databaseOwner}{objectQualifier}Wiki_MetaData_Settings
+	WHERE	SettingId = @SettingId
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_MetaData_GetByKey') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_MetaData_GetByKey
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Wiki_MetaData_GetByKey
+	@ModuleId int,
+	@Key nvarchar(64)
+AS
+BEGIN
+	-- NOTE(cbond): These results are ordered this way to ensure that we get any specific module settings instead of the general -1
+	SELECT	TOP 1 *
+	FROM	{databaseOwner}{objectQualifier}Wiki_MetaData_Settings
+	WHERE	(ModuleId < 0 OR ModuleId = @ModuleId) AND [Key] = @Key
+	ORDER BY ModuleId DESC
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Wiki_MetaData_Delete') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_MetaData_Delete
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Wiki_MetaData_Delete
+	@ContentItemId int,
+	@Key nvarchar(64)
+AS
+BEGIN
+	DECLARE @MetaDataID int
+
+	SELECT	@MetaDataID = MetaDataID
+	FROM	{databaseOwner}{objectQualifier}MetaData
+	WHERE	MetaDataName = @Key
+
+	IF @MetaDataID IS NOT NULL
+		DELETE FROM {databaseOwner}{objectQualifier}ContentItems_MetaData WHERE ContentItemID = @ContentItemId AND MetaDataID = @MetaDataID
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Wiki_MetaData_Settings_Enable') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_MetaData_Settings_Enable
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Wiki_MetaData_Settings_Enable
+	@ModuleId int,
+	@ArticleTypeId int,
+	@Key nvarchar(64),
+	@Enabled bit
+AS
+BEGIN
+	DECLARE @FieldType int
+	SELECT	@FieldType = FieldType
+	FROM	{databaseOwner}{objectQualifier}Wiki_MetaData_Settings
+	WHERE	[Key] = @Key
+	
+
+	IF NOT EXISTS(
+			SELECT	*
+			FROM	{databaseOwner}{objectQualifier}Wiki_MetaData_Settings
+			WHERE	ModuleId = @ModuleId AND ArticleTypeId = @ArticleTypeId AND [Key] = @Key)
+		INSERT INTO {databaseOwner}{objectQualifier}Wiki_MetaData_Settings
+			(ModuleId, ArticleTypeId, FieldType, [Key], Enabled)
+		VALUES
+			(@ModuleId, @ArticleTypeId, @FieldType, @Key, @Enabled)
+	ELSE
+		UPDATE {databaseOwner}{objectQualifier}Wiki_MetaData_Settings
+			SET [Enabled] = @Enabled
+		WHERE (ModuleId < 0 OR ModuleId = @ModuleId) AND ArticleTypeId = @ArticleTypeId AND [Key] = @Key
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Wiki_Article_GetBySubject') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_GetBySubject
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_GetBySubject
+    @ModuleId INT ,
+    @Subject NVARCHAR(512) ,
+    @ArticleTypeId INT = -1 ,
+    @GroupId INT = -1
+AS
+	BEGIN
+			SELECT  a.[ArticleId] ,
+					a.[ArticleTypeId] ,
+					a.[ContentItemId] ,
+					a.[SummaryContentItemId] ,
+					a.[PortalId] ,
+					a.[GroupId] ,
+					a.[ViewCount] ,
+					a.[Approved] ,
+					a.[Protected] ,
+					a.[Elements] ,
+					s.[Content] AS [Summary] ,
+					c.[Content] ,
+					c.[ContentTypeID] ,
+					c.[TabID] ,
+					c.[ModuleID] ,
+					c.[ContentKey] ,
+					c.[Indexed] ,
+					c.[CreatedByUserID] ,
+					c.[CreatedOnDate] ,
+					c.[LastModifiedByUserID] ,
+					c.[LastModifiedOnDate] ,
+					c.[StateID] ,
+					m.[MetaDataValue] AS [ContentTitle] ,
+					u.DisplayName
+			FROM	{databaseOwner}{objectQualifier}Wiki_Article a WITH (NOLOCK)
+					INNER JOIN {databaseOwner}{objectQualifier}ContentItems c WITH (NOLOCK) ON c.ContentItemID = a.ContentItemId
+					INNER JOIN {databaseOwner}{objectQualifier}MetaData md WITH (NOLOCK) ON md.MetaDataName = 'Title'
+					INNER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData m WITH (NOLOCK) ON m.MetaDataID = md.MetaDataID AND m.ContentItemID = c.ContentItemID
+					INNER JOIN {databaseOwner}{objectQualifier}Users u WITH (NOLOCK) ON u.UserID = c.CreatedByUserID
+					LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems s WITH (NOLOCK) ON a.SummaryContentItemId = s.ContentItemID
+			WHERE   m.MetaDataValue = @Subject
+					AND ( @ArticleTypeId < 0
+						  OR a.ArticleTypeId = @ArticleTypeId
+						)
+					AND ( c.ModuleID = @ModuleId )
+					AND ( @GroupId < 0
+						  OR a.GroupId = @GroupId
+						)
+	END
+GO
+
+-- Insert all default article types if there aren't any (table is new)
+IF (SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}Wiki_ArticleTypes) = 0
+BEGIN
+	INSERT INTO {databaseOwner}{objectQualifier}Wiki_ArticleTypes (PortalId, [Name], LocalizationKey)
+	          SELECT -1, 'People', 'ArticleType_People'
+	UNION ALL SELECT -1, 'Events', 'ArticleType_Events'
+	UNION ALL SELECT -1, 'Awards', 'ArticleType_Awards'
+	UNION ALL SELECT -1, 'Books, Magazines, Articles, Documents', 'ArticleType_Books'
+	UNION ALL SELECT -1, 'Media: Music, Movies, Art', 'ArticleType_Media'
+	UNION ALL SELECT -1, 'Concepts', 'ArticleType_Concepts'
+	UNION ALL SELECT -1, 'Procedures', 'ArticleType_Procedures'
+	UNION ALL SELECT -1, 'Geography: Regions, Cities, Countries, Districts', 'ArticleType_Geography'
+	UNION ALL SELECT -1, 'Architecture', 'ArticleType_Architecture'
+	UNION ALL SELECT -1, 'Misc.', 'ArticleType_Misc'
+	UNION ALL SELECT -1, 'Animals', 'ArticleType_Animals'
+	UNION ALL SELECT -1, 'Teams/Groups', 'ArticleType_Teams'
+END
+GO
+
+-- Insert metadata elements that aren't yet registered
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Thumbnail') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Thumbnail') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Type') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Type') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Motto') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Motto') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Eligibility') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Eligibility') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Awarded for') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Awarded for') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Status') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Status') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Established') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Established') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'First Induction') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('First induction') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Total Inductees') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Total inductees') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Title') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Title') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Editor') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Editor') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Author') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Author') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Thumbnail') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Thumbnail') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Excerpt') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Excerpt') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Released') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Released') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Recorded/Filmed/Painted') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Recorded/filmed/painted') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Genre') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Genre') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Length ( music /movie )') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Length ( music /movie )') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Label') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Label') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Artist / Director ( movie )') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Artist / Director ( movie )') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Producer ( music / movie )') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Producer ( music / movie )') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Country') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Country') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Region') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Region') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Province') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Province') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Incorporated') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Incorporated') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Area') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Area') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Elevation') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Elevation') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Population') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Population') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Time Zone') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Time Zone') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Website') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Website') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Location') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Location') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Coordinates') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Coordinates') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Construction') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Construction') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Completed') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Completed') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Opening') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Opening') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Height') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Height') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'sq. ft.') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('sq. ft.') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Architect') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Architect') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Developer') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Developer') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Structural Engineer') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Structural engineer') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Name') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Name') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Spouse') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Spouse') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Lineage') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Lineage') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Father') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Father') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Mother') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Mother') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Born') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Born') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Died') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Died') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Burial') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Burial') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Aliases') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Aliases') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Weight') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Weight') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Known for') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Known for') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Nationality') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Nationality') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Occupation') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Occupation') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Short Description') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Short description') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Kingdom') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Kingdom') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Phylum') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Phylum') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Class') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Class') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Order') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Order') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Family') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Family') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Genus') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Genus') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Species') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Species') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Date') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Date') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Participants') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Participants') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = '# of Participants') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('# of Participants') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Outcome') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Outcome') GO
+IF NOT EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Website') INSERT INTO {databaseOwner}{objectQualifier}MetaData (MetaDataName) VALUES ('Website') GO
+
+
+-- Default metadata settings for all modules (-1)
+IF (SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}Wiki_MetaData_Settings WHERE ModuleId < 0) = 0
+BEGIN
+	DECLARE @ArticleTypeId int
+	SELECT	@ArticleTypeId = ArticleTypeId
+	FROM	{databaseOwner}{objectQualifier}Wiki_ArticleTypes WHERE [Name] = 'People'
+
+	INSERT INTO {databaseOwner}{objectQualifier}Wiki_MetaData_Settings (ModuleId, FieldType, [Key], Enabled, ArticleTypeId)
+				SELECT -1, 1, 'Name', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Spouse', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Lineage', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Father', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Mother', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 0, 'Born', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 0, 'Died', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 0, 'Burial', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Aliases', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Weight', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Height', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Known for', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Nationality', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Occupation', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Title', 0, @ArticleTypeId
+	
+	SELECT	@ArticleTypeId = ArticleTypeId FROM	{databaseOwner}{objectQualifier}Wiki_ArticleTypes WHERE [Name] = 'Events'
+	INSERT INTO {databaseOwner}{objectQualifier}Wiki_MetaData_Settings (ModuleId, FieldType, [Key], Enabled, ArticleTypeId)
+				SELECT -1, 1, 'Name', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Location', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 0, 'Date', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Participants', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, '# of Participants', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Outcome', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 2, 'Website', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Title', 0, @ArticleTypeId
+
+	SELECT	@ArticleTypeId = ArticleTypeId FROM	{databaseOwner}{objectQualifier}Wiki_ArticleTypes WHERE [Name] = 'Awards'
+	INSERT INTO {databaseOwner}{objectQualifier}Wiki_MetaData_Settings (ModuleId, FieldType, [Key], Enabled, ArticleTypeId)
+				SELECT -1, 1, 'Name', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Type', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Motto', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Eligibility', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Awarded for', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Status', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 0, 'Established', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 0, 'First induction', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Total inductees', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Title', 0, @ArticleTypeId
+
+	SELECT	@ArticleTypeId = ArticleTypeId FROM	{databaseOwner}{objectQualifier}Wiki_ArticleTypes WHERE [Name] = 'Books, Magazines, Articles, Documents'
+	INSERT INTO {databaseOwner}{objectQualifier}Wiki_MetaData_Settings (ModuleId, FieldType, [Key], Enabled, ArticleTypeId)
+				SELECT -1, 1, 'Name', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Editor', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Author', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 4, 'Excerpt', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Title', 0, @ArticleTypeId
+	
+	SELECT	@ArticleTypeId = ArticleTypeId FROM	{databaseOwner}{objectQualifier}Wiki_ArticleTypes WHERE [Name] = 'Media: Music, Movies, Art'
+	INSERT INTO {databaseOwner}{objectQualifier}Wiki_MetaData_Settings (ModuleId, FieldType, [Key], Enabled, ArticleTypeId)
+				SELECT -1, 1, 'Name', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 0, 'Released', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Recorded/Filmed/Painted', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Genre', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Length ( music /movie )', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Label', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Artist / Director ( movie )', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Producer ( music / movie )', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Title', 0, @ArticleTypeId
+
+	SELECT	@ArticleTypeId = ArticleTypeId FROM	{databaseOwner}{objectQualifier}Wiki_ArticleTypes WHERE [Name] = 'Concepts'
+	INSERT INTO {databaseOwner}{objectQualifier}Wiki_MetaData_Settings (ModuleId, FieldType, [Key], Enabled, ArticleTypeId)
+				SELECT -1, 1, 'Name', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 4, 'Excerpt', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Title', 0, @ArticleTypeId
+
+	SELECT	@ArticleTypeId = ArticleTypeId FROM	{databaseOwner}{objectQualifier}Wiki_ArticleTypes WHERE [Name] = 'Procedures'
+	INSERT INTO {databaseOwner}{objectQualifier}Wiki_MetaData_Settings (ModuleId, FieldType, [Key], Enabled, ArticleTypeId)
+				SELECT -1, 1, 'Name', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 4, 'Excerpt', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Title', 0, @ArticleTypeId
+
+	SELECT	@ArticleTypeId = ArticleTypeId FROM	{databaseOwner}{objectQualifier}Wiki_ArticleTypes WHERE [Name] = 'Geography: Regions, Cities, Countries, Districts'
+	INSERT INTO {databaseOwner}{objectQualifier}Wiki_MetaData_Settings (ModuleId, FieldType, [Key], Enabled, ArticleTypeId)
+				SELECT -1, 1, 'Country', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Region', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Province', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 0, 'Incorporated', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Type', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Area', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Elevation', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Population', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Time Zone', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 2, 'Website', 2, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Title', 0, @ArticleTypeId
+
+	SELECT	@ArticleTypeId = ArticleTypeId FROM	{databaseOwner}{objectQualifier}Wiki_ArticleTypes WHERE [Name] = 'Architecture'
+	INSERT INTO {databaseOwner}{objectQualifier}Wiki_MetaData_Settings (ModuleId, FieldType, [Key], Enabled, ArticleTypeId)
+				SELECT -1, 1, 'Type', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Location', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Coordinates', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Construction', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 0, 'Completed', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 0, 'Opening', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Height', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'sq. ft.', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Architect', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Developer', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Structural Engineer', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Title', 0, @ArticleTypeId
+
+	SELECT	@ArticleTypeId = ArticleTypeId FROM	{databaseOwner}{objectQualifier}Wiki_ArticleTypes WHERE [Name] = 'Misc.'
+	INSERT INTO {databaseOwner}{objectQualifier}Wiki_MetaData_Settings (ModuleId, FieldType, [Key], Enabled, ArticleTypeId)
+				SELECT -1, 1, 'Name', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 4, 'Short Description', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Title', 0, @ArticleTypeId
+
+	SELECT	@ArticleTypeId = ArticleTypeId FROM	{databaseOwner}{objectQualifier}Wiki_ArticleTypes WHERE [Name] = 'Animals'
+	INSERT INTO {databaseOwner}{objectQualifier}Wiki_MetaData_Settings (ModuleId, FieldType, [Key], Enabled, ArticleTypeId)
+				SELECT -1, 1, 'Kingdom', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Phylum', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Class', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Order', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Family', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Genus', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Species', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Location', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Title', 0, @ArticleTypeId
+
+	SELECT	@ArticleTypeId = ArticleTypeId FROM	{databaseOwner}{objectQualifier}Wiki_ArticleTypes WHERE [Name] = 'Teams/Groups'
+	INSERT INTO {databaseOwner}{objectQualifier}Wiki_MetaData_Settings (ModuleId, FieldType, [Key], Enabled, ArticleTypeId)
+				SELECT -1, 1, 'Name', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 4, 'Short Description', 1, @ArticleTypeId
+	UNION ALL	SELECT -1, 1, 'Title', 0, @ArticleTypeId
+END
+GO

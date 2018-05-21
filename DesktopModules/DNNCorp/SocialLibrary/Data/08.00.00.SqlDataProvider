@@ -1,0 +1,378 @@
+/********************************************************
+ * SPROC: Social_AddJournalXml
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_AddJournalXml]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_AddJournalXml] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Social_AddJournalXml]
+	@JournalId INT,
+	@JournalXML XML
+AS
+BEGIN
+	INSERT INTO {databaseOwner}{objectQualifier}Journal_Data
+			(JournalId, JournalXML)
+	VALUES	(@JournalId, @JournalXML)
+END
+GO
+
+/********************************************************
+ * SPROC: Social_ListCommentsByJournalIds
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_ListCommentsByJournalIds]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_ListCommentsByJournalIds] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Social_ListCommentsByJournalIds]
+	@JounalIds nvarchar(max) = ''
+AS
+BEGIN
+	SELECT	jc.CommentId,
+			jc.JournalId,
+			jc.Comment,
+			jc.DateCreated,
+			jc.DateUpdated,
+			jc.CommentXML,
+			"UserId" = CASE WHEN ISNULL(u.UserId,-1) > 0 AND u.IsDeleted = 0 AND ISNULL(up.IsDeleted, 0) = 0 AND u.IsSuperUser = 0 THEN u.UserId ELSE -1 END,
+			u.UserName,
+			u.FirstName,
+			u.LastName,
+			u.IsSuperUser,
+			u.AffiliateId,
+			u.Email,
+			"DisplayName" = CASE WHEN ISNULL(u.UserId,-1) > 0 AND u.IsDeleted = 0 AND ISNULL(up.IsDeleted, 0) = 0 AND u.IsSuperUser = 0 THEN u.DisplayName ELSE 'Anonymous' END,
+			u.UpdatePassword,
+			u.LastIPAddress,
+			u.IsDeleted,
+			u.CreatedByUserID,
+			u.CreatedOnDate,
+			u.LastModifiedByUserID,
+			u.LastModifiedOnDate,
+			u.PasswordResetToken,
+			u.PasswordResetExpiration
+	FROM {databaseOwner}[{objectQualifier}Journal_Comments] as jc
+			INNER JOIN {databaseOwner}[{objectQualifier}Journal] as j ON jc.JournalId = j.JournalId
+			INNER JOIN {databaseOwner}[{objectQualifier}Users] as u ON jc.UserId = u.UserId
+			INNER JOIN {databaseOwner}[{objectQualifier}Journal_Split](@JounalIds,';') as jids ON jids.id = jc.JournalId
+			LEFT OUTER JOIN {databaseOwner}[{objectQualifier}UserPortals] as up ON up.UserId = u.UserId
+				AND up.PortalId = j.PortalId --Removal of PortalId will create dups in multi-portal
+	ORDER BY jc.CommentId ASC
+END
+GO
+
+/********************************************************
+ * SPROC: Social_GetJournalComments
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_GetJournalComments]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_GetJournalComments] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Social_GetJournalComments]
+	@PortalId int,
+	@CurrentUserId int,
+	@JournalId int,
+	@IncludeAllItems int = 0,
+	@IsDeleted int = 0
+AS
+BEGIN
+	SELECT     j.JournalId, j.JournalTypeId, j.Title, j.Summary, j.UserId, j.DateCreated, j.DateUpdated, j.PortalId,
+				j.ProfileId, j.GroupId, j.ObjectKey, j.AccessKey,
+				"JournalOwner" = '<entity><id>' + CAST(p.UserId as nvarchar(15)) + '</id><name><![CDATA[' + p.DisplayName + ']]></name></entity>',
+				"JournalAuthor" =
+					CASE WHEN ISNULL(a.UserId,-1) >0 AND a.IsDeleted = 0 AND ISNULL(up.IsDeleted, 0) = 0 AND a.IsSuperUser = 0 THEN
+						'<entity><id>' + CAST(a.UserId as nvarchar(15)) + '</id><name><![CDATA[' + a.DisplayName + ']]></name></entity>'
+					ELSE
+						'<entity><id>-1</id><name><![CDATA[Anonymous]]></name></entity>'
+					END,
+				"JournalOwnerId" = ISNULL(j.ProfileId,j.UserId),
+				 jt.Icon, jt.JournalType,
+				"Profile" =
+					CASE WHEN j.ProfileId > 0 THEN
+						'<entity><id>' + CAST(p.UserId as nvarchar(15)) + '</id><name><![CDATA[' + p.DisplayName + ']]></name><vanity></vanity></entity>'
+					ELSE
+						''
+					END,
+				"SimilarCount" = (SELECT COUNT(JournalId) FROM {databaseOwner}{objectQualifier}Journal WHERE ContentItemId = j.ContentItemId AND JournalTypeId = j.JournalTypeId),
+				jd.JournalXML, ContentItemId, j.ItemData, j.IsDeleted, j.CommentsDisabled, j.CommentsHidden
+	FROM       	{databaseOwner}[{objectQualifier}Journal] AS j
+				INNER JOIN
+					{databaseOwner}[{objectQualifier}Journal_Types] as jt ON jt.JournalTypeId = j.JournalTypeId
+				LEFT OUTER JOIN
+					{databaseOwner}[{objectQualifier}Journal_Data] as jd on jd.JournalId = j.JournalId
+				LEFT OUTER JOIN
+					{databaseOwner}[{objectQualifier}Users] AS p ON j.ProfileId = p.UserID
+				LEFT OUTER JOIN
+					{databaseOwner}[{objectQualifier}Users] AS a ON j.UserId = a.UserID
+				LEFT OUTER JOIN
+					{databaseOwner}[{objectQualifier}UserPortals] AS up ON up.UserId = a.UserID
+	WHERE		((@IncludeAllItems = 0) AND (j.JournalId = @JournalId AND j.IsDeleted = @IsDeleted))
+				OR
+				((@IncludeAllItems = 1) AND (j.JournalId = @JournalId))
+END
+GO
+
+/********************************************************
+ * SPROC: Social_GetJournalById
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_GetJournalById]', 'P') IS NOT NULL
+    DROP PROCEDURE {databaseOwner}[{objectQualifier}Social_GetJournalById]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_GetJournalById]
+	@JournalId int
+AS
+BEGIN
+	SELECT TOP 1 
+				j.JournalId, j.JournalTypeId, j.Title, j.Summary, j.UserId, j.DateCreated, j.DateUpdated, j.PortalId,
+                j.ProfileId, j.GroupId, j.ObjectKey, j.AccessKey,
+                "JournalOwner" = '<entity><id>' + CAST(p.UserId as nvarchar(150)) + '</id><name><![CDATA[' + p.DisplayName + ']]></name></entity>',
+                "JournalAuthor" = CASE WHEN ISNULL(a.UserId,-1) >0 THEN '<entity><id>' + CAST(a.UserId as nvarchar(150)) + '</id><name><![CDATA[' + a.DisplayName + ']]></name></entity>' ELSE '' END,
+                "JournalOwnerId" = ISNULL(j.ProfileId,j.UserId),
+                 jt.Icon, jt.JournalType,
+                "Profile" = CASE WHEN j.ProfileId > 0 THEN '<entity><id>' + CAST(p.UserID as nvarchar(150)) + '</id><name><![CDATA[' + p.DisplayName + ']]></name><vanity></vanity></entity>' ELSE '' END,
+				"SimilarCount" = 0,
+                jd.JournalXML, ContentItemId, j.ItemData, j.IsDeleted, j.CommentsDisabled, j.CommentsHidden		
+	FROM {databaseOwner}{objectQualifier}Journal j
+		INNER JOIN {databaseOwner}[{objectQualifier}Journal_Types] as jt ON jt.JournalTypeId = j.JournalTypeId
+		LEFT OUTER JOIN {databaseOwner}[{objectQualifier}Journal_Data] as jd on jd.JournalId = j.JournalId 
+		LEFT OUTER JOIN {databaseOwner}[{objectQualifier}Users] AS p ON j.ProfileId = p.UserID 
+		LEFT OUTER JOIN {databaseOwner}[{objectQualifier}Users] AS a ON j.UserId = a.UserID
+	WHERE j.JournalId = @JournalId
+
+END
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_cmx_GetTasks]', 'P') IS NOT NULL
+    DROP PROCEDURE {databaseOwner}[{objectQualifier}Social_cmx_GetTasks]
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_cmx_GetTask]', 'P') IS NOT NULL
+    DROP PROCEDURE {databaseOwner}[{objectQualifier}Social_cmx_GetTask]
+GO
+
+
+/********************************************************
+ * SPROC: Social_Bookmark_GetByContentItemId
+ ********************************************************/
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_Bookmark_GetByContentItemId]', 'P') IS NOT NULL
+    DROP PROCEDURE {databaseOwner}[{objectQualifier}Social_Bookmark_GetByContentItemId]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_Bookmark_GetByContentItemId]
+(
+	@ContenItemId INT
+)
+AS
+BEGIN
+	SELECT	
+			BM.[BookmarkId],
+			BM.[UserTitle],
+			BM.[ContentItemId],
+			BM.[UserId],
+			BM.[CreatedOnDate],
+			BM.[PortalId],
+			CI.[TabId],
+			CI.[ModuleId],
+			CI.[ContentKey]
+	FROM	{databaseOwner}[{objectQualifier}Social_Bookmark] BM WITH (NOLOCK)
+				INNER JOIN {databaseOwner}[{objectQualifier}ContentItems] CI WITH (NOLOCK)
+					ON BM.[ContentItemId] = CI.[ContentItemId]
+	WHERE	BM.[ContentItemId] = @ContenItemId
+END
+GO
+
+
+UPDATE {databaseOwner}{objectQualifier}CoreMessaging_NotificationTypes
+SET IsTask = 1
+WHERE [Name] IN (
+	N'DNNCorp_Wiki_PagePending',
+	N'DNNCorp_Wiki_RevisionPending',
+	N'DNNCorp_Wiki_PageFlagged',
+	N'DNNCorp_Wiki_Article_Comment_Approval',
+	N'DNNCorp_Wiki_Article_Comment_Flagged',
+	N'DNNCorp_SocialEvents_Event_Approval',
+	N'DNNCorp_SocialEvents_Event_Flagged',
+	N'DNNCorp_SocialEvents_Comment_Flagged',
+	N'DNNCorp_SocialEvents_Comment_Approval',
+	N'DNNCorp_Ideas_Idea',
+	N'DNNCorp_Ideas_Idea_Flagged',
+	N'DNNCorp_Ideas_Idea_Comment_Flagged',
+	N'DNNCorp_Ideas_Idea_Comment_Approval',
+	N'DNNCorp_Groups_PendingNotification',
+	N'DNNCorp_Groups_MemberPendingNotification',
+	N'DNNCorp_Discussions_Topic_Approval',
+	N'DNNCorp_Discussions_Topic_Flagged',
+	N'DNNCorp_Discussions_Reply_Flagged',
+	N'DNNCorp_Discussions_Reply_Approval',
+	N'DNNCorp_User_Flagged',
+	N'DNNCorp_Challenges_Challenge_Comment_Approval',
+	N'DNNCorp_Challenges_Challenge_Comment_Flagged',
+	N'DNNCorp_Blogs_Entry_CommentFlagged',
+	N'DNNCorp_Blogs_Entry_CommentAwaitingApproval',
+	N'DNNCorp_Answers_Post_Approval',
+	N'DNNCorp_Answers_Post_Flagged',
+	N'DNNCorp_Answers_Reply_Flagged',
+	N'NewUserRegistration',
+	N'NewUnauthorizedUserRegistration')
+GO
+
+/********************************************************
+ * Drop SPs moved to EL
+ ********************************************************/
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Social_cmx_GetUserDetail') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_cmx_GetUserDetail
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Social_cmx_GetUsers') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_cmx_GetUsers
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Social_cmx_GetUsersByUserIds') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_cmx_GetUsersByUserIds
+GO
+
+/********************************************************
+ * SOCIAL-3697 Removed Scheduled Task as it is now being done by Evoq Content Library as an Event from Platform
+ ********************************************************/
+DELETE FROM {databaseOwner}{objectQualifier}Schedule
+WHERE 
+	TypeFullName = 'DotNetNuke.SocialLibrary.Components.Tasks.UserProfileActions, DotNetNuke.SocialLibrary'
+GO
+
+/********************************************************
+ * SPROC: Social_JournalLikeList
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_JournalLikeList]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_JournalLikeList] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Social_JournalLikeList]
+	@PortalId int,
+	@CurrentUserId int,
+	@JournalId int,
+	@RowIndex int,
+	@MaxRows int
+AS
+BEGIN
+	IF @RowIndex < 1 BEGIN SET @RowIndex = 1 END
+
+	DECLARE @RegisteredUsersRole int
+	SELECT @RegisteredUsersRole = roleID FROM {databaseOwner}[{objectQualifier}Roles] WITH (NOLOCK) WHERE RoleName = 'Registered Users'
+
+	DECLARE @FriendRelationshipID int
+	SELECT @FriendRelationshipID = RelationshipTypeID FROM {databaseOwner}[{objectQualifier}Relationships] WITH (NOLOCK) WHERE Name = 'Friends'
+
+	DECLARE @xdoc xml
+	SET @xdoc = (SELECT TOP 1 journalxml.query('//likes')
+				 FROM {databaseOwner}[{objectQualifier}Journal_Data] as jd WITH (NOLOCK)
+						INNER JOIN {databaseOwner}[{objectQualifier}Journal] as j WITH (NOLOCK) ON j.JournalId = jd.JournalId
+						INNER JOIN {databaseOwner}[{objectQualifier}Journal_Security] as js WITH (NOLOCK)
+							ON js.JournalId = j.JournalId
+						INNER JOIN {databaseOwner}[{objectQualifier}Journal_User_Permissions](@PortalId,@CurrentUserId,@RegisteredUsersRole) as t
+							ON t.seckey = js.SecurityKey
+				 WHERE j.JournalId = @JournalId AND j.PortalId = @PortalId AND j.IsDeleted = 0)
+
+	CREATE TABLE #tempLikes (UserId INT, LikeSequence INT DEFAULT ((0)))
+
+	INSERT INTO #tempLikes (UserId)
+		SELECT userid = t.p.value('./@uid', 'INT')
+		FROM @xdoc.nodes('/likes/u') t(p)
+
+	DECLARE @SEQ INT = 0
+
+	UPDATE #tempLikes SET @SEQ = LikeSequence = @SEQ + 1
+
+	;With Likes AS
+	(
+		Select	COUNT(*) OVER () AS TotalRecords, u.UserId, u.DisplayName,
+				COALESCE(ur.Status, 0) AS FriendStatus,
+				CASE WHEN u.UserId = @CurrentUserId THEN 1 ELSE 0 END AS You,
+				tl.LikeSequence, COALESCE(up.IsDeleted, 0) IsDeleted, u.IsSuperUser
+		FROM	#tempLikes as tl
+					INNER JOIN {databaseOwner}[{objectQualifier}Users] as u WITH (NOLOCK) ON u.UserID = tl.UserId
+					LEFT OUTER JOIN {databaseOwner}[{objectQualifier}UserPortals]up WITH (NOLOCK) ON up.UserId = u.userId
+					LEFT OUTER JOIN {databaseOwner}[{objectQualifier}UserRelationships] ur WITH (NOLOCK)
+						ON (((ur.UserId = u.UserId AND ur.RelatedUserID = @CurrentUserId)
+							OR (ur.RelatedUserID = u.UserId AND ur.UserId = @CurrentUserId))
+							AND ur.RelationshipID = @FriendRelationshipID)
+		WHERE u.IsDeleted = 0
+		  AND (up.PortalId = @PortalId OR up.PortalId IS NULL)
+	),
+	LikesSorted AS
+	(
+		SELECT *, ROW_NUMBER() OVER (ORDER BY You DESC, FriendStatus DESC, LikeSequence DESC) AS RowNumber FROM Likes
+	)
+	SELECT TOP(@MaxRows) * FROM LikesSorted WHERE RowNumber >= @RowIndex
+
+	DROP TABLE #tempLikes;
+END
+GO
+
+/********************************************************
+ * SPROC: Social_CommentLikeList
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_CommentLikeList]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_CommentLikeList] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Social_CommentLikeList]
+	@PortalId int,
+	@CurrentUserId int,
+	@CommentId int,
+	@RowIndex int,
+	@MaxRows int
+AS
+BEGIN
+	IF @RowIndex < 1 BEGIN SET @RowIndex = 1 END
+
+	DECLARE @RegisteredUsersRole int
+	SELECT @RegisteredUsersRole = roleID FROM {databaseOwner}[{objectQualifier}Roles] WITH (NOLOCK) WHERE RoleName = 'Registered Users'
+
+	DECLARE @FriendRelationshipID int
+	SELECT @FriendRelationshipID = RelationshipTypeID FROM {databaseOwner}[{objectQualifier}Relationships] WITH (NOLOCK) WHERE Name = 'Friends'
+
+	DECLARE @xdoc xml
+	SET @xdoc = (SELECT TOP 1 jc.CommentXML.query('//likes')
+				 FROM {databaseOwner}[{objectQualifier}Journal_Comments] as jc WITH (NOLOCK)
+						INNER JOIN {databaseOwner}[{objectQualifier}Journal] as j WITH (NOLOCK) ON j.JournalId = jc.JournalId
+						INNER JOIN {databaseOwner}[{objectQualifier}Journal_Security] as js WITH (NOLOCK) ON js.JournalId = j.JournalId
+						INNER JOIN {databaseOwner}[{objectQualifier}Journal_User_Permissions](@PortalId,@CurrentUserId,@RegisteredUsersRole) as t
+							ON t.seckey = js.SecurityKey
+				 WHERE jc.CommentId = @CommentId AND j.PortalId = @PortalId AND j.IsDeleted = 0)
+
+	CREATE TABLE #tempLikes (UserId INT, LikeSequence INT DEFAULT ((0)))
+
+	INSERT INTO #tempLikes (UserId)
+		SELECT userid = t.p.value('./@uid', 'INT')
+		FROM @xdoc.nodes('/likes/u') t(p)
+
+	DECLARE @SEQ INT = 0
+
+	UPDATE #tempLikes SET @SEQ = LikeSequence = @SEQ + 1
+
+	;With Likes AS
+	(
+		Select	COUNT(*) OVER () AS TotalRecords, u.UserId, u.DisplayName,
+				COALESCE(ur.Status, 0) AS FriendStatus,
+				CASE WHEN u.UserId = @CurrentUserId THEN 1 ELSE 0 END AS You,
+				LikeSequence, COALESCE(up.IsDeleted, 0) IsDeleted, u.IsSuperUser
+		FROM	#tempLikes as tl
+					INNER JOIN {databaseOwner}[{objectQualifier}Users] as u WITH (NOLOCK) ON u.UserID = tl.UserId
+					LEFT OUTER JOIN {databaseOwner}[{objectQualifier}UserPortals] up WITH (NOLOCK) ON up.UserId = u.userId
+					LEFT OUTER JOIN {databaseOwner}[{objectQualifier}UserRelationships] ur WITH (NOLOCK)
+						ON (((ur.UserId = u.UserId AND ur.RelatedUserID = @CurrentUserId)
+							OR (ur.RelatedUserID = u.UserId AND ur.UserId = @CurrentUserId))
+							AND ur.RelationshipID = @FriendRelationshipID)
+		WHERE u.IsDeleted = 0
+		  AND (up.PortalId = @PortalId OR up.PortalId IS NULL)
+	),
+	LikesSorted AS
+	(
+		SELECT *, ROW_NUMBER() OVER (ORDER BY You DESC, FriendStatus DESC, LikeSequence DESC) AS RowNumber FROM Likes
+	)
+	SELECT TOP(@MaxRows) * FROM LikesSorted WHERE RowNumber >= @RowIndex
+
+	DROP TABLE #tempLikes;
+END
+GO

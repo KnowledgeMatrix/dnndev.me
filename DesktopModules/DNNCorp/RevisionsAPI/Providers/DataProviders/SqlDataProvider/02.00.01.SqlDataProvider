@@ -1,0 +1,18 @@
+﻿/********************************************************
+ * SPROC: Revisions_GetAllByUSer
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revisions_GetAllByUSer]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Revisions_GetAllByUSer] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Revisions_GetAllByUSer]
+	@PortalId int,
+	@UserId int
+AS
+BEGIN
+	SELECT	[RevisionId]
+	FROM	{databaseOwner}{objectQualifier}Revisions
+	WHERE	[PortalID] = @PortalId AND [CreatedUserID] = @UserId
+	ORDER BY [ContentItemId] ASC, [ContentItemType] ASC, [Sequence] ASC
+END
+GO

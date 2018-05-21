@@ -1,0 +1,53 @@
+﻿IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}SocialEvents_Search_Invitees]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Search_Invitees]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Search_Invitees]
+    @UserId INT ,
+    @PortalId INT,
+	@SearchDisplayName [nvarchar](50),
+	@GroupId INT, 
+	@EventId INT, 
+	@PageIndex INT, 
+	@PageSize INT
+AS 
+	DECLARE @RelationshipId INT
+
+	SELECT @RelationshipId = RelationshipId from {databaseOwner}[{objectQualifier}Relationships] where [Name] = 'Friends' AND [PortalID] = @PortalId
+	
+	;WITH UserIDs AS (
+		select ur.[RelatedUserID] as [UserID] from {databaseOwner}[{objectQualifier}UserRelationships] ur
+		LEFT OUTER JOIN {databaseOwner}[{objectQualifier}UserPortals] up ON up.[UserID] = ur.[RelatedUserID]
+		Where up.[PortalID] = @PortalId
+		AND	(up.[Authorised] = 1 AND up.[IsDeleted] = 0)
+		AND ur.[UserID] = @UserId
+		AND ur.[RelationshipID] = @RelationshipId 
+		AND ur.[Status] = 2 
+
+		UNION 
+
+		select ur.[UserID] from {databaseOwner}[{objectQualifier}UserRelationships] ur
+		LEFT OUTER JOIN {databaseOwner}[{objectQualifier}UserPortals] up ON up.[UserID] = ur.[UserID]
+		Where up.[PortalID] = @PortalId 
+		AND	(up.[Authorised] = 1 AND up.[IsDeleted] = 0)
+		AND ur.[RelatedUserID] = @UserId
+		AND ur.[RelationshipID] = @RelationshipId 
+		AND ur.[Status] = 2 
+
+		UNION 
+
+		select [UserID] from {databaseOwner}[{objectQualifier}userroles]
+		where RoleID = @GroupId AND @GroupId > 0
+	), UserList AS (
+	SELECT u.UserID, u.DisplayName, COALESCE(sg.[GuestId], 0) AS [IsInvited],
+		   ROW_NUMBER() OVER(ORDER BY sg.[GuestId] desc, DisplayName asc) AS RowNumber  
+	FROM UserIDs ui
+	INNER JOIN {databaseOwner}[{objectQualifier}users] u on u.userid = ui.userid
+	LEFT OUTER JOIN {databaseOwner}[{objectQualifier}SocialEvents_Guest] sg on sg.UserId = u.UserID AND sg.EventId = @EventId
+		WHERE ((@SearchDisplayName IS NOT NULL AND u.DisplayName like '%' + @SearchDisplayName + '%') OR (@SearchDisplayName IS NULL))
+		AND ((sg.EventId IS NOT NULL AND sg.EventId = @EventId AND @EventId > 0) OR (sg.EventId IS NULL)))
+	SELECT * FROM UserList
+		WHERE   RowNumber BETWEEN ( @PageIndex * @PageSize + 1 )
+							AND     ( ( @PageIndex + 1 ) * @PageSize )
+	
+GO

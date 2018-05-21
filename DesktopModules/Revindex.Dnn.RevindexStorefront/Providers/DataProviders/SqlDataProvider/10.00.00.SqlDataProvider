@@ -1,0 +1,124 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+SET XACT_ABORT ON
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder ADD ShippingPackages xml NULL
+
+	-- Add packing slip print template
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD CommunicationPackingSlipPrintTemplate xml NULL
+
+	-- Support FedEx Freight
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingProvider ADD FedExFreightAccountNumber varchar(256) NULL
+
+	-- Support Southeastern Freight Lines 
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingProvider ADD
+		SoutheasternUsername varchar(256) NULL,
+		SoutheasternPassword varchar(256) NULL,
+		SoutheasternCustomerAccount varchar(256) NULL
+
+	-- Support Canada Post
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingProvider ADD
+		CanadaPostCustomerNumber varchar(256) NULL,
+		CanadaPostPassword varchar(256) NULL,
+		CanadaPostUserID varchar(256) NULL,
+		CanadaPostContractID varchar(256) NULL,
+		CanadaPostTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ShippingProvider_CanadaPostTestMode DEFAULT 0
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingProvider DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ShippingProvider_CanadaPostTestMode
+
+	-- Support color code in product variant group option
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariantGroupOption ADD ColorCode varchar(50) NULL
+
+	-- Support Continue Shopping link on product detail page
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD ProductDetailContinueShoppingNavigateUrl varchar(256) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD ProductDetailContinueShoppingShow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductDetailContinueShoppingShow DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductDetailContinueShoppingShow
+
+	-- Support View Cart on product detail page
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD ProductDetailViewCartShow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductDetailViewCartShow DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductDetailViewCartShow
+
+	-- Allow passing payment methods in PayU Business gateway
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysPayUBusinessPaymentMethods varchar(255) NULL
+
+COMMIT TRANSACTION
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+
+		-- Update Australia Post service names
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'AUSTRALIA POST:INT_LETTER_EXP_OWN_PACKAGING' WHERE UniversalServiceName = 'AUSTRALIA POST:INTL_SERVICE_ECI_D'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'AUSTRALIA POST:INT_LETTER_EXP_OWN_PACKAGING' WHERE UniversalServiceName = 'AUSTRALIA POST:INTL_SERVICE_ECI_D&INTL_SERVICE_OPTION_PICKUP_METRO'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'AUSTRALIA POST:INT_PARCEL_EXP_OWN_PACKAGING' WHERE UniversalServiceName = 'AUSTRALIA POST:INTL_SERVICE_EPI_C5'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'AUSTRALIA POST:INT_PARCEL_EXP_OWN_PACKAGING' WHERE UniversalServiceName = 'AUSTRALIA POST:INTL_SERVICE_EPI_B4'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'AUSTRALIA POST:INT_LETTER_REG_SMALL_ENVELOPE' WHERE UniversalServiceName = 'AUSTRALIA POST:INTL_SERVICE_RPI_DLE'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'AUSTRALIA POST:INT_LETTER_REG_SMALL_ENVELOPE' WHERE UniversalServiceName = 'AUSTRALIA POST:INTL_SERVICE_RPI_DLE&INTL_SERVICE_OPTION_CONFIRM_DELIVERY'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'AUSTRALIA POST:INT_LETTER_REG_LARGE_ENVELOPE' WHERE UniversalServiceName = 'AUSTRALIA POST:INTL_SERVICE_RPI_B4'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'AUSTRALIA POST:INT_LETTER_REG_LARGE_ENVELOPE' WHERE UniversalServiceName = 'AUSTRALIA POST:INTL_SERVICE_RPI_B4&INTL_SERVICE_OPTION_CONFIRM_DELIVERY'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'AUSTRALIA POST:INT_LETTER_AIR_OWN_PACKAGING_LIGHT' WHERE UniversalServiceName = 'AUSTRALIA POST:INTL_SERVICE_AIR_MAIL'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'AUSTRALIA POST:INT_PARCEL_COR_OWN_PACKAGING' WHERE UniversalServiceName = 'AUSTRALIA POST:INTL_SERVICE_ECI_PLATINUM'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'AUSTRALIA POST:INT_PARCEL_EXP_OWN_PACKAGING' WHERE UniversalServiceName = 'AUSTRALIA POST:INTL_SERVICE_ECI_M'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'AUSTRALIA POST:INT_PARCEL_EXP_OWN_PACKAGING' WHERE UniversalServiceName = 'AUSTRALIA POST:INTL_SERVICE_ECI_M&INTL_SERVICE_OPTION_PICKUP_METRO'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'AUSTRALIA POST:INT_PARCEL_STD_OWN_PACKAGING' WHERE UniversalServiceName = 'AUSTRALIA POST:INTL_SERVICE_EPI'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'AUSTRALIA POST:INT_PARCEL_STD_OWN_PACKAGING' WHERE UniversalServiceName = 'AUSTRALIA POST:INTL_SERVICE_PTI'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'AUSTRALIA POST:INT_PARCEL_STD_OWN_PACKAGING' WHERE UniversalServiceName = 'AUSTRALIA POST:INTL_SERVICE_RPI'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'AUSTRALIA POST:INT_PARCEL_SEA_OWN_PACKAGING' WHERE UniversalServiceName = 'AUSTRALIA POST:INTL_SERVICE_SEA_MAIL'
+
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder SET ShippingUniversalServiceName = 'AUSTRALIA POST:INT_LETTER_EXP_OWN_PACKAGING' WHERE ShippingUniversalServiceName = 'AUSTRALIA POST:INTL_SERVICE_ECI_D'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder SET ShippingUniversalServiceName = 'AUSTRALIA POST:INT_LETTER_EXP_OWN_PACKAGING' WHERE ShippingUniversalServiceName = 'AUSTRALIA POST:INTL_SERVICE_ECI_D&INTL_SERVICE_OPTION_PICKUP_METRO'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder SET ShippingUniversalServiceName = 'AUSTRALIA POST:INT_PARCEL_EXP_OWN_PACKAGING' WHERE ShippingUniversalServiceName = 'AUSTRALIA POST:INTL_SERVICE_EPI_C5'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder SET ShippingUniversalServiceName = 'AUSTRALIA POST:INT_PARCEL_EXP_OWN_PACKAGING' WHERE ShippingUniversalServiceName = 'AUSTRALIA POST:INTL_SERVICE_EPI_B4'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder SET ShippingUniversalServiceName = 'AUSTRALIA POST:INT_LETTER_REG_SMALL_ENVELOPE' WHERE ShippingUniversalServiceName = 'AUSTRALIA POST:INTL_SERVICE_RPI_DLE'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder SET ShippingUniversalServiceName = 'AUSTRALIA POST:INT_LETTER_REG_SMALL_ENVELOPE' WHERE ShippingUniversalServiceName = 'AUSTRALIA POST:INTL_SERVICE_RPI_DLE&INTL_SERVICE_OPTION_CONFIRM_DELIVERY'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder SET ShippingUniversalServiceName = 'AUSTRALIA POST:INT_LETTER_REG_LARGE_ENVELOPE' WHERE ShippingUniversalServiceName = 'AUSTRALIA POST:INTL_SERVICE_RPI_B4'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder SET ShippingUniversalServiceName = 'AUSTRALIA POST:INT_LETTER_REG_LARGE_ENVELOPE' WHERE ShippingUniversalServiceName = 'AUSTRALIA POST:INTL_SERVICE_RPI_B4&INTL_SERVICE_OPTION_CONFIRM_DELIVERY'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder SET ShippingUniversalServiceName = 'AUSTRALIA POST:INT_LETTER_AIR_OWN_PACKAGING_LIGHT' WHERE ShippingUniversalServiceName = 'AUSTRALIA POST:INTL_SERVICE_AIR_MAIL'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder SET ShippingUniversalServiceName = 'AUSTRALIA POST:INT_PARCEL_COR_OWN_PACKAGING' WHERE ShippingUniversalServiceName = 'AUSTRALIA POST:INTL_SERVICE_ECI_PLATINUM'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder SET ShippingUniversalServiceName = 'AUSTRALIA POST:INT_PARCEL_EXP_OWN_PACKAGING' WHERE ShippingUniversalServiceName = 'AUSTRALIA POST:INTL_SERVICE_ECI_M'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder SET ShippingUniversalServiceName = 'AUSTRALIA POST:INT_PARCEL_EXP_OWN_PACKAGING' WHERE ShippingUniversalServiceName = 'AUSTRALIA POST:INTL_SERVICE_ECI_M&INTL_SERVICE_OPTION_PICKUP_METRO'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder SET ShippingUniversalServiceName = 'AUSTRALIA POST:INT_PARCEL_STD_OWN_PACKAGING' WHERE ShippingUniversalServiceName = 'AUSTRALIA POST:INTL_SERVICE_EPI'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder SET ShippingUniversalServiceName = 'AUSTRALIA POST:INT_PARCEL_STD_OWN_PACKAGING' WHERE ShippingUniversalServiceName = 'AUSTRALIA POST:INTL_SERVICE_PTI'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder SET ShippingUniversalServiceName = 'AUSTRALIA POST:INT_PARCEL_STD_OWN_PACKAGING' WHERE ShippingUniversalServiceName = 'AUSTRALIA POST:INTL_SERVICE_RPI'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder SET ShippingUniversalServiceName = 'AUSTRALIA POST:INT_PARCEL_SEA_OWN_PACKAGING' WHERE ShippingUniversalServiceName = 'AUSTRALIA POST:INTL_SERVICE_SEA_MAIL'
+
+		-- Default packing slip print template
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration SET CommunicationPackingSlipPrintTemplate = '<locale en-US="&lt;rule version=&quot;1.0&quot; type=&quot;data&quot;&gt;&amp;lt;data method=&quot;BasicPackingSlipPrint&quot; version=&quot;1.0&quot;&amp;gt;&#xD;&#xA;  &amp;lt;title&amp;gt;[[xsl:value-of select=&quot;in/configuration/generalStoreName&quot; /]] Packing Slip [[[xsl:value-of select=&quot;in/user/username&quot; /]] - Order #[[xsl:value-of select=&quot;in/salesOrder/salesOrderNumber&quot; /]]]&amp;lt;/title&amp;gt;&#xD;&#xA;  &amp;lt;htmlBody&amp;gt;[[xsl:for-each select=&amp;amp;amp;quot;in/salesOrder/shippingPackages/shippingPackage&amp;amp;amp;quot; ]]&#xD;&#xA;&amp;amp;lt;h1&amp;amp;gt;[[xsl:value-of select=&amp;amp;amp;quot;/in/configuration/generalStoreName&amp;amp;amp;quot; /]] Packing Slip&amp;amp;lt;/h1&amp;amp;gt;&#xD;&#xA;&#xD;&#xA;&amp;amp;lt;table border=&quot;0&quot; cellpadding=&quot;0&quot; cellspacing=&quot;3&quot; style=&quot;width: 100%&quot;&amp;amp;gt;&#xD;&#xA; &amp;amp;lt;tbody&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;tr&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td&amp;amp;gt;&amp;amp;lt;strong&amp;amp;gt;Order Number:&amp;amp;lt;/strong&amp;amp;gt;&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td&amp;amp;gt;[[xsl:value-of select=&amp;amp;amp;quot;/in/salesOrder/salesOrderNumber&amp;amp;amp;quot; /]]&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;/tr&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;tr&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td&amp;amp;gt;&amp;amp;lt;strong&amp;amp;gt;PO Number:&amp;amp;lt;/strong&amp;amp;gt;&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td&amp;amp;gt;[[xsl:value-of select=&amp;amp;amp;quot;/in/salesOrder/purchaseOrderNumber&amp;amp;amp;quot; /]]&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;/tr&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;tr&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td&amp;amp;gt;&amp;amp;lt;strong&amp;amp;gt;Order Date:&amp;amp;lt;/strong&amp;amp;gt;&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td&amp;amp;gt;[[xsl:value-of select=&amp;amp;amp;quot;format-dateTime(/in/salesOrder/orderDate, &amp;amp;amp;#39;[Y]-[M01]-[D01] [H01]:[m01]&amp;amp;amp;#39;)&amp;amp;amp;quot;/]]&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;/tr&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;tr&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td style=&quot;vertical-align: top;&quot;&amp;amp;gt;&amp;amp;lt;strong&amp;amp;gt;Bill To:&amp;amp;lt;/strong&amp;amp;gt;&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td&amp;amp;gt;[[xsl:value-of select=&amp;amp;amp;quot;/in/salesOrder/billingCompany&amp;amp;amp;quot; /]]&amp;amp;lt;br /&amp;amp;gt;&#xD;&#xA;   [[xsl:value-of select=&amp;amp;amp;quot;/in/salesOrder/billingFirstName&amp;amp;amp;quot; /]] [[xsl:value-of select=&amp;amp;amp;quot;/in/salesOrder/billingLastName&amp;amp;amp;quot; /]]&amp;amp;lt;br /&amp;amp;gt;&#xD;&#xA;   [[xsl:value-of select=&amp;amp;amp;quot;/in/salesOrder/billingStreet&amp;amp;amp;quot; /]], [[xsl:value-of select=&amp;amp;amp;quot;/in/salesOrder/billingCity&amp;amp;amp;quot; /]], [[xsl:value-of select=&amp;amp;amp;quot;/in/salesOrder/billingSubdivisionName&amp;amp;amp;quot; /]], [[xsl:value-of select=&amp;amp;amp;quot;/in/salesOrder/billingPostalCode&amp;amp;amp;quot; /]], [[xsl:value-of select=&amp;amp;amp;quot;/in/salesOrder/billingCountryName&amp;amp;amp;quot; /]]&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;/tr&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;tr&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td style=&quot;vertical-align: top;&quot;&amp;amp;gt;&amp;amp;lt;strong&amp;amp;gt;Ship To:&amp;amp;lt;/strong&amp;amp;gt;&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td&amp;amp;gt;[[xsl:value-of select=&amp;amp;amp;quot;/in/salesOrder/shippingCompany&amp;amp;amp;quot; /]]&amp;amp;lt;br /&amp;amp;gt;&#xD;&#xA;   [[xsl:value-of select=&amp;amp;amp;quot;/in/salesOrder/shippingFirstName&amp;amp;amp;quot; /]] [[xsl:value-of select=&amp;amp;amp;quot;/in/salesOrder/shippingLastName&amp;amp;amp;quot; /]]&amp;amp;lt;br /&amp;amp;gt;&#xD;&#xA;   [[xsl:value-of select=&amp;amp;amp;quot;/in/salesOrder/shippingStreet&amp;amp;amp;quot; /]], [[xsl:value-of select=&amp;amp;amp;quot;/in/salesOrder/shippingCity&amp;amp;amp;quot; /]], [[xsl:value-of select=&amp;amp;amp;quot;/in/salesOrder/shippingSubdivisionName&amp;amp;amp;quot; /]], [[xsl:value-of select=&amp;amp;amp;quot;/in/salesOrder/shippingPostalCode&amp;amp;amp;quot; /]], [[xsl:value-of select=&amp;amp;amp;quot;/in/salesOrder/shippingCountryName&amp;amp;amp;quot; /]]&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;/tr&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;tr&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td style=&quot;vertical-align: top;&quot;&amp;amp;gt;&amp;amp;lt;strong&amp;amp;gt;Shipping:&amp;amp;lt;/strong&amp;amp;gt;&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td&amp;amp;gt;[[xsl:value-of select=&amp;amp;amp;quot;/in/salesOrder/shippingMethod/name&amp;amp;amp;quot; /]]&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;/tr&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;tr&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td style=&quot;vertical-align: top;&quot;&amp;amp;gt;&amp;amp;lt;strong&amp;amp;gt;Package:&amp;amp;lt;/strong&amp;amp;gt;&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td&amp;amp;gt;[[xsl:value-of select=&amp;amp;amp;quot;name&amp;amp;amp;quot; /]]&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;/tr&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;tr&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td style=&quot;vertical-align: top;&quot;&amp;amp;gt;&amp;amp;lt;strong&amp;amp;gt;Total Quantity:&amp;amp;lt;/strong&amp;amp;gt;&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td&amp;amp;gt;[[xsl:value-of select=&amp;amp;amp;quot;sum(products/product/quantity)&amp;amp;amp;quot; /]]&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;/tr&amp;amp;gt;&#xD;&#xA; &amp;amp;lt;/tbody&amp;amp;gt;&#xD;&#xA;&amp;amp;lt;/table&amp;amp;gt;&#xD;&#xA;&amp;amp;amp;nbsp;&#xD;&#xA;&#xD;&#xA;&amp;amp;lt;table border=&quot;1&quot; cellpadding=&quot;3&quot; cellspacing=&quot;0&quot; style=&quot;width: 100%; table-layout: fixed; word-wrap: break-word;&quot;&amp;amp;gt;&#xD;&#xA; &amp;amp;lt;tbody&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;tr&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td style=&quot;width: 5%;&quot;&amp;amp;gt;&amp;amp;amp;nbsp;&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td style=&quot;width: 15%;&quot;&amp;amp;gt;&amp;amp;lt;strong&amp;amp;gt;SKU&amp;amp;lt;/strong&amp;amp;gt;&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td style=&quot;width: 45%;&quot;&amp;amp;gt;&amp;amp;lt;strong&amp;amp;gt;Item&amp;amp;lt;/strong&amp;amp;gt;&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td style=&quot;width: 10%;&quot;&amp;amp;gt;&amp;amp;lt;strong&amp;amp;gt;Quantity&amp;amp;lt;/strong&amp;amp;gt;&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;/tr&amp;amp;gt;&#xD;&#xA; &amp;amp;lt;/tbody&amp;amp;gt;&#xD;&#xA;&amp;amp;lt;/table&amp;amp;gt;&#xD;&#xA;[[xsl:for-each select=&amp;amp;amp;quot;products/product&amp;amp;amp;quot;]] [[xsl:variable name=&amp;amp;amp;quot;salesOrderDetailID&amp;amp;amp;quot; select=&amp;amp;amp;quot;salesOrderDetailID&amp;amp;amp;quot; /]] [[xsl:variable name=&amp;amp;amp;quot;salesOrderDetail&amp;amp;amp;quot; select=&amp;amp;amp;quot;/in/salesOrder/salesOrderDetails/salesOrderDetail[salesOrderDetailID=$salesOrderDetailID]&amp;amp;amp;quot; /]]&#xD;&#xA;&#xD;&#xA;&amp;amp;lt;table border=&quot;1&quot; cellpadding=&quot;3&quot; cellspacing=&quot;0&quot; style=&quot;width: 100%; table-layout: fixed; word-wrap: break-word;&quot;&amp;amp;gt;&#xD;&#xA; &amp;amp;lt;tbody&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;tr&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td style=&quot;width: 5%;&quot;&amp;amp;gt;&amp;amp;lt;input type=&quot;checkbox&quot; /&amp;amp;gt;&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td style=&quot;width: 15%;&quot;&amp;amp;gt;[[xsl:value-of select=&amp;amp;amp;quot;$salesOrderDetail/sku&amp;amp;amp;quot; /]]&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td style=&quot;width: 45%;&quot;&amp;amp;gt;[[xsl:value-of select=&amp;amp;amp;quot;$salesOrderDetail/productName&amp;amp;amp;quot; /]] - [[xsl:value-of select=&amp;amp;amp;quot;$salesOrderDetail/productVariantName&amp;amp;amp;quot; /]]&amp;amp;lt;br /&amp;amp;gt;&#xD;&#xA;   [[xsl:for-each select=&amp;amp;amp;quot;$salesOrderDetail/dynamicFormResult/fields/field&amp;amp;amp;quot;]][[xsl:value-of select=&amp;amp;amp;quot;@id&amp;amp;amp;quot; /]]: [[xsl:value-of select=&amp;amp;amp;quot;.&amp;amp;amp;quot; /]], [[/xsl:for-each]]&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;   &amp;amp;lt;td style=&quot;width: 10%;&quot;&amp;amp;gt;[[xsl:value-of select=&amp;amp;amp;quot;quantity&amp;amp;amp;quot; /]]&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;  &amp;amp;lt;/tr&amp;amp;gt;&#xD;&#xA; &amp;amp;lt;/tbody&amp;amp;gt;&#xD;&#xA;&amp;amp;lt;/table&amp;amp;gt;&#xD;&#xA;[[/xsl:for-each]]&amp;amp;lt;br /&amp;amp;gt;&#xD;&#xA;[[xsl:for-each select=&amp;amp;amp;quot;/in/salesOrder/dynamicFormResult/fields/field&amp;amp;amp;quot;]][[xsl:value-of select=&amp;amp;amp;quot;@id&amp;amp;amp;quot; /]]: [[xsl:value-of select=&amp;amp;amp;quot;.&amp;amp;amp;quot; /]], [[/xsl:for-each]]&amp;amp;amp;nbsp;&#xD;&#xA;&amp;amp;lt;div style=&quot;page-break-after: always&quot;&amp;amp;gt;&amp;amp;amp;nbsp;&amp;amp;lt;/div&amp;amp;gt;&#xD;&#xA;[[/xsl:for-each]]&amp;lt;/htmlBody&amp;gt;&#xD;&#xA;&amp;lt;/data&amp;gt;&lt;/rule&gt;" />'
+
+		-- Copy ProductVariantGroupOption Name to ColorCode for field type of color picker
+		UPDATE pvgo
+		SET pvgo.ColorCode = pvgo.Name.value('(/locale/@*)[1]', 'nvarchar(50)')
+		FROM {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariantGroupOption pvgo
+		JOIN {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariantGroup pvg
+		ON pvgo.ProductVariantGroupID = pvg.ProductVariantGroupID
+		WHERE pvg.FieldType = 3
+		AND pvgo.Name IS NOT NULL
+
+		-- Upgrade default ProductDetail template to "Standard18"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductDetailDisplayTemplate = 'Standard18' WHERE ProductDetailDisplayTemplate LIKE 'Standard%'
+
+		-- Fixed incorrect sales type
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant SET SalesType = 1 WHERE SalesType = 0
+
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

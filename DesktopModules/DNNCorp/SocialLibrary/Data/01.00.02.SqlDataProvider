@@ -1,0 +1,34 @@
+﻿IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_GetRelatedJournalId') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_GetRelatedJournalId
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_GetRelatedJournalId]
+	@ContentItemId INT,
+	@ObjectKey VARCHAR(1024),
+	@JournalTypeId INT
+AS
+BEGIN
+	IF @JournalTypeId >= 0
+		SELECT JournalId FROM {databaseOwner}{objectQualifier}Journal WHERE ContentItemId = @ContentItemId AND JournalTypeId = @JournalTypeId
+	ELSE
+		SELECT JournalId FROM {databaseOwner}{objectQualifier}Journal WHERE ContentItemId = @ContentItemId
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_GetJournalTypeId') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_GetJournalTypeId
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_GetJournalTypeId]
+	@JournalType VARCHAR(256)
+AS
+BEGIN
+	DECLARE @JournalTypeId INT
+
+	SELECT	@JournalTypeId = JournalTypeId
+	FROM	{databaseOwner}{objectQualifier}Journal_Types
+	WHERE	JournalType = @JournalType
+
+	SELECT COALESCE(@JournalTypeId, -1)
+END
+GO

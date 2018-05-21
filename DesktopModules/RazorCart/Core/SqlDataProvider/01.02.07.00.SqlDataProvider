@@ -1,0 +1,312 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****               Create Tables                      *****/
+/************************************************************/
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_BundleProducts') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_BundleProducts
+	(
+		[Id] [INT] IDENTITY(1,1) NOT NULL,
+		[ProductID] [INT] NULL,
+		[BundleProductID] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_BundleProducts] PRIMARY KEY CLUSTERED
+		(
+			[Id] ASC
+		)
+	)
+END
+GO
+
+
+
+/************************************************************/
+/*****                  Alter Tables                    *****/
+/************************************************************/
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_PaymentMethods') AND type in (N'U'))
+BEGIN
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_PaymentMethods') AND name = N'GatewayProvider')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_PaymentMethods
+		ADD
+			[GatewayProvider] [NVARCHAR] (64)
+	END
+END
+GO
+
+
+
+/************************************************************/
+/*****                Drop Sprocs                       *****/
+/************************************************************/
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_CreatePaymentMethod') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_CreatePaymentMethod
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_UpdatePaymentMethod') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdatePaymentMethod
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_CreateBundleProduct') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateBundleProduct
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListBundleProducts') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListBundleProducts
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ClearBundleProducts') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ClearBundleProducts
+GO
+
+
+/************************************************************/
+/*****               Create Sprocs                      *****/
+/************************************************************/
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_CreatePaymentMethod
+	@PayZoneID INT = NULL,
+	@Name NVARCHAR(100) = NULL,
+	@Roles VARCHAR(150) = NULL,
+	@SurchargeAmount DECIMAL(18,2) = NULL,
+	@SurchargePercentage DECIMAL(18,2) = NULL,
+	@Step2Label1 NVARCHAR(200) = NULL,
+	@Step2Label2 NVARCHAR(200) = NULL,
+	@EmailMessage NVARCHAR(500) = NULL,
+	@TabModuleId INT = NULL,
+	@PortalID INT = NULL,
+	@Type VARCHAR(150) = NULL,
+	@SortOrder INT = NULL,
+	@PriceFrom DECIMAL(18,2) = NULL,
+	@PriceTo DECIMAL(18,2) = NULL,
+	@MonthlyLimit DECIMAL(18,2) = NULL,
+	@Active BIT = NULL,
+	@DepositRequired BIT = NULL,
+	@DepositPercent DECIMAL(18,2) = NULL,
+	@Share BIT = NULL,
+	@StoreID INT = NULL,
+	@GatewayCode NVARCHAR(64) = NULL,
+	@GatewayProvider NVARCHAR(64) = NULL,
+	@GatewayUserID NVARCHAR(128) = NULL,
+	@GatewayPassword NVARCHAR(128) = NULL,
+	@GatewayKey NVARCHAR(512) = NULL
+AS
+BEGIN
+	INSERT INTO
+		{databaseOwner}{objectQualifier}Smith_PaymentMethods
+		([PayZoneID]
+		,[Name]
+		,[Roles]
+		,[SurchargeAmount]
+		,[SurchargePercentage]
+		,[Step2Label1]
+		,[Step2Label2]
+		,[EmailMessage]
+		,[TabModuleId]
+		,[PortalId]
+		,[Type]
+		,[SortOrder]
+		,[PriceFrom]
+		,[PriceTo]
+		,[MonthlyLimit]
+		,[Active]
+		,[DepositRequired]
+		,[DepositPercent]
+		,[Share]
+		,[StoreID]
+		,[GatewayCode]
+		,[GatewayProvider]
+		,[GatewayUserID]
+		,[GatewayPassword]
+		,[GatewayKey])
+	VALUES
+		(@PayZoneID
+		,@Name
+		,@Roles
+		,@SurchargeAmount
+		,@SurchargePercentage
+		,@Step2Label1
+		,@Step2Label2
+		,@EmailMessage
+		,@TabModuleId
+		,@PortalID
+		,@Type
+		,@SortOrder
+		,@PriceFrom
+		,@PriceTo
+		,@MonthlyLimit
+		,@Active
+		,@DepositRequired
+		,@DepositPercent
+		,@Share
+		,@StoreID
+		,@GatewayCode
+		,@GatewayProvider
+		,@GatewayUserID
+		,@GatewayPassword
+		,@GatewayKey)
+	SELECT SCOPE_IDENTITY()
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdatePaymentMethod
+	@PayMethodID INT = NULL,
+	@PayZoneID INT = NULL,
+	@Name NVARCHAR(100) = NULL,
+	@Roles VARCHAR(150) = NULL,
+	@SurchargeAmount DECIMAL(18,2) = NULL,
+	@SurchargePercentage DECIMAL(18,2) = NULL,
+	@Step2Label1 NVARCHAR(200) = NULL,
+	@Step2Label2 NVARCHAR(200) = NULL,
+	@EmailMessage NVARCHAR(500) = NULL,
+	@TabModuleId INT = NULL,
+	@PortalID INT = NULL,
+	@Type VARCHAR(150) = NULL,
+	@SortOrder INT = NULL,
+	@PriceFrom DECIMAL(18,2) = NULL,
+	@PriceTo DECIMAL(18,2) = NULL,
+	@MonthlyLimit DECIMAL(18,2) = NULL,
+	@Active BIT = NULL,
+	@DepositRequired BIT = NULL,
+	@DepositPercent DECIMAL(18,2) = NULL,
+	@Share BIT = NULL,
+	@StoreID INT = NULL,
+	@GatewayCode NVARCHAR(64) = NULL,
+	@GatewayProvider NVARCHAR(64) = NULL,
+	@GatewayUserID NVARCHAR(128) = NULL,
+	@GatewayPassword NVARCHAR(128) = NULL,
+	@GatewayKey NVARCHAR(512) = NULL
+AS
+BEGIN
+	UPDATE
+		{databaseOwner}{objectQualifier}Smith_PaymentMethods
+	SET
+		[PayZoneID] = @PayZoneID,
+		[Name] = @Name,
+		[Roles] = @Roles,
+		[SurchargeAmount] = @SurchargeAmount,
+		[SurchargePercentage] = @SurchargePercentage,
+		[Step2Label1] = @Step2Label1,
+		[Step2Label2] = @Step2Label2,
+		[EmailMessage] = @EmailMessage,
+		[TabModuleId] = @TabModuleId,
+		[PortalId] = @PortalID,
+		[Type] = @Type,
+		[SortOrder] = @SortOrder,
+		[PriceFrom] = @PriceFrom,
+		[PriceTo] = @PriceTo,
+		[MonthlyLimit] = @MonthlyLimit,
+		[Active] = @Active,
+		[DepositRequired] = @DepositRequired,
+		[DepositPercent] = @DepositPercent,
+		[Share] = @Share,
+		[StoreID] = @StoreID,
+		[GatewayCode] = @GatewayCode,
+		[GatewayProvider] = @GatewayProvider,
+		[GatewayUserID] = @GatewayUserID,
+		[GatewayPassword] = @GatewayPassword,
+		[GatewayKey] = @GatewayKey
+	WHERE
+		[PayMethodID] = @PayMethodID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateBundleProduct
+	@ProductID INT = NULL,
+	@BundleProductID INT = NULL
+AS
+BEGIN
+	INSERT INTO
+		{databaseOwner}{objectQualifier}Smith_BundleProducts
+		([ProductID]
+		,[BundleProductID])
+	VALUES
+		(@ProductID
+		,@BundleProductID)
+	SELECT SCOPE_IDENTITY()
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListBundleProducts
+	@ProductID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SELECT
+		P.*, I.[ThumbImage], I.[LargeImage], I.[ZoomImage], V.[HasVariants]
+	FROM
+		{databaseOwner}{objectQualifier}Smith_Products P
+	INNER JOIN
+		{databaseOwner}{objectQualifier}Smith_BundleProducts BP
+	ON
+		P.[ProductID] = BP.[BundleProductID]
+	OUTER APPLY
+	(
+		SELECT TOP 1
+			PI.*
+		FROM
+			{databaseOwner}{objectQualifier}Smith_ProductImages PI
+		WHERE
+			PI.[ProductID] = P.[ProductID]
+		ORDER BY
+			PI.[SortOrder]
+	) I
+	CROSS APPLY
+	(
+		SELECT CASE WHEN EXISTS
+		(
+			SELECT
+				PV.[VariantID]
+			FROM
+				{databaseOwner}{objectQualifier}Smith_ProductVariant PV
+			WHERE
+				PV.[ProductID] = P.[ProductID]
+		)
+		THEN
+			CAST(1 AS BIT)
+		ELSE
+			CAST(0 AS BIT)
+		END
+		AS [HasVariants]
+	) V
+	WHERE
+		BP.[ProductID] = @ProductID
+		AND P.[PortalID] = @PortalID
+		AND (
+			P.[LogicallyDeleted] <> 1
+			AND P.[Archived] <> 1
+			AND P.[HideProduct] <> 1
+		)
+	ORDER BY
+		P.[SortOrder] ASC
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ClearBundleProducts
+	@ProductID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	DELETE BP FROM
+		{databaseOwner}{objectQualifier}Smith_BundleProducts BP
+	INNER JOIN
+		{databaseOwner}{objectQualifier}Smith_Products P
+	ON
+		P.[ProductID] = BP.[ProductID]
+	WHERE
+		BP.[ProductID] = @ProductID
+		AND P.[PortalID] = @PortalID
+END
+GO
+
+
+
+/************************************************************/
+/*****               End of Script                      *****/
+/************************************************************/

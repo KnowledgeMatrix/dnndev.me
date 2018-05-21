@@ -1,0 +1,46 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+IF EXISTS (SELECT * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Publisher_Post') and OBJECTPROPERTY(id, N'IsTable') = 1)
+	DROP TABLE {databaseOwner}{objectQualifier}Publisher_Post
+GO
+
+IF object_id(N'{databaseOwner}{objectQualifier}Publisher_SearchPosts', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Publisher_SearchPosts
+GO
+
+IF object_id(N'{databaseOwner}{objectQualifier}Publisher_SearchPostsByDate', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Publisher_SearchPostsByDate
+GO
+
+IF object_id(N'{databaseOwner}{objectQualifier}Publisher_GetSitemapPosts', 'P') IS NOT NULL
+    DROP PROCEDURE {databaseOwner}{objectQualifier}Publisher_GetSitemapPosts
+GO
+
+IF object_id(N'{databaseOwner}{objectQualifier}Publisher_GetUnpublishedPosts', 'P') IS NOT NULL
+    DROP PROCEDURE {databaseOwner}{objectQualifier}Publisher_GetUnpublishedPosts
+GO
+
+/* CRUD OPERATIONS */
+IF object_id(N'{databaseOwner}{objectQualifier}Publisher_Post_Add', 'P') IS NOT NULL
+    DROP PROCEDURE {databaseOwner}{objectQualifier}Publisher_Post_Add
+GO
+
+IF object_id(N'{databaseOwner}{objectQualifier}Publisher_Post_Delete', 'P') IS NOT NULL
+    DROP PROCEDURE {databaseOwner}{objectQualifier}Publisher_Post_Delete
+GO
+
+IF object_id(N'{databaseOwner}{objectQualifier}Publisher_Post_GetByContentItemId', 'P') IS NOT NULL
+    DROP PROCEDURE {databaseOwner}{objectQualifier}Publisher_Post_GetByContentItemId
+GO
+
+IF object_id(N'{databaseOwner}{objectQualifier}Publisher_Post_Update', 'P') IS NOT NULL
+    DROP PROCEDURE {databaseOwner}{objectQualifier}Publisher_Post_Update
+GO

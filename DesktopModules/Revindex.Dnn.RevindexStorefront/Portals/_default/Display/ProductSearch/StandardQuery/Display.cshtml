@@ -1,0 +1,15 @@
+﻿@using Revindex.Business.Revindex.Revindex.Storefront;
+@using Revindex.Dnn.RevindexStorefront.Models;
+@using Revindex.Web.Mvc.Dnn.Helpers;
+@inherits Revindex.Dnn.RevindexStorefront.Views.ProductSearchWebViewPage<ProductSearchViewModel>
+
+<div class="rvdsf rvdsf-productsearch-container">
+    <div class="input-group">
+        <input id="rvdsfProductSearchQueryInput" type="search" onkeypress="if (event.keyCode == '13') { $('#rvdsfProductSearchSubmitButton').click() }" class="form-control" placeholder="@Html.LocalizeString("SearchPlaceholder")" value="@Model.SearchQuery">
+        <div class="input-group-btn">
+            <button id="rvdsfProductSearchSubmitButton" class="btn btn-primary rvd-btn-search" type="button" onclick="var url = new window.URL('@Model.ProductList.TabUrl'); if ($('#rvdsfProductSearchQueryInput').val() == '') url.searchParams.delete('@Global.QueryStringKeys.SearchQuery'); else url.searchParams.set('@Global.QueryStringKeys.SearchQuery', $('#rvdsfProductSearchQueryInput').val()); location.href = url.href;"><i class="glyphicon glyphicon-search"></i></button>
+        </div>
+    </div>
+</div>
+@* Uses polyfill. See https://qa.polyfill.io *@
+<script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>

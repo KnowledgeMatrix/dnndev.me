@@ -1,0 +1,180 @@
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_LikeList]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Social_LikeList]
+GO
+
+--Renaming SP Name
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_JournalLikeList]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Social_JournalLikeList]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_JournalLikeList]
+	@PortalId int,
+	@CurrentUserId int,
+	@JournalId int,
+	@RowIndex int,
+	@MaxRows int
+	AS
+
+	IF @RowIndex = 0 BEGIN SET @RowIndex = 1 END
+	DECLARE @EndRow int SET @EndRow = @RowIndex + @MaxRows - 1;
+
+	DECLARE @RegisteredUsersRole int
+	SELECT @RegisteredUsersRole = roleID FROM {databaseOwner}[{objectQualifier}Roles] WHERE RoleName = 'Registered Users'
+
+	DECLARE @FriendRelationshipID int
+	SELECT @FriendRelationshipID = RelationshipTypeID FROM {databaseOwner}[{objectQualifier}Relationships] WHERE Name = 'Friends'
+
+	DECLARE @xdoc xml
+	set @xdoc = (SELECT TOP 1 journalxml.query('//likes') 
+					from {databaseOwner}[{objectQualifier}Journal_Data] as jd
+					INNER JOIN {databaseOwner}[{objectQualifier}Journal] as j ON j.JournalId = jd.JournalId
+					INNER JOIN {databaseOwner}[{objectQualifier}Journal_Security] as js ON js.JournalId = j.JournalId
+					INNER JOIN {databaseOwner}[{objectQualifier}Journal_User_Permissions](@PortalId,@CurrentUserId,@RegisteredUsersRole) as t
+						ON t.seckey = js.SecurityKey 
+					WHERE j.JournalId = @JournalId AND j.PortalId = @PortalId AND j.IsDeleted = 0)
+	;With Likes AS (
+		Select COUNT(*) OVER () AS TotalRecords, u.UserId, u.DisplayName, 
+			COALESCE(ur.Status, 0) AS FriendStatus,
+			CASE WHEN u.UserId = @CurrentUserId THEN 1 ELSE 0 END AS You,
+			LikeSequence = ROW_NUMBER() OVER (ORDER BY (SELECT 0))
+			FROM @xdoc.nodes('/likes//u') as e(x) 
+		INNER JOIN {databaseOwner}[{objectQualifier}Users] as u ON u.UserID = x.value('@uid[1]','int')
+		LEFT OUTER JOIN {databaseOwner}[{objectQualifier}UserRelationships] ur ON 
+		(((ur.UserId = u.UserId AND ur.RelatedUserID = @CurrentUserId) OR (ur.RelatedUserID = u.UserId AND ur.UserId = @CurrentUserId)) AND ur.RelationshipID = @FriendRelationshipID)
+		WHERE u.IsDeleted = 0
+		),
+	LikesSorted AS (
+		SELECT *, ROW_NUMBER() OVER (ORDER BY You DESC, FriendStatus DESC, LikeSequence DESC) AS RowNumber FROM Likes
+		)
+	SELECT * FROM LikesSorted WHERE RowNumber BETWEEN @RowIndex AND @EndRow
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_CommentLikeList]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Social_CommentLikeList]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_CommentLikeList]
+	@PortalId int,
+	@CurrentUserId int,
+	@CommentId int,
+	@RowIndex int,
+	@MaxRows int
+	AS
+
+	IF @RowIndex = 0 BEGIN SET @RowIndex = 1 END
+	DECLARE @EndRow int SET @EndRow = @RowIndex + @MaxRows - 1;
+
+	DECLARE @RegisteredUsersRole int
+	SELECT @RegisteredUsersRole = roleID FROM {databaseOwner}[{objectQualifier}Roles] WHERE RoleName = 'Registered Users'
+
+	DECLARE @FriendRelationshipID int
+	SELECT @FriendRelationshipID = RelationshipTypeID FROM {databaseOwner}[{objectQualifier}Relationships] WHERE Name = 'Friends'
+
+	DECLARE @xdoc xml
+	set @xdoc = (SELECT TOP 1 jc.CommentXML.query('//likes') 
+					from {databaseOwner}[{objectQualifier}Journal_Comments] as jc
+					INNER JOIN {databaseOwner}[{objectQualifier}Journal] as j ON j.JournalId = jc.JournalId
+					INNER JOIN {databaseOwner}[{objectQualifier}Journal_Security] as js ON js.JournalId = j.JournalId
+					INNER JOIN {databaseOwner}[{objectQualifier}Journal_User_Permissions](@PortalId,@CurrentUserId,@RegisteredUsersRole) as t
+						ON t.seckey = js.SecurityKey 
+					WHERE jc.CommentId = @CommentId AND j.PortalId = @PortalId AND j.IsDeleted = 0)
+	;With Likes AS (
+		Select COUNT(*) OVER () AS TotalRecords, u.UserId, u.DisplayName, 
+			COALESCE(ur.Status, 0) AS FriendStatus,
+			CASE WHEN u.UserId = @CurrentUserId THEN 1 ELSE 0 END AS You,
+			LikeSequence = ROW_NUMBER() OVER (ORDER BY (SELECT 0))
+			FROM @xdoc.nodes('/likes//u') as e(x) 
+		INNER JOIN {databaseOwner}[{objectQualifier}Users] as u ON u.UserID = x.value('@uid[1]','int')
+		LEFT OUTER JOIN {databaseOwner}[{objectQualifier}UserRelationships] ur ON 
+		(((ur.UserId = u.UserId AND ur.RelatedUserID = @CurrentUserId) OR (ur.RelatedUserID = u.UserId AND ur.UserId = @CurrentUserId)) AND ur.RelationshipID = @FriendRelationshipID)
+		WHERE u.IsDeleted = 0
+		),
+	LikesSorted AS (
+		SELECT *, ROW_NUMBER() OVER (ORDER BY You DESC, FriendStatus DESC, LikeSequence DESC) AS RowNumber FROM Likes
+		)
+	SELECT * FROM LikesSorted WHERE RowNumber BETWEEN @RowIndex AND @EndRow
+GO
+-- //////////////////////////////////////////////////////////////////
+
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_ListComments') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_ListComments
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_ListComments]
+	@JounalId INT
+AS
+BEGIN
+SELECT	jc.CommentId,
+		jc.JournalId,
+		jc.Comment,
+		jc.DateCreated,
+		jc.DateUpdated,
+		jc.CommentXML, 
+		"UserId" = CASE WHEN ISNULL(u.UserId,-1) > 0 AND u.IsDeleted = 0 AND up.IsDeleted = 0 THEN u.UserId ELSE -1 END,
+		u.UserName,
+		u.FirstName, 
+		u.LastName,
+		u.IsSuperUser,
+		u.AffiliateId,
+		u.Email,
+		u.DisplayName,
+		u.UpdatePassword,
+		u.LastIPAddress,
+		u.IsDeleted,
+		u.CreatedByUserID,
+		u.CreatedOnDate,
+		u.LastModifiedByUserID,
+		u.LastModifiedOnDate,
+		u.PasswordResetToken,
+		u.PasswordResetExpiration
+	FROM {databaseOwner}[{objectQualifier}Journal_Comments] as jc 
+	INNER JOIN {databaseOwner}[{objectQualifier}Journal] as j ON jc.JournalId = j.JournalId
+	INNER JOIN {databaseOwner}[{objectQualifier}Users] as u ON jc.UserId = u.UserId
+	LEFT OUTER JOIN {databaseOwner}[{objectQualifier}UserPortals] as up ON up.UserId = u.UserId 
+		AND up.PortalId = j.PortalId --Removal of PortalId will create dups in multi-portal 
+WHERE jc.JournalId = @JounalId
+ORDER BY jc.CommentId ASC
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_ListCommentsByJournalIds') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_ListCommentsByJournalIds
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_ListCommentsByJournalIds]
+	@JounalIds nvarchar(max) = ''
+AS
+BEGIN
+SELECT	jc.CommentId,
+		jc.JournalId,
+		jc.Comment,
+		jc.DateCreated,
+		jc.DateUpdated,
+		jc.CommentXML, 
+		"UserId" = CASE WHEN ISNULL(u.UserId,-1) > 0 AND u.IsDeleted = 0 AND up.IsDeleted = 0 THEN u.UserId ELSE -1 END,
+		u.UserName,
+		u.FirstName, 
+		u.LastName,
+		u.IsSuperUser,
+		u.AffiliateId,
+		u.Email,
+		u.DisplayName,
+		u.UpdatePassword,
+		u.LastIPAddress,
+		u.IsDeleted,
+		u.CreatedByUserID,
+		u.CreatedOnDate,
+		u.LastModifiedByUserID,
+		u.LastModifiedOnDate,
+		u.PasswordResetToken,
+		u.PasswordResetExpiration
+	FROM {databaseOwner}[{objectQualifier}Journal_Comments] as jc 
+	INNER JOIN {databaseOwner}[{objectQualifier}Journal] as j ON jc.JournalId = j.JournalId
+	INNER JOIN {databaseOwner}[{objectQualifier}Users] as u ON jc.UserId = u.UserId
+	INNER JOIN {databaseOwner}[{objectQualifier}Journal_Split](@JounalIds,';') as jids ON jids.id = jc.JournalId
+	LEFT OUTER JOIN {databaseOwner}[{objectQualifier}UserPortals] as up ON up.UserId = u.UserId 
+		AND up.PortalId = j.PortalId --Removal of PortalId will create dups in multi-portal 
+ORDER BY jc.CommentId ASC
+END
+GO

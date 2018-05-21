@@ -1,0 +1,298 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+/***** Create StructuredContent_HtmlPro_ContentItems Table *****/
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_ContentItems]') AND type in (N'U'))
+BEGIN   
+	CREATE TABLE {databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_ContentItems]
+	(
+		[ContentItemId] nvarchar(100) NOT NULL,
+		[ModuleId] int NOT NULL,
+		[CreationUtcDateTime] datetime NOT NULL,
+		[LastUpdateUtcDateTime] datetime NOT NULL,
+		CONSTRAINT [PK_{objectQualifier}StructuredContent_HtmlPro_ContentItems] PRIMARY KEY CLUSTERED ([ContentItemId] ASC)
+	) ON [PRIMARY]
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_ContentItems_GetModuleIdByContentItemId]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_ContentItems_GetModuleIdByContentItemId]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_ContentItems_GetModuleIdByContentItemId]
+	@ContentItemId nvarchar(100)
+AS 
+	SELECT TOP 1 [ModuleId]
+	FROM    {databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_ContentItems]
+	WHERE   ContentItemId = @ContentItemId
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_ContentItems_Save]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_ContentItems_Save]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_ContentItems_Save]
+	@ContentItemId nvarchar(100),
+	@ModuleId int
+AS 
+	DECLARE @ExistingContentItemId nvarchar(100) = NULL
+
+	SELECT @ExistingContentItemId = [ContentItemId]
+	FROM    {databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_ContentItems]
+	WHERE   ContentItemId = @ContentItemId
+
+	IF @ExistingContentItemId IS NULL
+		BEGIN
+			INSERT INTO {databaseOwner}{objectQualifier}StructuredContent_HtmlPro_ContentItems
+					([ContentItemId], [ModuleId], [CreationUtcDateTime], [LastUpdateUtcDateTime])
+			VALUES  (@ContentItemId, @ModuleId, GetUtcDate(), GetUtcDate())
+		END
+	ELSE
+		BEGIN
+			UPDATE {databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_ContentItems]
+			SET     [ModuleId] = @ModuleId,
+					[LastUpdateUtcDateTime] = GetUtcDate()
+			WHERE   ContentItemId = @ContentItemId
+		END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_ContentItems_DeleteByModuleId]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_ContentItems_DeleteByModuleId]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_ContentItems_DeleteByModuleId]
+	@ModuleId int
+AS 
+	DELETE  FROM {databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_ContentItems]
+	WHERE [ModuleId] = @ModuleId
+GO
+
+/***** Create StructuredContent_HtmlPro_ContentItems Table *****/
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_MigrationLog]') AND type in (N'U'))
+BEGIN   
+	CREATE TABLE {databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_MigrationLog]
+	(
+		[Id] int IDENTITY(1,1) NOT NULL,
+		[ModuleId] int NOT NULL,
+		[PortalId] int NOT NULL,
+		[Status] nvarchar(10) NOT NULL,
+		[CreationUtcDateTime] datetime NOT NULL,
+		[PendingProcessUtcDateTime] datetime NOT NULL,
+		[StartProcessingUtcDateTime] datetime NULL,
+		[CompleteProcessUtcDateTime] datetime NULL,
+		[SkippedUtcDateTime] datetime NULL,
+		[RetryCount] int NULL,
+		[Note] nvarchar(max) NULL
+		CONSTRAINT [PK_{objectQualifier}StructuredContent_HtmlPro_MigrationLog] PRIMARY KEY CLUSTERED ([Id] ASC)
+	) ON [PRIMARY]
+		
+	CREATE NONCLUSTERED INDEX IX_{objectQualifier}MigrationLog_ModuleId_PortalId_Status
+		ON {databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_MigrationLog] ([ModuleId], [PortalId], [Status])
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_MigrationExceptionLog]') AND type in (N'U'))
+BEGIN   
+	CREATE TABLE {databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_MigrationExceptionLog]
+	(
+		[Id] int IDENTITY(1,1) NOT NULL,
+		[MigrationLogId] int NOT NULL,
+		[RetryNumber] int NULL,
+		[ErrorMessage] nvarchar(max) NOT NULL,
+		[StackTrace] nvarchar(max) NOT NULL,
+		[CreationUtcDateTime] datetime NOT NULL
+		CONSTRAINT [PK_{objectQualifier}StructuredContent_HtmlPro_MigrationExceptionLog] PRIMARY KEY CLUSTERED ([Id] ASC)
+	) ON [PRIMARY]
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_MigrationExceptionLog] 
+        WITH CHECK ADD CONSTRAINT [FK_{objectQualifier}ExceptionMigrationLog_{objectQualifier}MigrationId] FOREIGN KEY([MigrationLogId])
+        REFERENCES {databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_MigrationLog] ([Id])
+    ON DELETE CASCADE
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}StructuredContent_HtmlPro_Migration_EnqueueHtmlProModulesToMigrate') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}StructuredContent_HtmlPro_Migration_EnqueueHtmlProModulesToMigrate
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_Migration_EnqueueHtmlProModulesToMigrate]
+	@PortalId int,
+	@Count int
+AS 
+	  WITH HtmlProToMigrate (ModuleId, PortalId)  
+		AS  
+		(  
+			SELECT TOP(@Count) m.ModuleId, m.PortalId
+			FROM {databaseOwner}[{objectQualifier}Modules] m 
+			INNER JOIN {databaseOwner}[{objectQualifier}ModuleDefinitions] md ON m.ModuleDefID = md.ModuleDefID
+			WHERE m.PortalId = @PortalId 
+			AND md.DefinitionName = 'Text/Html' 
+			AND m.ModuleId not in (SELECT ml.ModuleId FROM {databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_MigrationLog] ml)
+			-- Check if module is not deleted and it is in a page
+			AND m.ModuleId in (SELECT TOP 1 tb.ModuleId FROM {databaseOwner}[{objectQualifier}TabModules] tb 
+							   INNER JOIN {databaseOwner}[{objectQualifier}Tabs] t ON t.TabId = tb.TabId 
+							   WHERE tb.IsDeleted = 0 AND t.PortalId = @PortalId AND tb.ModuleId = m.ModuleId)
+			ORDER BY m.LastContentModifiedOnDate ASC
+		)
+
+	MERGE {databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_MigrationLog] AS T
+	USING HtmlProToMigrate AS S
+	ON (T.ModuleId = S.ModuleId AND T.PortalId = S.PortalId)
+	WHEN NOT MATCHED BY TARGET
+		THEN INSERT([ModuleId], [PortalId], [Status], [CreationUtcDateTime], [PendingProcessUtcDateTime]) 
+		VALUES (S.ModuleId, S.PortalId, 'Pending', GetUtcDate(), GetUtcDate());
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}StructuredContent_HtmlPro_Migration_ResetInProgressMigrationsToPending') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}StructuredContent_HtmlPro_Migration_ResetInProgressMigrationsToPending
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_Migration_ResetInProgressMigrationsToPending]
+	@PortalId int,
+	@Minutes int,
+	@RetryLimit int,
+	@ReachedRetryLimitMessage nvarchar(max)
+AS 
+	UPDATE {databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_MigrationLog] 
+	SET 
+		[Status] = 'Pending', 
+		[StartProcessingUtcDateTime] = NULL, 
+		[PendingProcessUtcDateTime] = GetUtcDate(),
+		[RetryCount] = COALESCE([RetryCount], 0) + 1
+	WHERE 
+		[PortalId] = @PortalId AND 
+		[Status] = 'InProgress' AND 
+		[StartProcessingUtcDateTime] < DATEADD(minute, -@Minutes, GetUtcDate()) AND
+		([RetryCount] IS NULL OR [RetryCount] < @RetryLimit)
+
+	UPDATE {databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_MigrationLog] 
+	SET 
+		[Status] = 'Skipped', 
+		[SkippedUtcDateTime] = GetUtcDate(), 
+		[Note] = @ReachedRetryLimitMessage
+	WHERE 
+		[PortalId] = @PortalId AND 
+		[Status] = 'InProgress' AND 
+		[StartProcessingUtcDateTime] < DATEADD(minute, -@Minutes, GetUtcDate()) AND
+		[RetryCount] = @RetryLimit
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}StructuredContent_HtmlPro_Migration_GetHtmlProModulesToMigrate') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}StructuredContent_HtmlPro_Migration_GetHtmlProModulesToMigrate
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_Migration_GetHtmlProModulesToMigrate]
+	@PortalId int,
+	@Count int
+AS 
+	SELECT TOP(@Count) Id as MigrationId, ModuleId, PortalId, RetryCount
+	FROM {databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_MigrationLog] 
+	WHERE PortalId = @PortalId AND Status = 'Pending'
+	ORDER BY PendingProcessUtcDateTime asc
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}StructuredContent_HtmlPro_Migration_UpdateHtmlProModuleMigrationStatus') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}StructuredContent_HtmlPro_Migration_UpdateHtmlProModuleMigrationStatus
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_Migration_UpdateHtmlProModuleMigrationStatus]
+	@ModuleId int,
+	@PortalId int,
+	@Status nvarchar(10),
+	@Note nvarchar(max)
+AS  
+	DECLARE @ExistingModuleId int = NULL
+	DECLARE @MigrationId int = NULL
+	
+	IF @Status = 'Pending'
+	BEGIN
+		SELECT @ExistingModuleId = [ModuleId], @MigrationId = [Id]
+		FROM    {databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_MigrationLog]
+		WHERE   ModuleId = @ModuleId AND PortalId = @PortalId AND ([Status] = 'Pending' OR [Status] = 'InProgress')
+
+		IF @ExistingModuleId IS NOT NULL
+		BEGIN
+			UPDATE {databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_MigrationLog] 
+			SET 
+				[Status] = @Status, 
+				StartProcessingUtcDateTime = NULL, 
+				CompleteProcessUtcDateTime = NULL, 
+				PendingProcessUtcDateTime = GetUtcDate(),
+				Note = @Note
+			WHERE ModuleId = @ModuleId AND PortalId = @PortalId AND ([Status] = 'Pending' OR [Status] = 'InProgress')
+
+			SELECT @MigrationId
+		END
+		ELSE
+		BEGIN
+			INSERT INTO {databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_MigrationLog] 
+			([ModuleId], [PortalId], [Status], [CreationUtcDateTime], [PendingProcessUtcDateTime], [Note]) VALUES 
+			(@ModuleId, @PortalId, @Status, GetUtcDate(), GetUtcDate(), @Note)
+
+			SELECT @@IDENTITY
+		END
+	END
+	IF @Status = 'InProgress'
+	BEGIN
+		UPDATE {databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_MigrationLog] 
+		SET [Status] = @Status, StartProcessingUtcDateTime = GetUtcDate(), CompleteProcessUtcDateTime = NULL, Note = @Note
+		OUTPUT INSERTED.Id
+		WHERE ModuleId = @ModuleId AND PortalId = @PortalId AND [Status] = 'Pending'
+	END
+	IF @Status = 'Complete'
+	BEGIN
+		UPDATE {databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_MigrationLog] 
+		SET [Status] = @Status, CompleteProcessUtcDateTime = GetUtcDate(), Note = @Note
+		OUTPUT INSERTED.Id
+		WHERE ModuleId = @ModuleId AND PortalId = @PortalId AND [Status] = 'InProgress'
+	END
+	IF @Status = 'Skipped'
+	BEGIN
+		UPDATE {databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_MigrationLog] 
+		SET [Status] = @Status, SkippedUtcDateTime = GetUtcDate(), Note = @Note
+		OUTPUT INSERTED.Id
+		WHERE ModuleId = @ModuleId AND PortalId = @PortalId AND [Status] = 'InProgress'
+	END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}StructuredContent_HtmlPro_Migration_DeleteByModuleId') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}StructuredContent_HtmlPro_Migration_DeleteByModuleId
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_Migration_DeleteByModuleId]
+	@ModuleId int,
+	@PortalId int
+AS  
+BEGIN
+	DELETE FROM {databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_MigrationLog] 
+	WHERE ModuleId = @ModuleId AND PortalId = @PortalId
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}StructuredContent_HtmlPro_Migration_AddExceptionLog') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}StructuredContent_HtmlPro_Migration_AddExceptionLog
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_Migration_AddExceptionLog]
+	@MigrationId int,
+	@RetryNumber int,
+	@ErrorMessage nvarchar(max),
+	@StackTrace nvarchar(max)
+AS  
+BEGIN
+	INSERT INTO {databaseOwner}[{objectQualifier}StructuredContent_HtmlPro_MigrationExceptionLog] 
+		([MigrationLogId], [RetryNumber], [ErrorMessage], [StackTrace], [CreationUtcDateTime]) VALUES 
+		(@MigrationId, @RetryNumber, @ErrorMessage, @StackTrace, GetUtcDate())
+END
+GO
+
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/

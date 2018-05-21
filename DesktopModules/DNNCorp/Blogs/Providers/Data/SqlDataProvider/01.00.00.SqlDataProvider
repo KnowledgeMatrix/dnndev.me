@@ -1,0 +1,562 @@
+﻿IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Blog_Add') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Blog_Add
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Blog_Delete') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Blog_Delete
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Blog_Get') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Blog_Get
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Blog_GetByPortal') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Blog_GetByPortal
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Blog_GetDays') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Blog_GetDays
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Blog_GetMonths') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Blog_GetMonths
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Blog_Update') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Blog_Update
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Entry_Add') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Entry_Add
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Entry_Delete') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Entry_Delete
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Entry_GetAllByBlog') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Entry_GetAllByBlog
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Entry_GetAllByPortal') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Entry_GetAllByPortal
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Entry_GetByBlog') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Entry_GetByBlog
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Entry_GetByDay') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Entry_GetByDay
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Entry_GetByMonth') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Entry_GetByMonth
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Entry_GetByPortal') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Entry_GetByPortal
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Entry_GetByTerm') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Entry_GetByTerm
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Entry_Update') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Entry_Update
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_GetBlogViewEntryModuleID') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_GetBlogViewEntryModuleID
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_MetaWeblog_GetDesktopModule') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_MetaWeblog_GetDesktopModule
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Setting_Get') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Setting_Get
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Setting_Update') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Setting_Update
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_EnsureRowForUrl') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_EnsureRowForUrl
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Entry_UpdateCount') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Entry_UpdateCount
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Entry_UpdateAddedDate') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Entry_UpdateAddedDate
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Entry_IsTagMatch'))
+	DROP FUNCTION {databaseOwner}{objectQualifier}Blogs_Entry_IsTagMatch
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'FK_{objectQualifier}Blogs_Setting_{objectQualifier}Portals') and OBJECTPROPERTY(id, N'IsConstraint') = 1)
+	ALTER TABLE {databaseOwner}{objectQualifier}Blogs_Setting DROP CONSTRAINT FK_{objectQualifier}Blogs_Setting_{objectQualifier}Portals
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Setting') and OBJECTPROPERTY(id, N'IsTable') = 1)
+	DROP TABLE {databaseOwner}{objectQualifier}Blogs_Setting
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Entry') and OBJECTPROPERTY(id, N'IsTable') = 1)
+	DROP TABLE {databaseOwner}{objectQualifier}Blogs_Entry
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'FK_{objectQualifier}Blogs_Blog_{objectQualifier}Portals') and OBJECTPROPERTY(id, N'IsConstraint') = 1)
+	ALTER TABLE {databaseOwner}{objectQualifier}Blogs_Blog DROP CONSTRAINT FK_{objectQualifier}Blogs_Blog_{objectQualifier}Portals
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Blog') and OBJECTPROPERTY(id, N'IsTable') = 1)
+	DROP TABLE {databaseOwner}{objectQualifier}Blogs_Blog
+GO
+
+CREATE TABLE {databaseOwner}[{objectQualifier}Blogs_Blog](
+	  [PortalId] [int] NOT NULL,
+	  [BlogId] [int] IDENTITY(1, 1) NOT NULL,
+	  [UserId] [int] NOT NULL,
+	  [Title] [nvarchar](255) NOT NULL,
+	  [Description] [nvarchar](2000) NULL,
+	  [Authorized] [bit] NOT NULL,
+	  [AllowComments] [bit] NOT NULL,
+	  [LastEntry] [datetime] NULL,
+	  [Created] [datetime] NOT NULL,
+	  [Syndicated] [bit] NOT NULL,
+	  [SyndicationURL] [nvarchar](1024) NULL,
+	  [AuthorMode] [int] NULL,
+	  [GroupId] [int] NULL)
+GO
+
+ALTER TABLE {databaseOwner}{objectQualifier}Blogs_Blog
+	WITH NOCHECK ADD CONSTRAINT PK_{objectQualifier}Blogs_Blog PRIMARY KEY CLUSTERED ( [BlogId] )
+GO
+
+ALTER TABLE {databaseOwner}{objectQualifier}Blogs_Blog
+	ADD CONSTRAINT FK_{objectQualifier}Blogs_Blog_{objectQualifier}Portals FOREIGN KEY ( [PortalId] ) 
+	REFERENCES {databaseOwner}{objectQualifier}Portals ( [PortalID] ) ON DELETE CASCADE
+GO
+
+CREATE TABLE {databaseOwner}[{objectQualifier}Blogs_Entry](
+	[BlogId] [int] NOT NULL,
+	[EntryId] [int] IDENTITY(1,1) NOT NULL,
+	[Title] [nvarchar](255) NOT NULL,
+	[Entry] [nvarchar](max) NOT NULL,
+	[Summary] [nvarchar](max) NULL,
+	[Approved] [bit] NOT NULL,
+	[AllowComments] [bit] NOT NULL,
+	[PermaLink] [nvarchar](1024) NULL,
+	[Views] [int] NOT NULL,
+	[ContentItemId] [int] NULL,
+	[PublishOnDate] [datetime] NOT NULL)
+GO
+
+ALTER TABLE {databaseOwner}{objectQualifier}Blogs_Entry
+	WITH NOCHECK ADD CONSTRAINT PK_{objectQualifier}Blogs_Entry PRIMARY KEY CLUSTERED ( [EntryId] DESC )
+GO
+
+CREATE TABLE {databaseOwner}[{objectQualifier}Blogs_Setting](
+	[SettingId] [int] IDENTITY(1,1) NOT NULL,
+	[PortalId] [int] NOT NULL,
+	[Key] [nvarchar](50) NOT NULL,
+	[Value] [nvarchar](1024) NOT NULL,
+	[TabId] [int] NOT NULL)
+GO
+
+ALTER TABLE {databaseOwner}{objectQualifier}Blogs_Setting
+	WITH NOCHECK ADD CONSTRAINT PK_{objectQualifier}Blogs_Setting PRIMARY KEY CLUSTERED ( [SettingId] )
+GO
+
+ALTER TABLE {databaseOwner}{objectQualifier}Blogs_Setting
+	ADD CONSTRAINT FK_{objectQualifier}Blogs_Setting_{objectQualifier}Portals FOREIGN KEY ( [PortalId] ) 
+	REFERENCES {databaseOwner}{objectQualifier}Portals ( [PortalID] ) ON DELETE CASCADE
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Blogs_Blog_Add]
+	@PortalId INT,
+	@UserId INT,
+	@Title NVARCHAR(512),
+	@Description NVARCHAR(2000),
+	@Authorized BIT,
+	@AllowComments BIT,
+	@Syndicated BIT,
+	@SyndicationURL NVARCHAR(1024),
+	@AuthorMode INT ,
+	@GroupId INT
+AS 
+	INSERT  INTO {databaseOwner}{objectQualifier}Blogs_Blog
+			( [PortalId],
+			  [UserId],
+			  [Title],
+			  [Description],
+			  [Authorized],
+			  [AllowComments],
+			  [Created],
+			  [Syndicated],
+			  [SyndicationURL],
+			  [AuthorMode],
+			  [GroupId]
+			)
+	VALUES  ( @PortalId,
+			  @UserId,
+			  @Title,
+			  @Description,
+			  @Authorized,
+			  @AllowComments,
+			  GETUTCDATE(),
+			  @Syndicated,
+			  @SyndicationURL,
+			  @AuthorMode,
+			  @GroupId
+			)
+	SELECT  SCOPE_IDENTITY()
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Blogs_Blog_Delete]
+	@BlogId INT,
+	@PortalId INT
+AS 
+	DELETE  FROM {databaseOwner}{objectQualifier}Blogs_Blog
+	WHERE   PortalID = @PortalID
+			AND BlogId = @BlogId
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Blogs_Blog_Get] @BlogId INT
+AS 
+	SELECT  B.*,
+			U.[UserName],
+			U.[DisplayName],
+			( SELECT    COUNT(BlogId)
+			  FROM      {databaseOwner}{objectQualifier}Blogs_Entry E
+			  WHERE     E.BlogId = B.BlogId
+						AND E.Approved = 1 AND E.PublishOnDate <= GETUTCDATE()
+			) AS BlogPostCount
+	FROM    {databaseOwner}{objectQualifier}Blogs_Blog B
+			INNER JOIN {databaseOwner}{objectQualifier}Users U ON B.[UserId] = U.[UserID]
+	WHERE   BlogId = @BlogId
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Blogs_Blog_GetByPortal] @PortalId INT
+AS 
+	SELECT  B.*,
+			U.[UserName],
+			U.[DisplayName],
+			( SELECT    COUNT(BlogId)
+			  FROM      {databaseOwner}{objectQualifier}Blogs_Entry E
+			  WHERE     E.BlogId = B.BlogId
+						AND E.Approved = 1 AND E.PublishOnDate <= GETUTCDATE()
+			) AS BlogPostCount
+	FROM    {databaseOwner}{objectQualifier}Blogs_Blog B
+			INNER JOIN {databaseOwner}{objectQualifier}Users U ON B.[UserId] = U.[UserID]
+	WHERE   PortalId = @PortalId
+	ORDER BY Title
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Blogs_Blog_GetDays]
+	(
+	  @PortalId INT,
+	  @BlogId INT
+	)
+AS 
+	IF @BlogID > -1 
+		BEGIN
+			SELECT  E.EntryId,
+					E.BlogId,
+					E.Title,
+					E.PublishOnDate,
+					U.Username,
+					U.DisplayName,
+					DATEPART(mm, E.PublishOnDate) AS AddedMonth,
+					DATEPART(yy, E.PublishOnDate) AS AddedYear
+			FROM    {databaseOwner}{objectQualifier}Blogs_Blog B
+					INNER JOIN {databaseOwner}{objectQualifier}Blogs_Entry E ON B.BlogId = E.BlogId
+					INNER JOIN {databaseOwner}{objectQualifier}Users U ON B.UserId = U.UserID
+			WHERE   B.PortalId = @PortalId
+					AND B.BlogId = @BlogId
+					AND E.Approved = 1
+					AND E.PublishOnDate <= GETUTCDATE()	
+			ORDER BY E.PublishOnDate
+		END
+	ELSE 
+		BEGIN
+			SELECT  E.EntryId,
+					E.BlogId,
+					E.Title,
+					E.PublishOnDate,
+					U.Username,
+					DATEPART(mm, E.PublishOnDate) AS AddedMonth,
+					DATEPART(yy, E.PublishOnDate) AS AddedYear
+			FROM    {databaseOwner}{objectQualifier}Blogs_Blog B
+					INNER JOIN {databaseOwner}{objectQualifier}Blogs_Entry E ON B.BlogId = E.BlogId
+					INNER JOIN {databaseOwner}{objectQualifier}Users U ON B.UserId = U.UserID
+			WHERE   B.PortalId = @PortalId
+					AND E.Approved = 1
+					AND E.PublishOnDate <= GETUTCDATE()
+			ORDER BY E.PublishOnDate
+		END
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Blogs_Blog_GetMonths]
+	(
+	  @PortalId INT,
+	  @BlogId INT
+	)
+AS 
+	IF @BlogId > 0 
+		BEGIN
+			SELECT  DATEPART(mm, E.PublishOnDate) AS AddedMonth,
+					DATEPART(yy, E.PublishOnDate) AS AddedYear,
+					COUNT(EntryId) AS PostCount
+			FROM    {databaseOwner}{objectQualifier}Blogs_Entry E
+					INNER JOIN {databaseOwner}{objectQualifier}Blogs_Blog B ON B.BlogId = E.BlogId
+			WHERE   B.PortalId = @PortalId
+					AND B.BlogId = @BlogId
+					AND E.Approved = 1
+			GROUP BY DATEPART(m, E.PublishOnDate),
+					DATEPART(yy, E.PublishOnDate)
+			ORDER BY AddedYear DESC,
+					AddedMonth DESC
+		END
+	ELSE 
+		BEGIN
+			SELECT  DATEPART(mm, E.PublishOnDate) AS AddedMonth,
+					DATEPART(yy, E.PublishOnDate) AS AddedYear,
+					COUNT(EntryId) AS PostCount
+			FROM    {databaseOwner}{objectQualifier}Blogs_Entry E
+					INNER JOIN {databaseOwner}{objectQualifier}Blogs_Blog B ON B.BlogId = E.BlogId
+			WHERE   B.PortalId = @PortalId
+					AND E.Approved = 1
+			GROUP BY DATEPART(m, E.PublishOnDate),
+					DATEPART(yy, E.PublishOnDate)
+			ORDER BY AddedYear DESC,
+					AddedMonth DESC
+		END
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Blogs_Blog_Update]
+	@PortalId INT,
+	@BlogId INT,
+	@UserId INT,
+	@Title NVARCHAR(512),
+	@Description NVARCHAR(2000),
+	@Authorized BIT,
+	@AllowComments BIT,
+	@Syndicated BIT,
+	@SyndicationURL NVARCHAR(1024),
+	@AuthorMode INT
+AS 
+	UPDATE  {databaseOwner}{objectQualifier}Blogs_Blog
+	SET     PortalId = @PortalId,
+			UserId = @UserId,
+			Title = @Title,
+			[Description] = @Description,
+			[Authorized] = @Authorized,
+			AllowComments = @AllowComments,
+			Syndicated = @Syndicated,
+			SyndicationURL = @SyndicationURL,
+			AuthorMode = @AuthorMode
+	WHERE   BlogId = @BlogId
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Blogs_Entry_Add]
+	@BlogId INT,
+	@Title NVARCHAR(255),
+	@Summary NVARCHAR(MAX),
+	@Entry NVARCHAR(MAX),
+	@Approved BIT,
+	@AllowComments BIT,
+	@PermaLink NVARCHAR(1024),
+	@PublishOnDate DATETIME
+AS 
+	DECLARE @EntryID INT
+	UPDATE  {databaseOwner}{objectQualifier}Blogs_Blog
+	SET     LastEntry = GETUTCDATE()
+	WHERE   BlogId = @BlogId
+	INSERT  INTO {databaseOwner}{objectQualifier}Blogs_Entry
+			( BlogId,
+			  Title,
+			  Summary,
+			  [Entry],
+			  Approved,
+			  AllowComments,
+			  PermaLink,
+			  [Views],
+			  PublishOnDate
+			)
+	VALUES  ( @BlogID,
+			  @Title,
+			  @Summary,
+			  @Entry,
+			  @Approved,
+			  @AllowComments,
+			  NULL,
+			  0,
+			  @PublishOnDate
+			)
+	SET @EntryId = SCOPE_IDENTITY()
+	IF NOT @PermaLink IS NULL 
+		UPDATE  {databaseOwner}{objectQualifier}Blogs_Entry
+		SET     PermaLink = @PermaLink + CONVERT(NVARCHAR(10), EntryId)
+		WHERE   BlogId = @BlogId
+				AND PermaLink IS NULL
+	SELECT  @EntryId
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Blogs_Entry_Delete] @EntryId INT
+AS 
+	DELETE  FROM {databaseOwner}{objectQualifier}Blogs_Entry
+	WHERE   EntryId = @EntryId
+GO
+
+CREATE FUNCTION {databaseOwner}[{objectQualifier}Blogs_Entry_IsTagMatch](@ContentItemId INT, @Tags NVARCHAR(1024))
+RETURNS BIT
+AS
+BEGIN
+	IF LEN(@Tags) > 0
+	BEGIN
+		IF (
+				SELECT COUNT(*)
+				FROM {databaseOwner}[{objectQualifier}ContentItems_Tags] CIT
+				INNER JOIN {databaseOwner}[{objectQualifier}Taxonomy_Terms] TT ON CIT.TermID = TT.TermID
+				INNER JOIN {databaseOwner}[{objectQualifier}ConvertListToTable](',', @Tags) T ON TT.Name = T.RowValue
+				WHERE CIT.ContentItemID = @ContentItemID) != (SELECT LEN(@Tags) - LEN(REPLACE(@Tags, ',', '')) + 1)
+			RETURN 0
+	END
+	
+	RETURN 1
+END
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Blogs_Entry_Update]
+	@BlogId INT,
+	@EntryId INT,
+	@Title NVARCHAR(255),
+	@Summary NVARCHAR(MAX),
+	@Entry NVARCHAR(MAX),
+	@Approved BIT,
+	@AllowComments BIT,
+	@PermaLink NVARCHAR(1024),
+	@ContentItemId INT,
+	@PublishOnDate DATETIME
+AS 
+	UPDATE  {databaseOwner}{objectQualifier}Blogs_Entry
+	SET     BlogId = @BlogId,
+			Title = @Title,
+			Summary = @Summary,
+			[Entry] = @Entry,
+			Approved = @Approved,
+			AllowComments = @AllowComments,
+			PermaLink = @PermaLink,
+			ContentItemId = @ContentItemId,
+			PublishOnDate = @PublishOnDate
+	WHERE   EntryId = @EntryId
+	IF @Approved = 1 
+		UPDATE  {databaseOwner}{objectQualifier}Blogs_Blog
+		SET     LastEntry = GETUTCDATE()
+		WHERE   BlogId = @BlogId
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Blogs_GetBlogViewEntryModuleID] @TabID INT
+AS 
+	SELECT  {databaseOwner}{objectQualifier}TabModules.ModuleID
+	FROM    {databaseOwner}{objectQualifier}TabModules
+			INNER JOIN {databaseOwner}{objectQualifier}Modules ON {databaseOwner}{objectQualifier}TabModules.ModuleID = {databaseOwner}{objectQualifier}Modules.ModuleID
+	WHERE   {databaseOwner}{objectQualifier}TabModules.TabID = @TabID
+			AND {databaseOwner}{objectQualifier}Modules.ModuleDefID = ( SELECT  ModuleDefID
+											FROM    {databaseOwner}{objectQualifier}ModuleControls
+											WHERE   ControlKey = 'View_Entry' )
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Blogs_MetaWeblog_GetDesktopModule]
+	@ModuleDefinition NVARCHAR(50)
+AS 
+	BEGIN
+		SELECT  DM.FriendlyName
+		FROM    {databaseOwner}{objectQualifier}ModuleDefinitions MD
+				JOIN {databaseOwner}{objectQualifier}DesktopModules DM ON MD.DesktopModuleID = DM.DesktopModuleID
+		WHERE   MD.FriendlyName = @ModuleDefinition  
+	END
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Blogs_Setting_Get]
+	@PortalId INT,
+	@TabId INT
+AS 
+	SELECT  [Key],
+			[Value],
+			PortalId,
+			TabId
+	FROM    {databaseOwner}{objectQualifier}Blogs_Setting
+	WHERE   PortalId = @PortalId
+			AND TabId = @TabId
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Blogs_Setting_Update]
+	@PortalId INT,
+	@TabId INT,
+	@Key NVARCHAR(50),
+	@Value NVARCHAR(1024)
+AS 
+	IF EXISTS ( SELECT  [Key]
+				FROM    {databaseOwner}{objectQualifier}Blogs_Setting
+				WHERE   PortalId = @PortalId
+						AND TabId = @TabId
+						AND [Key] = @Key ) 
+		UPDATE  {databaseOwner}{objectQualifier}Blogs_Setting
+		SET     [Value] = @Value
+		WHERE   PortalId = @PortalId
+				AND TabId = @TabId
+				AND [Key] = @Key
+	ELSE 
+		INSERT  INTO {databaseOwner}{objectQualifier}Blogs_Setting
+				( PortalId, TabId, [Key], [Value] )
+		VALUES  ( @PortalId, @TabId, @Key, @Value )
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Blogs_Entry_UpdateCount]
+	@EntryId INT
+AS 
+	UPDATE  {databaseOwner}{objectQualifier}Blogs_Entry
+	SET     [Views] = [Views] + 1
+	WHERE   EntryId = @EntryId
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Blogs_Entry_UpdateAddedDate
+	@EntryId INT,
+	@CreatedDate DATETIME
+AS
+	BEGIN
+		UPDATE {databaseOwner}[{objectQualifier}Blog_Entries] SET AddedDate = @CreatedDate WHERE [EntryID] = @EntryId
+	END
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Blogs_Entry_GetAllByBlog
+	@BlogId INT
+AS 
+	SELECT  E.*,
+			B.PortalId,
+			B.UserId,
+			B.Authorized,
+			B.GroupId,
+			CI.Content,
+			CI.ContentTypeID,
+			CI.TabID,
+			CI.ModuleID ,
+			CI.ContentKey ,
+			CI.Indexed ,
+			CI.CreatedByUserID ,
+			CI.[CreatedOnDate] ,
+			CI.LastModifiedByUserID ,
+			CI.[LastModifiedOnDate]
+	FROM    {databaseOwner}{objectQualifier}Blogs_Blog B
+			INNER JOIN {databaseOwner}{objectQualifier}Blogs_Entry E ON B.BlogId = E.BlogId
+			INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI ON E.ContentItemId = CI.ContentItemID
+	
+	WHERE  B.BlogId = @BlogId
+GO

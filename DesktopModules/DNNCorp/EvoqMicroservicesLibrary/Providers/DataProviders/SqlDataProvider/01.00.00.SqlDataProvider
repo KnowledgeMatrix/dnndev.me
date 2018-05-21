@@ -1,0 +1,42 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+DECLARE @NotificationTypeId INT
+SELECT @NotificationTypeId = NotificationTypeId
+    FROM    {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes]
+    WHERE   Name = 'DnnCorp_Microservices_OptIn_Notification'
+IF @NotificationTypeId IS NULL
+BEGIN
+    INSERT INTO {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes]
+        ([Name]
+        ,[Description]
+        ,[TTL]
+        ,[DesktopModuleID]
+        ,[CreatedByUserID]
+        ,[CreatedOnDate]
+        ,[LastModifiedByUserID]
+        ,[LastModifiedOnDate]
+        ,[IsTask])
+    VALUES (
+        'DnnCorp_Microservices_OptIn_Notification',
+        'Notification to nofity microservices optin operation',
+        NULL,
+        NULL,
+        -1,
+        GETDATE(),
+        -1,
+        GETDATE(),
+		0)
+END
+GO
+
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/

@@ -1,0 +1,981 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ControlNotFound.Error" xml:space="preserve">
+    <value>Niet kunt vinden controle {0}!</value>
+  </data>
+  <data name="Unexpected.Error" xml:space="preserve">
+    <value>Er is een onverwachte fout opgetreden!</value>
+  </data>
+  <data name="OrderBillingAddress.Text" xml:space="preserve">
+    <value>Billing Address:</value>
+  </data>
+  <data name="OrderCannotBeProcessed.Text" xml:space="preserve">
+    <value>Indien, om welke reden dan ook, uw bestelling kan niet worden verwerkt, dan is een van onze klantenservice vertegenwoordigers zullen zsm contact met u op.</value>
+  </data>
+  <data name="OrderContents.Text" xml:space="preserve">
+    <value>Bestel Inhoud</value>
+  </data>
+  <data name="OrderDate.Text" xml:space="preserve">
+    <value>Sorteer op Datum:</value>
+  </data>
+  <data name="OrderDateFormat.Text" xml:space="preserve">
+    <value>g</value>
+  </data>
+  <data name="OrderEmailHeader.Text" xml:space="preserve">
+    <value>Dank u voor het plaatsen van een order met {0}.
+
+Hieronder vindt u een ordernummer en een overzicht van uw bestelling. U kunt de status van uw bestelling op elk gewenst moment door in te loggen op onze site en te klikken op de &amp;quot;{1}&amp;quot; link. Als u vragen heeft over uw bestelling, neem dan gerust contact met ons op {2}, of gewoon antwoord op dit bericht.</value>
+  </data>
+  <data name="OrderItems.Text" xml:space="preserve">
+    <value>{0} x {1} @ {2}</value>
+  </data>
+  <data name="OrderNumber.Text" xml:space="preserve">
+    <value>Bestelnummer:</value>
+  </data>
+  <data name="OrderShipping.Text" xml:space="preserve">
+    <value>Shipping &amp;amp; Handling: {0}</value>
+  </data>
+  <data name="OrderShippingAddress.Text" xml:space="preserve">
+    <value>Verzendadres:</value>
+  </data>
+  <data name="OrderSubject.Text" xml:space="preserve">
+    <value>{0} Orderbevestiging</value>
+  </data>
+  <data name="OrderSubjectToAdmin.Text" xml:space="preserve">
+    <value>New Order: {0}</value>
+  </data>
+  <data name="OrderSubTotal.Text" xml:space="preserve">
+    <value>Sub-Totaal: {0}</value>
+  </data>
+  <data name="OrderTax.Text" xml:space="preserve">
+    <value>Tax: {0}</value>
+  </data>
+  <data name="OrderTermsOfUse.Text" xml:space="preserve">
+    <value>Deze factuur is onderworpen aan onze gebruiksvoorwaarden.</value>
+  </data>
+  <data name="OrderThanks.Text" xml:space="preserve">
+    <value>Nogmaals, ik dank u voor uw bestelling.</value>
+  </data>
+  <data name="OrderTotal.Text" xml:space="preserve">
+    <value>Totaal: {0}</value>
+  </data>
+  <data name="AboutChange.Text" xml:space="preserve">
+    <value>Als u vragen heeft over deze verandering, neem dan gerust contact met ons op {0}, of gewoon antwoord op dit bericht.</value>
+  </data>
+  <data name="ChangedStatus.Text" xml:space="preserve">
+    <value>Deze order ({0}) is veranderd status &amp;quot;{1}&amp;quot;.</value>
+  </data>
+  <data name="CheckStatus.Text" xml:space="preserve">
+    <value>U kunt de status van uw bestelling op elk gewenst moment door in te loggen op onze site en op de {0} link.</value>
+  </data>
+  <data name="PlacedOrder.Text" xml:space="preserve">
+    <value>U heeft onlangs een bestelling geplaatst met {0}</value>
+  </data>
+  <data name="RequiresPayment.Text" xml:space="preserve">
+    <value>BELANGRIJK: Uw bestelling nu betaald moet worden. Indien u wenst te betalen via een specifieke methode, of wilt u uw bestelling te annuleren, neem dan contact met ons op {0}, of gewoon antwoord op dit bericht.</value>
+  </data>
+  <data name="StatusChanged.Text" xml:space="preserve">
+    <value>{0} Order Status gewijzigd</value>
+  </data>
+  <data name="OrderVat.Text" xml:space="preserve">
+    <value>BTW: {0}</value>
+  </data>
+  <data name="OrderItemsVariant.Text" xml:space="preserve">
+    <value>{0} x {1} - ({3}) @ {2}</value>
+  </data>
+  <data name="OrderShippingMethod.Text" xml:space="preserve">
+    <value>Verzendkosten Methode: {0}</value>
+  </data>
+  <data name="AjaxAddProductMissingVariant.Text" xml:space="preserve">
+    <value>Variant optie: {0} is vereist</value>
+  </data>
+  <data name="AjaxProductReviewAdded.Text" xml:space="preserve">
+    <value>Uw beoordeling is toegevoegd en in afwachting van matiging.</value>
+  </data>
+  <data name="AjaxProductReviewDelete.Text" xml:space="preserve">
+    <value>Product Review verwijderd.</value>
+  </data>
+  <data name="AjaxProductReviewUpdated.Text" xml:space="preserve">
+    <value>Herziening aangepast.</value>
+  </data>
+  <data name="Currency_AUD.Text" xml:space="preserve">
+    <value>AUD $</value>
+  </data>
+  <data name="Currency_CAD.Text" xml:space="preserve">
+    <value>CAD $</value>
+  </data>
+  <data name="Currency_CHF.Text" xml:space="preserve">
+    <value>CHF</value>
+  </data>
+  <data name="Currency_EURO.Text" xml:space="preserve">
+    <value>€</value>
+  </data>
+  <data name="Currency_GBP.Text" xml:space="preserve">
+    <value>£</value>
+  </data>
+  <data name="Currency_USD.Text" xml:space="preserve">
+    <value>$</value>
+  </data>
+  <data name="AjaxAddQuoteExistingCart.Text" xml:space="preserve">
+    <value>Vul uw aankopen in het winkelwagentje voordat u een offerte aan</value>
+  </data>
+  <data name="AjaxProductReviewProfanity.Text" xml:space="preserve">
+    <value>Uw commentaar mag geen godslastering in de gebruikersnaam of herziening zelf.</value>
+  </data>
+  <data name="AjaxSendUserEmailContainsProfanity.Text" xml:space="preserve">
+    <value>Uw e-mail bericht kan niet bevatten godslastering.</value>
+  </data>
+  <data name="AjaxSendUserEmailInvalidCaptcha.Text" xml:space="preserve">
+    <value>Ongeldige captcha ingevoerde gegevens.</value>
+  </data>
+  <data name="AjaxSendUserEmailInvalidEmailAddress.Text" xml:space="preserve">
+    <value>Geef geldige e-mailadressen.</value>
+  </data>
+  <data name="AjaxSendUserEmailSent.Text" xml:space="preserve">
+    <value>E-mail verzonden!</value>
+  </data>
+  <data name="AjaxAddToCartExistingQuote.Text" xml:space="preserve">
+    <value>Vul uw offerte voor het maken van een winkelwagentje</value>
+  </data>
+  <data name="AjaxAddToCartMessage.Text" xml:space="preserve">
+    <value>Dit item is succesvol toegevoegd aan uw mandje!</value>
+  </data>
+  <data name="AjaxAddToQuoteMessage.Text" xml:space="preserve">
+    <value>Dit item is succesvol toegevoegd aan uw offerte!</value>
+  </data>
+  <data name="RequestForQuoteEmailItemTemplate.Text" xml:space="preserve">
+    <value>[MODELNUMBER] [MODELNAME] x [QUANTITY]</value>
+  </data>
+  <data name="RequestForQuoteEmailSubject.Text" xml:space="preserve">
+    <value>Request for Quote</value>
+  </data>
+  <data name="RequestForQuoteEmailTemplate.Text" xml:space="preserve">
+    <value>Verzoek om Quote -[STORENAME]
+----------------------------------
+
+Naam:[NAME]
+Bedrijf:[COMPANYNAME]
+Telefoonnummer:[PHONE]
+E-mail:[EMAIL]
+Extra Commentaar:[COMMENT]
+
+Items
+----------------------------------
+[ITEMS]</value>
+  </data>
+  <data name="Currency_MXN.Text" xml:space="preserve">
+    <value>Mex $</value>
+  </data>
+  <data name="AjaxAddToWishlist.Text" xml:space="preserve">
+    <value>Item toegevoegd aan uw lijst</value>
+  </data>
+  <data name="AjaxAddToWishlistError.Text" xml:space="preserve">
+    <value>Product is existings in uw lijst</value>
+  </data>
+  <data name="AddToCart.Text" xml:space="preserve">
+    <value>Voeg toe aan winkelwagen</value>
+  </data>
+  <data name="AddToQuote.Text" xml:space="preserve">
+    <value>Vraag een offerte</value>
+  </data>
+  <data name="AddToWishlist.Text" xml:space="preserve">
+    <value>Zet op verlanglijst</value>
+  </data>
+  <data name="AjaxDeleteItemFromWishlist.Text" xml:space="preserve">
+    <value>Item verwijderd uit uw lijst</value>
+  </data>
+  <data name="Currency_Points.Text" xml:space="preserve">
+    <value>Punten:</value>
+  </data>
+  <data name="AjaxAddToCartMessageNotEnoughPoints.Text" xml:space="preserve">
+    <value>Je hoeft niet genoeg punten om dit item te kopen.</value>
+  </data>
+  <data name="AjaxAddToCartMessagePointsNotLoggedIn.Text" xml:space="preserve">
+    <value>U moet ingelogd zijn om aan te schaffen.</value>
+  </data>
+  <data name="CouponExpired.Text" xml:space="preserve">
+    <value>Deze coupon is verlopen.</value>
+  </data>
+  <data name="CouponMinSubtotal.Text" xml:space="preserve">
+    <value>De minimale subtotaal voor deze coupon is {0}.</value>
+  </data>
+  <data name="CouponUsedMultipleTimes.Text" xml:space="preserve">
+    <value>Deze coupon is al gebruikt.</value>
+  </data>
+  <data name="csvProductImportMissingHeader.Text" xml:space="preserve">
+    <value>Verplichte header &lt;strong&gt;{0}&lt;/strong&gt; ontbreekt in het importbestand.</value>
+  </data>
+  <data name="OrderDiscount.Text" xml:space="preserve">
+    <value>Korting: {0}</value>
+  </data>
+  <data name="ProductImport_CategoryMultipleMatches.Text" xml:space="preserve">
+    <value>Categorie: {0} mulitple wedstrijden gevonden</value>
+  </data>
+  <data name="ProductImport_CategoryNotFound.Text" xml:space="preserve">
+    <value>Categorie: {0} niet gevonden</value>
+  </data>
+  <data name="ProductImport_Error.Text" xml:space="preserve">
+    <value>Er is een fout opgetreden tijdens het importeren van het product op regel: {0}, bericht: {1}</value>
+  </data>
+  <data name="GlobalDecimalNumberFormat.Text" xml:space="preserve">
+    <value>C</value>
+  </data>
+  <data name="productNewsLetterDescription.Text" xml:space="preserve">
+    <value>&lt;b&gt;Hieronder vindt u de producten toe te voegen aan onze site!&lt;/b&gt;</value>
+  </data>
+  <data name="productNewsLetterSubject.Text" xml:space="preserve">
+    <value>{0} Nieuwste producten worden toegevoegd aan onze winkel</value>
+  </data>
+  <data name="productNewsLetterSpecialOffer.Text" xml:space="preserve">
+    <value>&lt;b&gt;Prijs:&lt;/b&gt; &lt;br /&gt; Was &lt;span class="StoreProductRegularPrice"&gt;{0}&lt;/span&gt; &lt;br /&gt; Nu &lt;font color="red"&gt;{1}&lt;/font&gt;</value>
+  </data>
+  <data name="CVDropdownMenuControl.Title.Text" xml:space="preserve">
+    <value>Acties</value>
+  </data>
+  <data name="productNewsLetterFooter.Text" xml:space="preserve">
+    <value>Gelieve kassa onze winkel om de producten te bekijken. &lt;br /&gt; Indien u wenst te worden verwijderd uit de mailing list klik &lt;a href='{0}'&gt;hier&lt;/a&gt; . &lt;br /&gt; Met vriendelijke groet.</value>
+  </data>
+  <data name="productNewsLetterNormalPrice.Text" xml:space="preserve">
+    <value>&lt;b&gt;Prijs:&lt;/b&gt; &lt;font color='red'&gt;{0}&lt;/font&gt;</value>
+  </data>
+  <data name="lblConfirmEmailFail.Text" xml:space="preserve">
+    <value>Ongeldige gegevens ingevoerd probeer en schrijf je weer!</value>
+  </data>
+  <data name="lblConfirmEmailSuccess.Text" xml:space="preserve">
+    <value>U bent succesvol toegevoegd aan het product nieuwsbrief e-mailen lijst!</value>
+  </data>
+  <data name="lblUnsubscribeResource.Text" xml:space="preserve">
+    <value>U hebt het abonnement op de product nieuwsbrief!</value>
+  </data>
+  <data name="productNewsLetterConfirmEmailAddressSubject.Text" xml:space="preserve">
+    <value>{0} E-mailadres bevestigen</value>
+  </data>
+  <data name="productNewsLetterConfirmEmailMessage.Text" xml:space="preserve">
+    <value>Klik op de link &lt;a href='{0}'&gt;hier&lt;/a&gt; om uw e-mailadres te bevestigen en lid van de e-maillijst. &lt;br /&gt; Met vriendelijke groet.</value>
+  </data>
+  <data name="default.ProductWidget.SimpleTemplate.Footer.Text" xml:space="preserve">
+    <value>&lt;/ul&gt;&lt;div style="clear:both"&gt;&lt;/div&gt;</value>
+  </data>
+  <data name="default.ProductWidget.SimpleTemplate.Header.Text" xml:space="preserve">
+    <value>&lt;style&gt;
+.productWidgetSimple{
+padding:0px;
+
+}
+.productWidgetSimple li{
+list-style-type:none;
+margin:0px 5px;
+display:inline;
+float:left;
+width:150px;
+border:1px solid #eee;
+height:170px;
+text-align:center;
+}
+
+.pwsPrice{
+color:#f00;
+font-weight:900;
+}
+&lt;/style&gt;
+&lt;ul class="productWidgetSimple"&gt;</value>
+  </data>
+  <data name="default.ProductWidget.SimpleTemplate.Item.Text" xml:space="preserve">
+    <value>&lt;li itemscope itemtype="http://schema.org/Product" class="cvVariantBoundary"&gt;
+&lt;h3 itemprop="name"&gt;[MODELNAME]&lt;/h3&gt;
+&lt;a href="[VIEWDETAILSLINKURL]"&gt;&lt;img itemprop="image" src="[SMALLIMAGEURL]" border="0" alt="[MODELNAME]"/&gt;&lt;/a&gt;
+&lt;p&gt;&lt;a href="#" onclick="[ADDTOCARTLINKURL]"&gt;Add to Cart&lt;/a&gt;&lt;/p&gt;
+&lt;div itemprop="offers" itemscope itemtype="http://schema.org/Offer"&gt;
+	&lt;span class="pwsPrice" itemprop="price"&gt;[PRICE]&lt;/span&gt;
+&lt;/div&gt;
+&lt;/li&gt;</value>
+  </data>
+  <data name="default.ProductWidget.SimpleTemplate.Name.Text" xml:space="preserve">
+    <value>Eenvoudige weergave - Default Template</value>
+  </data>
+  <data name="AjaxAdminGallerySortOrderNotAuth.Text" xml:space="preserve">
+    <value>Niet Toegelaten</value>
+  </data>
+  <data name="AjaxAdminGallerySortOrderSaved.Text" xml:space="preserve">
+    <value>Toegepast de sortering</value>
+  </data>
+  <data name="AjaxAdminGalleryUpdateCaptionNotAuth.Text" xml:space="preserve">
+    <value>Niet Toegelaten</value>
+  </data>
+  <data name="AjaxAdminGalleryUpdateCaptionSaved.Text" xml:space="preserve">
+    <value>Titel is opgeslagen</value>
+  </data>
+  <data name="AjaxAdminProductCategoryAssignmentNotAuth.Text" xml:space="preserve">
+    <value>Niet Toegelaten</value>
+  </data>
+  <data name="AjaxAdminProductCategoryAssignmentSaved.Text" xml:space="preserve">
+    <value>Product categorie toewijzen bijgewerkt</value>
+  </data>
+  <data name="AjaxAdminProductVariantAddNotAuth.Text" xml:space="preserve">
+    <value>Niet Toegelaten</value>
+  </data>
+  <data name="AjaxAdminProductVariantAddSaved.Text" xml:space="preserve">
+    <value>Variant Opgeslagen</value>
+  </data>
+  <data name="AjaxAdminProductVariantDeleteNotAuth.Text" xml:space="preserve">
+    <value>Niet Toegelaten</value>
+  </data>
+  <data name="AjaxAdminProductVariantGetNotAuth.Text" xml:space="preserve">
+    <value>Niet Toegelaten</value>
+  </data>
+  <data name="AjaxAdminProductVariantListNotAuth.Text" xml:space="preserve">
+    <value>Niet Toegelaten</value>
+  </data>
+  <data name="AjaxAdminProductVariantOptionDeleteNotAuth.Text" xml:space="preserve">
+    <value>Niet Toegelaten</value>
+  </data>
+  <data name="rssFeedFeaturedProductsDescription.Text" xml:space="preserve">
+    <value>Producten die momenteel zijn gemarkeerd als featured in mijn winkel.</value>
+  </data>
+  <data name="rssFeedFeaturedTitle.Text" xml:space="preserve">
+    <value>In de schijnwerpers</value>
+  </data>
+  <data name="rssFeedNewProductsDescription.Text" xml:space="preserve">
+    <value>Producten die zijn aan de winkel toegevoegd in de laatste 30 dagen!</value>
+  </data>
+  <data name="rssFeedNewProductsTitle.Text" xml:space="preserve">
+    <value>Nieuwe producten</value>
+  </data>
+  <data name="rssFeedPopularProductsDescription.Text" xml:space="preserve">
+    <value>De best verkopende producten in mijn winkel.</value>
+  </data>
+  <data name="rssFeedPopularProductsTitle.Text" xml:space="preserve">
+    <value>Top Verkoop Producten</value>
+  </data>
+  <data name="OrderDetailsHeader.Text" xml:space="preserve">
+    <value>Bestellen Details</value>
+  </data>
+  <data name="OrderPdfDiscount.Text" xml:space="preserve">
+    <value>Korting:</value>
+  </data>
+  <data name="OrderPdfShipping.Text" xml:space="preserve">
+    <value>Verzending:</value>
+  </data>
+  <data name="OrderpdfSubtotal.Text" xml:space="preserve">
+    <value>Subtotaal</value>
+  </data>
+  <data name="OrderPdfTax.Text" xml:space="preserve">
+    <value>Belasting:</value>
+  </data>
+  <data name="OrderPdfTotal.Text" xml:space="preserve">
+    <value>Totaal:</value>
+  </data>
+  <data name="OrderPdfVat.Text" xml:space="preserve">
+    <value>Btw:</value>
+  </data>
+  <data name="OrderPrice.Text" xml:space="preserve">
+    <value>Prijs</value>
+  </data>
+  <data name="OrderProduct.Text" xml:space="preserve">
+    <value>Product</value>
+  </data>
+  <data name="OrderQty.Text" xml:space="preserve">
+    <value>Aantal</value>
+  </data>
+  <data name="OrderStatus.Text" xml:space="preserve">
+    <value>Order Status:</value>
+  </data>
+  <data name="ShippingMethod.Text" xml:space="preserve">
+    <value>Verzendmethode</value>
+  </data>
+  <data name="AjaxBundleAddToCartFailMessage.Text" xml:space="preserve">
+    <value>De volgende onderdelen van de bundel werden niet opgenomen in uw winkelwagen: &lt;br /&gt;&lt;br /&gt;</value>
+  </data>
+  <data name="AjaxBundleAddToCartMessage.Text" xml:space="preserve">
+    <value>Alle items in de bundel zijn toegevoegd aan uw mandje!</value>
+  </data>
+  <data name="AjaxBundleAddToCartHasVariants.Text" xml:space="preserve">
+    <value>{0} - heeft product varianten en kunnen alleen worden toegevoegd via de pagina met productdetails. &lt;br /&gt;</value>
+  </data>
+  <data name="AjaxBundleAddToCartIsRoq.Text" xml:space="preserve">
+    <value>{0} - dit product is een vraag een offerte aan item alleen. &lt;br /&gt;</value>
+  </data>
+  <data name="AjaxBundlePointsNotEnoughPoints.Text" xml:space="preserve">
+    <value>{0} - u niet genoeg punten om dit item te kopen. &lt;br /&gt;</value>
+  </data>
+  <data name="AjaxBundlePointsNotLoggedIn.Text" xml:space="preserve">
+    <value>{0} - is een betaling punten product en uw nog niet ingelogd. &lt;br /&gt;</value>
+  </data>
+  <data name="CouponHasNotStarted.Text" xml:space="preserve">
+    <value>Coupon is nog niet begonnen.</value>
+  </data>
+  <data name="CouponInvalidEmail.Text" xml:space="preserve">
+    <value>Vul je e-mail adres dat is toegewezen aan deze coupon.</value>
+  </data>
+  <data name="CouponInvalidSubtotal.Text" xml:space="preserve">
+    <value>De korting zou resulteren in een krediet aan uzelf, is dit niet toegestaan.</value>
+  </data>
+  <data name="AjaxAdminProductUserPriceAddNotAuth.Text" xml:space="preserve">
+    <value>Niet Toegelaten</value>
+  </data>
+  <data name="AjaxAdminProductUserPriceAddSaved.Text" xml:space="preserve">
+    <value>Gebruiker specifieke prijzen is opgeslagen</value>
+  </data>
+  <data name="donationProductName.Text" xml:space="preserve">
+    <value>Schenking</value>
+  </data>
+  <data name="AjaxAdminProductUserPriceDeleteNotAuth.Text" xml:space="preserve">
+    <value>Niet Toegelaten</value>
+  </data>
+  <data name="AjaxAdminProductUserPriceGetNotAuth.Text" xml:space="preserve">
+    <value>Niet Toegelaten</value>
+  </data>
+  <data name="AjaxAdminProductUserPricingListNotAuth.Text" xml:space="preserve">
+    <value>Niet Toegelaten</value>
+  </data>
+  <data name="AjaxAdminProductUserPriceAddDuplicate.Text" xml:space="preserve">
+    <value>Gebruiker of rol is reeds toegewezen aan dit product</value>
+  </data>
+  <data name="AjaxAdminProductUserPriceAddUserNotFound.Text" xml:space="preserve">
+    <value>Fout - Kan de gebruiker te vinden vanaf de ingevoerde waarde</value>
+  </data>
+  <data name="CouponSkuNotFound.Text" xml:space="preserve">
+    <value>Het product deze coupon geldt is niet gevonden in uw winkelwagen.</value>
+  </data>
+  <data name="AjaxAddToCartMessageVariantsOutOfStock.Text" xml:space="preserve">
+    <value>We hebben niet genoeg onderdelen op voorraad voor deze combinatie van product-varianten.</value>
+  </data>
+  <data name="lblShippingNotAvailable.Text" xml:space="preserve">
+    <value>Niet beschikbaar</value>
+  </data>
+  <data name="CreatedDateNO.Text" xml:space="preserve">
+    <value>Nieuwste Items</value>
+  </data>
+  <data name="CreatedDateON.Text" xml:space="preserve">
+    <value>Oudste Items</value>
+  </data>
+  <data name="ManufacturerAZ.Text" xml:space="preserve">
+    <value>Fabrikant - AZ</value>
+  </data>
+  <data name="ManufacturerZA.Text" xml:space="preserve">
+    <value>Fabrikant - ZA</value>
+  </data>
+  <data name="ModelNameAZ.Text" xml:space="preserve">
+    <value>Modelnaam - AZ</value>
+  </data>
+  <data name="ModelNameZA.Text" xml:space="preserve">
+    <value>Modelnaam - ZA</value>
+  </data>
+  <data name="ModelNumberAZ.Text" xml:space="preserve">
+    <value>Modelnummer - AZ</value>
+  </data>
+  <data name="ModelNumberZA.Text" xml:space="preserve">
+    <value>Modelnummer - ZA</value>
+  </data>
+  <data name="UnitPriceHL.Text" xml:space="preserve">
+    <value>Prijs - High-Low</value>
+  </data>
+  <data name="UnitPriceLH.Text" xml:space="preserve">
+    <value>Prijs - Laag-Hoog</value>
+  </data>
+  <data name="AjaxAddToCartMessageExceedCustomerLimit.Text" xml:space="preserve">
+    <value>Het maximum aantal van dit product dat kan worden gekocht per klant is {0}</value>
+  </data>
+  <data name="AjaxAdminProductOfferNotAuth.Text" xml:space="preserve">
+    <value>Niet bevoegd</value>
+  </data>
+  <data name="ProductImportErrorMultipleProducts.Text" xml:space="preserve">
+    <value>Meerdere producten met het model nummer {0} werd gevonden, is dit product niet meer bijgewerkt.</value>
+  </data>
+  <data name="AjaxCreateNewWishlist.Text" xml:space="preserve">
+    <value>Verlanglijstje gemaakt, je bent nu vrij om producten toe te voegen aan deze wishlist!</value>
+  </data>
+  <data name="AjaxCreateNewWishlistFailed.Text" xml:space="preserve">
+    <value>Er is een fout opgetreden aan uw lijst is nog niet gemaakt.</value>
+  </data>
+  <data name="AjaxComparisionListAlreadyInList.Text" xml:space="preserve">
+    <value>Deze post is al in uw vergelijkingslijst.</value>
+  </data>
+  <data name="AjaxComparisionListToManyProducts.Text" xml:space="preserve">
+    <value>Slechts 4 producten kunnen worden toegevoegd om een ​​vergelijking lijst.</value>
+  </data>
+  <data name="AjaxProductAddedToComparisionList.Text" xml:space="preserve">
+    <value>Product toegevoegd aan uw vergelijkingslijst.</value>
+  </data>
+  <data name="lblCreateNewWishList.Text" xml:space="preserve">
+    <value>Nieuwe verlanglijst</value>
+  </data>
+  <data name="lblAddToWishList.Text" xml:space="preserve">
+    <value>Zet op verlanglijst</value>
+  </data>
+  <data name="AjaxComparisonListHasProducts.Text" xml:space="preserve">
+    <value>Voeg een product aan de vergelijking lijst</value>
+  </data>
+  <data name="AjaxProductVisualizerAction.Text" xml:space="preserve">
+    <value>Actie</value>
+  </data>
+  <data name="AjaxProductVisualizerAlreadyHaveVariant.Text" xml:space="preserve">
+    <value>Een marker die reeds bestaat voor deze varaint optie, bewerk het bestaande in plaats van toe te voegen een nieuwe.</value>
+  </data>
+  <data name="AjaxProductVisualizerCharacterLimit.Text" xml:space="preserve">
+    <value>Tekenlimiet</value>
+  </data>
+  <data name="AjaxProductVisualizerDelete.Text" xml:space="preserve">
+    <value>Verwijderen</value>
+  </data>
+  <data name="AjaxProductVisualizerEdit.Text" xml:space="preserve">
+    <value>Bewerken</value>
+  </data>
+  <data name="AjaxProductVisualizerIsText.Text" xml:space="preserve">
+    <value>Is Tekst</value>
+  </data>
+  <data name="AjaxProductVisualizerNoMarker.Text" xml:space="preserve">
+    <value>Geen markers zijn nog toegevoegd.</value>
+  </data>
+  <data name="AjaxProductVisualizerVariantOptionName.Text" xml:space="preserve">
+    <value>Variant optie Naam</value>
+  </data>
+  <data name="AjaxProductVisualizerFont.Text" xml:space="preserve">
+    <value>Font</value>
+  </data>
+  <data name="AjaxProductVisualizerFontColour.Text" xml:space="preserve">
+    <value>Font kleur</value>
+  </data>
+  <data name="AjaxProductVisualizerFontSize.Text" xml:space="preserve">
+    <value>Tekengrootte</value>
+  </data>
+  <data name="AjaxCreateProductVisualizerImage.Text" xml:space="preserve">
+    <value>We zijn niet in staat om uw persoonlijke afbeelding te creëren op dit moment.</value>
+  </data>
+  <data name="userSuppliedImage.Text" xml:space="preserve">
+    <value>Gebruiker geleverde beeld.</value>
+  </data>
+  <data name="AjaxProductVisualizerTextAlignment.Text" xml:space="preserve">
+    <value>Tekst Aligment</value>
+  </data>
+  <data name="AdminReindexSearchFail.Text" xml:space="preserve">
+    <value>Re-Index is mislukt!</value>
+  </data>
+  <data name="AdminReindexSearchSuccess.Text" xml:space="preserve">
+    <value>Re-Index Completed!</value>
+  </data>
+  <data name="DonationThankyouMessage.Text" xml:space="preserve">
+    <value>Dank u voor het maken van een donatie!</value>
+  </data>
+  <data name="ProductSerialNumberInfo.Text" xml:space="preserve">
+    <value>Hieronder staan ​​de serienummers die zijn aan u zijn toegewezen voor uw aankopen:</value>
+  </data>
+  <data name="PaymentStatus.Text" xml:space="preserve">
+    <value>Betaling Status:</value>
+  </data>
+  <data name="OrderPDFProductSerialNumber.Text" xml:space="preserve">
+    <value>Serienummer:</value>
+  </data>
+  <data name="lblOrderConfirmEmailProductSerial.Text" xml:space="preserve">
+    <value>Serienummer:</value>
+  </data>
+  <data name="AjaxAdminProductOfferInvalid.Text" xml:space="preserve">
+    <value>Error - Deze aanbieding is niet geldig</value>
+  </data>
+  <data name="AjaxAdminProductOfferRemoved.Text" xml:space="preserve">
+    <value>Bieden is verwijderd</value>
+  </data>
+  <data name="AjaxAdminProductOfferSaved.Text" xml:space="preserve">
+    <value>Bieden is bijgewerkt</value>
+  </data>
+  <data name="AjaxAdminProductUserPriceInvalidPrice.Text" xml:space="preserve">
+    <value>Fout - Prijs is niet geldig</value>
+  </data>
+  <data name="AjaxAdminProductVariantAddInvalidOption.Text" xml:space="preserve">
+    <value>Error - De optie is niet geldig</value>
+  </data>
+  <data name="AjaxAdminProductVariantAddInvalidOrder.Text" xml:space="preserve">
+    <value>Error - De sorteervolgorde voor deze variant is niet geldig</value>
+  </data>
+  <data name="ErrorSettings.Text" xml:space="preserve">
+    <value>&lt;strong&gt;U kunt geen gebruik maken van deze module, omdat de winkel nog niet bestaat! &lt;br/&gt; Eerste definiëren Bewaar instellingen in de winkel Admin module.&lt;/strong&gt;</value>
+  </data>
+  <data name="ErrorSettingsHeading.Text" xml:space="preserve">
+    <value>Store-instellingen zijn niet gedefinieerd</value>
+  </data>
+  <data name="PaymentMethod.Text" xml:space="preserve">
+    <value>Betaalmethode</value>
+  </data>
+  <data name="GoogleCheckoutPaymentMethod.Text" xml:space="preserve">
+    <value>Google Checkout</value>
+  </data>
+  <data name="AjaxShareWishlistEmailMessage.Text" xml:space="preserve">
+    <value>Hallo, \ r \ nControleer uit mijn lijst van het verlanglijstje: \ r \ n \ r \ n</value>
+  </data>
+  <data name="AjaxShareWishlistEmailSubject.Text" xml:space="preserve">
+    <value>Bekijk mijn verlanglijst van items</value>
+  </data>
+  <data name="default.ProductWidget.CarouselTemplate.Footer.Text" xml:space="preserve">
+    <value>&lt;/ul&gt;&lt;div style="clear:both"&gt;&lt;/div&gt;</value>
+  </data>
+  <data name="default.ProductWidget.CarouselTemplate.Header.Text" xml:space="preserve">
+    <value>&lt;script type="text/javascript"&gt;
+/* &lt;![CDATA[ */
+jQuery(document).ready(function () {         jQuery('#cvProductCarousel').jcarousel({
+});
+}); 
+/* ]]&gt; */
+&lt;/script&gt; &lt;style&gt;
+.productWidgetSimple{
+padding:0px;
+
+}
+.productWidgetSimple li{
+list-style-type:none;
+margin:0px 5px;
+display:inline;
+float:left;
+width:150px;
+border:1px solid #eee;
+height:170px;
+text-align:center;
+}
+
+.pwsPrice{
+color:#f00;
+font-weight:900;
+}
+&lt;/style&gt;
+&lt;ul id="cvProductCarousel" class="jcarousel-skin-tango"&gt;</value>
+  </data>
+  <data name="default.ProductWidget.CarouselTemplate.Item.Text" xml:space="preserve">
+    <value>&lt;li itemscope itemtype="http://schema.org/Product" class="cvVariantBoundary"&gt;
+&lt;h3 itemprop="name"&gt;[MODELNAME]&lt;/h3&gt;
+&lt;a href="[VIEWDETAILSLINKURL]"&gt;&lt;img itemprop="image" src="[SMALLIMAGEURL]" border="0" alt="[MODELNAME]"/&gt;&lt;/a&gt;
+&lt;p&gt;&lt;a href="#" onclick="[ADDTOCARTLINKURL]"&gt;Add to Cart&lt;/a&gt;&lt;/p&gt;
+&lt;div itemprop="offers" itemscope itemtype="http://schema.org/Offer"&gt;
+	&lt;span class="pwsPrice" itemprop="price"&gt;[PRICE]&lt;/span&gt;
+&lt;/div&gt;
+&lt;/li&gt;</value>
+  </data>
+  <data name="default.ProductWidget.CarouselTemplate.Name.Text" xml:space="preserve">
+    <value>Carousel - Default Template</value>
+  </data>
+  <data name="lblOrderConfirmationOfferCode.Text" xml:space="preserve">
+    <value>Aanbieding Code: {0}</value>
+  </data>
+  <data name="lblCompanyName.Text" xml:space="preserve">
+    <value>Bedrijfsnaam:</value>
+  </data>
+  <data name="lblVatNumber.Text" xml:space="preserve">
+    <value>BTW-nummer:</value>
+  </data>
+  <data name="AjaxApplyCouponInvalidCouponCode.Text" xml:space="preserve">
+    <value>Coupon code is niet geldig</value>
+  </data>
+  <data name="AjaxApplyCouponSuccess.Text" xml:space="preserve">
+    <value>Coupon toegepast</value>
+  </data>
+  <data name="AjaxRemoveCouponSuccess.Text" xml:space="preserve">
+    <value>Coupon verwijderd</value>
+  </data>
+  <data name="AjaxApplyCouponFreeShippingDiscount.Text" xml:space="preserve">
+    <value>Gratis verzending</value>
+  </data>
+  <data name="lblOrderNotes.Text" xml:space="preserve">
+    <value>Bestel Opmerkingen:</value>
+  </data>
+  <data name="lblFreeShippingProductName.Text" xml:space="preserve">
+    <value>Gratis verzending</value>
+  </data>
+  <data name="lblInStorePickUpProductName.Text" xml:space="preserve">
+    <value>In Store Collection</value>
+  </data>
+  <data name="Currency_THB.Text" xml:space="preserve">
+    <value>฿</value>
+  </data>
+  <data name="lblUPSShippingBand01.Text" xml:space="preserve">
+    <value>UPS Next Day Air Priority</value>
+  </data>
+  <data name="lblUPSShippingBand02.Text" xml:space="preserve">
+    <value>UPS 2nd Day Air</value>
+  </data>
+  <data name="lblUPSShippingBand03.Text" xml:space="preserve">
+    <value>UPS Ground</value>
+  </data>
+  <data name="lblUPSShippingBand07.Text" xml:space="preserve">
+    <value>Worldwide Express</value>
+  </data>
+  <data name="lblUPSShippingBand08.Text" xml:space="preserve">
+    <value>Wereldwijd Expedited</value>
+  </data>
+  <data name="lblUPSShippingBand09.Text" xml:space="preserve">
+    <value>Will Call</value>
+  </data>
+  <data name="lblUPSShippingBand12.Text" xml:space="preserve">
+    <value>UPS 3 Day Saver</value>
+  </data>
+  <data name="lblUPSShippingBand13.Text" xml:space="preserve">
+    <value>UPS Next Air Saver</value>
+  </data>
+  <data name="lblUPSShippingBand14.Text" xml:space="preserve">
+    <value>Next Day Air Vroege AM</value>
+  </data>
+  <data name="lblUPSShippingBand54.Text" xml:space="preserve">
+    <value>Worldwide Express Plus</value>
+  </data>
+  <data name="lblUPSShippingBand59.Text" xml:space="preserve">
+    <value>2nd Day Air AM Commercial</value>
+  </data>
+  <data name="lblDropDownListPleaseSelect.Text" xml:space="preserve">
+    <value>- Selecteer een optie -</value>
+  </data>
+  <data name="hiddenPrices.Text" xml:space="preserve">
+    <value>Log in om de prijzen te zien</value>
+  </data>
+  <data name="loginToEnableTheCart.Text" xml:space="preserve">
+    <value>Log in om de wagen in staat stellen</value>
+  </data>
+  <data name="DiscountCouponPaymentMethod.Text" xml:space="preserve">
+    <value>Betaald door Coupon</value>
+  </data>
+  <data name="lblOrderRegistrationNumber.Text" xml:space="preserve">
+    <value>Uw registratie nummer is: {0}</value>
+  </data>
+  <data name="lblOrderRegistrationNumberNoHtml.Text" xml:space="preserve">
+    <value>Uw registratie nummer is: {0}</value>
+  </data>
+  <data name="CouponInvalidCategory.Text" xml:space="preserve">
+    <value>U hoeft niet een product uit de gedefinieerde categorie van deze coupon gebruiken.</value>
+  </data>
+  <data name="CouponHasBeenUsed.Text" xml:space="preserve">
+    <value>Deze coupon is al gebruikt.</value>
+  </data>
+  <data name="CouponNotActive.Text" xml:space="preserve">
+    <value>Deze coupon is niet actief.</value>
+  </data>
+  <data name="lblOfflinePayment.Text" xml:space="preserve">
+    <value>Offline betaalmethodes</value>
+  </data>
+  <data name="lblOnlinePayment.Text" xml:space="preserve">
+    <value>Online betalen</value>
+  </data>
+  <data name="lblPayPalPayment.Text" xml:space="preserve">
+    <value>PayPal</value>
+  </data>
+  <data name="NoPaymentGatewayConfigured.Text" xml:space="preserve">
+    <value>Niet in staat om verder te gaan, zijn er geen betaalmethoden gedefinieerd. Neem contact op met de eigenaar van de winkel.</value>
+  </data>
+  <data name="SKinObjectLoader.ControlNotFound.Text" xml:space="preserve">
+    <value>SKINOBJECT controle niet gevonden</value>
+  </data>
+  <data name="SkinObjectLoader.TokenNotFound.Text" xml:space="preserve">
+    <value>SKINOBJECT niet gevonden</value>
+  </data>
+  <data name="lblPrePaidCredit.Text" xml:space="preserve">
+    <value>Prepaid Credit</value>
+  </data>
+  <data name="lblDownloadFiles.Text" xml:space="preserve">
+    <value>Klik &lt;a href="{0}"&gt;hier&lt;/a&gt; om naar de &lt;b&gt;digitale download&lt;/b&gt; locker en uw bestanden te downloaden. &lt;br /&gt;</value>
+  </data>
+  <data name="lblAwaitingPaymentOrderPDF.Text" xml:space="preserve">
+    <value>Betaling moet voorafgaand aan de bestelling verzonden worden gemaakt.</value>
+  </data>
+  <data name="lblPostPaidOrderPDF.Text" xml:space="preserve">
+    <value>Betaling dient te geschieden binnen {0} dagen na de factuurdatum.</value>
+  </data>
+  <data name="freeShippingCoupon.Text" xml:space="preserve">
+    <value>Gratis verzending</value>
+  </data>
+  <data name="lblTaxInc.Text" xml:space="preserve">
+    <value>Belasting Incl.</value>
+  </data>
+  <data name="lblVatInc.Text" xml:space="preserve">
+    <value>BTW Incl.</value>
+  </data>
+  <data name="AjaxQtyDiscountBandDiscountAmountLabel.Text" xml:space="preserve">
+    <value>Korting Bedrag / Prijs per Eenheid</value>
+  </data>
+  <data name="AjaxQtyDiscountBandLowerLimitLabel.Text" xml:space="preserve">
+    <value>Ondergrens</value>
+  </data>
+  <data name="AjaxQtyDiscountBandUpperLimitLabel.Text" xml:space="preserve">
+    <value>Bovengrens</value>
+  </data>
+  <data name="lblInvalidNumbers.Text" xml:space="preserve">
+    <value>Voer een geldige nummers.</value>
+  </data>
+  <data name="UserDefinedSort.Text" xml:space="preserve">
+    <value>Aangepaste Sorteervolgorde</value>
+  </data>
+  <data name="OrderAwaitingModerationSubject.Text" xml:space="preserve">
+    <value>Om in afwachting van matiging</value>
+  </data>
+  <data name="lblModerateOrderOnlyItemInOrder.Text" xml:space="preserve">
+    <value>Dit is het enige item in orde en als zodanig kan niet worden verwijderd, in plaats please "annuleren" te bestellen.</value>
+  </data>
+  <data name="lblModerateOrderOrderNotNeedModerated.Text" xml:space="preserve">
+    <value>Deze orde vereist geen matiging</value>
+  </data>
+  <data name="lblModerateOrderRequiredForCoupon.Text" xml:space="preserve">
+    <value>Een coupon is gebruikt voor deze bestelling dat dit product nodig, dus dit product kan niet worden verwijderd.</value>
+  </data>
+  <data name="lblAjaxItemAddedToOrder.Text" xml:space="preserve">
+    <value>Item toegevoegd aan Bestel</value>
+  </data>
+  <data name="UserDefinedSort.FriendlyName.Text" xml:space="preserve">
+    <value>Verzuim</value>
+  </data>
+  <data name="Relevance.Text" xml:space="preserve">
+    <value>Relevantie</value>
+  </data>
+  <data name="lblAjaxItemAddedToOrderAlreadyIn.Text" xml:space="preserve">
+    <value>Deze post is al in de volgorde, gebruik dan de update-functie om meer toe te voegen.</value>
+  </data>
+  <data name="PurchaseOrderCreatedSubject.Text" xml:space="preserve">
+    <value>Nieuw-Purchase Order</value>
+  </data>
+  <data name="PurchaseOrderSupplierCreatedSubject.Text" xml:space="preserve">
+    <value>Nieuwe Purchase Order gemaakt voor {0}</value>
+  </data>
+  <data name="lblSupplierNotEntered.Text" xml:space="preserve">
+    <value>N / A</value>
+  </data>
+  <data name="ProductImport_PDF_Error.Text" xml:space="preserve">
+    <value>Kan het PDF datasheet te vinden op de server tijdens het importeren het product op regel: {0}, PDF-bestand: {1}</value>
+  </data>
+  <data name="OrderStatus1.Text" xml:space="preserve">
+    <value>Verwerking</value>
+  </data>
+  <data name="OrderStatus2.Text" xml:space="preserve">
+    <value>Wacht op betaling</value>
+  </data>
+  <data name="OrderStatus3.Text" xml:space="preserve">
+    <value>In afwachting van Stock</value>
+  </data>
+  <data name="OrderStatus4.Text" xml:space="preserve">
+    <value>Verpakking</value>
+  </data>
+  <data name="OrderStatus5.Text" xml:space="preserve">
+    <value>Verzonden</value>
+  </data>
+  <data name="OrderStatus6.Text" xml:space="preserve">
+    <value>Geannuleerd</value>
+  </data>
+  <data name="OrderStatus7.Text" xml:space="preserve">
+    <value>Betaald</value>
+  </data>
+  <data name="OrderStatus8.Text" xml:space="preserve">
+    <value>Postpaid</value>
+  </data>
+  <data name="lblInvalidBandNumbers.Text" xml:space="preserve">
+    <value>De bovenste band te beperken moet groter zijn dan de lagere band te beperken.</value>
+  </data>
+</root>

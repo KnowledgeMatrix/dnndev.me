@@ -1,0 +1,106 @@
+﻿IF OBJECT_ID('FK_{objectQualifier}Ideas_Vote_{objectQualifier}Ideas_Idea', 'F') IS NOT NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Ideas_Vote DROP CONSTRAINT FK_{objectQualifier}Ideas_Vote_{objectQualifier}Ideas_Idea
+GO
+
+DELETE {databaseOwner}{objectQualifier}Ideas_Vote 
+FROM {databaseOwner}{objectQualifier}Ideas_Vote v
+	LEFT JOIN {databaseOwner}{objectQualifier}Ideas_Idea i ON v.IdeaId = i.IdeaId
+WHERE i.IdeaId IS NULL
+GO
+
+ALTER TABLE {databaseOwner}{objectQualifier}Ideas_Vote 
+	ADD CONSTRAINT FK_{objectQualifier}Ideas_Vote_{objectQualifier}Ideas_Idea 
+	FOREIGN KEY (IdeaId) REFERENCES {databaseOwner}{objectQualifier}Ideas_Idea (IdeaId) ON DELETE CASCADE
+GO
+
+IF OBJECT_ID('FK_{objectQualifier}Ideas_ResponseHistory_{objectQualifier}Ideas_Idea', 'F') IS NOT NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Ideas_ResponseHistory DROP CONSTRAINT FK_{objectQualifier}Ideas_ResponseHistory_{objectQualifier}Ideas_Idea
+GO
+
+DELETE {databaseOwner}{objectQualifier}Ideas_ResponseHistory 
+FROM {databaseOwner}{objectQualifier}Ideas_ResponseHistory r
+	LEFT JOIN {databaseOwner}{objectQualifier}Ideas_Idea i ON r.IdeaId = i.IdeaId
+WHERE i.IdeaId IS NULL
+GO
+
+ALTER TABLE {databaseOwner}{objectQualifier}Ideas_ResponseHistory 
+	ADD CONSTRAINT FK_{objectQualifier}Ideas_ResponseHistory_{objectQualifier}Ideas_Idea 
+	FOREIGN KEY (IdeaId) REFERENCES {databaseOwner}{objectQualifier}Ideas_Idea (IdeaId) ON DELETE CASCADE
+GO
+
+/********************************************************
+ * SPROC: Ideas_Idea_GetSearchable
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Ideas_Idea_GetSearchable]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Idea_GetSearchable] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Idea_GetSearchable]
+	@ModuleId int,
+	@StartDate datetime,
+	@EndDate datetime,
+	@StartDateUTC datetime,
+	@EndDateUTC datetime
+AS
+BEGIN
+	DECLARE @MetaDataID int, @PortalId int
+
+	SELECT @MetaDataID = MetaDataID FROM {databaseOwner}{objectQualifier}MetaData WITH (NOLOCK) WHERE MetaDataName = 'Title';
+	SELECT @PortalId = PortalID FROM {databaseOwner}{objectQualifier}Modules WITH (NOLOCK) WHERE ModuleID = @ModuleId
+
+	SELECT DISTINCT
+		I.[IdeaId],
+		I.[GroupId],
+		I.[Authorized],
+		(CASE I.[Views] WHEN -1 THEN 0 ELSE COALESCE(I.[Views], 0) END) AS [Views],
+		I.[Votes],
+		I.[Comments],
+		I.[Supporters],
+		I.[Status],
+		I.[Protected],
+		I.[Custom1],
+		I.[Custom2],
+		I.[Custom3],
+		I.[Custom4],
+		I.[ContentItemId],
+		I.[AcceptedOnDate],
+		I.[ScheduledOnDate],
+		I.[DeliveredOnDate],
+		CI.Content,
+		CI.ContentTypeID,
+		CI.TabID,
+		CI.ModuleID,
+		CI.ContentKey,
+		CI.Indexed,
+		CI.CreatedByUserID,
+		CI.[CreatedOnDate],
+		CI.LastModifiedByUserID,
+		CI.[LastModifiedOnDate],
+		TB.[PortalID],
+		CIMD.[MetaDataValue] AS [ContentTitle],
+		U.DisplayName AS DisplayName,
+		@PortalId AS [PortalId]
+	FROM {databaseOwner}{objectQualifier}Ideas_Idea I WITH (NOLOCK)
+			INNER JOIN {databaseOwner}[{objectQualifier}ContentItems] CI WITH (NOLOCK) ON CI.[ContentItemID] = I.[ContentItemID]
+			INNER JOIN {databaseOwner}[{objectQualifier}Tabs] TB WITH (NOLOCK) ON TB.[TabID] = CI.[TabID]
+			LEFT OUTER JOIN {databaseOwner}[{objectQualifier}Journal] J WITH (NOLOCK) ON J.[ContentItemID] = CI.[ContentItemID]
+			INNER JOIN {databaseOwner}[{objectQualifier}Users] U WITH (NOLOCK) ON U.UserID = CI.CreatedByUserID
+			INNER JOIN {databaseOwner}[{objectQualifier}ContentItems_MetaData] CIMD WITH (NOLOCK) ON CIMD.ContentItemID = I.[ContentItemID] AND CIMD.MetaDataID = @MetaDataID
+	WHERE Authorized = 1
+	  AND I.[Status] <> 30
+	  AND I.ModuleId = @ModuleId
+	  -- Comments have been added or updated within the given time frame
+	  AND (   (CI.LastModifiedOnDate BETWEEN @StartDate AND @EndDate)
+		   OR ( (	SELECT COUNT(*)
+					FROM   {databaseOwner}[{objectQualifier}Journal_Comments] JC WITH (NOLOCK)
+					WHERE  JC.[JournalId] IN (	SELECT JournalId
+												FROM   {databaseOwner}[{objectQualifier}Journal] J WITH (NOLOCK)
+												WHERE  J.[ContentItemId] = I.[ContentItemId] )
+					AND (   (JC.[DateCreated] BETWEEN @StartDateUTC AND @EndDateUTC)
+						 OR
+						    (JC.[DateUpdated] BETWEEN @StartDateUTC AND @EndDateUTC)
+						)
+				) > 0 )
+		)
+END
+GO

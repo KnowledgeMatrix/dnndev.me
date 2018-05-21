@@ -1,0 +1,155 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+SET XACT_ABORT ON
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+	
+	-- Add support for BluePay payment gateway
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysBluePayAccountID varchar(255) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysBluePaySecretKey varchar(255) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysBluePayTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysBluePayTestMode DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysBluePayTestMode
+	
+	-- Vouchers
+	CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_VoucherDefinition](
+		[VoucherDefinitionID] [int] IDENTITY(1,1) NOT NULL,
+		[PortalID] [int] NOT NULL,
+		[Name] [xml] NULL,
+		[Description] [xml] NULL,
+		[Deleted] [bit] NOT NULL,
+		[Amount] [decimal](19, 4) NOT NULL,
+		[StartDate] [datetime] NULL,
+		[StopDate] [datetime] NULL,
+		[ExpiryInterval] [int] NOT NULL,
+		[ExpiryIntervalType] [int] NOT NULL,
+		[CreateDate] [datetime] NOT NULL,
+		[UpdateDate] [datetime] NOT NULL,
+		[RowVersion] [timestamp] NOT NULL,
+		[Transferable] [bit] NOT NULL,
+		[Active] [bit] NOT NULL,
+	 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_VoucherDefinition] PRIMARY KEY CLUSTERED 
+	(
+		[VoucherDefinitionID] ASC
+	) 
+	) 
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_VoucherDefinition]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_VoucherDefinition_Portals] FOREIGN KEY([PortalID])
+	REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID])
+	ON DELETE CASCADE
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_VoucherDefinition] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_VoucherDefinition_Portals]
+		
+	CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Voucher](
+		[VoucherID] [int] IDENTITY(1,1) NOT NULL,
+		[Code] [varchar](255) NOT NULL,
+		[PortalID] [int] NOT NULL,
+		[VoucherDefinitionID] [int] NOT NULL,
+		[Deleted] [bit] NOT NULL,
+		[IssueDate] [datetime] NOT NULL,
+		[InitialAmount] [decimal](19, 4) NOT NULL,
+		[Amount] [decimal](19, 4) NOT NULL,
+		[AssignedUserID] [int] NULL,
+		[Status] [int] NOT NULL,
+		[CreateDate] [datetime] NOT NULL,
+		[UpdateDate] [datetime] NOT NULL,
+		[RowVersion] [timestamp] NOT NULL,
+		[AdminNotes] [nvarchar](4000) NULL,
+	 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_Voucher] PRIMARY KEY CLUSTERED 
+	(
+		[VoucherID] ASC
+	) 
+	) 
+
+	CREATE UNIQUE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_Voucher] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_Voucher] 
+	(
+		[Code] ASC
+	) 
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Voucher]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Voucher_Portals] FOREIGN KEY([PortalID])
+	REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID])
+	ON DELETE CASCADE
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Voucher] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Voucher_Portals]
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Voucher]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Voucher_Revindex_Storefront_VoucherDefinition] FOREIGN KEY([VoucherDefinitionID])
+	REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_VoucherDefinition] ([VoucherDefinitionID])
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Voucher] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Voucher_Revindex_Storefront_VoucherDefinition]
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Voucher]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Voucher_Users] FOREIGN KEY([AssignedUserID])
+	REFERENCES {databaseOwner}[{objectQualifier}Users] ([UserID])
+	ON DELETE CASCADE
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Voucher] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Voucher_Users]
+
+	CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_VoucherHistory](
+		[VoucherHistoryID] [int] IDENTITY(1,1) NOT NULL,
+		[VoucherID] [int] NOT NULL,
+		[HistoryDate] [datetime] NOT NULL,
+		[AmountAdjustment] [decimal](19, 4) NOT NULL,
+		[Operation] [int] NOT NULL,
+		[CreateDate] [datetime] NOT NULL,
+		[UpdateDate] [datetime] NOT NULL,
+		[RowVersion] [timestamp] NOT NULL,
+		[SalesOrderID] [int] NULL,
+	 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_VoucherHistory] PRIMARY KEY CLUSTERED 
+	(
+		[VoucherHistoryID] ASC
+	) 
+	) 
+
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_VoucherHistory] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_VoucherHistory] 
+	(
+		[VoucherID] ASC,
+		[HistoryDate] ASC
+	) 
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_VoucherHistory]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_VoucherHistory_Revindex_Storefront_SalesOrder] FOREIGN KEY([SalesOrderID])
+	REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder] ([SalesOrderID])
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_VoucherHistory] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_VoucherHistory_Revindex_Storefront_SalesOrder]
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_VoucherHistory]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_VoucherHistory_Revindex_Storefront_Voucher] FOREIGN KEY([VoucherID])
+	REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_Voucher] ([VoucherID])
+	ON DELETE CASCADE
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_VoucherHistory] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_VoucherHistory_Revindex_Storefront_Voucher]
+
+	-- Support vouchers in payment methods
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentMethodsVoucherActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsVoucherActive DEFAULT 1
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsVoucherActive
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentMethodsVoucherAvailabilityRule xml NULL
+
+	-- Support vouchers in sales payment object
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesPayment ADD VoucherCode varchar(255) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_UserPayment ADD	VoucherCode varchar(255) NULL
+
+COMMIT TRANSACTION
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+	
+		-- Upgrade default Checkout template to "Standard10"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CheckoutDisplayTemplate = 'Standard10' WHERE CheckoutDisplayTemplate LIKE 'Standard%'
+		
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

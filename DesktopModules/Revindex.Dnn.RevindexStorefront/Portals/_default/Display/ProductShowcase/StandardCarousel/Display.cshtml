@@ -1,0 +1,179 @@
+﻿@using Revindex.Business.Revindex.Revindex.Storefront;
+@using Revindex.Dnn.RevindexStorefront.Models;
+@using Revindex.Web.Mvc.Dnn.Helpers;
+@inherits Revindex.Dnn.RevindexStorefront.Views.ProductShowcaseWebViewPage<ProductShowcaseViewModel>
+
+<div class="rvdsf rvdsf-productshowcase-container">
+    @* Uses Bootstrap Carousel. See http://www.w3schools.com/bootstrap/bootstrap_ref_js_carousel.asp *@
+    <div id="rvdsfProductShowcaseCarousel_@(Dnn.Module.ModuleID)" class="carousel slide" data-ride="@(Model.DisplayEffect == ProductShowcaseDisplayEffectType.AutomaticAdvance ? "carousel" : "")" data-pause="hover" data-interval="@Model.FrameDuration" data-wrap="@Model.WrapFrames.ToString().ToLower()" style="width: @Model.Width">
+        <div class="carousel-inner" role="listbox">
+            @if (Request.Browser.IsMobileDevice) {
+                Model.VisibleMaxItems = 1;
+            }
+
+            @for (int i = 0; i < Model.Products.Count; i += Model.VisibleMaxItems)
+            {
+                <div class="item @(i == 0 ? "active" : "")" >
+                    <div style="display: flex; width: 100%; height: 100%; align-items: flex-start;">
+                        @for (int j = 0; j < Model.VisibleMaxItems && i + j < Model.Products.Count; j++)
+                        {
+                            var product = Model.Products[i + j];
+
+                            <div class="col-xs-@(Math.Floor((decimal)12/Model.VisibleMaxItems))" >
+                                <div class="rvdsf-product-container">
+                                    @if (product.ShowPrice && product.DefaultProductVariant.CombinedSavings > 0)
+                                    {
+                                        <div class="rvdsf-label-savings">@Html.LocalizeString("SavingsLabel")@if (product.ProductVariants.Count == 1) {<span> @product.DefaultProductVariant.FormattedCombinedPercentSavings</span>}</div>
+                                    }
+                                    <div class="rvdsf-product-gallery-container">
+                                        @if (product.DefaultThumbnailGallery != null)
+                                                {
+                                            <a href="@product.ProductDetail.TabUrl"><img class="img-responsive center-block" src="@product.DefaultThumbnailGallery.MediaUrl" alt="@product.DefaultThumbnailGallery.AlternateText" /></a>
+                                        }
+                                    </div>
+                                    <div class="rvdsf-product-info-container">
+                                        <div class="rvdsf-field-name">
+                                            <a class="rvdsf-label-name" href="@product.ProductDetail.TabUrl">@product.Name</a>
+                                        </div>
+                                        @if (product.ShowProductReviews)
+                                            {
+                                            <div class="rvdsf-field-rating">
+                                                <input type="hidden" class="rating" data-readonly data-fractions="2" value="@product.AverageOverallRating" data-filled="glyphicon glyphicon-star" data-empty="glyphicon glyphicon-star-empty" />
+                                            </div>
+                                        }
+                                        @if (product.ShowPrice)
+                                        {
+                                            if (product.ProductVariants.Count == 1)
+                                            {
+                                                if (String.IsNullOrEmpty(product.DefaultProductVariant.PriceText))
+                                                {
+                                                    <div class="rvdsf-field-price">
+                                                        @if (product.DefaultProductVariant.CombinedPromotionPrice.HasValue)
+                                                        {
+                                                            <span class="rvdsf-label-price"><s>@product.DefaultProductVariant.FormattedCombinedPrice</s></span>
+                                                            <span class="rvdsf-label-promotionprice">@product.DefaultProductVariant.FormattedCombinedPromotionPrice</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="rvdsf-label-price">@product.DefaultProductVariant.FormattedCombinedPrice</span>
+                                                        }
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="rvdsf-field-price">
+                                                        <span class="rvdsf-label-pricetext">@product.DefaultProductVariant.PriceText</span>
+                                                    </div>
+                                                }
+                                            }
+                                            else if (product.ProductVariants.Count > 1 && !String.IsNullOrEmpty(product.FormattedMinCombinedSellingPrice) && !String.IsNullOrEmpty(product.FormattedMaxCombinedSellingPrice))
+                                            {
+                                                <div class="rvdsf-field-price">
+                                                    <span class="rvdsf-label-price">@(product.FormattedMinCombinedSellingPrice == product.FormattedMaxCombinedSellingPrice ? product.FormattedMinCombinedSellingPrice : product.FormattedMinCombinedSellingPrice + " - " + product.FormattedMaxCombinedSellingPrice)</span>
+                                                </div>
+                                            }
+                                        }
+                                    </div>
+                                    @if (product.ShowQuantity && product.AllowInternetOrder && !product.DefaultProductVariant.HasFormFields && product.ProductVariants.Count == 1)
+                                    {
+                                        <div class="rvdsf-product-form-container form-horizontal">
+                                            <div class="form-group rvdsf-field-qty">
+                                                <label class="control-label col-xs-6 text-right" for="rvdsfProductShowcaseQuantityInput_@(Dnn.Module.ModuleID)_@(product.ProductID)">@Html.LocalizeString("QuantityLabel")</label>
+                                                <div class="col-xs-6 text-left">
+                                                    @if (product.DefaultProductVariant.AllowableOrderQuantityList.Count == 0)
+                                                    {
+                                                        <input id="rvdsfProductShowcaseQuantityInput_@(Dnn.Module.ModuleID)_@(product.ProductID)" name="rvdsfProductShowcaseQuantityInput_@(Dnn.Module.ModuleID)_@(product.ProductID)" type="number" required step="1" min="@(product.DefaultProductVariant.MinOrderQuantity.HasValue ? product.DefaultProductVariant.MinOrderQuantity : product.DefaultProductVariant.DefaultQuantity)" max="@(product.DefaultProductVariant.MaxOrderQuantity.HasValue ? product.DefaultProductVariant.MaxOrderQuantity : 9999 )" value="@product.DefaultProductVariant.DefaultQuantity" onchange="if (this.value == '') this.value = this.min; else if (parseInt(this.value) > this.max) this.value = this.max; else if (parseInt(this.value) < this.min) this.value = this.min;" onkeypress="return event.charCode >= 48 && event.charCode <= 57" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <select id="rvdsfProductShowcaseQuantityInput_@(Dnn.Module.ModuleID)_@(product.ProductID)" name="rvdsfProductShowcaseQuantityInput_@(Dnn.Module.ModuleID)_@(product.ProductID)" class="form-control">
+                                                            @foreach (var qty in product.DefaultProductVariant.AllowableOrderQuantityList)
+                                                            {
+                                                                <option value="@qty">@qty</option>
+                                                            }
+                                                        </select>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                    <div class="btn-toolbar">
+                                        @if (product.ShowSeeDetails)
+                                        {
+                                            <button type="button" class="rvdsf-btn-seedetails btn btn-primary" onclick="location.href = '@product.ProductDetail.TabUrl'">@Html.LocalizeString("SeeDetailsLink")</button>
+                                        }
+
+                                        @if (product.AllowInternetOrder && product.ProductVariants.Count == 1 && !product.DefaultProductVariant.HasFormFields && product.DefaultProductVariant.HasAcceptableInventory)
+                                        {
+                                            if (product.ShowAddToCart)
+                                            {
+                                                <button type="button" class="rvdsf-btn-addtocart btn btn-primary" onclick="rvdsfProductShowcase.addProductToCart(@product.DefaultProductVariant.ProductVariantID, ($('#rvdsfProductShowcaseQuantityInput_@(Dnn.Module.ModuleID)_@(product.ProductID)').length ? $('#rvdsfProductShowcaseQuantityInput_@(Dnn.Module.ModuleID)_@(product.ProductID)').val() : @product.DefaultProductVariant.DefaultQuantity), 'rvdsfProductShowcaseMessage_@(Dnn.Module.ModuleID)_@(product.ProductID)', null)">@(product.DefaultProductVariant.SalesType == SalesType.Quote ? Html.LocalizeString("AddToQuoteLink") : Html.LocalizeString("AddToCartLink"))</button>
+                                            }
+
+                                            if (product.ShowBuyNow)
+                                            {
+                                                <button type="button" class="rvdsf-btn-buynow btn btn-primary" onclick="rvdsfProductShowcase.addProductToCart(@product.DefaultProductVariant.ProductVariantID, ($('#rvdsfProductShowcaseQuantityInput_@(Dnn.Module.ModuleID)_@(product.ProductID)').length ? $('#rvdsfProductShowcaseQuantityInput_@(Dnn.Module.ModuleID)_@(product.ProductID)').val() : @product.DefaultProductVariant.DefaultQuantity), 'rvdsfProductShowcaseMessage_@(Dnn.Module.ModuleID)_@(product.ProductID)', '@Model.Checkout.TabUrl')">@(product.DefaultProductVariant.SalesType == SalesType.Quote ? Html.LocalizeString("QuoteNowLink") : Html.LocalizeString("BuyNowLink"))</button>
+                                            }
+                                        }
+                                    </div>
+                                    @if (!product.ProductVariants.Exists(pv => pv.HasAcceptableInventory))
+                                    {
+                                        <div class="alert alert-info rvdsf-label-soldout">@Html.LocalizeString("SoldOutLabel")</div>
+                                    }
+                                    <div id="rvdsfProductShowcaseMessage_@(Dnn.Module.ModuleID)_@(product.ProductID)" style="display:none"></div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+
+        @if(Model.DisplayEffect == ProductShowcaseDisplayEffectType.ButtonClick || Model.DisplayEffect == ProductShowcaseDisplayEffectType.ButtonMouseOver)
+                                        {
+            <a class="left carousel-control" href="#rvdsfProductShowcaseCarousel_@(Dnn.Module.ModuleID)" role="button" data-slide="prev" @(Model.DisplayEffect == ProductShowcaseDisplayEffectType.ButtonMouseOver? "onmouseover=this.click()" : "")>
+                <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+            </a>
+            <a class="right carousel-control" href="#rvdsfProductShowcaseCarousel_@(Dnn.Module.ModuleID)" role="button" data-slide="next" @(Model.DisplayEffect == ProductShowcaseDisplayEffectType.ButtonMouseOver? "onmouseover=this.click()" : "")>
+                <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+            </a>
+        }
+    </div>
+</div>
+@* Uses Bootstrap Rating. See https://github.com/dreyescat/bootstrap-rating *@
+<link href="~/DesktopModules/Revindex.Dnn.RevindexStorefront/Scripts/bootstrap-rating/bootstrap-rating.css" media="all" rel="stylesheet" type="text/css" />
+<script src="~/DesktopModules/Revindex.Dnn.RevindexStorefront/Scripts/bootstrap-rating/bootstrap-rating.min.js"></script>
+<script type="text/javascript">
+    var rvdsfProductShowcase = rvdsfProductShowcase || {}
+    rvdsfProductShowcase.addProductToCart = function (productVariantID, quantity, messageContainerID, redirect) {
+        var salesOrderDetailData = {
+            ProductVariantID: productVariantID,
+            Quantity: quantity
+        }
+
+        var servicesFramework = $.ServicesFramework(@Dnn.Module.ModuleID)
+
+        $.ajax({
+            type: "POST",
+            headers: { "Accept-Language": "@Dnn.Portal.CultureCode" },
+            beforeSend: servicesFramework.setModuleHeaders,
+            url: servicesFramework.getServiceRoot("@Dnn.Module.DesktopModule.FolderName") + "Cart/SalesOrderDetail",
+            data: salesOrderDetailData
+        })
+        .done(function (data, textStatus, jqXHR) {
+
+            // Notify all Cart Summary modules to rebind
+            $(".rvdsf-cartsummary-container").each(function () {
+                this.databind()
+            })
+
+            $("#" + messageContainerID).attr("class", "alert alert-success").html("<span class='glyphicon glyphicon-ok'></span> @HttpUtility.JavaScriptStringEncode(Html.LocalizeString(Global.LocalizedStrings.Message_ProductAddedToCart, Global.FilePaths.LocalSharedResourceFile)) <a class='btn btn-link' href='@Model.Cart.TabUrl'>@HttpUtility.JavaScriptStringEncode(Html.LocalizeString("CartLink"))</a>").show()
+
+            if (redirect)
+                location.href = redirect
+        })
+        .fail(function (data, textStatus, errorThrown) {
+            $("#" + messageContainerID).attr("class", "alert alert-danger").html("<span class='glyphicon glyphicon-remove'></span> @HttpUtility.JavaScriptStringEncode(Html.LocalizeString(Global.LocalizedStrings.Message_ProductNotAvailable, Global.FilePaths.LocalSharedResourceFile))").show()
+        })
+    }
+</script>

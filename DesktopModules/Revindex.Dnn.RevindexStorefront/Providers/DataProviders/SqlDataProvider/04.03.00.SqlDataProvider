@@ -1,0 +1,149 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+SET XACT_ABORT ON
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+		
+		-- Wrap DynamicFormCode in XML code. The following statements need to run before the schema changes below.		
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration
+		SET CheckoutDynamicFormCode = '<code version="1.0" type="aspnetmarkup">' + REPLACE(REPLACE(REPLACE(CheckoutDynamicFormCode, '&', '&amp;'), '<', '&lt;'), '>', '&gt;') + '</code>'
+		WHERE CheckoutDynamicFormCode IS NOT NULL
+
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_Product
+		SET DynamicFormCode = '<code version="1.0" type="aspnetmarkup">' + REPLACE(REPLACE(REPLACE(DynamicFormCode, '&', '&amp;'), '<', '&lt;'), '>', '&gt;') + '</code>'
+		WHERE DynamicFormCode IS NOT NULL
+
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant
+		SET DynamicFormCode = '<code version="1.0" type="aspnetmarkup">' + REPLACE(REPLACE(REPLACE(DynamicFormCode, '&', '&amp;'), '<', '&lt;'), '>', '&gt;') + '</code>'
+		WHERE DynamicFormCode IS NOT NULL
+		
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+
+	-- Add RequireHandling column
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrderDetail ADD RequireHandling bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrderDetail_RequireHandling DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrderDetail DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrderDetail_RequireHandling
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant ADD RequireHandling bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ProductVariant_RequireHandling DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ProductVariant_RequireHandling
+	
+	-- Add ShippingPrice column
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant ADD ShippingPrice decimal(19, 4) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ProductVariant_ShippingPrice DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ProductVariant_ShippingPrice
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrderDetail ADD ShippingPrice decimal(19, 4) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrderDetail_ShippingPrice DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrderDetail DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrderDetail_ShippingPrice
+	
+	-- Add HandlingPrice column
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant ADD HandlingPrice decimal(19, 4) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ProductVariant_HandlingPrice DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ProductVariant_HandlingPrice
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrderDetail ADD HandlingPrice decimal(19, 4) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrderDetail_HandlingPrice DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrderDetail DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrderDetail_HandlingPrice
+	
+	-- Convert CheckoutDynamicFormCode to XML and nullable type
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ALTER COLUMN CheckoutDynamicFormCode [xml] NULL
+	
+	-- Convert DynamicFormCode to XML and nullable type
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Product ALTER COLUMN DynamicFormCode [xml] NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant ALTER COLUMN DynamicFormCode [xml] NULL
+	
+	-- Add PromotionStartDate and PromotionStopDate to ProductVariant
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant ADD PromotionStartDate datetime NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant ADD PromotionStopDate datetime NULL
+	
+	-- Add support for Merchant e-Solutions gateway
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysMerchanteSolutionsProfileID varchar(255) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysMerchanteSolutionsProfileKey varchar(255) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysMerchanteSolutionsTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysMerchanteSolutionsTestMode DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysMerchanteSolutionsTestMode
+	
+	-- Add support for in-place Add To Cart
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD ProductListAddToCartInPlace bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductListAddToCartInPlace DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductListAddToCartInPlace
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD ProductDetailAddToCartInPlace bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductDetailAddToCartInPlace DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductDetailAddToCartInPlace
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD ProductShowcaseAddToCartInPlace bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductShowcaseAddToCartInPlace DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductShowcaseAddToCartInPlace
+	
+	-- Add configuration for Cart continue shopping
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD CartContinueShoppingNavigateUrl varchar(256) NULL
+	
+	-- Add support for allowing server side code edit in display template
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD SecurityDisplayTemplateServerCodeActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_SecurityDisplayTemplateServerCodeActive DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_SecurityDisplayTemplateServerCodeActive
+	
+COMMIT TRANSACTION
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+	
+		-- Set empty DynamicFormCode to null
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration
+		SET CheckoutDynamicFormCode = NULL WHERE len(CheckoutDynamicFormCode.value('(/code)[1]', 'nvarchar(max)')) = 0
+	
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_Product 
+		SET DynamicFormCode = NULL WHERE len(DynamicFormCode.value('(/code)[1]', 'nvarchar(max)')) = 0
+	
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant 
+		SET DynamicFormCode = NULL WHERE len(DynamicFormCode.value('(/code)[1]', 'nvarchar(max)')) = 0
+	
+		-- Upgrade default ProductDetail template to "Standard8"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductDetailDisplayTemplate = 'Standard8' WHERE ProductDetailDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default ProductList template to "Standard5"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductListDisplayTemplate = 'Standard5' WHERE ProductListDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default ProductShowcase template to "Standard3"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductShowcaseDisplayTemplate = 'Standard3' WHERE ProductShowcaseDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default Cart template to "Standard5"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CartDisplayTemplate = 'Standard5' WHERE CartDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default CartSummary template to "Standard2"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CartSummaryDisplayTemplate = 'Standard2' WHERE CartSummaryDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default Confirmation template to "Standard6"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ConfirmationDisplayTemplate = 'Standard6' WHERE ConfirmationDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default Checkout template to "Standard8"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CheckoutDisplayTemplate = 'Standard8' WHERE CheckoutDisplayTemplate LIKE 'Standard%'
+		
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

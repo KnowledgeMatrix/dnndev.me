@@ -1,0 +1,13 @@
+﻿<div id='{0}' style="padding-bottom: 10px" class="contentPersonalizationCookieRule">
+    <span data-bind='text: resx.RulesCookie' class='caption'></span>
+    <div>        
+        <input type="text" class=".dnnFormItem name" data-bind="value: name, hasFocus: true, attr: { placeholder: resx.RulesCookieNamePlaceholder }" aria-label="Name" />        
+        <select data-bind="value: matchingType" class="matchingType" aria-label="Type">
+            <option value="Equals" data-bind="text: resx.RulesCookieEquals"></option>
+            <option value="DoesNotEqual" data-bind="text: resx.RulesCookieDoesNotEqual"></option>
+            <option value="Contains" data-bind="text: resx.RulesCookieContains"></option>
+        </select>
+        <input type="text" class=".dnnFormItem matchingText" data-bind="value: matchingText, attr: { placeholder: resx.RulesCookieMatchingTextPlaceholder }" aria-label="Text" />
+    </div>
+    <div data-bind='text: resx.RulesRemoveRule, click: remove' class='deleteRule'></div>
+</div>

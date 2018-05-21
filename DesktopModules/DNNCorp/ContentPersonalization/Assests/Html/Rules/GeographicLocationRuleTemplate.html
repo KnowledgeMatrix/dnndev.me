@@ -1,0 +1,24 @@
+﻿<div id="{0}" class="contentPersonalizationGeographicLocationRule">
+    <span data-bind="text: resx.RulesGeoIPName" class="caption top"></span>
+    <div data-bind="visible: isNotSelectedCountry" class="locationBox">
+        <span data-bind="text: resx.RulesGeoIPSelectCountry" class="smallTitle"></span>
+        <input type="text" class=".dnnFormItem .token-input-list-facebook" aria-label="Country"
+               data-bind="tokenInput: countries, settings: { url: urlSearchCountry, theme:'facebook', resultsFormatter: tokenInputResultsFormatter, tokenLimit: 1 }, hasFocus: true"/>
+    </div>
+    <div data-bind="visible: isSelectedCountry" class="locationBox">
+        <span data-bind="text: resx.RulesGeoIPSelectRegion" class="smallTitle"></span>
+        <input type="text" class=".dnnFormItem .token-input-list-facebook" aria-label="Region"
+               data-bind="tokenInput: regions, settings: { url: urlSearchRegion, theme:'facebook', resultsFormatter: tokenInputResultsFormatter, tokenLimit: 1 }, hasFocus: true"/>
+        <a data-bind="text: resx.RulesGeoIPSkipRegion, click: skipRegion" class="skipRegion"></a>
+    </div>
+    <div class="locationBox">
+        <div data-bind="visible: thereAreLocationsInList">
+            <span data-bind="text: resx.RulesGeoIPLocations" class="smallTitle"></span>
+            <input id="locationsList" type="text" class=".dnnFormItem .token-input-list-facebook" aria-label="Location"
+                   data-bind="tokenInput: locations, settings: { theme:'facebook', resultsFormatter: tokenInputResultsFormatter, tokenLimit: 0}, hasFocus: false" />
+        </div>
+        <span class="rulesValidationMessage" data-bind="validationMessage: locations"></span>
+    </div>
+    <div data-bind="text: resx.RulesRemoveRule, click: remove" class="deleteRule"></div>
+</div>
+

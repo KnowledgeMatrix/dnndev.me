@@ -1,0 +1,52 @@
+﻿<div class="thumbnails-loader-wrapper"></div>
+<script type="text/html" id="evoq-pages-list-item-template">
+    <li data-bind="click: $root.pageItemClick, attr: {'data-page-id': id }, css: {'selected': $root.selectedPage().id == $data.id, 'page-notvisible': (status == 'Hidden' || status == 'Disabled')}">
+        <div class="page-item">
+            <span class="thumbnail" data-bind="css:{'has-children': childCount > 0}">
+                <img class="list" data-bind="attr: { src: thumbnail, alt: name }, event: { mouseover: $root.mouseOverThumbnail, mouseout: $root.mouseOutThumbnail }, css: {'disabled': status == 'Disabled'}" />
+            </span>
+            
+            <span class="child-count" data-bind="html: childCount, visible: childCount > 0"></span>
+
+            <span class="summary">
+                <span class="subtitle field-name" data-bind="html: name, attr: {title: name}"></span>
+                <span class="published"><label data-bind="html: $root.resx.Published"></label><span data-bind="html: publishDate"></span></span>
+                <span class="status" data-bind="css: { 'visible': (status == 'Hidden' || status == 'Disabled') }">
+                    <label data-bind="html: $root.resx.Status, attr: {title: (status == 'Hidden' ? $root.resx.Hidden : status)}"></label>
+                    <span data-bind="html: (status == 'Hidden' ? $root.resx.Hidden : status)"></span>
+                </span>
+            </span>
+
+            <span class="bottom-info">
+                <span class="child-count" data-bind="html: childCount, visible: childCount > 0"></span>
+                <span class="unpublished" data-bind="visible: hasUnpublishedChanges, attr: { title: $root.resx.Unpublished }"></span>
+            </span>
+
+            <span class="actions">
+                <span class="buttons">
+                    <span class="view-page" data-bind="click: $root.viewPageClick, clickBubble: false, attr: { title: $root.resx.View }"></span>
+                    <span class="edit-page" data-bind="visible: pageType === 'normal', click: $root.editPageClick, clickBubble: false, attr: { title: $root.resx.Edit }"></span>
+                    <span class="settings" data-bind="click: $root.settingsPageClick, clickBubble: false, attr: { title: $root.resx.Settings }"></span>
+                    <span class="delete-page" data-bind="click: (isspecial ? null : $root.deletePageClick), clickBubble: false, attr: { title: $root.resx.Delete }, css: { 'action-disabled': isspecial }"></span>
+                </span>
+            </span>
+
+            <span class="drag-area" data-bind="click: function () { return false; }, clickBubble: false, visible: $root.searchKeyword() == ''"></span>
+        </div>
+    </li>
+</script>
+
+<script type="text/html" id="evoq-pages-drag-item-template">
+    <li data-bind="if: id > 0, attr: {'data-page-id': id}">
+        <div class="page-item drag-item">
+            <span class="thumbnail" data-bind="css:{'has-children': childCount > 0}">
+                <img class="list" data-bind="attr: { src: thumbnail, alt: name }" />
+            </span>
+            <span class="summary">
+                <span class="subtitle field-name" data-bind="html: name"></span>
+                <span><label data-bind="html: $root.resx.Published"></label><span data-bind="html: publishDate"></span></span>
+                <span class="drag-area" data-bind="html: $root.resx.DragPageTooltip"></span>
+            </span>
+        </div>
+    </li>
+</script>

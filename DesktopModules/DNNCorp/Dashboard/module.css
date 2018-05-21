@@ -1,0 +1,719 @@
+
+/* Expanded View Styles */
+.profileContainer {
+    background-color: #fff;
+    position: relative;
+}
+
+    .profileContainer .profile-avatar {
+        border: 4px solid #ddd;
+        background-color: #ddd;
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        width: 120px;
+        height: 120px;
+    }
+
+        .profileContainer .profile-avatar span {
+            display: inline-block;
+            border: transparent;
+            text-decoration: none;
+            height: 120px;
+            width: 120px;
+            overflow: hidden;
+        }
+
+        .profileContainer .profile-avatar em {
+            display: table-cell;
+            width: 120px;
+            height: 120px;
+            vertical-align: middle;
+        }
+
+        .profileContainer .profile-avatar img {
+            display: inline-block;
+            border: none;
+            width: 100%;
+        }
+
+    .profileContainer .profile-topContainer {
+        padding: 20px 20px 15px 165px;
+        border-bottom: 1px solid #ccc;
+        background-color: #F5F4F2; /* fallback */
+        background-repeat: repeat-x;
+        background: linear-gradient(to bottom, #fff, #f6f2f1);
+    }
+
+        .profileContainer .profile-topContainer .profile-completion-image {
+            width: 35px;
+            height: 35px;
+            cursor: pointer;
+            float: left;
+            margin: 0 15px 0 0;
+        }
+
+        .profileContainer .profile-topContainer > .dnnLeft {
+            padding-bottom: 10px;
+        }
+
+            .profileContainer .profile-topContainer > .dnnLeft > a.dnnSocialLink.profile-link {
+                font-size: 22px;
+                font-weight: bold;
+                display: block;
+                float: left;
+                margin: 18px 0 0 10px;
+                max-width: 350px;
+                line-height: 22px;
+                word-wrap: break-word;
+            }
+
+            .profileContainer .profile-topContainer > .dnnLeft > span.profile-full-name {
+                display: block;
+                color: #888;
+            }
+
+            .profileContainer .profile-topContainer > .dnnLeft > span > a.userRemovedMsg {
+                position: absolute;
+                margin: 12px 0 0 10px;
+                padding: 5px;
+                background-color: #fb0044 !important;
+                background: #fb0044 !important;
+                color: #fff !important;
+                font-weight: bold;
+            }
+
+
+        .profileContainer .profile-topContainer > .dnnRight > ul.profile-statistics {
+            list-style-type: none;
+            display: inline-block;
+            vertical-align: top;
+            margin: 0;
+        }
+
+            .profileContainer .profile-topContainer > .dnnRight > ul.profile-statistics.ko-container {
+                display: none;
+            }
+
+            .profileContainer .profile-topContainer > .dnnRight > ul.profile-statistics > li {
+                display: block;
+                list-style-type: none;
+                float: left;
+                border-left: 1px solid #ccc;
+                padding: 0 15px 0 15px;
+            }
+
+                .profileContainer .profile-topContainer > .dnnRight > ul.profile-statistics > li > span {
+                    display: block;
+                    font-size: 13px;
+                    font-weight: bold;
+                    color: #999;
+                    margin-bottom: 5px;
+                }
+
+                    .profileContainer .profile-topContainer > .dnnRight > ul.profile-statistics > li > span.profile-item-data {
+                        color: #fe9e47;
+                        font-size: 18px;
+                        font-weight: bold;
+                        text-align: center;
+                    }
+
+        .profileContainer .profile-topContainer > .dnnRight > ul.profile-social-actions {
+            list-style-type: none;
+            display: inline-block;
+            vertical-align: top;
+            margin: 8px 0 0 15px;
+        }
+
+            .profileContainer .profile-topContainer > .dnnRight > ul.profile-social-actions > li {
+                display: block;
+                list-style-type: none;
+                float: left;
+                height: 20px;
+                margin: 0 5px 0 0;
+                width: 20px;
+            }
+
+                .profileContainer .profile-topContainer > .dnnRight > ul.profile-social-actions > li > a {
+                    display: block;
+                    height: 20px;
+                    width: 20px;
+                }
+
+    /* User profile social action links */
+
+    .profileContainer a.profile-social-like {
+        background-image: url('images/likes.png');
+    }
+
+    .profileContainer a.profile-social-like-liked {
+        background-image: url('images/likeSelect.png');
+    }
+
+    .profileContainer a.profile-social-bookmark {
+        background-image: url('images/bookmark.png');
+    }
+
+    .profileContainer a.profile-social-bookmark-bookmarked {
+        background-image: url('images/bookmarkSelect.png');
+    }
+
+    .profileContainer a.profile-social-rss {
+        background-image: url('images/rss.png');
+    }
+
+    .profileContainer a.profile-social-rss-subscribed {
+        background-image: url('images/rssSelect.png');
+    }
+
+    .profileContainer .profile-bottomContainer {
+        background-color: #fff;
+        padding: 15px 15px 15px 165px;
+        min-height: 45px;
+    }
+
+        .profileContainer .profile-bottomContainer > div > a {
+            padding-left: 25px;
+        }
+
+
+    .profileContainer .chart {
+        width: 105px;
+        height: 55px;
+        clear: none;
+        float: left;
+    }
+
+
+    .profileContainer .biography-wide {
+        max-width: 400px;
+        width: 400px;
+        color: #999;
+    }
+
+    .profileContainer .profile-bottomContainer > .dnnLeft > .profile-address {
+        background: #fff url(images/address.png) no-repeat;
+        padding: 1px 0 0 25px;
+        margin: 0 0 10px 0;
+    }
+
+        .profileContainer .profile-bottomContainer > .dnnLeft > .profile-address > span {
+            font-weight: bold;
+        }
+
+    .profileContainer .profile-bottomContainer > .dnnLeft > .profile-social-links {
+        margin: 0;
+    }
+
+        .profileContainer .profile-bottomContainer > .dnnLeft > .profile-social-links > ul.dnnButtonGroup {
+            margin-right: 10px;
+            vertical-align: top;
+            margin-bottom: 0;
+        }
+
+        .profileContainer .profile-bottomContainer > .dnnLeft > .profile-social-links > a.dnnSecondaryAction {
+            margin-bottom: 0;
+        }
+
+        .profileContainer .profile-bottomContainer > .dnnLeft > .profile-social-links > ul.dnnButtonGroup > li > a.profile-message-btn {
+            display: block;
+            background-image: url(images/message.png);
+            background-repeat: no-repeat;
+            background-position: center;
+            width: 40px;
+            height: 30px;
+            padding: 0;
+            margin: 0;
+        }
+
+    .profileContainer ul.user-external-sociallinks {
+        display: inline-block;
+        margin: 0 0 0 10px;
+        padding: 0;
+        list-style-type: none;
+        vertical-align: top;
+    }
+
+        .profileContainer ul.user-external-sociallinks > li {
+            display: block;
+            float: left;
+            padding-top: 3px;
+        }
+
+            .profileContainer ul.user-external-sociallinks > li > a {
+                display: block;
+                width: 30px;
+                height: 30px;
+                background-repeat: no-repeat;
+                background-position: center;
+                background-color: #fff;
+            }
+
+                .profileContainer ul.user-external-sociallinks > li > a.external-sociallink-twitter {
+                    background-image: url(images/twitter.png);
+                }
+
+                .profileContainer ul.user-external-sociallinks > li > a.external-sociallink-facebook {
+                    background-image: url(images/facebook.png);
+                }
+
+                .profileContainer ul.user-external-sociallinks > li > a.external-sociallink-linkedin {
+                    background-image: url(images/linkedin.png);
+                }
+
+                .profileContainer ul.user-external-sociallinks > li > a.external-sociallink-googleplus {
+                    background-image: url(images/googleplus.png);
+                }
+
+    .profileContainer .profile-bottomContainer > .dnnRight > p {
+        color: #999;
+        font-size: 11px;
+        margin: 0;
+        line-height: 16px;
+    }
+
+    .profileContainer .profile-bottomContainer > .dnnRight p {
+        margin-bottom: 0;
+    }
+
+    .profileContainer .profile-bottomContainer > .dnnRight > p.profile-description {
+        font-size: 15px;
+        margin: 5px 0 8px 0;
+        font-family: "Titillium Web", Arial, Helvetica, sans-serif;
+        color: #333;
+    }
+
+    /* -- Tooltip (tag menu) -- */
+    .profileContainer .tag-menu {
+        display: none;
+        z-index: 1000;
+        position: absolute;
+        white-space: nowrap;
+        padding: 10px 15px 10px 15px;
+        border-radius: 3px;
+        background: rgba(0,0,0,0.75);
+        font-size: 11px;
+        color: #ddd;
+        text-align: left;
+        bottom: 15px;
+        left: -12px;
+    }
+
+        .profileContainer .tag-menu > p {
+            margin-bottom: 0;
+            display: block;
+        }
+
+        .profileContainer .tag-menu:after {
+            position: absolute;
+            content: "";
+            width: 0;
+            height: 0;
+            opacity: 0.75;
+            border-left: 7px solid transparent;
+            border-right: 7px solid transparent;
+            border-top: 7px solid #000;
+            left: 25px;
+            bottom: -7px;
+        }
+/* -- end Tooltip -- */
+
+ul.token-input-list-facebook {
+    margin-bottom: 18px !important; /* bad practice - need to find another way */
+}
+
+
+.dashboard-container {
+    margin-bottom: 20px;
+    background-color: #fff;
+    padding: 20px;
+}
+
+.dashboard-about-name {
+    font-size: 11pt;
+    color: #999;
+}
+
+.dashboard-profile-header {
+    font-size: 12pt;
+    color: #333;
+}
+
+    .dashboard-profile-header.strong-header {
+        font-weight: bold;
+        margin-bottom: 8px;
+        font-size: 11pt;
+    }
+
+.dashboard-profile-header-tip {
+    float: right;
+    text-align: right;
+}
+
+.dashboard-biography {
+    color: #999;
+    margin: 6px 0 10px 0;
+}
+
+.dashboard-about-property {
+    margin-bottom: 8px;
+}
+
+    .dashboard-about-property > .dnnLabel {
+        clear: both;
+        width: 120px;
+        text-align: left;
+        font-weight: bold;
+    }
+
+    .dashboard-about-property > .value {
+        clear: none;
+        display: block;
+        float: left;
+        color: #999;
+        font-size: 10pt;
+        font-weight: normal;
+        width: 180px;
+    }
+
+.dashboard-single-line-bar {
+    clear: both;
+    display: inline-block;
+    height: 35px;
+    margin-top: 8px;
+}
+
+.dashboard-single-line-bar-value {
+    display: inline-block;
+    font-size: 16px;
+    font-weight: bold;
+    color: #f29e47;
+    vertical-align: top;
+    margin-left: 15px;
+    margin-top: 4px;
+}
+
+.ui-progressbar.dashboard-engagement-progress, .ui-progressbar.dashboard-influence-progress {
+    background: #eee;
+}
+
+    .ui-progressbar.dashboard-engagement-progress .ui-progressbar-value {
+        background: #f29e47;
+    }
+
+    .ui-progressbar.dashboard-influence-progress .ui-progressbar-value {
+        background: #ff5f76;
+    }
+
+.dashboard-container .points-list {
+    display: block;
+    margin-top: 16px;
+}
+
+    .dashboard-container .points-list .points-list-item {
+        display: inline-block;
+        height: 45px;
+        border-right: 1px solid #eee;
+        padding-top: 6px;
+        text-align: center;
+    }
+
+        .dashboard-container .points-list .points-list-item:last-child {
+            border-right: none;
+        }
+
+.dashboard-container .points-header {
+    display: block;
+    color: #9b9b9b;
+    font-size: 13px;
+    font-weight: bold;
+    padding-bottom: 6px;
+}
+
+.dashboard-container .points-value {
+    color: #f29e47;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+table.group-space-sidelist-tbl {
+    width: 100%;
+}
+
+    table.group-space-sidelist-tbl tr {
+        border-top: 1px solid #eee;
+    }
+
+        table.group-space-sidelist-tbl tr:first-child {
+            border: none;
+        }
+
+    table.group-space-sidelist-tbl td {
+        padding: 10px 10px 10px 0;
+        vertical-align: middle;
+    }
+
+        table.group-space-sidelist-tbl td.group-name {
+            width: 100%;
+        }
+
+            table.group-space-sidelist-tbl td.group-name > a {
+                width: 161px;
+                overflow: hidden;
+                display: inline-block;
+                text-overflow: ellipsis;
+            }
+
+/* -- Tooltip (tag menu) -- */
+.dashboard-container .tag-menu {
+    display: none;
+    z-index: 1000;
+    position: absolute;
+    white-space: nowrap;
+    padding: 10px 15px 10px 15px;
+    border-radius: 3px;
+    background: rgba(0,0,0,0.75);
+    font-size: 11px;
+    color: #ddd;
+    text-align: left;
+    width: auto;
+    height: 15px;
+}
+
+    .dashboard-container .tag-menu > p {
+        margin-bottom: 0;
+        display: block;
+    }
+
+    .dashboard-container .tag-menu:after {
+        position: absolute;
+        content: "";
+        left: 15px;
+        bottom: -7px;
+        width: 0;
+        height: 0;
+        opacity: 0.75;
+        border-left: 7px solid transparent;
+        border-right: 7px solid transparent;
+        border-top: 7px solid #000;
+    }
+/* -- end Tooltip -- */
+
+.dashboard-profile-badge-list {
+    padding-top: 10px;
+    position: relative;
+    overflow: hidden;
+}
+
+    .dashboard-profile-badge-list > div {
+        color: #aaaaaa;
+        font-style: italic;
+        font-size: 9pt;
+        padding-top: 10px;
+    }
+
+    .dashboard-profile-badge-list ul, .dashboard-profile-badge-list ul li {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        float: left;
+    }
+
+    .dashboard-profile-badge-list ul {
+        margin-right: -999em;
+        float: left;
+    }
+
+        .dashboard-profile-badge-list ul li {
+            float: left;
+            width: 40px;
+            height: 40px;
+            margin: 4px 5px;
+        }
+
+            .dashboard-profile-badge-list ul li:first-child {
+                margin-left: 0;
+            }
+
+            .dashboard-profile-badge-list ul li:last-child {
+                margin-right: 0;
+            }
+
+            .dashboard-profile-badge-list ul li img {
+                display: inline-block;
+                width: 40px;
+                height: 40px;
+            }
+
+.dashboard-container .pager-rightside {
+    float: right;
+    margin-top: 10px;
+}
+
+.dashboard-goals {
+    padding: 10px 0 0 30px;
+    font-size: 13pt;
+}
+
+.dashboard-goal-config h5 {
+    margin-left: 15px;
+    color: rgb(91, 91, 91);
+    font-weight: normal;
+    font-size: 90%;
+}
+
+.dashboard-goals-actions {
+    margin-top: 15px;
+}
+
+.dashboard-goal-table th,
+.dashboard-goal-table td {
+    padding: 0 8px 0 8px;
+    vertical-align: middle;
+}
+
+.dashboard-goal-value {
+    font-weight: bold;
+    width: 90px;
+}
+
+.dashboard-goal-text {
+    padding: 8px !important;
+}
+
+.dashboard-profile-heatmap {
+    width: 100%;
+}
+
+.dashboard-profile-heatmap-list {
+    clear: both;
+    margin-right: 20px;
+}
+
+    .dashboard-profile-heatmap-list > p {
+        margin: 0 0 8px 0;
+        font-size: 14px;
+        font-weight: bold;
+        font-family: Consolas, courier;
+    }
+
+    .dashboard-profile-heatmap-list ul {
+        list-style-type: none;
+    }
+
+        .dashboard-profile-heatmap-list ul li {
+            list-style-type: none;
+            padding: 8px 15px 8px 0;
+            border-bottom: 1px solid #eee;
+            margin: 0;
+        }
+
+            .dashboard-profile-heatmap-list ul li a {
+                display: block;
+                font-weight: bold;
+                font-family: Consolas, courier;
+            }
+
+            .dashboard-profile-heatmap-list ul li span.action {
+                display: inline-block;
+                color: #888;
+                vertical-align: top;
+                margin-right: 5px;
+                font-family: Consolas, courier;
+            }
+
+            .dashboard-profile-heatmap-list ul li span.points {
+                display: inline-block;
+                float: right;
+                text-transform: uppercase;
+                font-weight: bold;
+                text-align: right;
+                color: #888;
+                vertical-align: top;
+                margin-right: 15px;
+                font-family: Consolas, courier;
+            }
+
+            .dashboard-profile-heatmap-list ul li span.area {
+                display: inline-block;
+                float: right;
+                text-transform: uppercase;
+                width: 140px;
+                text-align: right;
+                color: #888;
+                vertical-align: top;
+                font-weight: bold;
+                font-family: Consolas, courier;
+            }
+
+
+/* profile features */
+.dashboard-features .dnnAdminTabNav {
+    border-bottom: none;
+}
+
+    .dashboard-features .dnnAdminTabNav li.tabNavTab {
+        margin: 0;
+    }
+
+        .dashboard-features .dnnAdminTabNav li.tabNavTab.tabNavCurrentTab a {
+            background: linear-gradient(to bottom, #d1cdc8 0, #b6afa9 100%);
+            border-style: solid;
+            border-color: #ddd;
+            border-radius: 0;
+            border-left: none;
+            border-bottom: none;
+            color: #fff;
+            text-shadow: 0 -1px 0 #999;
+            box-shadow: none;
+        }
+
+        .dashboard-features .dnnAdminTabNav li.tabNavTab a {
+            border-style: solid;
+            border-radius: 0;
+            border-left: none;
+            border-color: #ddd;
+            border-bottom: 1px solid #ddd;
+            color: #777;
+            text-shadow: 0 1px 0 #fff;
+            background: linear-gradient(to bottom, #fff 0,#eee6e5 100%);
+            box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 1);
+            padding: 9px 15px 9px 15px;
+        }
+
+        .dashboard-features .dnnAdminTabNav li.tabNavTab:first-child a {
+            border-left: 1px solid #ddd;
+        }
+
+        /* this is used to fix message module override profile features button */
+        .dashboard-features .dnnAdminTabNav li.tabNavTab a span {
+            box-shadow: none;
+            border-radius: 0;
+            background: none;
+            min-height: inherit;
+            padding: inherit;
+            margin: inherit;
+            font-size: inherit;
+            font-weight: inherit;
+        }
+
+/* d3 style */
+rect.day:hover {
+    stroke: #555;
+    stroke-width: 1px;
+    shape-rendering: crispedges;
+}
+
+text.dayLabel, text.monthLabel, text.legendLabel {
+    fill: #aaa;
+    font-size: 11px;
+    font-family: Consolas, courier;
+}
+
+.dashboard-container-subscriptions .dnnFormMessage {
+    margin-top: 20px;
+}
+
+.dashboard-container-subscriptions a {
+    margin-top: 15px;
+}

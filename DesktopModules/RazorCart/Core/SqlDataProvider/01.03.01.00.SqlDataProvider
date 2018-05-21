@@ -1,0 +1,637 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****               Create Tables                      *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****                  Alter Tables                    *****/
+/************************************************************/
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ProductQtyDiscounts') AND type in (N'U'))
+BEGIN
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ProductQtyDiscounts') AND name = N'DiscountLevel')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_ProductQtyDiscounts
+		ADD
+			[DiscountLevel] [VARCHAR](512)
+	END
+END
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ProductDiscountsByRole') AND type in (N'U'))
+BEGIN
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ProductDiscountsByRole') AND name = N'DiscountLevel')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_ProductDiscountsByRole
+		ADD
+			[DiscountLevel] [VARCHAR](512)
+	END
+END
+GO
+
+
+
+/************************************************************/
+/*****              Drop Functions                      *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****              Create Functions                    *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****                Drop Sprocs                       *****/
+/************************************************************/
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListProductsByFilter') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListProductsByFilter
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_CreateProductQuantityDiscount') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateProductQuantityDiscount
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_UpdateProductQuantityDiscount') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateProductQuantityDiscount
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_CreateProductRoleDiscount') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateProductRoleDiscount
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_UpdateProductRoleDiscount') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateProductRoleDiscount
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_GetProductByID') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_GetProductByID
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_GetProductBySEO') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_GetProductBySEO
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_GetProductBySKU') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_GetProductBySKU
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListOrdersByFilter') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListOrdersByFilter
+GO
+
+
+/************************************************************/
+/*****               Create Sprocs                      *****/
+/************************************************************/
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListProductsByFilter
+	@PageNumber INT = NULL,
+	@PageSize INT = NULL,
+	@OrderColumn VARCHAR(128) = NULL,
+	@OrderDirection VARCHAR(4) = NULL,
+	@SearchText NVARCHAR(128) = NULL,
+	@CatList VARCHAR(1000) = NULL,
+	@MinPrice MONEY = NULL,
+	@MaxPrice MONEY = NULL,
+	@IsSaleEnabled BIT = NULL,
+	@UserID INT = NULL,
+	@IsAdmin BIT = NULL,
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	DECLARE @TodayDate DATETIME = CONVERT(DATE, GETDATE())
+	DECLARE @CatPIDTbl TABLE ([PID] INT)
+	SET @CatList = NULLIF(LTRIM(RTRIM(@CatList)), '')
+	IF @CatList IS NOT NULL
+	BEGIN
+    	DECLARE @CatIDTbl TABLE ([RowNo] INT, [CatID] INT)
+		INSERT INTO @CatIDTbl
+		SELECT CT.[RowNo], CI.[Value]
+		FROM (
+				SELECT ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) [RowNo], [Value]
+				FROM {databaseOwner}{objectQualifier}RZC_FxSplit(@CatList, '|')
+			) CT
+			CROSS APPLY (
+				SELECT [Value]
+				FROM {databaseOwner}{objectQualifier}RZC_FxSplit(CT.[Value], ',')
+			) CI
+		INSERT INTO @CatPIDTbl
+		SELECT DISTINCT CP.ProductID
+		FROM {databaseOwner}{objectQualifier}Smith_CategoryProduct CP JOIN @CatIDTbl C ON C.CatID = CP.CategoryID
+		GROUP BY CP.ProductID
+		HAVING COUNT(DISTINCT C.[RowNo]) = (SELECT COUNT(DISTINCT C2.[RowNo]) FROM @CatIDTbl C2)
+	END
+
+	DECLARE @ProductList TABLE ([ProductID] INT, [TotalRecords] INT)
+	INSERT INTO
+		@ProductList
+	SELECT
+		P.[ProductID], COUNT(*) OVER() AS [TotalRecords]
+	FROM
+		{databaseOwner}{objectQualifier}Smith_Products P WITH (NOLOCK)
+	LEFT JOIN
+		@CatPIDTbl PT
+	ON
+		P.[ProductID] = PT.[PID]
+	CROSS APPLY
+	(
+		SELECT
+		(
+			CASE WHEN
+				@IsSaleEnabled = 1 AND P.[SalePrice] > 0
+				AND (
+					@TodayDate BETWEEN P.[SaleStartDate] AND P.[SaleEndDate]
+				)
+			THEN
+				P.[SalePrice]
+			ELSE
+				P.[UnitCost]
+			END
+		) AS [SellingPrice]
+	) PR
+	WHERE
+		(NULLIF(@SearchText, '') IS NULL
+			OR (
+				(LEFT(@SearchText, 1) = '#' AND P.[ProductID] = TRY_CONVERT(INT, SUBSTRING(@SearchText, 2, LEN(@SearchText))))
+				OR (LEFT(@SearchText, 1) <> '#'
+					AND (
+						P.[ModelName] LIKE '%' + @SearchText + '%'
+						OR P.[ModelNumber] LIKE '%' + @SearchText + '%'
+						OR P.[Description] Like '%' + @SearchText + '%'
+						OR P.[Summary] Like '%' + @SearchText + '%'
+					)
+				)
+			)
+		)
+		AND (
+			@UserID = 0
+			OR (
+				P.[ProductID] NOT IN (
+					SELECT HR.[ProductID] FROM {databaseOwner}{objectQualifier}Smith_ProductHideRole HR
+					JOIN {databaseOwner}{objectQualifier}UserRoles UR ON UR.[RoleID] = HR.[RoleID]
+					WHERE UR.[UserID] = @UserID
+				)
+				AND (P.[ShowProductRole] = 0 OR P.[ProductID] IN (
+					SELECT SR.[ProductID] FROM {databaseOwner}{objectQualifier}Smith_ProductShowRole SR
+					JOIN {databaseOwner}{objectQualifier}UserRoles UR ON UR.[RoleID] = SR.[RoleID]
+					WHERE UR.[UserID] = @UserID)
+				)
+			)
+		)
+		AND (
+			@IsAdmin = 1 OR ((P.[ActiveFrom] IS NULL OR GETDATE() >= P.[ActiveFrom])
+			AND (P.[ActiveTo] IS NULL OR P.[ActiveTo] = CAST(-53690 AS DATETIME) OR GETDATE() <= P.[ActiveTo]))
+		)
+		AND (@MinPrice = -1 OR PR.[SellingPrice] >= @MinPrice)
+		AND (@MaxPrice = -1 OR PR.[SellingPrice] <= @MaxPrice)
+		AND (
+			PT.[PID] IS NOT NULL
+			OR @CatList IS NULL
+		)
+		AND P.[LogicallyDeleted] <> 1
+		AND (@IsAdmin = 1 OR (P.[Archived] <> 1 AND P.[HideProduct] <> 1))
+		AND (P.[StoreID] = @StoreID OR P.[TabModuleId] = @StoreID OR P.[Share] = 1 OR @StoreID = -1)
+		AND P.[PortalID] = @PortalID
+	ORDER BY
+		CASE WHEN (@OrderColumn = 'SortOrder' AND @OrderDirection = 'ASC') THEN P.[SortOrder] END ASC,
+		CASE WHEN (@OrderColumn = 'SortOrder' AND @OrderDirection = 'DESC') THEN P.[SortOrder] END DESC,
+		CASE WHEN (@OrderColumn = 'UnitCost' AND @OrderDirection = 'ASC') THEN P.[UnitCost] END ASC,
+		CASE WHEN (@OrderColumn = 'UnitCost' AND @OrderDirection = 'DESC') THEN P.[UnitCost] END DESC,
+		CASE WHEN (@OrderColumn = 'SellingPrice' AND @OrderDirection = 'ASC') THEN PR.[SellingPrice] END ASC,
+		CASE WHEN (@OrderColumn = 'SellingPrice' AND @OrderDirection = 'DESC') THEN PR.[SellingPrice] END DESC,
+		CASE WHEN (@OrderColumn = 'ModelName' AND @OrderDirection = 'ASC') THEN P.[ModelName] END ASC,
+		CASE WHEN (@OrderColumn = 'ModelName' AND @OrderDirection = 'DESC') THEN P.[ModelName] END DESC,
+		CASE WHEN (@OrderColumn = 'ModelNumber' AND @OrderDirection = 'ASC') THEN P.[ModelNumber] END ASC,
+		CASE WHEN (@OrderColumn = 'ModelNumber' AND @OrderDirection = 'DESC') THEN P.[ModelNumber] END DESC,
+		CASE WHEN (@OrderColumn = 'Manufacturer' AND @OrderDirection = 'ASC') THEN P.[Manufacturer] END ASC,
+		CASE WHEN (@OrderColumn = 'Manufacturer' AND @OrderDirection = 'DESC') THEN P.[Manufacturer] END DESC,
+		CASE WHEN (@OrderColumn = 'CreatedDate' AND @OrderDirection = 'ASC') THEN P.[CreatedDate] END ASC,
+		CASE WHEN (@OrderColumn = 'CreatedDate' AND @OrderDirection = 'DESC') THEN P.[CreatedDate] END DESC,
+		CASE WHEN (@OrderColumn = 'QuantityOnHand' AND @OrderDirection = 'ASC') THEN P.[QuantityOnHand] END ASC,
+		CASE WHEN (@OrderColumn = 'QuantityOnHand' AND @OrderDirection = 'DESC') THEN P.[QuantityOnHand] END DESC,
+		CASE WHEN (@OrderColumn = 'ProductID' AND @OrderDirection = 'ASC') THEN P.[ProductID] END ASC,
+		CASE WHEN (@OrderColumn = 'ProductID' AND @OrderDirection = 'DESC') THEN P.[ProductID] END DESC
+	OFFSET
+		@PageSize * (@PageNumber - 1) ROWS
+	FETCH NEXT
+		@PageSize ROWS ONLY
+
+	DECLARE @TotalRecords INT = (SELECT TOP 1 [TotalRecords] FROM @ProductList)
+	DECLARE @MoreRecords INT = (@TotalRecords - ((SELECT COUNT(*) FROM @ProductList) + (@PageSize * (@PageNumber - 1))))
+	SELECT
+		P.*, I.[ThumbImage], I.[LargeImage], I.[ZoomImage], I.[Title] AS [ImageTitle], I.[AltTag] AS [ImageAlt], V.[HasVariants], @TotalRecords AS [TotalRecords], @MoreRecords AS [MoreRecords]
+	FROM
+		{databaseOwner}{objectQualifier}Smith_Products P
+	INNER JOIN
+		@ProductList PL
+	ON
+		P.[ProductID] = PL.[ProductID]
+	OUTER APPLY
+	(
+		SELECT TOP 1
+			IMG.*
+		FROM
+			{databaseOwner}{objectQualifier}Smith_ProductImages IMG
+		WHERE
+			IMG.[ProductID] = P.[ProductID]
+		ORDER BY
+			IMG.[SortOrder] ASC
+	) I
+	CROSS APPLY
+	(
+		SELECT CASE WHEN EXISTS
+		(
+			SELECT PV.[VariantID]
+			FROM {databaseOwner}{objectQualifier}Smith_ProductVariant PV
+			WHERE PV.[ProductID] = P.[ProductID]
+		)
+		THEN 1
+		ELSE 0
+		END AS [HasVariants]
+	) V
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateProductQuantityDiscount
+	@ProductID INT = NULL,
+	@QtyFrom INT = NULL,
+	@QtyTo INT = NULL,
+	@Price MONEY = NULL,
+	@AdjustType VARCHAR(50) = NULL,
+	@RoleID INT = NULL,
+	@PaymentMethod VARCHAR(100) = NULL,
+	@DisplayLabel NVARCHAR(50) = NULL,
+	@DiscountLevel VARCHAR(512) = NULL,
+	@TabModuleId INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	INSERT INTO
+		{databaseOwner}{objectQualifier}Smith_ProductQtyDiscounts
+		([ProductID]
+		,[QtyFrom]
+		,[QtyTo]
+		,[Price]
+		,[AdjustType]
+		,[RoleID]
+		,[PaymentMethod]
+		,[DisplayLabel]
+		,[DiscountLevel]
+		,[TabModuleId]
+		,[PortalId])
+	VALUES
+		(@ProductID
+		,@QtyFrom
+		,@QtyTo
+		,@Price
+		,@AdjustType
+		,@RoleID
+		,@PaymentMethod
+		,@DisplayLabel
+		,@DiscountLevel
+		,@TabModuleId
+		,@PortalID)
+	SELECT SCOPE_IDENTITY()
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateProductQuantityDiscount
+	@QtyDiscountID INT = NULL,
+	@ProductID INT = NULL,
+	@QtyFrom INT = NULL,
+	@QtyTo INT = NULL,
+	@Price MONEY = NULL,
+	@AdjustType VARCHAR(50) = NULL,
+	@RoleID INT = NULL,
+	@PaymentMethod VARCHAR(100) = NULL,
+	@DisplayLabel NVARCHAR(50) = NULL,
+	@DiscountLevel VARCHAR(512) = NULL,
+	@TabModuleId INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	UPDATE
+		{databaseOwner}{objectQualifier}Smith_ProductQtyDiscounts
+	SET
+		[ProductID] = @ProductID,
+		[QtyFrom] = @QtyFrom,
+		[QtyTo] = @QtyTo,
+		[Price] = @Price,
+		[AdjustType] = @AdjustType,
+		[RoleID] = @RoleID,
+		[PaymentMethod] = @PaymentMethod,
+		[DisplayLabel] = @DisplayLabel,
+		[DiscountLevel] = @DiscountLevel,
+		[TabModuleId] = @TabModuleId,
+		[PortalId] = @PortalID
+	WHERE
+		[QtyDiscountID] = @QtyDiscountID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateProductRoleDiscount
+	@ProductID INT = NULL,
+	@RoleID INT = NULL,
+	@DiscountPercent DECIMAL(6,2) = NULL,
+	@DiscountAmount MONEY = NULL,
+	@DiscountLevel VARCHAR(512) = NULL,
+	@UserName NVARCHAR(100) = NULL,
+	@StartDate DATETIME = NULL,
+	@EndDate DATETIME = NULL,
+	@InvertRole BIT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	INSERT INTO
+		{databaseOwner}{objectQualifier}Smith_ProductDiscountsByRole
+		([ProductID]
+		,[RoleID]
+		,[DiscountPercent]
+		,[DiscountAmount]
+		,[DiscountLevel]
+		,[UserName]
+		,[StartDate]
+		,[EndDate]
+		,[InvertRole]
+		,[PortalID])
+	VALUES
+		(@ProductID
+		,@RoleID
+		,@DiscountPercent
+		,@DiscountAmount
+		,@DiscountLevel
+		,@UserName
+		,@StartDate
+		,@EndDate
+		,@InvertRole
+		,@PortalID)
+	SELECT SCOPE_IDENTITY()
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateProductRoleDiscount
+	@DiscountID INT = NULL,
+	@ProductID INT = NULL,
+	@RoleID INT = NULL,
+	@DiscountPercent DECIMAL(6,2) = NULL,
+	@DiscountAmount MONEY = NULL,
+	@DiscountLevel VARCHAR(512) = NULL,
+	@UserName NVARCHAR(100) = NULL,
+	@StartDate DATETIME = NULL,
+	@EndDate DATETIME = NULL,
+	@InvertRole BIT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	UPDATE
+		{databaseOwner}{objectQualifier}Smith_ProductDiscountsByRole
+	SET
+		[ProductID] = @ProductID,
+		[RoleID] = @RoleID,
+		[DiscountPercent] = @DiscountPercent,
+		[DiscountAmount] = @DiscountAmount,
+		[DiscountLevel] = @DiscountLevel,
+		[UserName] = @UserName,
+		[StartDate] = @StartDate,
+		[EndDate] = @EndDate,
+		[InvertRole] = @InvertRole,
+		[PortalID] = @PortalID
+	WHERE
+		[DiscountID] = @DiscountID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_GetProductByID
+	@ProductID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SELECT
+		P.*, I.[ThumbImage], I.[LargeImage], I.[ZoomImage], I.[Title] AS [ImageTitle], I.[AltTag] AS [ImageAlt], V.[HasVariants]
+	FROM
+		{databaseOwner}{objectQualifier}Smith_Products P
+	OUTER APPLY
+	(
+		SELECT TOP 1
+			IMG.*
+		FROM
+			{databaseOwner}{objectQualifier}Smith_ProductImages IMG
+		WHERE
+			IMG.[ProductID] = P.[ProductID]
+		ORDER BY
+			IMG.[SortOrder] ASC
+	) I
+	CROSS APPLY
+	(
+		SELECT CASE WHEN EXISTS
+		(
+			SELECT PV.[VariantID]
+			FROM {databaseOwner}{objectQualifier}Smith_ProductVariant PV
+			WHERE PV.[ProductID] = P.[ProductID]
+		)
+		THEN CAST(1 AS BIT)
+		ELSE CAST(0 AS BIT)
+		END AS [HasVariants]
+	) V
+	WHERE
+		P.[ProductID] = @ProductID
+		AND P.[PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_GetProductBySEO
+	@ProductSEO VARCHAR(80) = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SELECT TOP 1
+		P.*, I.[ThumbImage], I.[LargeImage], I.[ZoomImage], I.[Title] AS [ImageTitle], I.[AltTag] AS [ImageAlt], V.[HasVariants]
+	FROM
+		{databaseOwner}{objectQualifier}Smith_Products P
+	OUTER APPLY
+	(
+		SELECT TOP 1
+			IMG.*
+		FROM
+			{databaseOwner}{objectQualifier}Smith_ProductImages IMG
+		WHERE
+			IMG.[ProductID] = P.[ProductID]
+		ORDER BY
+			IMG.[SortOrder] ASC
+	) I
+	CROSS APPLY
+	(
+		SELECT CASE WHEN EXISTS
+		(
+			SELECT PV.[VariantID]
+			FROM {databaseOwner}{objectQualifier}Smith_ProductVariant PV
+			WHERE PV.[ProductID] = P.[ProductID]
+		)
+		THEN CAST(1 AS BIT)
+		ELSE CAST(0 AS BIT)
+		END AS [HasVariants]
+	) V
+	WHERE
+		P.[SEOURL] = @ProductSEO
+		AND P.[PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_GetProductBySKU
+	@ProductSKU VARCHAR(50) = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SELECT TOP 1
+		P.*, I.[ThumbImage], I.[LargeImage], I.[ZoomImage], I.[Title] AS [ImageTitle], I.[AltTag] AS [ImageAlt], V.[HasVariants]
+	FROM
+		{databaseOwner}{objectQualifier}Smith_Products P
+	OUTER APPLY
+	(
+		SELECT TOP 1
+			IMG.*
+		FROM
+			{databaseOwner}{objectQualifier}Smith_ProductImages IMG
+		WHERE
+			IMG.[ProductID] = P.[ProductID]
+		ORDER BY
+			IMG.[SortOrder] ASC
+	) I
+	CROSS APPLY
+	(
+		SELECT CASE WHEN EXISTS
+		(
+			SELECT PV.[VariantID]
+			FROM {databaseOwner}{objectQualifier}Smith_ProductVariant PV
+			WHERE PV.[ProductID] = P.[ProductID]
+		)
+		THEN CAST(1 AS BIT)
+		ELSE CAST(0 AS BIT)
+		END AS [HasVariants]
+	) V
+	WHERE
+		P.[ModelNumber] = @ProductSKU
+		AND P.[PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListOrdersByFilter
+	@PageNumber INT = NULL,
+	@PageSize INT = NULL,
+	@OrderColumn VARCHAR(128) = NULL,
+	@OrderDirection VARCHAR(4) = NULL,
+	@Status VARCHAR(128) = NULL,
+	@SearchValue NVARCHAR(256) = NULL,
+	@CustomerID INT = NULL,
+	@DateFrom DATETIME = NULL,
+	@DateTo DATETIME = NULL,
+	@ModifiedFrom DATETIME = NULL,
+	@ModifiedTo DATETIME = NULL,
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SET NOCOUNT ON;
+	DECLARE @PageRecordStart INT
+	DECLARE @PageRecordEnd INT
+
+	SET @PageRecordStart = ((@PageNumber - 1) * @PageSize) + 1
+	SET @PageRecordEnd = @PageNumber * @PageSize
+
+	;WITH [OrdersPage] AS
+	(
+		SELECT
+			(
+				CASE
+					WHEN @OrderColumn = 'Status' AND @OrderDirection = 'ASC' THEN ROW_NUMBER() OVER (ORDER BY O.[Status] ASC)
+					WHEN @OrderColumn = 'Status' AND @OrderDirection = 'DESC' THEN ROW_NUMBER() OVER (ORDER BY O.[Status] DESC)
+					WHEN @OrderColumn = 'OrderID' AND @OrderDirection = 'ASC' THEN ROW_NUMBER() OVER (ORDER BY O.[OrderID] ASC)
+					WHEN @OrderColumn = 'OrderID' AND @OrderDirection = 'DESC' THEN ROW_NUMBER() OVER (ORDER BY O.[OrderID] DESC)
+					WHEN @OrderColumn = 'OrderDate' AND @OrderDirection = 'ASC' THEN ROW_NUMBER() OVER (ORDER BY O.[OrderDate] ASC)
+					WHEN @OrderColumn = 'OrderDate' AND @OrderDirection = 'DESC' THEN ROW_NUMBER() OVER (ORDER BY O.[OrderDate] DESC)
+					WHEN @OrderColumn = 'GrandTotal' AND @OrderDirection = 'ASC' THEN ROW_NUMBER() OVER (ORDER BY O.[GrandTotal] ASC)
+					WHEN @OrderColumn = 'GrandTotal' AND @OrderDirection = 'DESC' THEN ROW_NUMBER() OVER (ORDER BY O.[GrandTotal] DESC)
+					WHEN @OrderColumn = 'DateModified' AND @OrderDirection = 'ASC' THEN ROW_NUMBER() OVER (ORDER BY O.[DateModified] ASC)
+					WHEN @OrderColumn = 'DateModified' AND @OrderDirection = 'DESC' THEN ROW_NUMBER() OVER (ORDER BY O.[DateModified] DESC)
+				ELSE ROW_NUMBER() OVER (ORDER BY O.[OrderID] ASC)
+				END
+			) AS [RowNo], O.*, P.[PaidTotal]
+		FROM
+			{databaseOwner}{objectQualifier}Smith_StoreOrders O
+		OUTER APPLY
+		(
+			SELECT
+				ISNULL(SUM(PH.[Amount]), 0) AS 'PaidTotal'
+			FROM
+				{databaseOwner}{objectQualifier}Smith_PayHist PH
+			WHERE
+				PH.[OrderID] = O.[OrderID]
+				AND PH.[Success] = 1
+		) P
+		WHERE
+			(NULLIF(@SearchValue, '') IS NULL
+				OR (
+					(LEFT(@SearchValue, 1) = '#' AND O.[OrderID] = TRY_CONVERT(INT, SUBSTRING(@SearchValue, 2, LEN(@SearchValue))))
+					OR (LEFT(@SearchValue, 1) <> '#'
+						AND (
+							O.[ShipFirstName] LIKE '%' + @SearchValue + '%'
+							OR O.[ShipLastName] LIKE '%' + @SearchValue + '%'
+							OR O.[ShipAddress1] LIKE '%' + @SearchValue + '%'
+							OR O.[ShipAddress2] LIKE '%' + @SearchValue + '%'
+							OR O.[ShipCity] LIKE '%' + @SearchValue + '%'
+							OR O.[ShipZipcode] LIKE '%' + @SearchValue + '%'
+							OR O.[ShipMethod] LIKE '%' + @SearchValue + '%'
+							OR O.[SpecialInstructions] LIKE '%' + @SearchValue + '%'
+							OR O.[Status] IN (SELECT * FROM {databaseOwner}{objectQualifier}RZC_FxSplit(@SearchValue, ','))
+						)
+					)
+				)
+			)
+			AND (NULLIF(@Status, '') IS NULL
+				OR (
+					O.[Status] = @Status
+					OR ('Unpaid' IN (SELECT * FROM {databaseOwner}{objectQualifier}RZC_FxSplit(@Status, ',')) AND P.[PaidTotal] < O.[GrandTotal])
+					OR ('Paid' IN (SELECT * FROM {databaseOwner}{objectQualifier}RZC_FxSplit(@Status, ',')) AND P.[PaidTotal] >= O.[GrandTotal])
+				)
+			)
+			AND (
+				CONVERT(DATE, O.[OrderDate]) BETWEEN ISNULL(@DateFrom, CAST(-53690 AS DATETIME)) AND ISNULL(@DateTo, GETDATE())
+			)
+			AND (
+				CONVERT(DATETIME, O.[DateModified]) BETWEEN ISNULL(@ModifiedFrom, CAST(-53690 AS DATETIME)) AND ISNULL(@ModifiedTo, GETDATE())
+			)
+			AND (NULLIF(@CustomerID, '-1') IS NULL OR O.[CustomerID] = @CustomerID)
+			AND (O.[StoreID] = @StoreID OR @StoreID = -1)
+			AND O.[PortalID] = @PortalID
+	)
+	SELECT
+		*,
+		TotalRecords = (
+			SELECT COUNT(*) FROM [OrdersPage]
+		),
+		MoreRecords = (
+			SELECT COUNT(*) FROM [OrdersPage]
+			WHERE [RowNo] > @PageRecordEnd
+		)
+	FROM
+		[OrdersPage]
+	WHERE
+		[RowNo] BETWEEN @PageRecordStart AND @PageRecordEnd
+	ORDER BY
+		[RowNo];
+END
+GO
+
+
+
+/************************************************************/
+/*****               End of Script                      *****/
+/************************************************************/

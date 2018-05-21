@@ -1,0 +1,63 @@
+﻿IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}MyStatus_GetItemCount]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}MyStatus_GetItemCount]
+GO
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}MyStatus_GetItemCount]
+	@PortalId INT,
+	@UserId INT,
+	@ContentTypeId INT
+AS
+BEGIN
+	SELECT COUNT(*) FROM {databaseOwner}[{objectQualifier}ContentItems] CI
+	INNER JOIN {databaseOwner}[{objectQualifier}Modules] M ON M.ModuleID = CI.ModuleID
+		WHERE CI.[CreatedByUserID] = @UserId
+		  AND CI.[ContentTypeId] = @ContentTypeId
+		  AND CI.[TabID] != -1
+		  AND CI.[ModuleID] != -1
+		  AND M.PortalID = @PortalId	
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}MyStatus_GetContentItemsByType]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}MyStatus_GetContentItemsByType]
+GO
+CREATE PROCEDURE  {databaseOwner}[{objectQualifier}MyStatus_GetContentItemsByType]
+	@PortalId INT,
+	@UserId INT,
+	@ContentTypeId INT,
+	@PageIndex INT,
+	@PageSize INT
+AS
+BEGIN
+	;WITH contentItems AS(
+		SELECT
+			CI.*, M.PortalID,
+			ROW_NUMBER() OVER (ORDER BY
+				CASE WHEN CI.[LastModifiedOnDate] IS NOT NULL THEN CI.[LastModifiedOnDate] ELSE CI.[CreatedOnDate] END DESC)
+			AS [RowNumber]
+		FROM {databaseOwner}[{objectQualifier}ContentItems] CI
+		INNER JOIN {databaseOwner}[{objectQualifier}Modules] M ON CI.ModuleID = M.ModuleID
+		WHERE CI.[CreatedByUserID] = @UserId
+		  AND CI.[ContentTypeId] = @ContentTypeId
+		  AND CI.[TabID] != -1
+		  AND CI.[ModuleID] != -1
+		  AND M.PortalID = @PortalId
+	)
+	SELECT TOP (@PageSize) * FROM contentItems WHERE RowNumber > (@PageIndex * @PageSize) ORDER BY RowNumber ASC
+END
+GO
+
+IF NOT EXISTS (SELECT name FROM sys.indexes WHERE name = 'IX_{objectQualifier}ContentItems_ByUser')
+BEGIN
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}ContentItems_ByUser] ON {databaseOwner}[{objectQualifier}ContentItems]
+		([CreatedByUserID] ASC)
+	WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF)
+END
+GO
+
+IF NOT EXISTS (SELECT name FROM sys.indexes WHERE name = 'IX_{objectQualifier}ContentItems_LastModifiedOnDate')
+BEGIN
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}ContentItems_LastModifiedOnDate] ON {databaseOwner}[{objectQualifier}ContentItems]
+		([LastModifiedOnDate] DESC)
+	WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF)
+END
+GO

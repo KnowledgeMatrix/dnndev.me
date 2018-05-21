@@ -1,0 +1,87 @@
+<!--HeaderTemplateBegin-->
+[Has:EDG:BreadCrumbLink]<div class="edsgg_breadcrumbs">[EDG:BreadCrumbLink]</div>[/Has:EDG:BreadCrumbLink]
+[Has:EDG:CommunityMode]<div class="edsgg_myGalleriesLinkWrapper">[EDG:CommunityModeEditMedia]</div>[/Has:EDG:CommunityMode]
+[Has:EDG:NewsArticleLink]<div class="edsgg_newsArticleLinkWrapper"><a class="edsgg_newsArticleLink" href="[EDG:NewsArticleLink]">[EDG:LocalizedText:BacktoArticle]</a></div>[/Has:EDG:NewsArticleLink]
+<div class="edsgg_clear"></div>
+[Has:EDG:ItemParentGalleryTitle]<h1 class="edsgg_mainTitle">[EDG:ItemParentGalleryTitle]</h1>[/Has:EDG:ItemParentGalleryTitle]
+[Has:EDG:ItemParentGalleryDescription]<div class="edsgg_description">[EDG:ItemParentGalleryDescription]</div>[/Has:EDG:ItemParentGalleryDescription]
+<!--HeaderTemplateEnd-->
+
+<!--ItemTemplateBegin-->
+<div style="width: [EDG:ListItemThumbWidth]px;">
+	[Has:EDG:EditPermission][EDG:EditMediaData][/Has:EDG:EditPermission]
+	<div class="edsgg_itemContainer" data-media-id="[EDG:MediaID]">
+		<div class="edsgg_link">
+			[EDG:DontEmbedInPage]
+			<a class="edsgg__itemDetailsAndLightboxTrigger" target="[EDG:MediaUrlTarget]" href="[EDG:ItemMediaLink]" title="[EDG:ItemTitle]">
+				<span class="edsgg_thumbnail" >
+					<img src="[EDG:ItemThumbnail]" alt="[EDG:ItemTitle]"/>
+					<span class="edsgg_moreLink edsgg_mediaType_[EDG:MediaType]"><span></span></span>
+				</span>
+			</a>
+			[Has:EDG:MediaType]<span class="edsgg_madiaType edsgg_mediaType_[EDG:MediaType]"></span>[/Has:EDG:MediaType]
+			<div class="edsgg_topOverlay">
+				[EDG:MediaLike]
+				[Has:EDG:NumberOfLikes][EDG:NumberOfLikes][/Has:EDG:NumberOfLikes]
+			</div>
+			<div class="edsgg_socialAndRSS">
+				[Has:EDG:EmailLink]
+				<span class="edsgg_emailLink"><a title="[EDG:LocalizedText:Email]" href="mailto:?to=&amp;subject=[EDG:LocalizedText:EmailSubject]&amp;body=[EDG:LocalizedText:EmailBody][EDG:CurrentMediaURL]"><span>[EDG:LocalizedText:Email]</span></a></span>
+				[/Has:EDG:EmailLink]
+				[Has:EDG:ItemsSharingButtons]<span class="edsgg_SharingButtons">[EDG:ItemsShareButtons]</span>[/Has:EDG:ItemsSharingButtons]
+			</div>
+			[/EDG:DontEmbedInPage]
+			[EDG:EmbedInPage]
+			<div class="edsgg_thumbnail edsgg_mediaType_[EDG:MediaType] edsgg_EmbedInPage" >
+				[EDG:EmbedMediaData]
+				<div class="edsgg_topOverlay">
+					[EDG:MediaLike]
+					[Has:EDG:NumberOfLikes][EDG:NumberOfLikes][/Has:EDG:NumberOfLikes]
+					[Has:EDG:ItemsSharingButtons]<span class="edsgg_SharingButtons">[EDG:ItemsShareButtons]</span>[/Has:EDG:ItemsSharingButtons]
+				</div>
+			</div>
+			[/EDG:EmbedInPage]
+			[Has:EDG:MediaDownload]
+			<a class="edsgg_MediaDownloadLink" href="[EDG:MediaDownloadLink]" >[EDG:LocalizedText:DownloadMedia]<span>[EDG:DownloadMediaExtension] ([EDG:DownloadMediaSize])</span></a>
+			[/Has:EDG:MediaDownload]
+		</div>
+		[Has:EDG:ItemTitle]<span class="edsgg_title"><a href="[EDG:ItemMediaLink]" title="[EDG:ItemTitle]">[EDG:ItemTitle]</a></span>[/Has:EDG:ItemTitle]
+		[Has:EDG:ItemDescription]<div class="edsgg_ItemsDescription">[EDG:ItemDescription]</div>[/Has:EDG:ItemDescription]
+		<div class="edsgg_details">
+			<ul>
+				[Has:EDG:ItemNumberOfViews]
+				<li class="edsgg_numberOfViews"><span class="edsgg_icon"></span><span>[EDG:ItemNumberOfViews]</span></li>
+				[/Has:EDG:ItemNumberOfViews]
+				[Has:EDG:NumberOfComments]
+				<li class="edsgg_numberOfComments"><span class="edsgg_icon"></span><span>[EDG:NumberOfComments]</span></li>
+				[/Has:EDG:NumberOfComments]
+				[Has:EDG:MediaRatingAction]
+				<li class="edsgg_MediaRating">[EDG:MediaRatingAction][EDG:MediaRatingValue]</li>
+				[/Has:EDG:MediaRatingAction]
+				[Has:EDG:ReportMedia]
+				<li class="edsgg_reportMediaItem">
+					[EDG:ReportMedia]
+				</li>
+				[/Has:EDG:ReportMedia]
+				[Has:EDG:ItemUploaderInfo]
+				<li class="edsgg_autorInfo">
+					<div>
+						<span>[EDG:ItemAuthor]</span>
+						<div>
+							<a class="edsgg_GalleryOwnerAvatar" href="[EDG:ItemAuthorProfileLink]">[EDG:ItemAuthorAvatar]</a>
+							<a class="edsgg_GalleryOwner" href="[EDG:ItemAuthorProfileLink]">[EDG:ItemAuthor]</a>
+						</div>
+					</div>
+				</li>
+				[/Has:EDG:ItemUploaderInfo]
+			</ul>
+			<div class="edsgg_clear"></div>
+		</div>
+	</div>
+</div>
+<!--ItemTemplateEnd-->
+
+<!--FooterTemplateBegin-->
+[EDG:ItemPaging]
+[Has:EDG:ItemListShowRss]<div class="edsgg_listRssWrapper"><a href="[EDG:ItemListRSSURL]"><span>[EDG:LocalizedText:RSS]</span></a></div>[/Has:EDG:ItemListShowRss]
+<!--FooterTemplateEnd-->

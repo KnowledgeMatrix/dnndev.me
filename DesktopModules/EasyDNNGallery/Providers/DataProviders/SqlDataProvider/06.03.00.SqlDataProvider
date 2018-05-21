@@ -1,0 +1,21 @@
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryGravityGallerySettings' AND column_name = 'ShowImages')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryGravityGallerySettings] ADD ShowImages BIT CONSTRAINT DF_{objectQualifier}EasyGalleryGravityGallerySettings_ShowImages DEFAULT (1) NOT NULL
+END
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryGravityGallerySettings' AND column_name = 'ShowVideos')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryGravityGallerySettings] ADD ShowVideos BIT CONSTRAINT DF_{objectQualifier}EasyGalleryGravityGallerySettings_ShowVideos DEFAULT (1) NOT NULL
+END
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryGravityGallerySettings' AND column_name = 'ShowAudio')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryGravityGallerySettings] ADD ShowAudio BIT CONSTRAINT DF_{objectQualifier}EasyGalleryGravityGallerySettings_ShowAudio DEFAULT (1) NOT NULL
+END
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryPictures' AND column_name = 'Description')
+BEGIN
+ ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryPictures] ALTER COLUMN Description nvarchar(MAX);
+END
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyDNNMediaLocalization' AND column_name = 'Description')
+BEGIN
+ ALTER TABLE {databaseOwner}[{objectQualifier}EasyDNNMediaLocalization] ALTER COLUMN Description nvarchar(MAX);
+END
+GO

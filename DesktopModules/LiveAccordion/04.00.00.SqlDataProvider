@@ -1,0 +1,101 @@
+﻿/****** Object:  Table {databaseOwner}[LiveAccordion]    Script Date: 01/20/2012 09:29:11 ******/
+
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES where TABLE_NAME = '{objectQualifier}LiveAccordion')
+BEGIN
+EXEC sp_rename '{databaseOwner}{objectQualifier}LiveAccordion', 'LiveAccordion'
+END
+GO
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='LiveAccordion' and COLUMN_NAME='modID')
+BEGIN
+EXECUTE sp_rename N'{databaseOwner}LiveAccordion.modID', N'Tmp_ModuleId', 'COLUMN' 
+EXECUTE sp_rename N'{databaseOwner}LiveAccordion.Tmp_ModuleId', N'ModuleId', 'COLUMN' 
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='LiveAccordion' and COLUMN_NAME='Width' and COLUMN_NAME='Height')
+BEGIN
+ALTER TABLE {databaseOwner}LiveAccordion ADD
+	[Width] [int] NULL ,
+	[Height] [int] NULL ,
+	[AutoHeight] [bit] NOT NULL CONSTRAINT DF_LiveAccordion_AutoHeight DEFAULT 0,
+	[Animated] [nvarchar](255) NOT NULL CONSTRAINT DF_LiveAccordion_Animated DEFAULT '',
+	[SelectOnMouseover] [bit] NOT NULL CONSTRAINT DF_LiveAccordion_SelectOnMouseover DEFAULT 0,
+	[Persistence] [bit] NOT NULL CONSTRAINT DF_LiveAccordion_Persistence DEFAULT 0,
+	[IntelligentPaneLink] [bit] NOT NULL CONSTRAINT DF_LiveAccordion_IntelligentPaneLink DEFAULT 0,
+	[Theme] [nvarchar](50) NOT NULL CONSTRAINT DF_LiveAccordion_Theme DEFAULT '',
+	[FxCustom] [bit] NOT NULL CONSTRAINT DF_LiveAccordion_FxCustom DEFAULT 0,
+	[TrackClicks] [bit] NOT NULL CONSTRAINT DF_LiveAccordion_TrackClicks DEFAULT 0,
+	[TrackCategory] [nvarchar](MAX) NOT NULL CONSTRAINT DF_LiveAccordion_TrackCategory DEFAULT '',
+	[TrackAction] [nvarchar](MAX) NOT NULL CONSTRAINT DF_LiveAccordion_TrackAction DEFAULT '',
+	[TrackLabel] [nvarchar](MAX) NOT NULL CONSTRAINT DF_LiveAccordion_TrackLabel DEFAULT '',
+	[TrackingCode] [nvarchar](MAX)  NULL,
+	[EnableThemeScript] [bit] NOT NULL CONSTRAINT DF_LiveAccordion_EnableThemeScript DEFAULT 0,
+	[Collapsed] [bit] NOT NULL CONSTRAINT DF_LiveAccordion_Collapse DEFAULT 0,
+	[Collapsible] [bit] NOT NULL CONSTRAINT DF_LiveAccordion_Collapsible DEFAULT 0,
+	[SelectedPane] [nvarchar](MAX) NULL,
+	[LoadOnDemand] [bit] NOT NULL CONSTRAINT DF_LiveAccordion_LoadOnDemand DEFAULT 0,
+	[TabMode] [nvarchar](255) NOT NULL CONSTRAINT DF_LiveAccordion_TabMode DEFAULT '',
+	[FeedUrl] [nvarchar](255) NULL,
+	[MaxTitleLength] [int] NOT NULL CONSTRAINT DF_LiveAccordion_MaxTitleLength DEFAULT 0,
+	[CacheTime] [int] NOT NULL CONSTRAINT DF_LiveAccordion_CacheTime DEFAULT 0,
+	[TitleLengthUnit] [nvarchar](50) NOT NULL CONSTRAINT DF_LiveAccordion_TitleLengthUnit DEFAULT '',
+	[ConnectionString] [nvarchar](255) NULL,
+	[SqlQuery] [nvarchar](MAX) NULL,
+	[UseToken] [nvarchar](50) NULL,
+	[MaxPanes] [int] NOT NULL CONSTRAINT DF_LiveAccordion_MaxPanes DEFAULT 0
+END
+GO
+
+
+/****** Object:  Table {databaseOwner}[LiveAccordion_Pane]    Script Date: 06/12/2012 13:06:24 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[LiveAccordion_Pane]') AND type in (N'U'))
+BEGIN
+CREATE TABLE {databaseOwner}[LiveAccordion_Pane](
+	[PaneId] [int] IDENTITY(1,1) NOT NULL,
+	[ModuleId] [int] NOT NULL,
+	[Permissions] [nvarchar](max) NOT NULL,
+	[EmbeddedModule] [nvarchar](max) NOT NULL,
+	[Locale] [nvarchar](255) NOT NULL,
+	[PaneName] [nvarchar](max) NOT NULL,
+	[PaneHeader] [nvarchar](max) NULL,
+	[Content] [nvarchar](max) NULL,
+	[SearchSummary] [nvarchar](max) NOT NULL,
+	[Searchable] [bit] NOT NULL,
+	[SortOrder] [int] NOT NULL,
+	[NavigateUrl] [varchar](255) NULL,
+	[LegacyPaneId] [int] NULL,
+	[LoadOnDemand] [bit] NOT NULL,
+	[BreakLine] [nvarchar](max) NOT NULL,
+ CONSTRAINT [PK_LiveAccordion_Pane] PRIMARY KEY CLUSTERED 
+(
+	[PaneId] ASC
+)WITH (STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF)
+)
+END
+GO
+
+Delete from {databaseOwner}{objectQualifier}modulecontrols where ControlKey = 'Settings' AND ModuleDefId = (select ModuleDefId from {databaseOwner}{objectQualifier}moduledefinitions where friendlyname = 'Live Accordion')
+
+/****** Object:  Stored Procedure {databaseOwner}{objectQualifier}LiveAccordionGet    Script Date: Tuesday, October 10, 2006 ******/
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}LiveAccordionGet') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+drop procedure {databaseOwner}{objectQualifier}LiveAccordionGet
+GO
+
+/****** Object:  Stored Procedure {databaseOwner}{objectQualifier}LiveAccordionAdd    Script Date: Tuesday, October 10, 2006 ******/
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}LiveAccordionAdd') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+drop procedure {databaseOwner}{objectQualifier}LiveAccordionAdd
+GO
+
+/****** Object:  Stored Procedure {databaseOwner}{objectQualifier}LiveAccordionUpdate    Script Date: Tuesday, October 10, 2006 ******/
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}LiveAccordionUpdate') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+drop procedure {databaseOwner}{objectQualifier}LiveAccordionUpdate
+GO
+
+/****** Object:  Stored Procedure {databaseOwner}{objectQualifier}LiveAccordionDelete    Script Date: Tuesday, October 10, 2006 ******/
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}LiveAccordionDelete') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+drop procedure {databaseOwner}{objectQualifier}LiveAccordionDelete
+GO

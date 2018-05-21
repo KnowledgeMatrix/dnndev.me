@@ -1,0 +1,9 @@
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryGravityGallerySettings' AND column_name = 'ItemsListDisplayEmailLink')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryGravityGallerySettings] ADD ItemsListDisplayEmailLink BIT CONSTRAINT DF_{objectQualifier}EasyGalleryGravityGallerySettings_ItemsListDisplayEmailLink DEFAULT (0) NOT NULL
+END
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryGravityGallerySettings' AND column_name = 'DetailsDisplayEmailLink')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryGravityGallerySettings] ADD DetailsDisplayEmailLink BIT CONSTRAINT DF_{objectQualifier}EasyGalleryGravityGallerySettings_DetailsDisplayEmailLink DEFAULT (0) NOT NULL
+END
+GO

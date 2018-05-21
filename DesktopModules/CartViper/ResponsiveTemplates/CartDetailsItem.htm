@@ -1,0 +1,38 @@
+<div class="row hidden-xs hidden-sm text-left cvCartItemRow" data-id="[ITEMID]">
+  <div class="col-md-6">
+	[PRODUCTTHUMBNAIL]
+    [PRODUCTHYPERLINK]
+    [INSTOREPICKUP]
+    [BACKORDERDETAILS]
+    [VARIANTDETAILS]
+  </div>
+  <div class="col-md-1">[QUANTITY]</div>
+  <div class="col-md-1">[UNITPRICE]</div>
+  <div class="col-md-2">[LINETOTAL]</div>
+  <div class="col-md-2">
+    <a href="#" onclick="javascript:return DeleteItemInCart(this, [ITEMID])" class="DeleteSingleCartItem">
+        [LOCALIZATION:lblDeleteSingleItemFromCart.Text]
+    </a>
+  </div>
+</div>
+
+<div class="row text-left cvCartItemRow visible-xs visible-sm" data-id="[ITEMID]">
+  <div class="col-xs-12">
+    <span class="xsCheckoutHeader">PRODUCT</span>
+    [PRODUCTHYPERLINK]
+    [VARIANTDETAILS]
+  </div>
+ 
+</div>
+ 
+<div class="row text-left cvCartItemRow visible-xs visible-sm" data-id="[ITEMID]">
+  <div class="col-xs-3"><span class="xsCheckoutHeader">Quantity</span>[QUANTITY]</div>
+  <div class="col-xs-3"><span class="xsCheckoutHeader">Unit Price</span>[UNITPRICE]</div>
+  <div class="col-xs-3"><span class="xsCheckoutHeader">Line Subtoal</span>[LINETOTAL]</div>
+  <div class="col-xs-3">
+    <a href="#" onclick=" return DeleteItemInCart(this, [ITEMID])" class="DeleteSingleCartItem">
+        [LOCALIZATION:lblDeleteSingleItemFromCart.Text]
+    </a>
+  </div>
+ 
+</div>

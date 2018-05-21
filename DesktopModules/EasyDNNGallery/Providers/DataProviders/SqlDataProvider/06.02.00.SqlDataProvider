@@ -1,0 +1,26 @@
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGallerySmbLiteSettings]') AND type in (N'U'))
+BEGIN
+CREATE TABLE {databaseOwner}[{objectQualifier}EasyGallerySmbLiteSettings](
+	[ModuleID] [int] NOT NULL,
+	[ShowTitle] [bit] NOT NULL,
+	[WrapperResizeDuration] [int] NOT NULL,
+	[ShowFacbook] [bit] NOT NULL,
+	[ShowTwitter] [bit] NOT NULL,
+	[ShowGooglePlus] [bit] NOT NULL,
+	[ShowPinterst] [bit] NOT NULL,
+	[ShowLinkedin] [bit] NOT NULL,
+ CONSTRAINT [PK_{objectQualifier}EasyGallerySmbLiteSettings] PRIMARY KEY CLUSTERED 
+(
+	[ModuleID] ASC
+)WITH (STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF)
+)
+ALTER TABLE {databaseOwner}[{objectQualifier}EasyGallerySmbLiteSettings]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}EasyGallerySmbLiteSettings_Modules] FOREIGN KEY([ModuleID])
+REFERENCES {databaseOwner}[{objectQualifier}Modules] ([ModuleID])
+ON DELETE CASCADE
+ALTER TABLE {databaseOwner}[{objectQualifier}EasyGallerySmbLiteSettings] CHECK CONSTRAINT [FK_{objectQualifier}EasyGallerySmbLiteSettings_Modules]
+END
+GO

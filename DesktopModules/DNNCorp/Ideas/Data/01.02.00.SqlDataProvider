@@ -1,0 +1,360 @@
+﻿-- BUG FIX: SOCIAL - 1786: Votes need to be filtered by Group Mode
+--------------------------------------------------------------------
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Ideas_Subscriber_GetByUser]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Subscriber_GetByUser]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Subscriber_GetByUser]
+	@ModuleId INT,
+	@GroupId INT,
+	@UserId INT
+AS
+BEGIN
+	DECLARE @VotesCast INT
+	DECLARE @VotesCommitted INT
+	SET @VotesCast = ( SELECT   SUM(IV.Votes)
+					   FROM     {databaseOwner}{objectQualifier}Ideas_Vote AS IV
+								INNER JOIN {databaseOwner}{objectQualifier}Ideas_Idea AS I ON I.IdeaId = IV.IdeaId
+					   WHERE    IV.UserId = @UserId
+								AND ModuleId = @ModuleId
+								AND GroupId = @GroupId
+					 )
+	SET @VotesCommitted = ( SELECT  SUM(IV.Votes)
+							FROM    {databaseOwner}{objectQualifier}Ideas_Vote AS IV
+									INNER JOIN {databaseOwner}{objectQualifier}Ideas_Idea AS I ON I.IdeaId = IV.IdeaId
+							WHERE   IV.UserId = @UserId
+									AND IV.[Committed] = 1
+									AND I.Authorized = 1
+									AND ModuleId = @ModuleId
+									AND GroupId = @GroupId
+						  )
+	SELECT  ISNULL(ISU.IdeaSubscriberId, -1) AS IdeaSubscriberId,
+			U.UserId,
+			U.DisplayName,
+			U.Email,
+			ISNULL(ISU.ModuleId, @ModuleId) AS ModuleId,
+			ISNULL(ISU.Notify, 0) AS Notify,
+			ISU.CreatedOnDate,
+			ISNULL(@VotesCast, 0) AS [VotesCast],
+			ISNULL(@VotesCommitted, 0) AS [VotesCommitted]
+	FROM    {databaseOwner}{objectQualifier}Users AS U
+			LEFT OUTER JOIN {databaseOwner}{objectQualifier}Ideas_Subscriber AS ISU ON U.UserId = ISU.UserId
+														 AND ISU.ModuleId = @ModuleId
+	WHERE   U.UserID = @UserID
+END
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Ideas_Vote_GetUserVotesByIdea]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Vote_GetUserVotesByIdea]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Vote_GetUserVotesByIdea]
+	@ModuleId INT,
+	@GroupId INT,
+	@IdeaId INT,
+	@UserId INT
+AS
+BEGIN 
+	DECLARE @Votes INT
+	DECLARE @Total INT
+
+	SELECT  @Votes = [Votes]
+	FROM    {databaseOwner}[{objectQualifier}Ideas_Vote]
+	WHERE   IdeaId = @IdeaId AND UserId = @UserId
+
+	SELECT	@Total = SUM(IV.Votes)
+	FROM	{databaseOwner}[{objectQualifier}Ideas_Vote]  AS IV
+			INNER JOIN {databaseOwner}[{objectQualifier}Ideas_Idea] AS I ON IV.IdeaId = I.IdeaId
+	WHERE	ModuleId = @ModuleId AND GroupId = @GroupId AND IV.UserId = @UserId
+
+	SELECT  [Votes] = ISNULL(@Votes, 0), [Total] = ISNULL(@Total, 0)
+END
+GO
+-----------------------------------------------------------------------
+-- END BUG FIX: SOCIAL - 1786
+
+-- ///////////////////////////////
+-- SQL Optimization Report changes
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes
+				WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Ideas_Vote]')
+				AND name = N'IX_{objectQualifier}Ideas_Vote_UserID')
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Ideas_Vote_UserID]
+		ON {databaseOwner}[{objectQualifier}Ideas_Vote] ([UserId])
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Ideas_Idea_Get]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Idea_Get]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Idea_Get]
+	@IdeaId INT ,
+	@ModuleId INT
+AS
+BEGIN
+	DECLARE @MetaID INT
+
+	SET	@MetaID = (SELECT MetaDataID
+	FROM	{databaseOwner}[{objectQualifier}MetaData]
+	WHERE	MetaDataName = 'Title')
+
+	SELECT	[IdeaId] ,
+			[GroupId],
+			[Authorized] ,
+			[Views] ,
+			[Votes] ,
+			[Comments] ,
+			[Supporters] ,
+			[Status] ,
+			[Protected],
+			[Custom1] ,
+			[Custom2] ,
+			[Custom3] ,
+			[Custom4] ,
+			[AcceptedOnDate] ,
+			[ScheduledOnDate] ,
+			[DeliveredOnDate] ,
+			CI.ContentItemID ,
+			CI.Content ,
+			CI.ContentTypeID ,
+			CI.TabID ,
+			CI.ModuleID ,
+			CI.ContentKey ,
+			CI.Indexed ,
+			CI.CreatedByUserID ,
+			CI.CreatedOnDate ,
+			CI.LastModifiedByUserID ,
+			CI.LastModifiedOnDate ,
+			TB.[PortalID],
+			CIMD.MetaDataValue AS [ContentTitle]
+	FROM	{databaseOwner}{objectQualifier}Ideas_Idea AS I
+			INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI ON I.ContentItemId = CI.ContentItemID
+			INNER JOIN {databaseOwner}{objectQualifier}Tabs TB ON TB.[TabID] = CI.TabID
+			LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD ON CIMD.ContentItemID = CI.[ContentItemID]
+	WHERE	IdeaId = @IdeaId
+	  AND	I.ModuleId = @ModuleId
+	  AND	CIMD.MetaDataID = @MetaID
+
+END
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Ideas_Idea_Search_Filter]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Idea_Search_Filter]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Idea_Search_Filter]
+	@ModuleId INT,
+	@GroupId INT,
+	@UserId INT,
+	@Search NVARCHAR(255),
+	@Filter INT,
+	@Tags NVARCHAR(255),
+	@PageIndex INT,
+	@PageSize INT,
+	@IsAdmin BIT,
+	@SortColumn VARCHAR(32),
+	@SortAscending BIT
+AS
+BEGIN
+
+	DECLARE @TagLength Int
+	DECLARE @MetID Int
+
+	Set @TagLength = (SELECT LEN(@Tags) - LEN(REPLACE(@Tags, ',', '')) + 1)
+
+	SELECT	@MetID = MetaDataID
+	FROM	{databaseOwner}{objectQualifier}MetaData
+	WHERE	MetaDataName = 'Title'
+
+	Create Table #Tags(
+		RowNumber smallint,
+		RowValue nvarchar(50))
+
+	Create Table #Taxonomy(
+		TermID Int,
+		Name nvarchar(250))
+
+	Insert Into #Tags
+		Select	RowNumber,RowValue
+		From	{databaseOwner}{objectQualifier}ConvertListToTable(',', @Tags);
+
+	Insert Into #Taxonomy
+		Select	TermID, Name
+		From	{databaseOwner}{objectQualifier}Taxonomy_Terms TT
+				Inner Join #Tags T on TT.Name = T.RowValue;
+
+	WITH OrderedSet
+	AS (
+		SELECT	COUNT(*) OVER () AS TotalRecords,
+				I.[IdeaId],
+				I.[GroupId],
+				I.[Authorized],
+				(CASE I.[Views] WHEN -1 THEN 0 ELSE COALESCE(I.[Views], 0) END) AS [Views],
+				I.[Votes],
+				I.[Comments],
+				I.[Supporters],
+				I.[Status],
+				I.[Protected],
+				I.[Custom1],
+				I.[Custom2],
+				I.[Custom3],
+				I.[Custom4],
+				I.[ContentItemId],
+				I.[AcceptedOnDate],
+				I.[ScheduledOnDate],
+				I.[DeliveredOnDate],
+				CI.Content,
+				CI.ContentTypeID,
+				CI.TabID,
+				CI.ModuleID,
+				CI.ContentKey,
+				CI.Indexed,
+				CI.CreatedByUserID,
+				CI.[CreatedOnDate],
+				CI.LastModifiedByUserID,
+				CI.[LastModifiedOnDate],
+				TB.[PortalID],
+				CIMD.[MetaDataValue] AS [ContentTitle],
+				U.DisplayName AS DisplayName,
+				ROW_NUMBER() OVER (
+					ORDER BY
+						CASE WHEN @SortColumn = 'CreatedDate' AND @SortAscending = 1 THEN CI.CreatedOnDate END ASC,
+						CASE WHEN @SortColumn = 'CreatedDate' AND @SortAscending = 0 THEN CI.CreatedOnDate END DESC,
+						CASE WHEN @SortColumn = 'LastActive' AND @SortAscending = 1 THEN CI.LastModifiedOnDate END ASC,
+						CASE WHEN @SortColumn = 'LastActive' AND @SortAscending = 0 THEN CI.LastModifiedOnDate END DESC,
+						CASE WHEN @SortColumn = 'Title' AND @SortAscending = 1 THEN MetaDataValue END ASC,
+						CASE WHEN @SortColumn = 'Title' AND @SortAscending = 0 THEN MetaDataValue END DESC,
+						CASE WHEN @SortColumn = 'Author' AND @SortAscending = 1 THEN DisplayName END ASC,
+						CASE WHEN @SortColumn = 'Author' AND @SortAscending = 0 THEN DisplayName END DESC,
+						CASE WHEN @SortColumn = 'Votes' AND @SortAscending = 0 THEN Votes END DESC,
+						CASE WHEN @SortColumn = 'Votes' AND @SortAscending = 1 THEN Votes END ASC,
+						CASE WHEN @SortColumn = 'Views' AND @SortAscending = 0 THEN [Views] END DESC,
+						CASE WHEN @SortColumn = 'Views' AND @SortAscending = 1 THEN [Views] END ASC
+					) AS [RowNumber]
+		FROM	{databaseOwner}{objectQualifier}Ideas_Idea I WITH (NOLOCK)
+					INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI WITH (NOLOCK) ON CI.[ContentItemID] = I.[ContentItemID]
+					INNER JOIN {databaseOwner}{objectQualifier}Tabs TB WITH (NOLOCK) ON TB.[TabID] = CI.[TabID]
+					INNER JOIN {databaseOwner}{objectQualifier}Users U WITH (NOLOCK) ON U.UserID = CI.CreatedByUserID
+					INNER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD WITH (NOLOCK)
+						ON CIMD.ContentItemID = I.[ContentItemID]
+						AND CIMD.MetaDataID = @MetID
+		-- match all tags specified
+		WHERE (	@Tags IS NULL OR LEN(@Tags) = 0
+				OR (SELECT	COUNT(*)
+					FROM	{databaseOwner}{objectQualifier}ContentItems_Tags CIT
+							INNER JOIN #Taxonomy T On CIT.TermID = T.TermID
+					WHERE	CIT.ContentItemID = I.ContentItemId ) = @TagLength
+			  )
+		-- match title (if specified)
+		  AND (	@Search IS NULL OR LEN(@Search) = 0
+				OR MetaDataValue LIKE '%' + @Search + '%')
+		-- match current state (see enum IdeaStatus in source code)
+		  AND (	   (@Filter = 0 AND I.[Status] <> 30) -- all except duplicates
+				-- OR all except delivered, duplicates, and declined
+				OR (@Filter = 1 AND I.[Status] = 0) -- Submitted
+				OR (@Filter = 2 AND I.[Status] = 5) -- UnderReview
+				OR (@Filter = 3 AND I.[Status] = 33) -- Reviewed
+				OR (@Filter = 4 AND I.[Status] = 15) -- Accepted
+				OR (@Filter = 5 AND I.[Status] = 20) -- Scheduled
+				OR (@Filter = 6 AND I.[Status] = 25) -- Delivered
+				OR (@Filter = 7 AND I.[Status] = 35) -- Declined
+			  )
+		  AND (@IsAdmin = 1 OR Authorized = 1)
+		-- match module
+		  AND (I.[ModuleId] = @ModuleId)
+		-- match group
+		  AND (I.[GroupId] = @GroupId)
+		)
+	SELECT	TOP (@PageSize) *
+	FROM	OrderedSet
+	WHERE	RowNumber >= (@PageIndex * @PageSize) + 1
+
+	Drop Table #Tags
+	Drop Table #Taxonomy
+END
+GO
+
+/* Migrate Subscriptions */
+IF exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Subscriptions_Type') and OBJECTPROPERTY(id, N'IsTable') = 1)
+BEGIN
+	DECLARE @DesktopModuleId INT
+	DECLARE @NewSubscriptionTypeId INT
+
+	SET @DesktopModuleId = (SELECT ISNULL(DesktopModuleId, -1) FROM {databaseOwner}{objectQualifier}DesktopModules WHERE ModuleName = 'Ideas' )
+	--SELECT  @DesktopModuleId
+
+	IF @DesktopModuleId > 0
+		BEGIN
+			-- Means the module is being upgraded, migrate subscriptions
+			SET @NewSubscriptionTypeId = (SELECT TOP 1 SubscriptionTypeId FROM {databaseOwner}{objectQualifier}CoreMessaging_SubscriptionTypes WHERE SubscriptionName = 'DNNCorp_Ideas')
+			--SELECT @NewSubscriptionTypeId
+
+			IF @NewSubscriptionTypeId IS NULL
+				BEGIN
+					INSERT {databaseOwner}{objectQualifier}CoreMessaging_SubscriptionTypes
+					(SubscriptionName, FriendlyName, DesktopModuleId)
+					VALUES
+					('DNNCorp_Ideas', 'Idea Subscriptions', @DesktopModuleId)
+					
+					SET @NewSubscriptionTypeId = (SELECT SCOPE_IDENTITY())
+
+					-- get all subscribers and copy over
+					DECLARE @OldSubscriptionTypeId INT
+					SET @OldSubscriptionTypeId = (SELECT TOP 1 SubscriptionTypeId FROM {databaseOwner}{objectQualifier}Subscriptions_Type WHERE SubscriptionName = 'DNNCorp_Ideas')
+
+					IF @OldSubscriptionTypeId > 0
+						BEGIN
+							DECLARE @PortalId INT
+							DECLARE @UserId INT
+							DECLARE @CreatedOnDate DATETIME
+							DECLARE @ModuleId INT
+							DECLARE @ObjectKey NVARCHAR(255)					
+							DECLARE @ContentItemId INT
+							DECLARE @GroupId INT
+							DECLARE @Description NVARCHAR(255)
+
+							DECLARE IdeasMigrate_Cursor CURSOR
+							FOR
+								SELECT  DISTINCT ss.PortalId, ss.UserId, ss.CreatedOnDate, ss.ModuleId, ss.GroupId, ss.ContentItemId
+								FROM    {databaseOwner}{objectQualifier}Subscriptions_Subscriber ss
+										INNER JOIN {databaseOwner}{objectQualifier}Modules m ON ss.ModuleID = m.ModuleID
+								WHERE	SubscriptionTypeId = @OldSubscriptionTypeId
+
+								OPEN IdeasMigrate_Cursor
+								FETCH NEXT FROM IdeasMigrate_Cursor 
+								INTO @PortalId, @UserId, @CreatedOnDate, @ModuleId, @GroupId, @ContentItemId
+
+								WHILE @@FETCH_STATUS = 0 
+								BEGIN
+
+									BEGIN TRANSACTION
+										-- after selecting row of data in cursor
+										IF @ContentItemId > 0
+											BEGIN
+												SET @ObjectKey = 'gid=' + CONVERT(NVARCHAR(10), @GroupId) + ';cid=' + CONVERT(NVARCHAR(10), @ContentItemId)
+												SET @Description = 'Idea Activity'
+											END	
+										ELSE
+											BEGIN
+												SET @ObjectKey = 'gid=' + CONVERT(NVARCHAR(10), @GroupId)
+												SET @Description = 'New Ideas'
+											END		
+								
+										INSERT {databaseOwner}{objectQualifier}CoreMessaging_Subscriptions
+											(UserId, PortalId, SubscriptionTypeId, ObjectKey, CreatedOnDate, ModuleId, [Description], TabId)
+										VALUES
+											(@UserId, @PortalId, @NewSubscriptionTypeId, @ObjectKey, @CreatedOnDate, @ModuleId, @Description, 0)
+
+
+										COMMIT
+
+											FETCH NEXT FROM IdeasMigrate_Cursor INTO @PortalId, @UserId, @CreatedOnDate, @ModuleId, @GroupId, @ContentItemId
+										END
+								
+								CLOSE IdeasMigrate_Cursor
+								DEALLOCATE IdeasMigrate_Cursor
+						END
+				END
+		END
+END
+GO

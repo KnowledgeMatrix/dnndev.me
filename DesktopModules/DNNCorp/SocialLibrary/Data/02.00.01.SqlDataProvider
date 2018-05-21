@@ -1,0 +1,328 @@
+/********************************************************
+ * SPROC: Social_cmx_GetTasks
+ ********************************************************/
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Social_cmx_GetTasks') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_cmx_GetTasks
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Social_cmx_GetTasks (
+	@PortalId INT,
+	@UserId INT,
+	@PageIndex INT = 0,
+    @PageSize INT = 10,
+	@AfterNotificationId INT = 0
+) AS
+BEGIN
+	;WITH GroupTasksCTE
+	AS
+	(	
+		SELECT M.MessageID AS NotificationId, M.Subject, M.Body, M.NotificationTypeID, 
+		M.SenderUserID, M.CreatedOnDate, U.DisplayName AS SenderDisplayName,
+		COUNT(*) OVER () AS TotalTasks,
+		ROW_NUMBER() OVER (PARTITION BY M.NotificationTypeId, M.Context, M.Subject ORDER BY M.MessageID) AS GroupedRowNumber,
+		ROW_NUMBER() OVER (ORDER BY M.MessageID) AS MainRowNumber,
+		COUNT(*) OVER(PARTITION BY M.NotificationTypeId, M.Context, M.Subject) AS Count
+		FROM {databaseOwner}{objectQualifier}CoreMessaging_Messages M WITH (NOLOCK)
+		INNER JOIN {databaseOwner}{objectQualifier}CoreMessaging_MessageRecipients MR WITH (NOLOCK)
+			ON M.MessageID = MR.MessageID
+		INNER JOIN {databaseOwner}{objectQualifier}CoreMessaging_NotificationTypes NT WITH (NOLOCK)
+			ON M.NotificationTypeId = NT.NotificationTypeId
+		INNER JOIN {databaseOwner}{objectQualifier}Users U WITH (NOLOCK)
+			ON M.SenderUserID = U.UserID
+		WHERE M.NotificationTypeId IS NOT NULL
+			AND NT.DesktopModuleID IS NOT NULL
+			AND MR.UserID = @UserId
+			AND M.PortalID = @PortalId
+			AND M.MessageID > @AfterNotificationId
+			AND (M.[ExpirationDate] IS NULL OR (M.[ExpirationDate] IS NOT NULL AND M.[ExpirationDate] > GETUTCDATE()))
+			AND NT.Name  NOT IN ('DNNCorp_SocialEvents_Invite',
+							 'DNNCorp_SocialEvents_Delete', 
+							 'DNNCorp_Groups_MemberInviteNotification',
+							 'DNNCorp_Groups_MemberPrivateInviteNotification')
+	)
+	SELECT TOP (@PageSize) *,
+	COUNT(*) OVER () AS TotalRollups
+	FROM GroupTasksCTE
+	WHERE  GroupedRowNumber = 1
+	AND MainRowNumber > (@PageIndex * @PageSize)
+	ORDER BY NotificationId;
+END
+GO
+
+/********************************************************
+ * SPROC: Social_cmx_GetTask
+ ********************************************************/
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Social_cmx_GetTask') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_cmx_GetTask
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Social_cmx_GetTask (
+	@PortalId INT,
+	@UserId INT,
+	@NotificationId INT,
+    @IndexId INT
+) AS
+BEGIN
+	DECLARE @Subject nvarchar(400)
+	DECLARE @Context nvarchar(200)
+	DECLARE @NotificationTypeId INT
+
+	SELECT @Subject = Subject, @Context = Context, @NotificationTypeId = NotificationTypeId
+	FROM {databaseOwner}{objectQualifier}CoreMessaging_Messages M WITH (NOLOCK)
+	WHERE M.MessageID = @NotificationId
+
+	;WITH GroupTasksCTE
+	AS
+	(
+		SELECT M.MessageID AS NotificationId, M.Subject, M.Body, M.NotificationTypeID, 
+		M.SenderUserID, M.CreatedOnDate, U.DisplayName AS SenderDisplayName,
+		ROW_NUMBER() OVER (ORDER BY M.MessageID) AS RowNumber
+		FROM {databaseOwner}{objectQualifier}CoreMessaging_Messages M WITH (NOLOCK)
+		INNER JOIN {databaseOwner}{objectQualifier}CoreMessaging_MessageRecipients MR
+			ON M.MessageID = MR.MessageID
+		INNER JOIN {databaseOwner}{objectQualifier}CoreMessaging_NotificationTypes NT
+			ON M.NotificationTypeId = NT.NotificationTypeId
+		INNER JOIN {databaseOwner}{objectQualifier}Users U
+			ON M.SenderUserID = U.UserID
+		WHERE M.NotificationTypeId IS NOT NULL
+			AND NT.DesktopModuleID IS NOT NULL
+			AND MR.UserID = @UserId
+			AND M.PortalID = @PortalId
+			AND (M.[ExpirationDate] IS NULL OR (M.[ExpirationDate] IS NOT NULL AND M.[ExpirationDate] > GETUTCDATE()))
+			AND NT.Name  NOT IN ('DNNCorp_SocialEvents_Invite',
+							 'DNNCorp_SocialEvents_Delete', 
+							 'DNNCorp_Groups_MemberInviteNotification',
+							 'DNNCorp_Groups_MemberPrivateInviteNotification')
+			AND M.Subject = @Subject
+			AND M.Context = @Context
+			AND M.NotificationTypeId = @NotificationTypeId
+	)
+	SELECT TOP 1 * FROM GroupTasksCTE
+	WHERE RowNumber = @IndexId
+	ORDER BY NotificationId;
+END
+GO
+
+
+
+/********************************************************
+ * SPROC: Social_Group_GetGroup
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_Group_GetGroup]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_Group_GetGroup
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_Group_GetGroup]
+	@PortalId INT,
+	@GroupId INT,
+	@UserId INT,
+	@AllowAnonymous BIT
+AS
+BEGIN
+	DECLARE @AdminRoleId INT
+
+	SELECT @AdminRoleId = roleId FROM {databaseOwner}{objectQualifier}Roles WHERE RoleName='Administrators' AND PortalId = @PortalId 
+	
+	SELECT	R.PortalID As PortalId,
+			R.RoleID AS GroupId,
+			R.RoleName AS GroupName,
+			R.Description,
+			R.IsPublic,
+			R.IconFile,
+			R.Status,
+			R.SecurityMode,
+			R.IsSystemRole,
+			R.CreatedByUserID,
+			R.CreatedOnDate,
+			R.LastModifiedOnDate,
+			(SELECT CAST ((SELECT RoleId FROM {databaseOwner}{objectQualifier}UserRoles WITH (NOLOCK) WHERE RoleId = @GroupId AND UserId = @UserId ) AS BIT)) AS IsMember,
+
+			CASE WHEN @AllowAnonymous = 1
+				THEN (SELECT CAST ((SELECT RoleId FROM {databaseOwner}{objectQualifier}UserRoles WITH (NOLOCK) WHERE RoleId = @GroupId AND UserId = @UserId AND Status = -1) AS BIT))
+				ELSE 0
+			END AS MembershipPending,
+
+			(SELECT CAST ((SELECT SettingValue FROM {databaseOwner}{objectQualifier}RoleSettings WHERE RoleId = R.RoleId AND SettingName = 'ReviewMembers') AS BIT)) AS ReviewMembers,
+			(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}UserRoles U WHERE U.RoleID = R.RoleID AND U.Status = 1) AS MemberCount
+	FROM    
+			{databaseOwner}{objectQualifier}Roles AS R			
+	WHERE
+			R.RoleId = @GroupId
+			AND
+			R.SecurityMode IN (1, 2)
+			AND (	R.IsPublic = 1
+					OR
+					-- Super User
+					(EXISTS (SELECT UserID FROM {databaseOwner}{objectQualifier}Users WHERE @UserId = UserID AND IsSuperUser = 1))
+					OR
+					-- Admin
+					(EXISTS (SELECT UserID FROM {databaseOwner}{objectQualifier}UserRoles WHERE @AdminRoleId = RoleID AND @UserId = UserID))
+					OR
+					-- Member
+					(IsPublic = 0 AND EXISTS (SELECT RoleID FROM {databaseOwner}{objectQualifier}UserRoles WHERE R.RoleID = RoleID AND @UserId = UserID))
+					OR
+					-- Private Anonymous Viewing
+					IsPublic = 0 AND @AllowAnonymous = 1
+				)
+							
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Social_cmx_GetUserDetail') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_cmx_GetUserDetail
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Social_cmx_GetUserDetail (
+	@PortalId INT,
+	@UserId INT
+) AS
+BEGIN
+	--Basic Details
+	SELECT US.PortalID, U.UserID, U.Username, U.DisplayName, US.LastModifiedOnDate,
+		"IsDeleted" = CASE WHEN u.IsDeleted = 1 OR up.IsDeleted = 0 THEN 0 ELSE 1 END,
+		COALESCE(us.ContentCreatedCount, 0) AS [TotalContribution],
+		COALESCE(us.ReputationPoints, 0) AS [Reputation],	
+		COALESCE(us.ExperiencePoints, 0) AS [Experience]
+	FROM {databaseOwner}{objectQualifier}Users U WITH (NOLOCK)
+		INNER JOIN {databaseOwner}{objectQualifier}UserPortals UP WITH (NOLOCK)
+			ON U.UserID = UP.UserId
+		LEFT OUTER JOIN {databaseOwner}[{objectQualifier}Mechanics_UserScoring] US 
+			ON US.UserId = U.UserID
+	WHERE UP.PortalId = @PortalId
+		AND U.UserID = @UserID
+		AND UP.PortalId = @PortalId
+
+	--Rank
+	DECLARE @RP INT
+	SELECT @RP = US.ReputationPoints
+	FROM {databaseOwner}[{objectQualifier}Mechanics_UserScoring] US WITH (NOLOCK)
+	WHERE US.UserID = @UserID
+	AND US.PortalId = @PortalId
+		
+	IF @RP IS NOT NULL
+	BEGIN
+		SELECT @RP = COUNT(*) + 1 
+		FROM {databaseOwner}[{objectQualifier}Mechanics_UserScoring] US WITH (NOLOCK)
+		WHERE US.PortalId = @PortalId
+			AND US.ReputationPoints > @RP 
+	END
+	SELECT COALESCE(@RP, -1) As Rank
+
+	--Analytics
+	SELECT TOP 1 TotalSeconds, Engagement
+	FROM {databaseOwner}[{objectQualifier}Analytics_Users]
+	WHERE UserID = @UserID
+	AND PortalId = @PortalId
+
+	--Influence
+	DECLARE @AnnualCutOffDate INT
+	SET @AnnualCutOffDate = CAST(convert(varchar, DATEADD(DAY, - 364, GETUTCDATE()), 112) as int)
+	SELECT TOP 1 COALESCE(Influence, 0)
+	FROM {databaseOwner}[{objectQualifier}Analytics_Fact_UserScoringLogRollup]
+	WHERE UserID = @UserID
+	AND PortalId = @PortalId
+	AND Interval = 364 --annual
+	AND DesktopModuleId = -1
+	AND [Date] >= @AnnualCutOffDate
+
+	--User Activity
+	SELECT TOP 5 DM.FriendlyName AS Area, USL.CreatedOnDate, SAD.ScoringActionDefId,
+	"Title" = CASE WHEN CIMD.MetaDataValue <> '' THEN CIMD.MetaDataValue ELSE CI.Content END 
+	FROM {databaseOwner}[{objectQualifier}Mechanics_UserScoringLog] USL WITH (NOLOCK)
+	INNER JOIN {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition] SAD
+		ON USL.ScoringActionDefId = SAD.ScoringActionDefId
+	INNER JOIN {databaseOwner}[{objectQualifier}DesktopModules] DM
+		ON SAD.DesktopModuleID = DM.DesktopModuleID
+	LEFT OUTER JOIN {databaseOwner}[{objectQualifier}ContentItems] CI
+        ON USL.ContentItemId = CI.ContentItemId
+	LEFT OUTER JOIN	{databaseOwner}{objectQualifier}ContentItems_MetaData CIMD WITH (NOLOCK)
+		ON CIMD.ContentItemID = USL.ContentItemId
+		  AND CIMD.MetaDataID = (SELECT MetaDataID FROM {databaseOwner}{objectQualifier}MetaData WITH (NOLOCK) WHERE MetaDataName = 'Title')
+	WHERE USL.UserId =  @UserID
+		AND USL.PortalId = @PortalId
+		AND SAD.ActionType IN(0,2,7,11) -- Interacted = 0, Created = 2, FormedRelationship = 7, Shared = 11
+	ORDER BY USL.UserScoringLogId DESC   
+END
+GO
+
+-- SOCIAL-3206
+IF EXISTS (SELECT ScheduleId FROM {databaseOwner}{objectQualifier}Schedule WHERE 
+	TypeFullName = 'DotNetNuke.Professional.MechanicsAdmin.Components.Tasks.UserProfileActions, DotNetNuke.Professional.MechanicsAdmin')
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}Schedule
+		SET TypeFullName = 'DotNetNuke.SocialLibrary.Components.Tasks.UserProfileActions, DotNetNuke.SocialLibrary'
+		WHERE TypeFullName = 'DotNetNuke.Professional.MechanicsAdmin.Components.Tasks.UserProfileActions, DotNetNuke.Professional.MechanicsAdmin'
+	END
+ELSE
+	BEGIN
+		DELETE FROM {databaseOwner}{objectQualifier}Schedule
+		WHERE 
+			TypeFullName = 'DotNetNuke.SocialLibrary.Components.Tasks.UserProfileActions, DotNetNuke.SocialLibrary'
+
+		INSERT INTO {databaseOwner}{objectQualifier}Schedule
+		([TypeFullName], [TimeLapse], [TimeLapseMeasurement], [RetryTimeLapse], [RetryTimeLapseMeasurement], [RetainHistoryNum], [AttachToEvent], [CatchUpEnabled], [Enabled], [ObjectDependencies], [Servers], [FriendlyName])
+		VALUES ( 'DotNetNuke.SocialLibrary.Components.Tasks.UserProfileActions, DotNetNuke.SocialLibrary', 1, 'm', -1, 'm', 10, '', 0, 1, '', null, 'Gaming Mechanics' )
+	END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Social_GetUserEvents') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_GetUserEvents
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_GetUserEvents]
+	@PortalId INT,
+	@StartingLogEventID INT,
+	@RecordsToReturn INT,
+	@StartDate DATETIME,
+	@EndDate DATETIME
+AS 
+	SELECT  TOP (@RecordsToReturn) LogEventID, LogTypeKey, LogUserID, LogPortalID
+	FROM    {databaseOwner}{objectQualifier}EventLog
+	WHERE   LogPortalID = @PortalId
+			AND LogCreateDate >= @StartDate
+			AND LogCreateDate < @EndDate
+			AND LogUserID > 0
+			AND LogEventID > @StartingLogEventID
+			AND ( LogTypeKey = 'LOGIN_SUCCESS'
+				  OR LogTypeKey = 'LOGIN_SUPERUSER'
+				  OR LogTypeKey = 'USER_UPDATED'
+				)
+			ORDER BY LogUserID ASC
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Social_GetUserRegistrations') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_GetUserRegistrations
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_GetUserRegistrations]
+	@PortalId INT,
+	@StartingUserId INT,
+	@RecordsToReturn INT,	
+	@StartDate DATETIME,
+	@EndDate DATETIME
+AS 
+	SELECT  TOP (@RecordsToReturn) UserId ,
+			PortalId
+	FROM    {databaseOwner}{objectQualifier}UserPortals
+	WHERE   PortalId = @PortalId
+			AND UserId > @StartingUserId
+			AND CreatedDate >= @StartDate
+			AND CreatedDate < @EndDate
+	ORDER BY UserId ASC
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}CoreMessaging_RemoveSubscriptionsByContent') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}CoreMessaging_RemoveSubscriptionsByContent
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}CoreMessaging_RemoveSubscriptionsByContent
+	@PortalId int,
+	@ObjectKey NVARCHAR(255)
+AS
+BEGIN
+	DELETE
+	FROM {databaseOwner}{objectQualifier}CoreMessaging_Subscriptions
+	WHERE PortalId = @PortalId
+		AND ObjectKey = @ObjectKey
+END
+GO

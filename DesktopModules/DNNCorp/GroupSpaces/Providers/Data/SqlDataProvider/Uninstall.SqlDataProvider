@@ -1,0 +1,13 @@
+﻿IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}GroupSpaces_Group_GetFirstOwner]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}GroupSpaces_Group_GetFirstOwner
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}GroupSpaces_Group_GetGroup]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}GroupSpaces_Group_GetGroup
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}GroupSpaces_Group_GetRelatedGroups]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}GroupSpaces_Group_GetRelatedGroups
+GO
+
+

@@ -1,0 +1,160 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+-- SOCIAL-2368 - Localization: Collation conflict error using Temp Tables 
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}SocialEvents_Event_Search]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Event_Search]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Event_Search]
+	@ModuleId INT ,
+	@GroupId INT ,
+	@StartDate DATETIME = null,
+	@EndDate DATETIME = null,
+	@PageSize INT ,
+	@PageIndex INT ,
+	@Filter INT ,
+	@SortColumn VARCHAR(32) ,
+	@SortAscending BIT ,
+	@Keyword NVARCHAR(128) ,
+	@UserId INT ,
+	@Tags NVARCHAR(256)
+AS
+BEGIN
+
+	-- Only run one to cacluate the length of the tags and insert the tags into
+	-- temp table so as to not have to call the table valued function for every row.
+	DECLARE @TagLength Int
+	DECLARE @MetID Int
+
+	Set @TagLength = ( SELECT LEN(@Tags) - LEN(REPLACE(@Tags, ',', '')) + 1)
+
+	SELECT	@MetID = MetaDataID
+	FROM	{databaseOwner}{objectQualifier}MetaData
+	WHERE	MetaDataName = 'Title'
+
+	Create Table #Tags(
+		RowNumber smallint,
+		RowValue nvarchar(50) COLLATE DATABASE_DEFAULT)
+
+	Create Table #Taxonomy(
+		TermID Int,
+		Name nVarchar(250) COLLATE DATABASE_DEFAULT)
+
+	Insert Into #Tags
+		Select RowNumber,RowValue
+		From {databaseOwner}{objectQualifier}ConvertListToTable(',', @Tags);
+
+	Insert Into #Taxonomy
+		Select TermID, Name
+		From {databaseOwner}{objectQualifier}Taxonomy_Terms TT
+			Inner Join #Tags T on TT.Name = T.RowValue;
+
+	WITH TopicSet
+	AS (
+		SELECT	COUNT(*) OVER () AS TotalRecords,
+				EventId,
+				E.ContentItemId,
+				GroupId,
+				PortalId,
+				ViewCount,
+				Approved,
+				Deleted,
+				Content,
+				ContentTypeID,
+				TabID,
+				ModuleID,
+				ContentKey,
+				Indexed,
+				[MaxAttendees],
+				[InvitationOnly],
+				[ShowGuests],
+				[Attending],
+				[NotAttending],
+				[MayAttend],
+				[StartTime],
+				[EndTime],
+				[Street],
+				[City],
+				[Region],
+				[PostalCode],
+				[Country],
+				[InviteType],
+				CI.CreatedByUserID,
+				CI.CreatedOnDate,
+				CI.LastModifiedByUserID,
+				CI.LastModifiedOnDate,
+				CIMD.MetaDataValue AS ContentTitle,
+				U.DisplayName AS DisplayName,
+				ROW_NUMBER() OVER
+					( ORDER BY
+						CASE WHEN @SortColumn = 'EventStartTime' AND @SortAscending = 1 THEN [StartTime] END ASC,
+						CASE WHEN @SortColumn = 'EventStartTime' AND @SortAscending = 0 THEN [StartTime] END DESC,
+						CASE WHEN @SortColumn = 'CreatedDate' AND @SortAscending = 1 THEN CI.CreatedOnDate END ASC,
+						CASE WHEN @SortColumn = 'CreatedDate' AND @SortAscending = 0 THEN CI.CreatedOnDate END DESC,
+						CASE WHEN @SortColumn = 'LastActive' AND @SortAscending = 1 THEN CI.LastModifiedOnDate END ASC,
+						CASE WHEN @SortColumn = 'LastActive' AND @SortAscending = 0 THEN CI.LastModifiedOnDate END DESC,
+						CASE WHEN @SortColumn = 'Title' AND @SortAscending = 1 THEN MetaDataValue END ASC,
+						CASE WHEN @SortColumn = 'Title' AND @SortAscending = 0 THEN MetaDataValue END DESC,
+						CASE WHEN @SortColumn = 'Author' AND @SortAscending = 1 THEN DisplayName END ASC,
+						CASE WHEN @SortColumn = 'Author' AND @SortAscending = 0 THEN DisplayName END DESC,
+						CASE WHEN @SortColumn = 'Views' AND @SortAscending = 0 THEN [ViewCount] END DESC,
+						CASE WHEN @SortColumn = 'Views' AND @SortAscending = 1 THEN [ViewCount] END ASC
+					) AS [RowNumber]
+		FROM	{databaseOwner}{objectQualifier}SocialEvents_Event AS E
+				INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI ON CI.ContentItemID = E.ContentItemId
+				INNER JOIN {databaseOwner}{objectQualifier}Users U ON U.UserID = CI.CreatedByUserID
+				LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD
+					ON CIMD.ContentItemID = E.ContentItemId	AND CIMD.MetaDataID = @MetID
+		WHERE	CI.ModuleId = @ModuleId
+		  AND	Deleted = 0
+		  AND ( (@GroupId < 1 AND E.GroupId < 1) OR E.GroupId = @GroupId)
+		  AND ( @Filter < 0
+				OR (@Filter = 0
+					AND (@StartDate IS NULL
+					OR (E.StartTime BETWEEN @StartDate AND @EndDate))
+					AND (Approved = 1 OR E.UserId = @UserId))
+				OR (@Filter = 2
+					AND (	SELECT	COUNT(CommentId)
+							FROM	{databaseOwner}{objectQualifier}Journal_Comments JC
+									INNER JOIN {databaseOwner}{objectQualifier}Journal J ON JC.JournalId = J.JournalId
+							WHERE	ContentItemId = J.ContentItemId
+							  AND	ContentItemId = E.ContentItemId) < 1)
+				OR (@Filter = 3
+					AND CI.CreatedByUserID = @UserId)
+				OR (@Filter = 4
+					AND (	SELECT	COUNT(CommentId)
+							FROM	{databaseOwner}{objectQualifier}Journal AS J
+									INNER JOIN {databaseOwner}{objectQualifier}Journal_Comments JC ON JC.JournalId = J.JournalId
+							WHERE	ContentItemId = J.ContentItemId
+							  AND	ContentItemId = E.ContentItemId
+							  AND	JC.UserId = @UserId) > 0)
+			  )
+		  AND ( @Tags IS NULL OR LEN(@Tags) = 0
+				OR (	SELECT	COUNT(*)
+						FROM	{databaseOwner}{objectQualifier}ContentItems_Tags CIT
+								INNER JOIN #Taxonomy T On CIT.TermID = T.TermID
+						WHERE CIT.ContentItemID = E.ContentItemId
+						AND (	SELECT	[Approved]
+								FROM	{databaseOwner}{objectQualifier}SocialEvents_Event
+								WHERE EventId = E.EventId) = 1) = @TagLength
+			  )
+		)
+	SELECT	TOP (@PageSize) *
+	FROM	TopicSet
+	WHERE	RowNumber >= (@PageIndex * @PageSize) + 1;
+
+	Drop Table #Tags
+	Drop Table #Taxonomy
+END
+GO
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/

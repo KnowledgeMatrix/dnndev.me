@@ -1,0 +1,248 @@
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****               Create Tables                      *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****                  Alter Tables                    *****/
+/************************************************************/
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_Customer') AND type in (N'U'))
+BEGIN
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_Customer') AND name = N'Reminde')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_Customer
+		ADD
+			[Reminde] BIT
+	END
+END
+GO
+
+
+
+/************************************************************/
+/*****              Drop Functions                      *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****              Create Functions                    *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****                Drop Sprocs                       *****/
+/************************************************************/
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_CreateCustomer') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateCustomer
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_UpdateCustomer') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateCustomer
+GO
+
+
+
+/************************************************************/
+/*****               Create Sprocs                      *****/
+/************************************************************/
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateCustomer
+	@FirstName VARCHAR(50) = NULL,
+	@LastName VARCHAR(50) = NULL,
+	@Address1 VARCHAR(50) = NULL,
+	@Address2 VARCHAR(50) = NULL,
+	@City VARCHAR(50) = NULL,
+	@Country VARCHAR(50) = NULL,
+	@State VARCHAR(50) = NULL,
+	@Zip VARCHAR(50) = NULL,
+	@HomePhone VARCHAR(50) = NULL,
+	@CellPhone VARCHAR(50) = NULL,
+	@WorkPhone VARCHAR(50) = NULL,
+	@PhoneCarrier VARCHAR(50) = NULL,
+	@Reminde BIT = NULL,
+	@Email VARCHAR(50) = NULL,
+	@AccountNo VARCHAR(50) = NULL,
+	@MaskAccountNo VARCHAR(50) = NULL,
+	@ABAExpire VARCHAR(50) = NULL,
+	@BillingAdress VARCHAR(50) = NULL,
+	@BillingZip VARCHAR(50) = NULL,
+	@DNNLogin VARCHAR(50) = NULL,
+	@Contact BIT = NULL,
+	@IPAddress VARCHAR(50) = '',
+	@PortalID INT = 0,
+	@CompanyName VARCHAR(50) = NULL,
+	@BuyerRole VARCHAR(50) = NULL,
+	@AnniversaryDate DATETIME = NULL,
+	@CreditLimit DECIMAL(18,2) = 0,
+	@BidLimit DECIMAL(18,2) = 0,
+	@ModifiedBy VARCHAR(50) = NULL,
+	@TaxID VARCHAR(50) = NULL,
+	@StoreID INT = NULL
+AS
+BEGIN
+	INSERT INTO {databaseOwner}{objectQualifier}Smith_Customer
+		([FirstName]
+		,[LastName]
+		,[Address1]
+		,[Address2]
+		,[City]
+		,[Country]
+		,[State]
+		,[Zip]
+		,[HomePhone]
+		,[CellPhone]
+		,[WorkPhone]
+		,[PhoneCarrier]
+		,[Reminde]
+		,[Email]
+		,[AccountNo]
+		,[MaskAccountNo]
+		,[ABAExpire]
+		,[BillingAdress]
+		,[BillingZip]
+		,[DNNLogin]
+		,[DateCreated]
+		,[Contact]
+		,[IPAddress]
+		,[PortalID]
+		,[CompanyName]
+		,[BuyerRole]
+		,[AnniversaryDate]
+		,[CreditLimit]
+		,[BidLimit]
+		,[ModifiedBy]
+		,[DateModified]
+		,[TaxID]
+		,[StoreID])
+	VALUES
+		(@FirstName
+		,@LastName
+		,@Address1
+		,@Address2
+		,@City
+		,@Country
+		,@State
+		,@Zip
+		,@HomePhone
+		,@CellPhone
+		,@WorkPhone
+		,@PhoneCarrier
+		,@Reminde
+		,@Email
+		,@AccountNo
+		,@MaskAccountNo
+		,@ABAExpire
+		,@BillingAdress
+		,@BillingZip
+		,@DNNLogin
+		,GETDATE()
+		,@Contact
+		,@IPAddress
+		,@PortalID
+		,@CompanyName
+		,@BuyerRole
+		,@AnniversaryDate
+		,@CreditLimit
+		,@BidLimit
+		,@ModifiedBy
+		,GETDATE()
+		,@TaxID
+		,@StoreID)
+	SELECT SCOPE_IDENTITY()
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateCustomer
+	@CustomerID INT = NULL,
+	@PortalID INT = NULL,
+	@FirstName VARCHAR(50) = NULL,
+	@LastName VARCHAR(50) = NULL,
+	@Address1 VARCHAR(50) = NULL,
+	@Address2 VARCHAR(50) = NULL,
+	@City VARCHAR(50) = NULL,
+	@Country VARCHAR(50) = NULL,
+	@State VARCHAR(50) = NULL,
+	@Zip VARCHAR(50) = NULL,
+	@HomePhone VARCHAR(50) = NULL,
+	@CellPhone VARCHAR(50) = NULL,
+	@WorkPhone VARCHAR(50) = NULL,
+	@PhoneCarrier VARCHAR(50) = NULL,
+	@Reminde BIT = NULL,
+	@Email VARCHAR(50) = NULL,
+	@AccountNo VARCHAR(50) = NULL,
+	@MaskAccountNo VARCHAR(50) = NULL,
+	@ABAExpire VARCHAR(50) = NULL,
+	@BillingAdress VARCHAR(50) = NULL,
+	@BillingZip VARCHAR(50) = NULL,
+	@DNNLogin VARCHAR(50) = NULL,
+	@Contact BIT = NULL,
+	@IPAddress VARCHAR(50) = '',
+	@CompanyName VARCHAR(50) = NULL,
+	@BuyerRole VARCHAR(50) = NULL,
+	@AnniversaryDate DATETIME = NULL,
+	@CreditLimit DECIMAL(18,2) = 0,
+	@BidLimit DECIMAL(18,2) = 0,
+	@ModifiedBy VARCHAR(50) = NULL,
+	@TaxID VARCHAR(50) = NULL,
+	@StoreID INT = NULL
+AS
+BEGIN
+	UPDATE
+		{databaseOwner}{objectQualifier}Smith_Customer
+	SET
+		[FirstName] = @FirstName,
+		[LastName] = @LastName,
+		[Address1] = @Address1,
+		[Address2] = @Address2,
+		[City] = @City,
+		[Country] = @Country,
+		[State] = @State,
+		[Zip] = @Zip,
+		[HomePhone] = @HomePhone,
+		[CellPhone] = @CellPhone,
+		[WorkPhone] = @WorkPhone,
+		[PhoneCarrier] = @PhoneCarrier,
+		[Reminde] = @Reminde,
+		[Email] = @Email,
+		[AccountNo] = @AccountNo,
+		[MaskAccountNo] = @MaskAccountNo,
+		[ABAExpire] = @ABAExpire,
+		[BillingAdress] = @BillingAdress,
+		[BillingZip] = @BillingZip,
+		[DNNLogin] = @DNNLogin,
+		[Contact] = @Contact,
+		[IPAddress] = @IPAddress,
+		[CompanyName] = @CompanyName,
+		[BuyerRole] = @BuyerRole,
+		[AnniversaryDate] = @AnniversaryDate,
+		[CreditLimit] = @CreditLimit,
+		[BidLimit] = @BidLimit,
+		[ModifiedBy] = @ModifiedBy,
+		[DateModified] = GETDATE(),
+		[TaxID] = @TaxID,
+		[StoreID] = @StoreID
+	WHERE
+		[CustomerID] = @CustomerID
+		AND [PortalID] = @PortalID
+END
+GO
+
+
+
+/************************************************************/
+/*****               End of Script                      *****/
+/************************************************************/

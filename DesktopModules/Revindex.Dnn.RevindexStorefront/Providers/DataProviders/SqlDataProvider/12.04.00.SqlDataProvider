@@ -1,0 +1,253 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+SET XACT_ABORT ON
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+
+	IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Session]') AND type in (N'U'))
+	BEGIN
+		CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Session](
+			[SessionID] [varchar](100) NOT NULL,
+			[Value] [varchar](max) NOT NULL,
+			[ExpirationDate] [datetime] NOT NULL,
+		 CONSTRAINT [PK_{objectQualifier}Revindex_Session] PRIMARY KEY CLUSTERED 
+		(
+			[SessionID] ASC
+		))
+	END
+
+	-- Support product filtering by seller
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		ProductFilterSellerFilterable bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductFilterSellerFilterable DEFAULT 0,
+		ProductFilterSellerDisplayOrder int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductFilterSellerDisplayOrder DEFAULT 1000
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductFilterSellerFilterable
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductFilterSellerDisplayOrder
+
+	-- Support ACH payments
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesPayment ADD
+		AccountNumber varchar(100) NULL,
+		InstitutionName varchar(100) NULL,
+		AccountType int NULL
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_UserPayment ADD
+		AccountNumber varchar(100) NULL,
+		InstitutionName varchar(100) NULL,
+		AccountType int NULL
+
+	-- Support Total Apps Payment gateway
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		PaymentGatewaysTotalAppsDirectPostUsername varchar(255) NULL,
+		PaymentGatewaysTotalAppsDirectPostPassword varchar(255) NULL
+
+	-- Support FTNI credit card payment gateway
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		PaymentGatewaysFTNIUsername varchar(255) NULL,
+		PaymentGatewaysFTNIPassword varchar(255) NULL
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysFTNITestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysFTNITestMode DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysFTNITestMode
+
+	-- Support ACH payment method
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		PaymentMethodsACHActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsACHActive DEFAULT 0,
+		PaymentMethodsACHPaymentGateway varchar(256) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsACHPaymentGateway DEFAULT '',
+		PaymentMethodsACHAvailabilityRule xml NULL
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsACHActive
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsACHPaymentGateway
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD SecurityStoreACH bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_SecurityStoreACH DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_SecurityStoreACH
+
+	-- Support FTNI ACH payment gateway
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		PaymentGatewaysFTNIACHUsername varchar(255) NULL,
+		PaymentGatewaysFTNIACHPassword varchar(255) NULL,
+		PaymentGatewaysFTNIACHTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysFTNIACHTestMode DEFAULT 0
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysFTNIACHTestMode
+
+COMMIT TRANSACTION
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+
+		-- Fixed Sales payments reconciliation by date report not recognizing transaction type
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_ReportDefinition] SET DefinitionRule = '<rule version="1.0" type="data">&lt;data method="ReportDefinition" version="1.0"&gt;
+  &lt;dataSources&gt;
+    &lt;sqlDataSource&gt;
+      &lt;query&gt;SELECT
+    so.SalesOrderNumber, 
+    so.TotalAmount AS TotalAmount,
+    COALESCE(
+        SUM(
+        CASE sp.TransactionType 
+				
+		-- PURCHASE
+		WHEN 2 THEN Amount
+					
+		-- CAPTURE
+		WHEN 6 THEN Amount
+					
+		-- REFUND
+		WHEN 4 THEN -1 * Amount	
+	END
+    )
+    , 0) AS TotalPayments
+FROM {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder so
+LEFT JOIN {databaseOwner}{objectQualifier}Revindex_Storefront_SalesPayment sp 
+ON sp.SalesOrderID = so.SalesOrderID
+WHERE so.PortalID = @PortalID 
+    AND so.OrderDate BETWEEN @StartDate AND @StopDate
+    AND sp.TransactionType IN (2, 6, 4)
+    AND sp.PaymentGatewayResponseCode = 1
+GROUP BY so.SalesOrderNumber, so.TotalAmount
+ORDER BY so.SalesOrderNumber&lt;/query&gt;
+      &lt;parameters&gt;
+        &lt;controlParameter&gt;
+          &lt;name&gt;@StartDate&lt;/name&gt;
+          &lt;dataType&gt;6&lt;/dataType&gt;
+          &lt;field&gt;
+            &lt;datePicker&gt;
+              &lt;id&gt;StartDateDatePicker&lt;/id&gt;
+              &lt;inputControlHeight&gt;&lt;/inputControlHeight&gt;
+              &lt;inputControlWidth&gt;&lt;/inputControlWidth&gt;
+              &lt;label&gt;
+                &lt;locale en-US="Start date:" /&gt;
+              &lt;/label&gt;
+              &lt;required&gt;True&lt;/required&gt;
+              &lt;selectedDates /&gt;
+              &lt;validatorText&gt;
+                &lt;locale en-US="Start date is required." /&gt;
+              &lt;/validatorText&gt;
+            &lt;/datePicker&gt;
+          &lt;/field&gt;
+        &lt;/controlParameter&gt;
+        &lt;controlParameter&gt;
+          &lt;name&gt;@StopDate&lt;/name&gt;
+          &lt;dataType&gt;6&lt;/dataType&gt;
+          &lt;field&gt;
+            &lt;datePicker&gt;
+              &lt;id&gt;StopDateDatePicker&lt;/id&gt;
+              &lt;inputControlHeight&gt;&lt;/inputControlHeight&gt;
+              &lt;inputControlWidth&gt;&lt;/inputControlWidth&gt;
+              &lt;label&gt;
+                &lt;locale en-US="Stop date:" /&gt;
+              &lt;/label&gt;
+              &lt;required&gt;True&lt;/required&gt;
+              &lt;selectedDates /&gt;
+              &lt;validatorText&gt;
+                &lt;locale en-US="Stop date is required." /&gt;
+              &lt;/validatorText&gt;
+            &lt;/datePicker&gt;
+          &lt;/field&gt;
+        &lt;/controlParameter&gt;
+        &lt;variableParameter&gt;
+          &lt;name&gt;@PortalID&lt;/name&gt;
+          &lt;dataType&gt;11&lt;/dataType&gt;
+          &lt;variableName&gt;Portal:PortalID&lt;/variableName&gt;
+        &lt;/variableParameter&gt;
+      &lt;/parameters&gt;
+    &lt;/sqlDataSource&gt;
+  &lt;/dataSources&gt;
+  &lt;visualizers&gt;
+    &lt;htmlVisualizer&gt;
+      &lt;html&gt;&amp;lt;table bgcolor="#eeeeee" cellpadding="3" cellspacing="0" style="width: 100%; border-top: 1px solid #cccccc; border-left: 1px solid #cccccc; border-right: 1px solid #cccccc;"&amp;gt;
+ &amp;lt;colgroup&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+ &amp;lt;/colgroup&amp;gt;
+ &amp;lt;tbody&amp;gt;
+  &amp;lt;tr&amp;gt;
+   &amp;lt;td style="width: 20%;"&amp;gt;&amp;lt;strong&amp;gt;Order number&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 40%;"&amp;gt;&amp;lt;strong&amp;gt;Total amount&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 40%;"&amp;gt;&amp;lt;strong&amp;gt;Total payments&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+  &amp;lt;/tr&amp;gt;
+ &amp;lt;/tbody&amp;gt;
+&amp;lt;/table&amp;gt;
+{xsl:for-each select=&amp;amp;quot;/in/dataSet/dataTable/dataRow&amp;amp;quot; }
+
+&amp;lt;table cellpadding="3" cellspacing="0" style="width: 100%;"&amp;gt;
+ &amp;lt;colgroup&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+ &amp;lt;/colgroup&amp;gt;
+ &amp;lt;tbody&amp;gt;
+  &amp;lt;tr&amp;gt;
+   &amp;lt;td style="width: 20%; border: 1px solid #cccccc;"&amp;gt;{xsl:value-of select=&amp;amp;quot;SalesOrderNumber&amp;amp;quot; /}&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 40%; border: 1px solid #cccccc;"&amp;gt;{xsl:value-of select=&amp;amp;quot;format-number(TotalAmount, &amp;amp;#39;#,##0.00&amp;amp;#39;)&amp;amp;quot; /}&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 40%; border: 1px solid #cccccc;"&amp;gt;{xsl:value-of select=&amp;amp;quot;format-number(TotalPayments, &amp;amp;#39;#,##0.00&amp;amp;#39;)&amp;amp;quot; /}&amp;lt;/td&amp;gt;
+  &amp;lt;/tr&amp;gt;
+ &amp;lt;/tbody&amp;gt;
+&amp;lt;/table&amp;gt;
+{/xsl:for-each}
+
+&amp;lt;table cellpadding="3" cellspacing="0" style="width: 100%; border-top: 4px double black;"&amp;gt;
+ &amp;lt;colgroup&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+  &amp;lt;col /&amp;gt;
+ &amp;lt;/colgroup&amp;gt;
+ &amp;lt;tbody&amp;gt;
+  &amp;lt;tr&amp;gt;
+   &amp;lt;td style="width: 20%; border: 1px solid #cccccc;"&amp;gt;&amp;amp;nbsp;&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 40%; border: 1px solid #cccccc;"&amp;gt;{xsl:value-of select=&amp;amp;quot;format-number(sum(/in/dataSet/dataTable/dataRow/TotalAmount), &amp;amp;#39;#,##0.00&amp;amp;#39;)&amp;amp;quot; /}&amp;lt;/td&amp;gt;
+   &amp;lt;td style="width: 40%; border: 1px solid #cccccc;"&amp;gt;{xsl:value-of select=&amp;amp;quot;format-number(sum(/in/dataSet/dataTable/dataRow/TotalPayments), &amp;amp;#39;#,##0.00&amp;amp;#39;)&amp;amp;quot; /}&amp;lt;/td&amp;gt;
+  &amp;lt;/tr&amp;gt;
+ &amp;lt;/tbody&amp;gt;
+&amp;lt;/table&amp;gt;
+&lt;/html&gt;
+    &lt;/htmlVisualizer&gt;
+  &lt;/visualizers&gt;
+&lt;/data&gt;</rule>'
+		WHERE ReportDefinitionGUID = 'e9186684-51f4-4b99-ac49-27b43b286b0b'
+
+
+		-- Upgrade default Checkout template to "Standard24"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CheckoutDisplayTemplate = 'Standard24' WHERE CheckoutDisplayTemplate LIKE 'Standard%'
+
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

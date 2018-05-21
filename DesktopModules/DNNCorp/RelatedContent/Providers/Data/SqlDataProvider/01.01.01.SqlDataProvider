@@ -1,0 +1,12 @@
+﻿-- =========================================================
+-- BEGIN ** Adding Primary Keys to Analytice table **
+-- =========================================================
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'PK_{objectQualifier}RelatedContent') and OBJECTPROPERTY(id, N'IsPrimaryKey') = 1)
+BEGIN
+	ALTER TABLE {databaseOwner}{objectQualifier}RelatedContent ADD CONSTRAINT [PK_{objectQualifier}RelatedContent] PRIMARY KEY (RelationshipId)
+END
+GO
+-- =========================================================
+-- END ** Adding Primary Keys to Analytice table **
+-- =========================================================

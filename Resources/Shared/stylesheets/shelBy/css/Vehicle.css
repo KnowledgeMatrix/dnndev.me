@@ -1,0 +1,301 @@
+
+
+/************  sravan 19-1-18  ****************/
+.vehicle-attributes {
+   /** box-shadow: 0 1px 3px rgba(0,0,0,0.2);**/
+    position: relative;
+    font-family: 'fordngbs-antenna-extra-light','fordngbs-antenna-light','fordngbs-antenna-light',arial,helvetica,sans-serif;
+    line-height: 1.42857143;
+    border-top: solid 1px #737373;
+border-bottom: solid 1px #737373;
+}
+.fgx-brand-global-container-pad {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+.vehicle-attributes .fuel-label, .vehicle-attributes .seat-label {
+    float: left;
+    font-size: 1.4rem;
+}
+.vehicle-attributes .fuel .fuel-label .mileage-label, .vehicle-attributes .seat .fuel-label .mileage-label {
+    display: none;
+}
+.vehicle-attributes .fuel .fuel-label ~ .fuel-rating, .vehicle-attributes .seat .fuel-label ~ .fuel-rating {
+    width: 70%;
+}
+.vehicle-attributes .fuel .fuel-label ~ .fuel-rating .value-label, .vehicle-attributes .seat .fuel-label ~ .fuel-rating .value-label {
+    width: 50%;
+}
+.vehicle-attributes .fuel .fuel-rating .mileage-values, .vehicle-attributes .seat .fuel-rating .mileage-values, .vehicle-attributes .fuel .seat-number .mileage-values, .vehicle-attributes .seat .seat-number .mileage-values {
+    max-height: 38px;
+}
+.vehicle-attributes .fuel .adjust-right, .vehicle-attributes .seat .adjust-right {
+    margin-right: -10px;
+}
+.vehicle-attributes .fuel .fuel-label ~ .fuel-rating .mileage-label, .vehicle-attributes .seat .fuel-label ~ .fuel-rating .mileage-label {
+    display: block;
+}
+.vehicle-attributes .fuel .fuel-label ~ .fuel-rating>span, .vehicle-attributes .seat .fuel-label ~ .fuel-rating>span {
+    width: 50%;
+}
+@media (min-width: 480px){
+.fgx-contact-headline, .fgx-brand-css .fgx-contact-subheadline, .fgx-brand-global-container-pad {
+    padding-left: 25px;
+    padding-right: 25px;
+}
+}
+@media (min-width: 768px){
+.fgx-contact-headline, .fgx-contact-subheadline, .fgx-brand-global-container-pad {
+    padding-left: 30px;
+    padding-right: 30px;
+}
+.vehicle-attributes .section-top>.section-top-part {
+    display: table-cell;
+    padding-right: 20px;
+    vertical-align: middle;
+}
+.vehicle-attributes .section-top>.section-top-part {
+    display: block;
+    padding-right: 20px;
+    vertical-align: middle;
+    margin-bottom: 0;
+}
+.vehicle-attributes .fuel {
+    border-right: 1px solid #000;
+    width: 59% !important;
+}
+.vehicle-attributes .fuel .fuel-label {
+    width: 40% !important;
+    color: #333;
+}
+.fgx-brand-css .vehicle-attributes .fuel .fuel-label ~ .fuel-rating {
+    width: 30% !important;
+    float: left;
+}
+.vehicle-attributes .fuel .fuel-rating, .vehicle-attributes .seat .seat-number {
+    font-size: 3rem;
+    text-align: center;    
+}
+.vehicle-attributes .fuel .fuel-label ~ .fuel-rating .value-label {
+    width: auto;
+    color: #333;
+}
+.vehicle-attributes .fuel .fuel-rating .value-label {
+    float: none;
+    display: block;
+    width: auto;
+    text-transform: uppercase;
+    font-size: 1rem;
+}
+.vehicle-attributes .fuel .fuel-label ~ .fuel-rating>span {
+    width: auto !important;
+}
+.vehicle-attributes .fuel .fuel-rating .mileage-label {
+    margin-top: -6px;
+    text-transform: none;
+}
+.vehicle-attributes .fuel .fuel-rating>span {
+    float: none;
+    display: block;
+    width: auto;
+    text-transform: uppercase;
+    font-size: 1rem;
+}
+.vehicle-attributes .fuel .fuel-rating .mileage-label {
+    margin-top: -6px;
+    text-transform: none;
+}
+.vehicle-attributes .fuel .fuel-label ~ .fuel-rating>span {
+    width: auto;
+}
+.vehicle-attributes .fuel .fuel-label ~ .fuel-rating {
+    width: 30%;
+    float: left;
+}
+.vehicle-attributes .seat .seat-number {
+    text-align: left;
+    display: block;
+    width: 100%;
+}
+}
+@media (min-width: 992px){
+.fgx-contact-headline, .fgx-contact-subheadline, .fgx-brand-global-container-pad {
+    padding-left: 45px;
+    padding-right: 45px;
+}
+.vehicle-attributes .section-top {
+    border-bottom: 0 !important;
+    border-right: 1px solid #fff;
+    width: 50% !important;
+}
+.vehicle-attributes .section-top.fgx-brand-global-container-pad {
+    padding-right: 25px;
+}
+.vehicle-attributes .fuel {
+    width: 30% !important;
+}
+.vehicle-attributes .fuel .fuel-rating, .vehicle-attributes .seat .seat-number {
+    font-size: 2.6rem;
+}
+.vehicle-attributes .seat {
+    width: 15% !important;
+}
+}
+@media only screen and (min-width: 1200px){
+.vehicle-attributes .pricing-offers {
+    width: auto !important;
+}
+.vehicle-attributes .fuel .fuel-rating, .vehicle-attributes .seat .seat-number {
+    font-size: 3.0rem;
+}
+}
+.vehicle-attributes .section {
+    padding-top: 25px;
+    padding-bottom: 25px;
+    display: inline-block;
+    vertical-align: top;
+    width: 100%;
+}
+.vehicle-attributes .section-top {
+    border-bottom: 1px solid #eee;
+}
+.vehicle-attributes .price {
+    margin-bottom: 20px;
+    font-family: 'fordngbs-antenna-extra-light','fordngbs-antenna-light','fordngbs-antenna-light',arial,helvetica,sans-serif;
+    font-size: 1.4rem;
+    color: #1b394e;
+    clear: left;
+}
+.vehicle-attributes .price.purchase-price>.price-label {
+    line-height: initial;
+    margin-bottom: .5rem;
+    color: #333;
+}
+.vehicle-attributes .price>.price-label {
+    font-size: 1.4rem;
+    line-height: 0;
+    margin: 10px 0 0;
+}
+sub, sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+sup {
+    /* top: -0.5em; */
+}
+sup {
+    padding: 2px 2px 2px 1px;
+}
+.vehicle-attributes .fuel sup, .vehicle-attributes .seat sup {
+    font-size: 8px;
+    top: -2.2em;
+}
+sup[data-vdm-disc] {
+    color: #2596cf;
+    cursor: pointer;
+}
+sup[data-vdm-disc]:after {
+    content: "";
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    bottom: -10px;
+    left: -10px;
+}
+.vehicle-attributes .price>.price-value {
+    font-size: 3rem;
+    font-family: 'fordngbs-antenna-extra-light','fordngbs-antenna-light','fordngbs-antenna-light',arial,helvetica,sans-serif;
+    white-space: nowrap;
+    display: inline-block;
+}
+.vehicle-attributes .pricing-offers {
+    width: 100%;
+}
+.vehicle-attributes .price-location {
+    color: #616161;
+    font-size: 1.2rem;
+    margin: 0;
+}
+h3.seat-label {
+    color: #333;
+}
+.pricing-offers.section-top-part a {
+    color: #6ab4da;
+}
+.price.section-top-part.monthly-price.fgx-brand-hidden {
+    display: none;
+}
+
+
+
+.spec_details .title_spec {
+    text-transform: capitalize;
+    font-size: 26px;
+    color: #666;
+}
+
+.spec_details h3 {
+    width: 100%;
+    padding-left: 0;
+    font-size: 18px;
+    color: #666;
+}
+
+.spec_details ul {
+    padding: 0;
+    margin-left: 20px;
+    display: inline-block;
+    list-style: none;
+}
+
+.spec_details ul li {
+    font-size: 14px;
+    line-height: 30px;
+    color: #666;
+    width: 50%;
+    float: left;
+    padding-left: 0;
+    list-style: disc;
+}
+
+.split_data {
+    width: 50%;
+    float: left;
+}
+
+.split_data ul li {
+    width: 100%;
+}
+
+.perform_data {
+    text-align: center;
+    padding: 25px 0;
+}
+
+.perform_data h2 {
+    font-weight: 300;
+    margin-bottom: 30px;
+    color: #999;
+}
+
+.perform_data p {
+    padding: 0 15%;
+    font-size: 14px;
+    line-height: 24px;
+    color: #999;
+}
+
+.vechicle_text{
+    font-size: 14px;
+    line-height: 28px;
+    color: #666;
+    float: left;
+    padding-left: 0;
+    list-style: disc;
+}
+.cbp-caption-zoom .cbp-caption-activeWrap{
+        background: #71717100;
+    background-color: none !important;
+}

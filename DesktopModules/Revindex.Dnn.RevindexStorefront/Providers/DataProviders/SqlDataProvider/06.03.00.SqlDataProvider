@@ -1,0 +1,67 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+SET XACT_ABORT ON
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+	
+	-- Support package class code 
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Package ADD ShippingCode varchar(50) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant ADD ShippingCode varchar(50) NULL
+
+	-- Support ABF shipping
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD ShippingGatewaysABFSecureID varchar(255) NULL
+
+	-- Support optionally storing credit card verification
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD SecurityStoreCreditCardVerification bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_SecurityStoreCreditCardVerification DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_SecurityStoreCreditCardVerification
+
+	-- Increase CVV column width
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesPayment ALTER COLUMN CreditCardCvv varchar(100) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_UserPayment ALTER COLUMN CreditCardCvv varchar(100) NULL
+
+	-- Fraud risk using SiftScience
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		RiskGatewaysSiftScienceAPIKey varchar(255) NULL,
+		RiskGatewaysSiftScienceJavascriptSnippetKey varchar(255) NULL,
+		RiskMethodsFraudRiskGateway varchar(50) NULL,
+		RiskMethodsFraudActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_RiskMethodsFraudActive DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_RiskMethodsFraudActive
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder ADD FraudScore int NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder ADD FraudRiskGateway varchar(50) NULL
+
+	-- Fraud risk using FraudLabs Pro
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD RiskGatewaysFraudLabsProAPIKey varchar(255) NULL
+
+	-- Support auto delete of incomplete orders
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD SalesOrderIncompleteOrdersAutoDelete int NULL
+
+COMMIT TRANSACTION
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+
+		-- Fix incorrect wish list type being set on product detail page.
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_WishList SET WishListType = 1 WHERE WishListType = 0
+
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

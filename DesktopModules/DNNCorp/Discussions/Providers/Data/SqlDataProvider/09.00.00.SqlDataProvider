@@ -1,0 +1,41 @@
+﻿IF OBJECT_ID(N'{databaseOwner}{objectQualifier}Discussions_GetItemsToCreateZendeskTickets', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Discussions_GetItemsToCreateZendeskTickets
+GO      
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Discussions_GetItemsToCreateZendeskTickets
+	@GetUncommentedTicketsFromDate DATETIME,
+	@PortalId INT,
+	@RoleIds VARCHAR(MAX),
+	@MaxRows INT = 20
+AS
+BEGIN
+	DECLARE @TicketMetadataId INT
+	SELECT TOP 1 @TicketMetadataId = MetaDataID FROM {databaseOwner}[{objectQualifier}MetaData] where MetaDataName = 'ticketId'
+
+	DECLARE @JournalTypeForum INT
+	SELECT TOP 1 @JournalTypeForum = JournalTypeId FROM {databaseOwner}[{objectQualifier}Journal_Types] WHERE JournalType = 'forum_topic'
+
+	DECLARE @Roles TABLE (RoleId INT)
+	INSERT INTO @Roles
+	SELECT * FROM {databaseOwner}{objectQualifier}CsvSplit(@RoleIds, ',')
+
+	SELECT TOP (@MaxRows) DT.[TopicId], DT.[ContentItemID], DT.[PortalId], CI.[ModuleID], CI.[TabID]
+		FROM {databaseOwner}[{objectQualifier}Discussions_Topic] DT 
+		INNER JOIN {databaseOwner}[{objectQualifier}ContentItems] CI 
+			ON CI.[ContentItemID] = DT.[ContentItemId]
+		INNER JOIN {databaseOwner}[{objectQualifier}UserRoles] UR 
+			ON UR.UserID = CI.CreatedByUserID AND RoleID in ( SELECT * FROM @Roles)
+		LEFT OUTER JOIN {databaseOwner}[{objectQualifier}ContentItems_MetaData] CM 
+			ON CM.MetaDataId = @TicketMetadataId AND CM.ContentItemId = DT.ContentItemId
+		LEFT OUTER JOIN {databaseOwner}[{objectQualifier}Journal] J
+			ON J.ContentItemId = DT.ContentItemId AND JournalTypeId = @JournalTypeForum 
+		LEFT OUTER JOIN {databaseOwner}[{objectQualifier}Journal_Comments] JC
+			ON JC.JournalId = J.JournalId
+	WHERE 
+		CM.MetaDataValue IS NULL			
+		AND JC.CommentId IS NULL
+		AND DT.[ApprovedDate] <= @GetUncommentedTicketsFromDate AND DT.[Approved] = 1 
+		AND DT.[Closed] = 0 AND DT.[Deleted] = 0 AND DT.[PortalId] = @PortalId
+	GROUP BY DT.[TopicId], DT.[ContentItemID], DT.[PortalId], CI.[ModuleID], CI.[TabID]		
+END
+GO

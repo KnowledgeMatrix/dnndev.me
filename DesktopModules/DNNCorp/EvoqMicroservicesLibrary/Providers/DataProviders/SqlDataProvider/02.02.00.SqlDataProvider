@@ -1,0 +1,6 @@
+﻿UPDATE a 
+SET Version = '4.2.3'
+FROM {databaseOwner}[{objectQualifier}Assemblies] a
+    JOIN {databaseOwner}[{objectQualifier}Packages] p ON A.PackageID = p.PackageID
+WHERE AssemblyName = 'Polly.dll'
+  AND p.name = 'Evoq.GoogleAnalyticsConnector'

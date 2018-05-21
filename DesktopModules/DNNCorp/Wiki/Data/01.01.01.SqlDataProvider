@@ -1,0 +1,50 @@
+﻿-- NOTE(cbond): Allow -1 article types for front-page article with no specified type
+IF object_id('FK_{objectQualifier}Wiki_Article_{objectQualifier}ArticleTypeId') IS NOT NULL
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}Wiki_Article] DROP CONSTRAINT [FK_{objectQualifier}Wiki_Article_{objectQualifier}ArticleTypeId]
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_Article_Get') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_Get
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_Get
+	@ArticleId int
+AS
+BEGIN
+	SELECT
+		a.[ArticleId],
+		a.[ArticleTypeId],
+		a.[ContentItemId],
+		a.[SummaryContentItemId],
+		a.[PortalId],
+		a.[GroupId],
+		a.[ViewCount],
+		a.[Approved],
+		a.[Protected],
+		s.[Content] AS [Summary],
+		c.[Content],
+		c.[ContentTypeID],
+		c.[TabID],
+		c.[ModuleID],
+		c.[ContentKey],
+		c.[Indexed],
+		c.[CreatedByUserID],
+		c.[CreatedOnDate],
+		c.[LastModifiedByUserID],
+		c.[LastModifiedOnDate],
+		c.[StateID],
+		m.[MetaDataValue] AS [ContentTitle],
+		u.DisplayName
+	FROM {databaseOwner}{objectQualifier}Wiki_Article a WITH (NOLOCK)
+	LEFT OUTER JOIN	{databaseOwner}{objectQualifier}ContentItems c WITH (NOLOCK) ON a.ContentItemId = c.ContentItemID
+	LEFT OUTER JOIN {databaseOwner}[{objectQualifier}Users] u WITH (NOLOCK) ON U.UserID = c.CreatedByUserID
+	LEFT OUTER JOIN {databaseOwner}[{objectQualifier}ContentItems_MetaData] m WITH (NOLOCK) ON m.ContentItemID = a.[ContentItemId] AND m.MetaDataID =
+		(SELECT	[MetaDataID]
+		 FROM   {databaseOwner}[{objectQualifier}MetaData] WITH (NOLOCK)
+		 WHERE  [MetaDataName] = 'Title')	
+	LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems S WITH (NOLOCK) ON A.SummaryContentItemId = S.ContentItemID
+	WHERE		a.ArticleId = @ArticleId
+END
+GO

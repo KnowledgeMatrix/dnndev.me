@@ -1,0 +1,39 @@
+<!--Category Template-->
+<!--HeaderTemplateBegin-->
+[Has:EDG:CommunityMode][EDG:CommunityModeEditMedia][/Has:EDG:CommunityMode]
+<div class="edsgg_list">
+<!--HeaderTemplateEnd-->
+
+<!--CategoryItemTemplateBegin-->
+	<div class="edsgg_thumbnailWrapper">
+	[Has:EDG:EditPermission][EDG:EditCategoryData][/Has:EDG:EditPermission]
+		<div class="edsgg_mediaContainer" style="width: [EDG:CategoryThumbWidth]px;">
+			<a href="[EDG:CategoryLink]">
+				<span class="edsgg_imageThumbnail">
+					<img src="[EDG:CategoryThumbnail]" alt="[EDG:CategoryTitle]">
+					[Has:EDG:NumberOfGalleries]
+					<span class="edsgg_numberOfItems">[EDG:NumberOfGalleries]</span>
+					[/Has:EDG:NumberOfGalleries]
+				</span>
+			</a>
+		</div>
+		<div class="edsgg_listImageDetails">
+			<span class="edsgg_title">[Has:EDG:CategoryTitle][EDG:CategoryTitle][/Has:EDG:CategoryTitle]</span>
+			[Has:EDG:CategoryDescription]<div class="edsgg_description">[EDG:CategoryDescription]</div>[/Has:EDG:CategoryDescription]
+			<ul class="edsgg_mediaDetails">
+				[Has:EDG:CategorySharingButtons]
+				<li class="edsgg_socialSharing">[EDG:CategoryShareButtons]</li>
+				[/Has:EDG:CategorySharingButtons]
+				[Has:EDG:CategoryShowRss]
+				<li class="edsgg_rssLink"><a href="[EDG:CategoryRSSURL]" title="[EDG:LocalizedText:RSS]" target="_blank"><span>[EDG:LocalizedText:RSS]</span></a></li>
+				[/Has:EDG:CategoryShowRss]
+			</ul>
+		</div>
+	</div>
+<!--CategoryItemTemplateEnd-->
+
+<!--FooterTemplateBegin-->
+</div>
+[EDG:CategoryPaging]
+[Has:EDG:CategoryShowRss]<div class="edsgg_listRssWrapper"><a href="[EDG:CategoryListRSSURL]" title="[EDG:LocalizedText:RSS]"><span>[EDG:LocalizedText:RSS]</span></a></div>[/Has:EDG:CategoryShowRss]
+<!--FooterTemplateEnd-->

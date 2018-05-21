@@ -1,0 +1,145 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+SET XACT_ABORT ON
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+	
+	-- Allow shipping form in PayPal Standard
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysPayPalWPSShippingFormActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysPayPalWPSShippingFormActive DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysPayPalWPSShippingFormActive
+	
+	-- Support StepSize in ProductAttributeDefinition
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductAttributeDefinition ADD StepSize decimal(19, 4) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ProductAttributeDefinition_StepSize DEFAULT 1.0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductAttributeDefinition DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ProductAttributeDefinition_StepSize
+
+	-- Add payment origin to SalesPayment table
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesPayment ADD Origin int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesPayment_Origin DEFAULT 1
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesPayment DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesPayment_Origin
+
+	-- Support CashFlows Remote API payment gateway
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		PaymentGatewaysCashFlowsRemoteAPITestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysCashFlowsRemoteAPITestMode DEFAULT 0,
+		PaymentGatewaysCashFlowsRemoteAPIProfileID varchar(255) NULL,
+		PaymentGatewaysCashFlowsRemoteAPIPassword varchar(255) NULL
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysCashFlowsRemoteAPITestMode
+
+	-- Make company field 100 characters wide
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder ALTER COLUMN BillingCompany nvarchar(100)
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder ALTER COLUMN ShippingCompany nvarchar(100)
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesPayment ALTER COLUMN Company nvarchar(100)
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_UserAddress ALTER COLUMN Company nvarchar(100)
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_UserPayment ALTER COLUMN Company nvarchar(100)
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_RecurringSalesOrder ALTER COLUMN ShippingCompany nvarchar(100)
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_WishList ALTER COLUMN ShippingCompany nvarchar(100)
+
+	-- Fix Configuration table index is missing unique clause in older Storefront prior to 7.1
+	IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration]') AND name = N'IX_Revindex_Storefront_Configuration_1' AND is_unique = 1)
+	BEGIN
+		-- Delete duplicate rows by PortalID
+		DELETE FROM {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration
+		WHERE ConfigurationID NOT IN (SELECT MIN(ConfigurationID) FROM
+										{databaseOwner}{objectQualifier}Revindex_Storefront_Configuration
+										GROUP BY PortalID)
+	
+		-- Modify index to be unique
+		DROP INDEX IX_{objectQualifier}Revindex_Storefront_Configuration_1 ON {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration
+		CREATE UNIQUE NONCLUSTERED INDEX IX_{objectQualifier}Revindex_Storefront_Configuration_1 ON {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration (PortalID)
+	END
+
+	-- Add configuration for searchable fields
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		ProductSearchNameSearchable bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductSearchNameSearchable DEFAULT 1,
+		ProductSearchOverviewSearchable bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductSearchOverviewSearchable DEFAULT 1,
+		ProductSearchSummarySearchable bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductSearchSummarySearchable DEFAULT 1,
+		ProductSearchSpecificationsSearchable bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductSearchSpecificationsSearchable DEFAULT 1,
+		ProductSearchTermsSearchable bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductSearchTermsSearchable DEFAULT 1,
+		ProductSearchFAQSearchable bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductSearchFAQSearchable DEFAULT 1,
+		ProductSearchBuyingGuideSearchable bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductSearchBuyingGuideSearchable DEFAULT 1,
+		ProductSearchSKUSearchable bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductSearchSKUSearchable DEFAULT 1
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductSearchNameSearchable
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductSearchOverviewSearchable
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductSearchSummarySearchable
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductSearchSpecificationsSearchable
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductSearchTermsSearchable
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductSearchFAQSearchable
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductSearchBuyingGuideSearchable
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductSearchSKUSearchable
+
+	-- Add searchable field for product attribute definition
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductAttributeDefinition ADD Searchable bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ProductAttributeDefinition_Searchable DEFAULT 1
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductAttributeDefinition DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ProductAttributeDefinition_Searchable
+
+COMMIT TRANSACTION
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+		
+		-- In order to add a foreign key, we need to first delete any incorrect references
+		UPDATE sod
+		SET sod.RecurringSalesOrderID = NULL
+		FROM {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrderDetail sod
+		LEFT JOIN {databaseOwner}{objectQualifier}Revindex_Storefront_RecurringSalesOrder rso
+		ON sod.RecurringSalesOrderID = rso.RecurringSalesOrderID
+		WHERE sod.RecurringSalesOrderID IS NOT NULL AND rso.RecurringSalesOrderID IS NULL
+		
+		-- Searchable should take same value as filterable field in product attribute definition
+		-- since we historically relied on filterable field to decide if field is being indexed.
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductAttributeDefinition SET Searchable = Filterable
+
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+	
+	-- Add foreign key reference from SalesOrderDetail to RecurringSalesOrder table.
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrderDetail ADD CONSTRAINT
+	FK_{objectQualifier}Revindex_Storefront_SalesOrderDetail_Revindex_Storefront_RecurringSalesOrder FOREIGN KEY
+	(RecurringSalesOrderID) REFERENCES {databaseOwner}{objectQualifier}Revindex_Storefront_RecurringSalesOrder
+	(RecurringSalesOrderID) ON UPDATE  NO ACTION ON DELETE  NO ACTION 
+
+	-- Add index for SalesOrderDetail
+	CREATE NONCLUSTERED INDEX IX_{objectQualifier}Revindex_Storefront_SalesOrderDetail_1 ON {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrderDetail (RecurringSalesOrderID)
+
+	-- Support preorder
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant ADD PreorderInterval int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ProductVariant_PreorderInterval DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ProductVariant_PreorderInterval
+
+	-- Support preorder process behavior
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD SalesOrderPreorderProcessBehavior int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_SalesOrderPreorderProcessBehavior DEFAULT 2
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_SalesOrderPreorderProcessBehavior
+
+	-- Add index for SalesOrder.OrderDate column
+	CREATE NONCLUSTERED INDEX IX_{objectQualifier}Revindex_Storefront_SalesOrder_9 ON {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder (OrderDate)
+	
+	-- Fix FulfillmentProvider fkey did not have cascade action on delete 
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_FulfillmentProvider DROP CONSTRAINT FK_{objectQualifier}Revindex_Storefront_FulfillmentProvider_Portals
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_FulfillmentProvider ADD CONSTRAINT
+		FK_{objectQualifier}Revindex_Storefront_FulfillmentProvider_Portals FOREIGN KEY
+		(PortalID) REFERENCES {databaseOwner}{objectQualifier}Portals (PortalID) ON UPDATE NO ACTION ON DELETE CASCADE
+
+COMMIT TRANSACTION
+GO

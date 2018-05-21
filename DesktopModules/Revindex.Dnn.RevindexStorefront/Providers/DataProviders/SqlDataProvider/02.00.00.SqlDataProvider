@@ -1,0 +1,41 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+GO
+
+BEGIN TRY
+	BEGIN TRANSACTION
+
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant ADD
+			ModifierRule xml NULL
+			
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_RecurringSalesOrder ADD
+			DynamicFormResult xml NULL
+			
+		-- Rename ProductVariant.Price column to BasePrice
+		EXECUTE sp_rename N'{databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant.Price', N'BasePrice', 'COLUMN' 
+		
+		-- Upgrade default ProductDetail template to "Standard3"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductDetailDisplayTemplate = 'Standard3' WHERE ProductDetailDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default Cart template to "Standard2"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CartDisplayTemplate = 'Standard2' WHERE CartDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default Checkout template to "Standard3"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CheckoutDisplayTemplate = 'Standard3' WHERE CheckoutDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default Confirmation template to "Standard3"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ConfirmationDisplayTemplate = 'Standard3' WHERE ConfirmationDisplayTemplate LIKE 'Standard%'
+		
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

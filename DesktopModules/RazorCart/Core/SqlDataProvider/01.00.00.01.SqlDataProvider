@@ -1,0 +1,468 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****               Create Tables                      *****/
+/************************************************************/
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_Stores') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_Stores
+	(
+		[StoreID] [INT] IDENTITY(1,1) NOT NULL,
+		[StoreName] [NVARCHAR](150) NOT NULL,
+		[CreatedDate] [DATETIME] NULL,
+		[CreatedBy] [NVARCHAR](150) NULL,
+		[PortalID] [INT] NULL
+		CONSTRAINT [PK_{objectQualifier}Smith_Stores] PRIMARY KEY CLUSTERED
+		(
+			[StoreID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_StoreConfig') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_StoreConfig
+	(
+		[ConfigID] [INT] IDENTITY(1,1) NOT NULL,
+		[StoreID] [INT] NOT NULL,
+		[ConfigName] [NVARCHAR](100) NOT NULL,
+		[ConfigValue] [NVARCHAR](MAX) NULL,
+		[ModifiedBy] [NVARCHAR](150) NULL,
+		[ModifiedDate] [DATETIME] NULL,
+		[PortalID] [INT] NULL
+		CONSTRAINT [PK_{objectQualifier}Smith_Store_Config] PRIMARY KEY CLUSTERED
+		(
+			[ConfigID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ShoppingCartVariant') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_ShoppingCartVariant
+	(
+		[CartVariantID] [INT] IDENTITY(1,1) NOT NULL,
+		[CartID] [INT] NOT NULL,
+		[VariantGroupID] [INT] NULL,
+		[VariantGroup] [VARCHAR](50) NULL,
+		[VariantID] [INT] NULL,
+		[VariantName] [VARCHAR](50) NULL,
+		[VariantHasText] [BIT] NULL,
+		[VariantText] [VARCHAR](200) NULL
+		CONSTRAINT [PK_{objectQualifier}Smith_Shopping_Cart_Variant] PRIMARY KEY CLUSTERED
+		(
+			[CartVariantID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_SavedCartDetailVariant') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_SavedCartDetailVariant
+	(
+		[DetailVariantID] [INT] IDENTITY(1,1) NOT NULL,
+		[CartDetailID] [INT] NOT NULL,
+		[VariantGroupID] [INT] NULL,
+		[VariantGroup] [VARCHAR](50) NULL,
+		[VariantID] [INT] NULL,
+		[VariantName] [VARCHAR](50) NULL,
+		[VariantHasText] [BIT] NULL,
+		[VariantText] [VARCHAR](200) NULL
+		CONSTRAINT [PK_{objectQualifier}Smith_Saved_Cart_Detail_Variant] PRIMARY KEY CLUSTERED
+		(
+			[DetailVariantID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_StoreOrderDetailVariant') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_StoreOrderDetailVariant
+	(
+		[DetailVariantID] [INT] IDENTITY(1,1) NOT NULL,
+		[OrderDetailID] [INT] NOT NULL,
+		[VariantGroupID] [INT] NULL,
+		[VariantGroup] [VARCHAR](50) NULL,
+		[VariantID] [INT] NULL,
+		[VariantName] [VARCHAR](50) NULL,
+		[VariantHasText] [BIT] NULL,
+		[VariantText] [VARCHAR](200) NULL
+		CONSTRAINT [PK_{objectQualifier}Smith_Order_Detail_Variant] PRIMARY KEY CLUSTERED
+		(
+			[DetailVariantID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_SessionState') AND type in (N'U'))
+BEGIN
+	DROP TABLE {databaseOwner}{objectQualifier}Smith_SessionState
+END
+GO
+CREATE TABLE {databaseOwner}{objectQualifier}Smith_SessionState
+(
+	[ID] [INT] IDENTITY(1,1) NOT NULL,
+	[ClientGUID] [UNIQUEIDENTIFIER] NOT NULL,
+	[UserID] [INT] NULL,
+	[SessionTitle] [NVARCHAR](150) NULL,
+	[SessionData] [NVARCHAR](MAX) NULL,
+	[CreatedDate] [DATETIME] NULL,
+	[ModifiedDate] [DATETIME] NULL,
+	[PortalID] [INT] NULL,
+	[StoreID] [INT] NULL
+	CONSTRAINT [PK_{objectQualifier}Smith_Session_State] PRIMARY KEY CLUSTERED
+	(
+		[ID] ASC
+	),
+	CONSTRAINT [IX_{objectQualifier}Smith_Session_State_Unique] UNIQUE NONCLUSTERED
+	(
+		[ClientGUID] ASC,
+		[UserID] ASC,
+		[SessionTitle] ASC,
+		[PortalID] ASC,
+		[StoreID] ASC
+	)
+)
+GO
+
+
+
+/************************************************************/
+/*****             Create Table Types                   *****/
+/************************************************************/
+IF NOT EXISTS (SELECT * FROM sys.types WHERE USER_TYPE_ID = TYPE_ID(N'{databaseOwner}{objectQualifier}SmithStoreConfig'))
+BEGIN
+	CREATE TYPE {databaseOwner}{objectQualifier}SmithStoreConfig AS TABLE
+	(
+		[StoreID] [INT] NOT NULL,
+		[ConfigName] [NVARCHAR](100) NOT NULL,
+		[ConfigValue] [NVARCHAR](MAX) NULL,
+		[ModifiedBy] [NVARCHAR](150) NULL,
+		[ModifiedDate] [DATETIME] NULL,
+		[PortalID] [INT] NULL
+	)
+END
+GO
+
+
+
+/************************************************************/
+/*****                  Alter Tables                    *****/
+/************************************************************/
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_Products') AND type in (N'U'))
+BEGIN
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_Products') AND name = N'StoreID')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_Products
+		ADD
+			[StoreID] [INT]
+	END
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_PaymentMethodsZones') AND type in (N'U'))
+BEGIN
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_PaymentMethodsZones') AND name = N'StoreID')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_PaymentMethodsZones
+		ADD
+			[StoreID] [INT]
+	END
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_Customer') AND type in (N'U'))
+BEGIN
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_Customer') AND name = N'StoreID')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_Customer
+		ADD
+			[StoreID] [INT]
+	END
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_PaymentMethods') AND type in (N'U'))
+BEGIN
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_PaymentMethods') AND name = N'StoreID')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_PaymentMethods
+		ADD
+			[StoreID] [INT]
+	END
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_StoreOrders') AND type in (N'U'))
+BEGIN
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_StoreOrders') AND name = N'StoreID')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_StoreOrders
+		ADD
+			[StoreID] [INT]
+	END
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_PayHist') AND type in (N'U'))
+BEGIN
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_PayHist') AND name = N'StoreID')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_PayHist
+		ADD
+			[StoreID] [INT]
+	END
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ShoppingCart') AND type in (N'U'))
+BEGIN
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ShoppingCart') AND name = N'OtherCartFields')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_ShoppingCart
+		ADD
+			[OtherCartFields] [NVARCHAR](MAX)
+	END
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ShoppingCart') AND name = N'PortalID')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_ShoppingCart
+		ADD
+			[PortalID] [INT]
+	END
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ShoppingCart') AND name = N'StoreID')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_ShoppingCart
+		ADD
+			[StoreID] [INT]
+	END
+	IF EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ShoppingCart') AND name = N'CartCookie')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_ShoppingCart
+		ALTER COLUMN
+			[CartCookie] [VARCHAR](50)
+	END
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_SavedCart') AND type in (N'U'))
+BEGIN
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_SavedCart') AND name = N'StoreID')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_SavedCart
+		ADD
+			[StoreID] [INT]
+	END
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_EmailTemplateSC') AND type in (N'U'))
+BEGIN
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_EmailTemplateSC') AND name = N'StoreID')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_EmailTemplateSC
+		ADD
+			[StoreID] [INT]
+	END
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_Coupons') AND type in (N'U'))
+BEGIN
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_Coupons') AND name = N'StoreID')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_Coupons
+		ADD
+			[StoreID] [INT]
+	END
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_Category') AND type in (N'U'))
+BEGIN
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_Category') AND name = N'StoreID')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_Category
+		ADD
+			[StoreID] [INT]
+	END
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_PriceClass') AND type in (N'U'))
+BEGIN
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_PriceClass') AND name = N'StoreID')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_PriceClass
+		ADD
+			[StoreID] [INT]
+	END
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_Department') AND type in (N'U'))
+BEGIN
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_Department') AND name = N'StoreID')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_Department
+		ADD
+			[StoreID] [INT]
+	END
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_OrderDiscounts') AND type in (N'U'))
+BEGIN
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_OrderDiscounts') AND name = N'StoreID')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_OrderDiscounts
+		ADD
+			[StoreID] [INT]
+	END
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ShipMethods') AND type in (N'U'))
+BEGIN
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ShipMethods') AND name = N'StoreID')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_ShipMethods
+		ADD
+			[StoreID] [INT]
+	END
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ShippingByWeight') AND type in (N'U'))
+BEGIN
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ShippingByWeight') AND name = N'StoreID')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_ShippingByWeight
+		ADD
+			[StoreID] [INT]
+	END
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ShippingByAmount') AND type in (N'U'))
+BEGIN
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ShippingByAmount') AND name = N'StoreID')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_ShippingByAmount
+		ADD
+			[StoreID] [INT]
+	END
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ShippingByQuantity') AND type in (N'U'))
+BEGIN
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ShippingByQuantity') AND name = N'StoreID')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_ShippingByQuantity
+		ADD
+			[StoreID] [INT]
+	END
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ShippingByZipCode') AND type in (N'U'))
+BEGIN
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ShippingByZipCode') AND name = N'StoreID')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_ShippingByZipCode
+		ADD
+			[StoreID] [INT]
+	END
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_Tax') AND type in (N'U'))
+BEGIN
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_Tax') AND name = N'StoreID')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_Tax
+		ADD
+			[StoreID] [INT]
+	END
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_TaxStates') AND type in (N'U'))
+BEGIN
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_TaxStates') AND name = N'StoreID')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_TaxStates
+		ADD
+			[StoreID] [INT]
+	END
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ProductVariantGroup') AND type in (N'U'))
+BEGIN
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ProductVariantGroup') AND name = N'SortOrder')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_ProductVariantGroup
+		ADD
+			[SortOrder] [INT]
+	END
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ProductDiscountsByRole') AND type in (N'U'))
+BEGIN
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ProductDiscountsByRole') AND name = N'PortalID')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_ProductDiscountsByRole
+		ADD
+			[PortalID] [INT]
+	END
+END
+GO
+
+
+
+/************************************************************/
+/*****               End of Script                      *****/
+/************************************************************/

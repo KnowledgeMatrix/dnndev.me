@@ -1,0 +1,638 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+SET XACT_ABORT ON
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+
+	-- Support Dotpay payment gateway
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		PaymentGatewaysDotpayAccountID varchar(255) NULL,
+		PaymentGatewaysDotpayPin varchar(255) NULL,
+		PaymentGatewaysDotpayTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysDotpayTestMode DEFAULT 0,
+		PaymentMethodsDotpayActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsDotpayActive DEFAULT 0,
+		PaymentMethodsDotpayAvailabilityRule xml NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysDotpayTestMode
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsDotpayActive
+	
+	-- Seller table
+	CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Seller](
+		[SellerID] [int] IDENTITY(1,1) NOT NULL,
+		[PortalID] [int] NOT NULL,
+		[Name] [xml] NOT NULL,
+		[Description] [xml] NULL,
+		[Street] [nvarchar](200) NULL,
+		[City] [nvarchar](50) NULL,
+		[SubdivisionCode] [varchar](6) NULL,
+		[PostalCode] [varchar](10) NULL,
+		[CountryCode] [varchar](2) NULL,
+		[Phone] [varchar](50) NULL,
+		[Email] [nvarchar](256) NULL,
+		[CreateDate] [datetime] NOT NULL,
+		[UpdateDate] [datetime] NOT NULL,
+		[RowVersion] [timestamp] NOT NULL,
+		[Deleted] [bit] NOT NULL,
+	 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_Seller] PRIMARY KEY CLUSTERED 
+	(
+		[SellerID] ASC
+	))
+
+	CREATE NONCLUSTERED INDEX IX_{objectQualifier}Revindex_Storefront_Seller ON {databaseOwner}{objectQualifier}Revindex_Storefront_Seller (PortalID) 
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Seller]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Seller_Portals] FOREIGN KEY([PortalID])
+	REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID])
+	ON DELETE CASCADE
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Seller] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Seller_Portals]
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Customer ADD
+		SellerID int NULL
+	
+	CREATE NONCLUSTERED INDEX IX_{objectQualifier}Revindex_Storefront_Customer_2 ON {databaseOwner}{objectQualifier}Revindex_Storefront_Customer
+		(SellerID)
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Customer ADD CONSTRAINT
+		FK_{objectQualifier}Revindex_Storefront_Customer_Revindex_Storefront_Seller FOREIGN KEY
+		(SellerID) REFERENCES {databaseOwner}{objectQualifier}Revindex_Storefront_Seller
+		(SellerID) ON UPDATE  NO ACTION ON DELETE NO ACTION 
+
+	-- Warehouse table
+	CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Warehouse](
+		[WarehouseID] [int] IDENTITY(1,1) NOT NULL,
+		[PortalID] [int] NOT NULL,
+		[SellerID] [int] NULL,
+		[Name] [xml] NOT NULL,
+		[Description] [xml] NULL,
+		[CreateDate] [datetime] NOT NULL,
+		[UpdateDate] [datetime] NOT NULL,
+		[RowVersion] [timestamp] NOT NULL,
+		[Street] [nvarchar](200) NULL,
+		[City] [nvarchar](50) NULL,
+		[SubdivisionCode] [varchar](6) NULL,
+		[PostalCode] [varchar](10) NULL,
+		[CountryCode] [varchar](2) NULL,
+		[Phone] [varchar](50) NULL,
+		[Email] [nvarchar](256) NULL,
+		[Deleted] [bit] NOT NULL,
+	 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_Warehouse] PRIMARY KEY CLUSTERED 
+	(
+		[WarehouseID] ASC
+	))
+
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_Warehouse] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_Warehouse] 
+	(
+		[PortalID] ASC,
+		[SellerID] ASC
+	)
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Warehouse]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Warehouse_Portals] FOREIGN KEY([PortalID])
+	REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID]) ON DELETE CASCADE
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Warehouse] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Warehouse_Portals]
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Warehouse]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Warehouse_Revindex_Storefront_Seller] FOREIGN KEY([SellerID])
+	REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_Seller] ([SellerID])
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Warehouse] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Warehouse_Revindex_Storefront_Seller]
+
+
+	-- Support Seller in product
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Product ADD SellerID int NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Product ADD CONSTRAINT
+		FK_{objectQualifier}Revindex_Storefront_Product_Revindex_Storefront_Seller FOREIGN KEY
+		(SellerID) REFERENCES {databaseOwner}{objectQualifier}Revindex_Storefront_Seller
+		(SellerID) ON UPDATE  NO ACTION ON DELETE  NO ACTION 
+
+
+	-- Support warehouse in product variant
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant ADD WarehouseID int NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant ADD CONSTRAINT FK_{objectQualifier}Revindex_Storefront_ProductVariant_Revindex_Storefront_Warehouse FOREIGN KEY (WarehouseID) REFERENCES {databaseOwner}{objectQualifier}Revindex_Storefront_Warehouse (WarehouseID) ON UPDATE  NO ACTION ON DELETE  NO ACTION 
+
+	-- Support showing order details in cart summary
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD CartSummarySalesOrderDetailShow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CartSummarySalesOrderDetailShow DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CartSummarySalesOrderDetailShow
+
+	-- Support SellerID in SalesOrder table
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder ADD SellerID int NULL
+	CREATE NONCLUSTERED INDEX IX_{objectQualifier}Revindex_Storefront_SalesOrder_7 ON {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder
+		(
+		SellerID
+		)
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder ADD CONSTRAINT
+		FK_{objectQualifier}Revindex_Storefront_SalesOrder_Revindex_Storefront_Seller FOREIGN KEY
+		(
+		SellerID
+		) REFERENCES {databaseOwner}{objectQualifier}Revindex_Storefront_Seller
+		(
+		SellerID
+		) ON UPDATE  NO ACTION 
+		 ON DELETE  NO ACTION 
+
+	-- Add WarehouseID to SalesOrder table
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder ADD WarehouseID int NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder ADD CONSTRAINT
+		FK_{objectQualifier}Revindex_Storefront_SalesOrder_Revindex_Storefront_Warehouse FOREIGN KEY
+		(
+		WarehouseID
+		) REFERENCES {databaseOwner}{objectQualifier}Revindex_Storefront_Warehouse
+		(
+		WarehouseID
+		) ON UPDATE  NO ACTION 
+		 ON DELETE  NO ACTION 
+
+	-- Support ShippingProvider table
+	CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ShippingProvider](
+		[ShippingProviderID] [int] IDENTITY(1,1) NOT NULL,
+		[PortalID] [int] NOT NULL,
+		[SellerID] [int] NULL,
+		[CreateDate] [datetime] NOT NULL,
+		[UpdateDate] [datetime] NOT NULL,
+		[RowVersion] [timestamp] NOT NULL,
+		[FedExKey] [varchar](256) NULL,
+		[FedExPassword] [varchar](256) NULL,
+		[FedExAccountNumber] [varchar](256) NULL,
+		[FedExMeterNumber] [varchar](256) NULL,
+		[FedExTestMode] [bit] NOT NULL,
+		[UPSAccessKey] [varchar](256) NULL,
+		[UPSPassword] [varchar](256) NULL,
+		[UPSUsername] [varchar](256) NULL,
+		[UPSShipperNumber] [varchar](256) NULL,
+		[UPSTestMode] [bit] NOT NULL,
+		[USPSUserID] [varchar](256) NULL,
+		[USPSPassword] [varchar](256) NULL,
+		[USPSTestMode] [bit] NOT NULL,
+		[ShipwireUsername] [varchar](255) NULL,
+		[ShipwirePassword] [varchar](255) NULL,
+		[ShipwireTestMode] [bit] NOT NULL,
+		[AustraliaPostAPIKey] [varchar](255) NULL,
+		[AustraliaPostTestMode] [bit] NOT NULL,
+		[ABFSecureID] [varchar](255) NULL,
+	 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_ShippingProvider] PRIMARY KEY CLUSTERED 
+	(
+		[ShippingProviderID] ASC
+	))
+
+	CREATE UNIQUE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_ShippingProvider] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_ShippingProvider] 
+	(
+		[PortalID] ASC,
+		[SellerID] ASC
+	)
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ShippingProvider]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ShippingProvider_Portals] FOREIGN KEY([PortalID]) REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID]) ON DELETE CASCADE
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ShippingProvider] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ShippingProvider_Portals]
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ShippingProvider]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ShippingProvider_Revindex_Storefront_Seller] FOREIGN KEY([SellerID]) REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_Seller] ([SellerID])
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ShippingProvider] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ShippingProvider_Revindex_Storefront_Seller]
+
+	-- Add SellerID to ShippingMethod
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod ADD SellerID int NULL
+	DROP INDEX IX_{objectQualifier}Revindex_Storefront_ShippingMethod ON {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod
+
+	CREATE NONCLUSTERED INDEX IX_{objectQualifier}Revindex_Storefront_ShippingMethod ON {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod
+		(
+		PortalID,
+		SellerID
+		)
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod ADD CONSTRAINT
+		FK_{objectQualifier}Revindex_Storefront_ShippingMethod_Revindex_Storefront_Seller FOREIGN KEY
+		(SellerID) REFERENCES {databaseOwner}{objectQualifier}Revindex_Storefront_Seller (SellerID) ON UPDATE  NO ACTION ON DELETE  NO ACTION 
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_PackingMethod ADD SellerID int NULL
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_PackingMethod ADD CONSTRAINT
+		FK_{objectQualifier}Revindex_Storefront_PackingMethod_Revindex_Storefront_Seller FOREIGN KEY
+		(SellerID) REFERENCES {databaseOwner}{objectQualifier}Revindex_Storefront_Seller (SellerID) ON UPDATE  NO ACTION ON DELETE  NO ACTION 
+
+	DROP INDEX IX_{objectQualifier}Revindex_Storefront_PackingMethod ON {databaseOwner}{objectQualifier}Revindex_Storefront_PackingMethod
+	CREATE NONCLUSTERED INDEX IX_{objectQualifier}Revindex_Storefront_PackingMethod ON {databaseOwner}{objectQualifier}Revindex_Storefront_PackingMethod
+		(
+		PortalID,
+		SellerID
+		)
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Package ADD SellerID int NULL
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Package ADD CONSTRAINT
+		FK_{objectQualifier}Revindex_Storefront_Package_Revindex_Storefront_Seller FOREIGN KEY
+		(SellerID) REFERENCES {databaseOwner}{objectQualifier}Revindex_Storefront_Seller (SellerID) ON UPDATE  NO ACTION ON DELETE  NO ACTION 
+
+	DROP INDEX IX_{objectQualifier}Revindex_Storefront_Package ON {databaseOwner}{objectQualifier}Revindex_Storefront_Package
+	CREATE NONCLUSTERED INDEX IX_{objectQualifier}Revindex_Storefront_Package ON {databaseOwner}{objectQualifier}Revindex_Storefront_Package
+		(
+		PortalID,
+		SellerID
+		)
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_HandlingMethod ADD SellerID int NULL
+
+	DROP INDEX IX_{objectQualifier}Revindex_Storefront_HandlingMethod ON {databaseOwner}{objectQualifier}Revindex_Storefront_HandlingMethod
+	CREATE NONCLUSTERED INDEX IX_{objectQualifier}Revindex_Storefront_HandlingMethod ON {databaseOwner}{objectQualifier}Revindex_Storefront_HandlingMethod
+		(
+		PortalID,
+		SellerID
+		)
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_HandlingMethod ADD CONSTRAINT
+		FK_{objectQualifier}Revindex_Storefront_HandlingMethod_Revindex_Storefront_Seller FOREIGN KEY
+		(SellerID) REFERENCES {databaseOwner}{objectQualifier}Revindex_Storefront_Seller (SellerID) ON UPDATE  NO ACTION ON DELETE  NO ACTION 
+
+	-- Rename address validation gateway to provider
+	EXECUTE sp_rename N'{databaseOwner}{objectQualifier}Revindex_Storefront_Configuration.AddressValidationGatewaysAvalaraTaxAccountNumber', N'AddressValidationProvidersAvalaraTaxAccountNumber', 'COLUMN' 
+	EXECUTE sp_rename N'{databaseOwner}{objectQualifier}Revindex_Storefront_Configuration.AddressValidationGatewaysAvalaraTaxLicenseKey', N'AddressValidationProvidersAvalaraTaxLicenseKey', 'COLUMN' 
+	EXECUTE sp_rename N'{databaseOwner}{objectQualifier}Revindex_Storefront_Configuration.AddressValidationGatewaysAvalaraTaxGatewayUrl', N'AddressValidationProvidersAvalaraTaxProviderUrl', 'COLUMN' 
+	EXECUTE sp_rename N'{databaseOwner}{objectQualifier}Revindex_Storefront_Configuration.AddressValidationGatewaysAvalaraTaxTestMode', N'AddressValidationProvidersAvalaraTaxTestMode', 'COLUMN' 
+
+	-- Rename address validation gateway to provider
+	EXECUTE sp_rename N'{databaseOwner}{objectQualifier}Revindex_Storefront_AddressValidationMethod.AddressValidationGateway', N'AddressValidationProvider', 'COLUMN' 
+
+	-- Rename fulfillment gateway to provider
+	EXECUTE sp_rename N'{databaseOwner}{objectQualifier}Revindex_Storefront_Configuration.FulfillmentGatewaysShipWorksUsername', N'FulfillmentProvidersShipWorksUsername', 'COLUMN' 
+	EXECUTE sp_rename N'{databaseOwner}{objectQualifier}Revindex_Storefront_Configuration.FulfillmentGatewaysShipWorksPassword', N'FulfillmentProvidersShipWorksPassword', 'COLUMN' 
+
+	-- Rename risk gateway to provider
+	EXECUTE sp_rename N'{databaseOwner}{objectQualifier}Revindex_Storefront_Configuration.RiskGatewaysSiftScienceAPIKey', N'RiskProvidersSiftScienceAPIKey', 'COLUMN' 
+	EXECUTE sp_rename N'{databaseOwner}{objectQualifier}Revindex_Storefront_Configuration.RiskGatewaysSiftScienceJavascriptSnippetKey', N'RiskProvidersSiftScienceJavascriptSnippetKey', 'COLUMN' 
+	EXECUTE sp_rename N'{databaseOwner}{objectQualifier}Revindex_Storefront_Configuration.RiskGatewaysFraudLabsProAPIKey', N'RiskProvidersFraudLabsProAPIKey', 'COLUMN' 
+
+	-- Rename tax class gateway to provider
+	EXECUTE sp_rename N'{databaseOwner}{objectQualifier}Revindex_Storefront_TaxClass.TaxGateway', N'TaxProvider', 'COLUMN' 
+
+	-- New TaxProvider table
+	CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_TaxProvider](
+		[TaxProviderID] [int] IDENTITY(1,1) NOT NULL,
+		[PortalID] [int] NOT NULL,
+		[SellerID] [int] NULL,
+		[CreateDate] [datetime] NOT NULL,
+		[UpdateDate] [datetime] NOT NULL,
+		[RowVersion] [timestamp] NOT NULL,
+		[Zip2TaxUsername] [varchar](255) NULL,
+		[Zip2TaxPassword] [varchar](255) NULL,
+		[AvalaraTaxAccountNumber] [varchar](255) NULL,
+		[AvalaraTaxLicenseKey] [varchar](255) NULL,
+		[AvalaraTaxCompanyCode] [varchar](255) NULL,
+		[AvalaraTaxProviderUrl] [varchar](255) NULL,
+		[AvalaraTaxTestMode] [bit] NOT NULL,
+	 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_TaxProvider] PRIMARY KEY CLUSTERED 
+	(
+		[TaxProviderID] ASC
+	))
+
+	CREATE UNIQUE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_TaxProvider] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_TaxProvider] 
+	(
+		[PortalID] ASC,
+		[SellerID] ASC
+	)
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_TaxProvider]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_TaxProvider_Portals] FOREIGN KEY([PortalID])
+	REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID]) ON DELETE CASCADE
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_TaxProvider] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_TaxProvider_Portals]
+	
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_TaxProvider]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_TaxProvider_Revindex_Storefront_Seller] FOREIGN KEY([SellerID])
+	REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_Seller] ([SellerID])
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_TaxProvider] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_TaxProvider_Revindex_Storefront_Seller]
+
+	-- Add SellerID to TaxClass table
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_TaxClass ADD SellerID int NULL
+	
+	DROP INDEX IX_{objectQualifier}Revindex_Storefront_TaxClass ON {databaseOwner}{objectQualifier}Revindex_Storefront_TaxClass
+	CREATE NONCLUSTERED INDEX IX_{objectQualifier}Revindex_Storefront_TaxClass ON {databaseOwner}{objectQualifier}Revindex_Storefront_TaxClass
+		(
+		PortalID,
+		SellerID
+		)
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_TaxClass ADD CONSTRAINT
+		FK_{objectQualifier}Revindex_Storefront_TaxClass_Revindex_Storefront_Seller FOREIGN KEY
+		(SellerID) REFERENCES {databaseOwner}{objectQualifier}Revindex_Storefront_Seller (SellerID) ON UPDATE  NO ACTION ON DELETE  NO ACTION 
+	
+	-- Add new FulfillmentProvider table
+	CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_FulfillmentProvider](
+		[FulfillmentProviderID] [int] IDENTITY(1,1) NOT NULL,
+		[PortalID] [int] NOT NULL,
+		[SellerID] [int] NULL,
+		[CreateDate] [datetime] NOT NULL,
+		[UpdateDate] [datetime] NOT NULL,
+		[RowVersion] [timestamp] NOT NULL,
+		[ShipWorksUsername] [varchar](255) NULL,
+		[ShipWorksPassword] [varchar](255) NULL,
+	 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_FulfillmentProvider] PRIMARY KEY CLUSTERED 
+	(
+		[FulfillmentProviderID] ASC
+	))
+
+	CREATE UNIQUE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_FulfillmentProvider] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_FulfillmentProvider] 
+	(
+		[PortalID] ASC,
+		[SellerID] ASC
+	)
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_FulfillmentProvider]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_FulfillmentProvider_Portals] FOREIGN KEY([PortalID])
+	REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID])
+	ON UPDATE CASCADE
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_FulfillmentProvider] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_FulfillmentProvider_Portals]
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_FulfillmentProvider]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_FulfillmentProvider_Revindex_Storefront_Seller] FOREIGN KEY([SellerID])
+	REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_Seller] ([SellerID])
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_FulfillmentProvider] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_FulfillmentProvider_Revindex_Storefront_Seller]
+
+	-- Add FulfillmentMethod table
+	CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_FulfillmentMethod](
+		[FulfillmentMethodID] [int] IDENTITY(1,1) NOT NULL,
+		[PortalID] [int] NOT NULL,
+		[SellerID] [int] NULL,
+		[CreateDate] [datetime] NOT NULL,
+		[UpdateDate] [datetime] NOT NULL,
+		[RowVersion] [timestamp] NOT NULL,
+		[ShipWorksActive] [bit] NOT NULL,
+	 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_FulfillmentMethod] PRIMARY KEY CLUSTERED 
+	(
+		[FulfillmentMethodID] ASC
+	))
+
+	CREATE UNIQUE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_FulfillmentMethod] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_FulfillmentMethod] 
+	(
+		[PortalID] ASC,
+		[SellerID] ASC
+	)
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_FulfillmentMethod]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_FulfillmentMethod_Portals] FOREIGN KEY([PortalID])
+	REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID]) ON DELETE CASCADE
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_FulfillmentMethod] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_FulfillmentMethod_Portals]
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_FulfillmentMethod]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_FulfillmentMethod_Revindex_Storefront_Seller] FOREIGN KEY([SellerID])
+	REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_Seller] ([SellerID])
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_FulfillmentMethod] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_FulfillmentMethod_Revindex_Storefront_Seller]
+
+
+	-- Add SellerID to RecurringSalesOrder table
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_RecurringSalesOrder ADD SellerID int NULL
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_RecurringSalesOrder ADD CONSTRAINT
+		FK_{objectQualifier}Revindex_Storefront_RecurringSalesOrder_Revindex_Storefront_Seller FOREIGN KEY
+		(SellerID) REFERENCES {databaseOwner}{objectQualifier}Revindex_Storefront_Seller (SellerID) ON UPDATE  NO ACTION ON DELETE  NO ACTION 
+
+	CREATE NONCLUSTERED INDEX IX_{objectQualifier}Revindex_Storefront_RecurringSalesOrder_4 ON {databaseOwner}{objectQualifier}Revindex_Storefront_RecurringSalesOrder (SellerID)
+
+	-- Add seller configuration
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		SellerMarketplaceActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_SellerMarketplaceActive DEFAULT 0,
+		SecuritySellerRole varchar(8000) NULL
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_SellerMarketplaceActive
+
+	-- Add ParentSalesOrderID column
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder ADD ParentSalesOrderID int NULL
+
+	CREATE NONCLUSTERED INDEX IX_{objectQualifier}Revindex_Storefront_SalesOrder_8 ON {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder (ParentSalesOrderID)
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder ADD CONSTRAINT
+		FK_{objectQualifier}Revindex_Storefront_SalesOrder_Revindex_Storefront_SalesOrder FOREIGN KEY
+		(ParentSalesOrderID) REFERENCES {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder (SalesOrderID) ON UPDATE  NO ACTION ON DELETE  NO ACTION 
+
+	-- Add BusinessTaxNumber to UserPayment table
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_UserPayment ADD	BusinessTaxNumber varchar(50) NULL
+
+COMMIT TRANSACTION
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+
+		-- Upgrade default CartSummary template to "Standard4"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CartSummaryDisplayTemplate = 'Standard4' WHERE CartSummaryDisplayTemplate LIKE 'Standard%'
+
+		-- Upgrade default Checkout template to "Standard21"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CheckoutDisplayTemplate = 'Standard21' WHERE CheckoutDisplayTemplate LIKE 'Standard%'
+
+		-- Change permission key from CUSTOMERS to PEOPLE
+		-- The manifest will insert the new permission keys. We need to update 
+		-- ModulePermission table and delete the old permission keys.
+		DECLARE @ViewCustomersPermissionID INT
+		DECLARE @ViewPeoplePermissionID INT
+		DECLARE @EditCustomersPermissionID INT
+		DECLARE @EditPeoplePermissionID INT
+
+		SELECT @ViewCustomersPermissionID = PermissionID FROM {databaseOwner}[{objectQualifier}Permission] WHERE PermissionCode = 'REVINDEXSTOREFRONT_MODULE' AND PermissionKey = 'VIEW CUSTOMERS'
+		SELECT @ViewPeoplePermissionID = PermissionID FROM {databaseOwner}[{objectQualifier}Permission] WHERE PermissionCode = 'REVINDEXSTOREFRONT_MODULE' AND PermissionKey = 'VIEW PEOPLE'
+		SELECT @EditCustomersPermissionID = PermissionID FROM {databaseOwner}[{objectQualifier}Permission] WHERE PermissionCode = 'REVINDEXSTOREFRONT_MODULE' AND PermissionKey = 'EDIT CUSTOMERS'
+		SELECT @EditPeoplePermissionID = PermissionID FROM {databaseOwner}[{objectQualifier}Permission] WHERE PermissionCode = 'REVINDEXSTOREFRONT_MODULE' AND PermissionKey = 'EDIT PEOPLE'
+
+		UPDATE {databaseOwner}[{objectQualifier}ModulePermission] SET PermissionID = @ViewPeoplePermissionID WHERE PermissionID = @ViewCustomersPermissionID
+		UPDATE {databaseOwner}[{objectQualifier}ModulePermission] SET PermissionID = @EditPeoplePermissionID WHERE PermissionID = @EditCustomersPermissionID
+
+		DELETE FROM {databaseOwner}[{objectQualifier}Permission] WHERE PermissionCode = 'REVINDEXSTOREFRONT_MODULE' AND PermissionKey = 'VIEW CUSTOMERS'
+		DELETE FROM {databaseOwner}[{objectQualifier}Permission] WHERE PermissionCode = 'REVINDEXSTOREFRONT_MODULE' AND PermissionKey = 'EDIT CUSTOMERS'
+
+
+		-- Move shipping gateway settings from Configuration to ShippingProvider table
+		INSERT INTO {databaseOwner}[{objectQualifier}Revindex_Storefront_ShippingProvider]
+			   ([PortalID]
+			   ,[SellerID]
+			   ,[CreateDate]
+			   ,[UpdateDate]
+			   ,[FedExKey]
+			   ,[FedExPassword]
+			   ,[FedExAccountNumber]
+			   ,[FedExMeterNumber]
+			   ,[FedExTestMode]
+			   ,[UPSAccessKey]
+			   ,[UPSPassword]
+			   ,[UPSUsername]
+			   ,[UPSShipperNumber]
+			   ,[UPSTestMode]
+			   ,[USPSUserID]
+			   ,[USPSPassword]
+			   ,[USPSTestMode]
+			   ,[ShipwireUsername]
+			   ,[ShipwirePassword]
+			   ,[ShipwireTestMode]
+			   ,[AustraliaPostAPIKey]
+			   ,[AustraliaPostTestMode]
+			   ,[ABFSecureID])
+		 SELECT 
+			   PortalID
+			   ,NULL
+			   ,CreateDate
+			   ,UpdateDate
+			   ,ShippingGatewaysFedExKey
+			   ,ShippingGatewaysFedExPassword
+			   ,ShippingGatewaysFedExAccountNumber
+			   ,ShippingGatewaysFedExMeterNumber
+			   ,ShippingGatewaysFedExTestMode
+			   ,ShippingGatewaysUPSAccessKey
+			   ,ShippingGatewaysUPSPassword
+			   ,ShippingGatewaysUPSUsername
+			   ,ShippingGatewaysUPSShipperNumber
+			   ,ShippingGatewaysUPSTestMode
+			   ,ShippingGatewaysUSPSUserID
+			   ,ShippingGatewaysUSPSPassword
+			   ,ShippingGatewaysUSPSTestMode
+			   ,ShippingGatewaysShipwireUsername
+			   ,ShippingGatewaysShipwirePassword
+			   ,ShippingGatewaysShipwireTestMode
+			   ,ShippingGatewaysAustraliaPostAPIKey
+			   ,ShippingGatewaysAustraliaPostTestMode
+			   ,ShippingGatewaysABFSecureID
+		 FROM {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration]
+
+		 -- Move tax gateway settings from Configuration to TaxProvider table
+		 INSERT INTO {databaseOwner}[{objectQualifier}Revindex_Storefront_TaxProvider]
+			   ([PortalID]
+			   ,[SellerID]
+			   ,[CreateDate]
+			   ,[UpdateDate]
+			   ,[Zip2TaxUsername]
+			   ,[Zip2TaxPassword]
+			   ,[AvalaraTaxAccountNumber]
+			   ,[AvalaraTaxLicenseKey]
+			   ,[AvalaraTaxCompanyCode]
+			   ,[AvalaraTaxProviderUrl]
+			   ,[AvalaraTaxTestMode])
+		 SELECT
+			   PortalID
+			   ,NULL
+			   ,CreateDate
+			   ,UpdateDate
+			   ,TaxGatewaysZip2TaxUsername
+			   ,TaxGatewaysZip2TaxPassword
+			   ,TaxGatewaysAvalaraTaxAccountNumber
+			   ,TaxGatewaysAvalaraTaxLicenseKey
+			   ,TaxGatewaysAvalaraTaxCompanyCode
+			   ,TaxGatewaysAvalaraTaxGatewayUrl
+			   ,TaxGatewaysAvalaraTaxTestMode
+		 FROM {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration]
+
+		 -- Move fulfillment gateway settings from Configuration to FulfillmentProvider table
+		 INSERT INTO {databaseOwner}[{objectQualifier}Revindex_Storefront_FulfillmentProvider]
+           ([PortalID]
+           ,[SellerID]
+           ,[CreateDate]
+           ,[UpdateDate]
+           ,[ShipWorksUsername]
+           ,[ShipWorksPassword])
+		SELECT
+			   PortalID
+			   ,NULL
+			   ,CreateDate
+			   ,UpdateDate
+			   ,FulfillmentProvidersShipWorksUsername
+			   ,FulfillmentProvidersShipWorksUsername
+		 FROM {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration]
+
+		 -- Move fulfillment method settings from Configuration to FulfillmentMethod table
+		 INSERT INTO {databaseOwner}[{objectQualifier}Revindex_Storefront_FulfillmentMethod]
+           ([PortalID]
+           ,[SellerID]
+           ,[CreateDate]
+           ,[UpdateDate]
+           ,[ShipWorksActive])
+		SELECT
+			   PortalID
+			   ,NULL
+			   ,CreateDate
+			   ,UpdateDate
+			   ,FulfillmentMethodsShipWorksActive
+		 FROM {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration]
+
+		-- Upgrade default ProductDetail template to "Standard14"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductDetailDisplayTemplate = 'Standard14' WHERE ProductDetailDisplayTemplate LIKE 'Standard%'
+
+		-- Upgrade default Cart template to "Standard13"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CartDisplayTemplate = 'Standard13' WHERE CartDisplayTemplate LIKE 'Standard%'
+
+		-- Update USPS Service names
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'USPS:MEDIA MAIL PARCEL' WHERE UniversalServiceName = 'USPS:MEDIA MAIL&LT;SUP&GT;&#174;&LT;/SUP&GT;'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'USPS:LIBRARY MAIL PARCEL' WHERE UniversalServiceName = 'USPS:LIBRARY MAIL'
+
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder SET ShippingUniversalServiceName = 'USPS:MEDIA MAIL PARCEL' WHERE ShippingUniversalServiceName = 'USPS:MEDIA MAIL&LT;SUP&GT;&#174;&LT;/SUP&GT;'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder SET ShippingUniversalServiceName = 'USPS:LIBRARY MAIL PARCEL' WHERE ShippingUniversalServiceName = 'USPS:LIBRARY MAIL'
+
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+
+	-- Drop shipping gateway columns from Configuration table
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration]
+	DROP COLUMN 
+		ShippingGatewaysFedExKey
+		,ShippingGatewaysFedExPassword
+		,ShippingGatewaysFedExAccountNumber
+		,ShippingGatewaysFedExMeterNumber
+		,ShippingGatewaysFedExTestMode
+		,ShippingGatewaysUPSAccessKey
+		,ShippingGatewaysUPSPassword
+		,ShippingGatewaysUPSUsername
+		,ShippingGatewaysUPSShipperNumber
+		,ShippingGatewaysUPSTestMode
+		,ShippingGatewaysUSPSUserID
+		,ShippingGatewaysUSPSPassword
+		,ShippingGatewaysUSPSTestMode
+		,ShippingGatewaysShipwireUsername
+		,ShippingGatewaysShipwirePassword
+		,ShippingGatewaysShipwireTestMode
+		,ShippingGatewaysAustraliaPostAPIKey
+		,ShippingGatewaysAustraliaPostTestMode
+		,ShippingGatewaysABFSecureID
+
+	-- Drop tax gateway columns from Configuration table
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration]
+	DROP COLUMN 
+		TaxGatewaysZip2TaxUsername
+		,TaxGatewaysZip2TaxPassword
+		,TaxGatewaysAvalaraTaxAccountNumber
+		,TaxGatewaysAvalaraTaxLicenseKey
+		,TaxGatewaysAvalaraTaxCompanyCode
+		,TaxGatewaysAvalaraTaxGatewayUrl
+		,TaxGatewaysAvalaraTaxTestMode
+
+	-- Drop fulfillment gateway columns from configuration table
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration]
+	DROP COLUMN 
+		FulfillmentProvidersShipWorksUsername
+		,FulfillmentProvidersShipWorksPassword
+
+	-- Drop fulfillment method columns from configuration table
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration]
+	DROP COLUMN 
+		FulfillmentMethodsShipWorksActive
+
+	-- Support payment limit in VoucherDefinition
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_VoucherDefinition ADD PaymentLimitType int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_VoucherDefinition_RedemptionLimitType DEFAULT 1
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_VoucherDefinition DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_VoucherDefinition_RedemptionLimitType
+
+	-- Support live currency update
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Currency ADD AutoUpdate bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Currency_AutoUpdate DEFAULT 0,
+		Provider varchar(50) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Currency DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Currency_AutoUpdate
+
+COMMIT TRANSACTION
+GO

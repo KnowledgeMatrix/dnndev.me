@@ -1,0 +1,77 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****               Create Tables                      *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****                  Alter Tables                    *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****                Drop Sprocs                       *****/
+/************************************************************/
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListCategoriesByPathOrder') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListCategoriesByPathOrder
+GO
+
+
+
+/************************************************************/
+/*****               Create Sprocs                      *****/
+/************************************************************/
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListCategoriesByPathOrder
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	;WITH [CategoryPage] AS
+	(
+		SELECT
+			C.*,
+			CAST(ROW_NUMBER() OVER(PARTITION BY C.[ParentID] ORDER BY C.[SortOrder]) AS VARCHAR(MAX)) AS [Path]
+		FROM
+			{databaseOwner}{objectQualifier}Smith_Category C
+		WHERE
+			NULLIF(C.[ParentID], 0) IS NULL
+			AND (C.[StoreID] = @StoreID OR C.[TabModuleId] = @StoreID OR C.[Share] = 1)
+			AND C.[PortalID] = @PortalID
+		UNION ALL
+		SELECT
+			P.*,
+			[Path] + CAST(ROW_NUMBER() OVER(PARTITION BY P.[ParentID] ORDER BY P.[SortOrder]) AS VARCHAR(MAX))
+		FROM
+			[CategoryPage] CP
+		JOIN
+			{databaseOwner}{objectQualifier}Smith_Category P
+		ON
+			P.[ParentID] = CP.[CategoryID]
+	)
+	SELECT
+		CP.*
+	FROM
+		[CategoryPage] CP
+	ORDER BY
+		CP.[Path] ASC
+END
+GO
+
+
+
+/************************************************************/
+/*****               End of Script                      *****/
+/************************************************************/

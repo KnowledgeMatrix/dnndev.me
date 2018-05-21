@@ -1,0 +1,123 @@
+﻿
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Dashboard_GetUserActivitiesHeatMap]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Dashboard_GetUserActivitiesHeatMap]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Dashboard_GetUserActivitiesHeatMap]	
+	@PortalId int,
+	@UserId int
+AS
+	BEGIN
+		SELECT 
+			COUNT([UserId]) AS [Count], 
+			DATEADD(DAY, 0, DATEDIFF(DAY,0, [TimeStamp])) AS [Date]
+		FROM 
+			{databaseOwner}{objectQualifier}Analytics_Fact_UserScoringLog WITH (NOLOCK) 
+		WHERE [UserId] = @UserId
+		AND [PortalId] = @PortalId
+		AND [TimeStamp] > DATEADD(YYYY, -1, GETUTCDATE())
+		AND [ActionTypeId] != 1
+		AND [ReputationPoints] != 0
+		GROUP BY DATEADD(DAY, 0, DATEDIFF(DAY,0, [TimeStamp]))
+
+	END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Dashboard_GetUseActivitieForDay]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Dashboard_GetUseActivitieForDay]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Dashboard_GetUseActivitieForDay]	
+	@PortalId INT,
+	@UserId INT,
+	@Day DATETIME
+AS
+	BEGIN
+		DECLARE @NextDay DATETIME
+		DECLARE @CurrentDay DATETIME
+
+		SET @CurrentDay =  DATEADD(DAY,0, DATEDIFF(DAY,0, @Day))
+		SET @NextDay = DATEADD(DAY,1, DATEDIFF(DAY,0, @Day))
+
+			SELECT TOP 100 
+				USL.ContentItemId,
+				"ContentTitle" = CASE WHEN CIMD.MetaDataValue <> '' THEN CIMD.MetaDataValue ELSE CI.Content END ,
+				TabId,
+				ContentKey,
+				DM.FriendlyName AS Area, 
+				ReputationPoints,
+				SAD.ScoringActionDefId,
+				USL.CreatedOnDate
+			FROM 
+				{databaseOwner}{objectQualifier}Mechanics_UserScoringLog USL WITH (NOLOCK) 
+				INNER JOIN {databaseOwner}{objectQualifier}Mechanics_ScoringActionDefinition SAD WITH (NOLOCK) ON USL.ScoringActionDefId = SAD.ScoringActionDefId
+				INNER JOIN {databaseOwner}{objectQualifier}DesktopModules DM WITH (NOLOCK) ON SAD.DesktopModuleID = DM.DesktopModuleID
+				LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems CI WITH (NOLOCK) ON USL.ContentItemId = CI.ContentItemId
+				LEFT OUTER JOIN	{databaseOwner}{objectQualifier}ContentItems_MetaData CIMD WITH (NOLOCK) ON CIMD.ContentItemID = USL.ContentItemId AND CIMD.MetaDataID = (SELECT MetaDataID FROM {databaseOwner}{objectQualifier}MetaData WITH (NOLOCK) WHERE MetaDataName = 'Title')
+			WHERE [UserId] = @UserId
+			AND [PortalId] = @PortalId
+			AND [ActionType] != 1
+			AND [ReputationPoints] != 0
+			AND USL.[CreatedOnDate] >= @CurrentDay
+			AND USL.[CreatedOnDate] < @NextDay
+			ORDER BY CreatedOnDate DESC
+	END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Dashboard_GetUserGroups]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Dashboard_GetUserGroups]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Dashboard_GetUserGroups]	
+	@PortalId INT,
+	@ProfileId INT,
+	@ShowPrivate BIT,
+	@PageSize INT,
+	@PageIndex INT
+AS
+	BEGIN
+		IF @ShowPrivate = 1
+			BEGIN
+				;WITH GroupSet
+				AS (
+					SELECT COUNT(*) OVER () AS TotalRecords,
+						   RoleID,
+						   PortalID,
+						   UserID,
+						   RoleName,
+						   IconFile,
+						   ROW_NUMBER() OVER ( ORDER BY RoleName) AS [RowNumber]
+					  FROM {databaseOwner}{objectQualifier}VW_UserRoles
+					  WHERE UserID = @ProfileId
+					  AND PortalID = @PortalId
+					  AND Status = 1
+					  AND SecurityMode > 0
+					)
+				SELECT TOP (@PageSize) *
+				FROM GroupSet
+				WHERE RowNumber  >= (@PageIndex * @PageSize) + 1
+			END
+		ELSE
+			BEGIN
+				;WITH GroupSet
+				AS (
+					SELECT COUNT(*) OVER () AS TotalRecords,
+						   RoleID,
+						   PortalID,
+						   UserID,
+						   RoleName,
+						   IconFile,
+						   ROW_NUMBER() OVER ( ORDER BY RoleName) AS [RowNumber]
+					  FROM {databaseOwner}{objectQualifier}VW_UserRoles
+					  WHERE UserID = @ProfileId
+					  AND PortalID = @PortalId
+					  AND Status = 1
+					  AND SecurityMode > 0
+					  AND IsPublic = 1
+					)
+				SELECT TOP (@PageSize) *
+				FROM GroupSet
+				WHERE RowNumber  >= (@PageIndex * @PageSize) + 1
+			END
+		END
+GO

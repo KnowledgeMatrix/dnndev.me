@@ -1,0 +1,243 @@
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Blog_Add') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Blog_Add
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Blog_Delete') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Blog_Delete
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Blog_Get') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Blog_Get
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Blog_GetByPortal') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Blog_GetByPortal
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Blog_GetDays') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Blog_GetDays
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Blog_GetMonths') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Blog_GetMonths
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Blog_Update') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Blog_Update
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Entry_Add') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Entry_Add
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Entry_Delete') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Entry_Delete
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Entry_Get') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Entry_Get
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Entry_GetAllByBlog') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Entry_GetAllByBlog
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Entry_GetAllByPortal') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Entry_GetAllByPortal
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Entry_GetByBlog') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Entry_GetByBlog
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Entry_GetByContentItem') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Entry_GetByContentItem
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Entry_GetByDay') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Entry_GetByDay
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Entry_GetByMonth') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Entry_GetByMonth
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Entry_GetByPortal') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Entry_GetByPortal
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Entry_GetByTerm') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Entry_GetByTerm
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Entry_Update') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Entry_Update
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Blogs_GetBlogViewEntryModuleID') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_GetBlogViewEntryModuleID
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Blogs_MetaWeblog_GetDesktopModule') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_MetaWeblog_GetDesktopModule
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Setting_Get') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Setting_Get
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Setting_Update') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Setting_Update
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Entry_UpdateCount') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Entry_UpdateCount
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Blogs_EnsureRowForUrl') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_EnsureRowForUrl
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Entry_UpdateAddedDate') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Entry_UpdateAddedDate
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Entry_Search'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Entry_Search
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Entry_GetSearchable') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Entry_GetSearchable
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Blog_GetRoster') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Blog_GetRoster
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Entry_GetSitemap') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Entry_GetSitemap
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Settings_GetUpgradeTransfer') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Settings_GetUpgradeTransfer
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_IsSearchMatch'))
+	DROP FUNCTION {databaseOwner}{objectQualifier}Blogs_IsSearchMatch
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Entry_IsTagMatch'))
+	DROP FUNCTION {databaseOwner}{objectQualifier}Blogs_Entry_IsTagMatch
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'FK_{objectQualifier}Blogs_Setting_{objectQualifier}Portals') and OBJECTPROPERTY(id, N'IsConstraint') = 1)
+	ALTER TABLE {databaseOwner}{objectQualifier}Blogs_Setting DROP CONSTRAINT FK_{objectQualifier}Blogs_Setting_{objectQualifier}Portals
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Setting') and OBJECTPROPERTY(id, N'IsTable') = 1)
+	DROP TABLE {databaseOwner}{objectQualifier}Blogs_Setting
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'FK_{objectQualifier}Blogs_Comment_{objectQualifier}Blogs_Entry') and OBJECTPROPERTY(id, N'IsConstraint') = 1)
+	ALTER TABLE {databaseOwner}{objectQualifier}Blogs_Comment DROP CONSTRAINT FK_{objectQualifier}Blogs_Comment_{objectQualifier}Blogs_Entry
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Entry') and OBJECTPROPERTY(id, N'IsTable') = 1)
+	DROP TABLE {databaseOwner}{objectQualifier}Blogs_Entry
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'FK_{objectQualifier}Blogs_Blog_{objectQualifier}Portals') and OBJECTPROPERTY(id, N'IsConstraint') = 1)
+	ALTER TABLE {databaseOwner}{objectQualifier}Blogs_Blog DROP CONSTRAINT FK_{objectQualifier}Blogs_Blog_{objectQualifier}Portals
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Blog') and OBJECTPROPERTY(id, N'IsTable') = 1)
+	DROP TABLE {databaseOwner}{objectQualifier}Blogs_Blog
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Blogs_Entry_GetByDates]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Blogs_Entry_GetByDates]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Blogs_Entry_GetByUserId]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Blogs_Entry_GetByUserId]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Blogs_Blog_GetByUserId]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Blogs_Blog_GetByUserId]
+GO
+
+/******* CORE INTEGRATION DATA *******/
+/* Notifications */
+DECLARE @NotificationTypeId INT
+ SET @NotificationTypeId = (SELECT NotificationTypeID from {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] WHERE Name = N'DNN_Blog_Entry_Publishing')
+ DELETE FROM  {databaseOwner}[{objectQualifier}CoreMessaging_Messages] 
+	WHERE NotificationTypeId = @NotificationTypeId
+
+ DELETE FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] 
+	WHERE NotificationTypeId = @NotificationTypeId
+
+DELETE FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] 
+	WHERE NotificationTypeId = @NotificationTypeId
+
+SET @NotificationTypeId = (SELECT NotificationTypeID from {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] WHERE Name = N'DNN_Blog_Entry_CommentApproval')
+DELETE FROM  {databaseOwner}[{objectQualifier}CoreMessaging_Messages] 
+	WHERE NotificationTypeId = @NotificationTypeId
+
+DELETE FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] 
+	WHERE NotificationTypeId = @NotificationTypeId
+
+DELETE FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] 
+	WHERE NotificationTypeId = @NotificationTypeId
+
+SET @NotificationTypeId = (SELECT NotificationTypeID from {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] WHERE Name = N'DNN_Blog_Entry_CommentAdded')
+DELETE FROM  {databaseOwner}[{objectQualifier}CoreMessaging_Messages] 
+	WHERE NotificationTypeId = @NotificationTypeId
+
+DELETE FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] 
+WHERE NotificationTypeId = @NotificationTypeId
+
+DELETE FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] 
+	WHERE NotificationTypeId = @NotificationTypeId
+GO
+
+/* Content Item */
+DECLARE @ContentTypeID INT
+SET @ContentTypeID = ( SELECT   ContentTypeID
+					   FROM     {databaseOwner}{objectQualifier}ContentTypes
+					   WHERE    ContentType = 'DNN_Blog_Entry'
+					 )
+
+DELETE FROM {databaseOwner}{objectQualifier}ContentItems
+	WHERE   ContentTypeID = @ContentTypeID
+
+DELETE FROM  {databaseOwner}{objectQualifier}ContentTypes
+	WHERE ContentTypeID = @ContentTypeID
+GO
+
+/* Subscriptions */
+DECLARE @SubscriptionTypeId INT
+SET @SubscriptionTypeId = ( SELECT   SubscriptionTypeId
+					   FROM     {databaseOwner}{objectQualifier}CoreMessaging_SubscriptionTypes
+					   WHERE    SubscriptionName = 'DNNCorp_Blogs'
+					 )
+
+DELETE FROM {databaseOwner}{objectQualifier}CoreMessaging_SubscriptionTypes
+	WHERE   SubscriptionTypeId = @SubscriptionTypeId
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Entry_GetByRange') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Entry_GetByRange
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Blogs_Blog_GetByPortal]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Blog_GetByPortalAndUserAndGroup
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Blogs_Settings_RemoveOlderTemplates]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Settings_RemoveOlderTemplates
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Blog_GetSearchable') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Blog_GetSearchable
+GO

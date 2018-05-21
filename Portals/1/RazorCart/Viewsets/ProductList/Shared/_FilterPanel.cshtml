@@ -1,0 +1,80 @@
+@inherits DotNetNuke.Web.Mvc.Framework.DnnWebViewPage<RazorCart.ProductList.Models.ListModel>
+
+<div class="well well-sm rzc-filter-panel">
+    <div class="form-inline">
+        <div class="form-group">
+            <label>@Dnn.LocalizeString("DisplayLabel")</label>
+            <div class="btn-group">
+                <a ng-href="{{'@Model.DisplayURL'.replace('{0}', 'gridview')}}" class="btn btn-default btn-sm" ng-click="!(list.displayMode === 'gridview') && list.changeDisplay($event, 'gridview')" ng-disabled="list.displayMode == 'gridview'">
+                    <span class="glyphicon glyphicon-th"></span>
+                </a>
+                <a ng-href="{{'@Model.DisplayURL'.replace('{0}', 'listview')}}" class="btn btn-default btn-sm" ng-click="!(list.displayMode === 'listview') && list.changeDisplay($event, 'listview')" ng-disabled="list.displayMode == 'listview'">
+                    <span class="glyphicon glyphicon-th-list"></span>
+                </a>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="dropdown" ng-class="list.sortMenu ? 'open' : ''">
+                <button type="button" class="btn btn-default dropdown-toggle" ng-model="list.sortMenu" ng-click="list.sortMenu = !list.sortMenu" ng-blur="list.sortMenu = false">
+                    <b>{{(list.sortExpressions | filter: { Key: list.sortExpression })[0].Value}}</b>
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" ng-init="list.sortExpressions = [{ Key: 'order-asc', Value: '@Dnn.LocalizeString("Sort_Default")' }, { Key: 'price-asc', Value: '@Dnn.LocalizeString("Sort_PriceAsc")' }, { Key: 'price-desc', Value: '@Dnn.LocalizeString("Sort_PriceDesc")' }]">
+                    <li ng-repeat="sortExpression in list.sortExpressions | filter: { Key: '!' + list.sortExpression }">
+                        <a href="#" ng-mousedown="list.sortExpressionChange($event, sortExpression.Key); list.sortMenu = !list.sortMenu">{{sortExpression.Value}}</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        @*<div class="form-group">
+            <input type="search" class="form-control" placeholder="@Dnn.LocalizeString("Search")" ng-model="list.searchText" ng-change="list.enableAutoFiltering && list.applyFilters($event)"
+                   ng-model-options="{ debounce: list.autoFilteringTimeout }" ng-keypress="($event.which === 13) && list.applyFilters($event)">
+        </div>*@
+        @*<div class="form-group">
+            <label>@Dnn.LocalizeString("PriceRangeLabel")</label>
+            <input type="number" class="form-control" placeholder="@Dnn.LocalizeString("From")" min="0" ng-model="list.minPrice" ng-change="list.enableAutoFiltering && list.applyFilters($event)"
+                   ng-model-options="{ debounce: list.autoFilteringTimeout }" ng-keypress="($event.which === 13) && list.applyFilters($event)">
+            <input type="number" class="form-control" placeholder="@Dnn.LocalizeString("To")" min="0" ng-model="list.maxPrice" ng-change="list.enableAutoFiltering && list.applyFilters($event)"
+                   ng-model-options="{ debounce: list.autoFilteringTimeout }" ng-keypress="($event.which === 13) && list.applyFilters($event)">
+        </div>*@
+        @*<button class="btn btn-default" ng-click="list.applyFilters($event)">
+            <span class="glyphicon glyphicon-filter"></span> @Dnn.LocalizeString("FilterLabel")
+        </button>*@
+        <div class ="form-group">
+            <label>Color:</label>
+            <input type="search" class="form-control" placeholder="EnterYourColor"ng-model="list.searchText" ng-change="list.enableAutoFiltering && list.applyFilters($event)"
+                   ng-model-options="{ debounce: list.autoFilteringTimeout }" ng-keypress="($event.which === 13) && list.applyFilters($event)">
+        </div>
+        <div class="form-group">
+            <label>Select Size:</label>
+            <div class="form-group">
+                <div class="dropdown" ng-class="sortSize ? 'open' : ''" ng-init="sortSize=false">
+                    <button type="button" class="btn btn-default dropdown-toggle" ng-model="list.sortMenu" ng-click="sortSize = !sortSize" ng-blur="sortSize = false">
+                        <b>select size</b>
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" ng-init="list.sortRange = [{ Key: 'M', Value: 'MEDIUM' }, { Key: 'L', Value: 'LARGE' }, { Key: 'XL', Value: 'XTRA LARGE' },{ Key: 'XXL', Value: 'dOUBLEX TRA LARGE' }]">
+                        <li ng-repeat="sortExpression in list.sortRange | filter: { Key: '!' + list.sortRange }">
+                            <a href="#" ng-mousedown="list.sortExpressionChange($event, sortExpression.Key); list.sortMenu = !list.sortMenu">{{sortExpression.Value}}</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <label>Show Items per Page :</label>
+        
+        <div class="form-group">
+            <div class="dropdown" ng-class="itemsSize ? 'open' : ''" ng-init="itemsSize=false">
+                <button type="button" class="btn btn-default dropdown-toggle" ng-model="list.sortMenu" ng-click="itemsSize = !itemsSize" ng-blur="itemsSize = false">
+                    <b>select size of items</b>
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" ng-init="list.sortPageSize = [{ Key: '24', Value: '24' },{ Key: '48', Value: '48' }, { Key: 'showAll', Value: 'Show All' }]">
+                    <li ng-repeat="sortExpression in list.sortPageSize | filter: { Key: '!' + list.sortPageSize }">
+                        <a href="#" ng-mousedown="list.sortExpressionChange($event, sortExpression.Key); list.sortMenu = !list.sortMenu">{{sortExpression.Value}}</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,145 @@
+<!--DetailsTemplateBegin-->
+[Has:EDG:BreadCrumbLink]<div class="edsgg_breadcrumbs">[EDG:BreadCrumbLink]</div>[/Has:EDG:BreadCrumbLink]
+<div class="edsgg_detailsContainer">
+	<div class="edsgg_topRibbon">
+		[EDG:MediaLike][Has:EDG:NumberOfLikes]<span class="edsgg_detailsNumbnerOfLikes">[EDG:NumberOfLikes]</span>[/Has:EDG:NumberOfLikes]
+		[Has:EDG:MediaDownload][Has:EDG:NumberOfDownloads]<span class="edsgg_detailsNumberOfDownloads">[EDG:NumberOfDownloads]</span>[/Has:EDG:NumberOfDownloads]<a class="edsgg_mediaDownloadLink" href="[EDG:MediaDownloadLink]" >[EDG:LocalizedText:DownloadMedia] <i>[EDG:DownloadMediaExtension]</i> [EDG:DownloadMediaSize]</a>[/Has:EDG:MediaDownload]
+		[Has:EDG:EmailLink]
+		<a class="edsgg_emailLink" title="[EDG:LocalizedText:Email]" href="mailto:?to=&amp;subject=[EDG:LocalizedText:EmailSubject]&amp;body=[EDG:LocalizedText:EmailBody][EDG:CurrentURL]"><span>[EDG:LocalizedText:Email]</span></a>
+		[/Has:EDG:EmailLink]
+		[Has:EDG:ItemsSharingButtons][EDG:ItemsShareButtons][/Has:EDG:ItemsSharingButtons]
+		[Has:EDG:NewsArticleLink]<a class="edsgg_newsArticleLink" href="[EDG:NewsArticleLink]">[EDG:LocalizedText:BacktoArticle]</a>[/Has:EDG:NewsArticleLink]
+		[Has:EDG:CommunityMode][EDG:CommunityModeEditMedia][/Has:EDG:CommunityMode]
+		<div class="edsgg_clear"></div>
+	</div>
+	<div class="edsgg_details">
+		<div class="edsgg_detailsItemContainer" style="width:[EDG:DetailsItemThumbWidth]px">
+			[EDG:DontEmbedInPage]
+			<div class="edsgg_imageContainer">
+				<a class="edsgg__itemDetailsAndLightboxTrigger" target="[EDG:MediaUrlTarget]" href="[EDG:ItemMediaLink]"><span>[EDG:ItemTitle]</span></a>
+				<div class="edsgg_imageOverlay"></div>
+				<img src="[EDG:ItemThumbnail]" alt="[EDG:ImageAltData]" />
+				<a class="edsgg_navigation edsgg_previous" href="[EDG:PreviousImageURL]"><span>[EDG:LocalizedText:Previous]</span></a>
+				<a class="edsgg_navigation edsgg_next" href="[EDG:NextImageURL]"><span>[EDG:LocalizedText:Next]</span></a>
+				[Has:EDG:MediaType]<span class="edsgg_mediaTypeIcon edsgg_[EDG:MediaType]"><span>[EDG:MediaType]</span></span>[/Has:EDG:MediaType]
+			</div>
+			[/EDG:DontEmbedInPage]
+			[EDG:EmbedInPage]
+				<div class="edsgg_imageContainer edsgg_mediaType[EDG:MediaType]">
+					[EDG:EmbedMediaData]
+					<a class="edsgg_navigation edsgg_previous" href="[EDG:PreviousImageURL]"><span>[EDG:LocalizedText:Previous]</span></a>
+					<a class="edsgg_navigation edsgg_next" href="[EDG:NextImageURL]"><span>[EDG:LocalizedText:Next]</span></a>
+				</div>
+			[/EDG:EmbedInPage]
+			[Has:EDG:ItemsListLikeButtons]<div class="edsgg_itemsDetailLikeButtons">[EDG:ItemsDetailLikeButtons]</div>[/Has:EDG:ItemsListLikeButtons]
+		</div>
+	</div>
+</div>
+<div class="edsgg_itemContent">
+	[Has:EDG:ItemTitle]<h1 class="edsgg_mainTitle">[EDG:ItemTitle]</h1>[/Has:EDG:ItemTitle]
+	[Has:EDG:ReportMedia]
+	<div class="edsgg_reportMedia">
+		[EDG:ReportMedia]
+	</div>
+	[/Has:EDG:ReportMedia]
+	[Has:EDG:ItemUploaderInfo]<a class="edsgg_authorDate[Has:EDG:AvatarProvider] avatar[/Has:EDG:AvatarProvider]" href="[EDG:ItemAuthorProfileLink]" >[EDG:ItemAuthorAvatar]<span class="edsgg_uploaderName">[EDG:ItemAuthor]</span><span class="edsgg_dateCreated">[EDG:ItemUploadDate]</span></a>[/Has:EDG:ItemUploaderInfo]
+	<div class="edsgg_elements">
+		[Has:EDG:ItemNumberOfViews]<span class="edsgg_numberOfViews">[EDG:ItemNumberOfViews]</span>[/Has:EDG:ItemNumberOfViews]
+		[Has:EDG:NumberOfComments][EDG:NumberOfComments][/Has:EDG:NumberOfComments]
+	</div>
+	[EDG:MediaRatingAction]
+	<div class="edsgg_clear edsgg_separator"></div>
+	[Has:EDG:ItemDescription]<div class="edsgg_itemDescription">[EDG:ItemDescription]</div><div class="edsgg_clear"></div>[/Has:EDG:ItemDescription]
+	[EDG:PeopleWhoLikedThisMedia]
+	[Has:EDG:GoogleMaps]<div class="edsgg_googleMap">[EDG:GoogleMap]</div>[/Has:EDG:GoogleMaps]
+	[EDG:ExifMetaData]
+</div>
+[EDG:MediaDetailsComments]
+<!--DetailsTemplateEnd-->
+
+<!--CommentsTemplateBegin-->
+<!--CommentsSectionWrapperHeaderTemplateBegin-->
+	<h4 class="edsgg_numberOfComments">[EDG:NumberOfComments] Comments</h4>
+<!--CommentsSectionWrapperHeaderTemplateEnd-->
+
+	<!--CommentsListHeaderTemplateBegin-->
+	<!--CommentsListHeaderTemplateEnd-->
+
+	<!--SingleCommentInListTemplateBegin-->
+	<div class="edsgg_votes">
+		<div class="edsgg__commentVoting_trigger edsgg__commentVoting_upvote[Has:EDG:CommentUpVoted] edsgg__commentVoting_voted[/Has:EDG:CommentUpVoted]">
+			<span class="edsgg__commentVoting_goodVotes">[EDG:CommentGoodVotes]</span>
+		</div>
+		<div class="edsgg__commentVoting_trigger edsgg__commentVoting_downvote[Has:EDG:CommentDownVoted] edsgg__commentVoting_voted[/Has:EDG:CommentDownVoted]">
+			<span class="edsgg__commentVoting_badVotes">[EDG:CommentBadVotes]</span>
+		</div>
+	</div>
+	<div class="edsgg_comment">
+		[Has:EDG:AvatarProvider][EDG:CommentersAvatar][/Has:EDG:AvatarProvider]
+		<a class="edsgg_commentersName" href="#" title="[EDG:CommentersName]">[EDG:CommentersName]</a>
+		<span class="edsgg_commentDateAdded"> &#8226 [EDG:CommentDateAdded]</span>
+		[EDG:CommentFormatedText]
+		[Has:EDG:CommentEditPermission]
+		<div class="edsgg__editCommentContainer">
+			<span class="edsgg_errorMessage edsgg__commentsNoCommentError">[EDG:LocalizedText:PleaseSpecifyaComment]</span>
+			<textarea class="edsgg__editCommentContent" rows="2" cols="20"></textarea>
+			<div class="edsgg_commentActions">
+				<span class="edsgg__editCommentSaveTrigger"><span>[EDG:LocalizedText:Save]</span></span><span class="edsgg__editCommentCancelTrigger"><span>[EDG:LocalizedText:Cancel]</span></span>
+			</div>
+		</div>
+		[/Has:EDG:CommentEditPermission]
+		<div class="edsgg_commentActions main">[EDG:CommentAdminActions]</div>
+	</div>
+	<div class="edsgg_clear"></div>
+	<!--SingleCommentInListTemplateEnd-->
+
+	<!--CommentsListFooterTemplateBegin-->
+	<!--CommentsListFooterTemplateEnd-->
+
+	<!--CommentsAddFormTemplateBegin-->
+	<h3 class="edsgg_leaveaComment"><span>[EDG:LocalizedText:LeaveaComment]</span></h3>
+	<div class="edsgg_addComment">
+		<p class="edsgg__replyingToMessage">[EDG:LocalizedText:YouAreReplyingTo]</p>
+		<div class="edsgg_inputWrapper">
+			<span class="edsgg_errorMessage edsgg__commentsNoCommentError">[EDG:LocalizedText:PleaseSpecifyaComment]</span>
+			<label for="edsgg_commentsCommentInput_[EDG:ModuleID]">[EDG:LocalizedText:Comment]:</label>
+			<textarea id="edsgg_commentsCommentInput_[EDG:ModuleID]" class="edsgg__commentsCommentInput" rows="5" cols="20"></textarea>
+		</div>
+		<div class="edsgg_button">
+			<span class="edsgg__commentsSubmitComment"><span>[EDG:LocalizedText:AddComment]</span></span>
+		</div>
+	</div>
+	<!--CommentsAddFormTemplateEnd-->
+	<!--CommentsUnregisteredUserAddFormTemplateBegin-->
+	<h3 class="edsgg_leaveaComment"><span>[EDG:LocalizedText:LeaveaComment]</span></h3>
+	<div class="edsgg_addComment">
+		<p class="edsgg__replyingToMessage">[EDG:LocalizedText:YouAreReplyingTo]</p>
+		[Has:EDG:CaptchaControl]
+			[EDG:CaptchaControl]<span class="edsgg_errorMessage edsgg__commentsNoCaptchaError">[EDG:LocalizedText:PleaseSolveCaptcha]</span>
+		[/Has:EDG:CaptchaControl]
+		<div class="edsgg_inputWrapper">
+			<span class="edsgg_errorMessage edsgg__commentsNoNameError">[EDG:LocalizedText:PleaseSpecifyYourName]</span>
+			<label for="edsgg_commentsAuthorNameInput_[EDG:ModuleID]">[EDG:LocalizedText:Name] :</label>
+			<input id="edsgg_commentsAuthorNameInput_[EDG:ModuleID]" class="edsgg__commentsAuthorNameInput" type="text" name="name">
+		</div>
+		<div class="edsgg_inputWrapper">
+			<span class="edsgg_errorMessage edsgg__commentsNoEmailError">[EDG:LocalizedText:PleaseSpecifyYourEmailAddress]</span>
+			<span class="edsgg_errorMessage edsgg__commentsInvalidEmailError">[EDG:LocalizedText:PleaseSpecifyaValidEmailAddress]</span>
+			<label for="edsgg_commentsAuthorEmailInput_[EDG:ModuleID]">[EDG:LocalizedText:Email] :</label>
+			<input id="edsgg_commentsAuthorEmailInput_[EDG:ModuleID]" class="edsgg__commentsAuthorEmailInput" type="text" name="email">
+		</div>
+		<div class="edsgg_inputWrapper">
+			<span class="edsgg_errorMessage edsgg__commentsNoCommentError">[EDG:LocalizedText:PleaseSpecifyaComment]</span>
+			<label for="edsgg_commentsCommentInput_[EDG:ModuleID]">[EDG:LocalizedText:Comment]:</label>
+			<textarea id="edsgg_commentsCommentInput_[EDG:ModuleID]" class="edsgg__commentsCommentInput" rows="5" cols="20"></textarea>
+		</div>
+		<div class="edsgg_button">
+			<span class="edsgg__commentsSubmitComment"><span>[EDG:LocalizedText:AddComment]</span></span>
+		</div>
+	</div>
+	<!--CommentsUnregisteredUserAddFormTemplateEnd-->
+
+<!--CommentsSectionWrapperFooterTemplateBegin-->
+<!--CommentsSectionWrapperFooterTemplateEnd-->
+
+<!--CommentsTemplateEnd-->

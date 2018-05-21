@@ -1,0 +1,41 @@
+<!--Category Template-->
+<!--HeaderTemplateBegin-->
+[Has:EDG:CommunityMode]<div class="edsgg_myGalleriesLinkWrapper">[EDG:CommunityModeEditMedia]</div>[/Has:EDG:CommunityMode]
+<!--HeaderTemplateEnd-->
+
+<!--CategoryItemTemplateBegin-->
+<div class="edsgg_thumbnailWrapper">
+[Has:EDG:EditPermission][EDG:EditCategoryData][/Has:EDG:EditPermission]
+	<div class="edsgg_thumbnailContainer">
+		<a href="[EDG:CategoryLink]">
+			<span class="edsgg_image_thumbnail">
+				<img src="[EDG:CategoryThumbnail]" alt="[EDG:CategoryTitle]">
+				[Has:EDG:NumberOfGalleries]
+				<span class="edsgg_numberOfItems">[EDG:NumberOfGalleries]</span>
+				[/Has:EDG:NumberOfGalleries]
+				<span class="edsgg_readMore"></span>
+				<div class="edsgg_widthEnforcer" style="width: [EDG:CategoryThumbWidth]px;"></div>
+			</span>
+			[Has:EDG:CategoryTitle]<span class="edsgg_title" style="max-width:[EDG:CategoryThumbWidth]px;">[EDG:CategoryTitle]</span>[/Has:EDG:CategoryTitle]
+		</a>
+	</div>
+	[Has:EDG:CategoryDescription]<div class="edsgg_description" style="max-width:[EDG:CategoryThumbWidth]px;">[EDG:CategoryDescription]</div>[/Has:EDG:CategoryDescription]
+	<ul class="edsgg_galleryDetails" style="max-width:[EDG:CategoryThumbWidth]px;">
+		<li class="authorSharingRss">
+			<ul>
+				[Has:EDG:CategorySharingButtons]
+				<li class="edsgg_socialSharing">[EDG:CategoryShareButtons]</li>
+				[/Has:EDG:CategorySharingButtons]
+				[Has:EDG:CategoryShowRss]
+				<li class="edsgg_rssLink"><a href="[EDG:CategoryRSSURL]" title="[EDG:LocalizedText:RSS]" target="_blank"><span>[EDG:LocalizedText:RSS]</span></a></li>
+				[/Has:EDG:CategoryShowRss]
+			</ul>
+		</li>
+	</ul>
+</div>
+<!--CategoryItemTemplateEnd-->
+
+<!--FooterTemplateBegin-->
+[EDG:CategoryPaging]
+[Has:EDG:CategoryShowRss]<div class="edsgg_listRssWrapper"><a href="[EDG:CategoryListRSSURL]" title="[EDG:LocalizedText:RSS]"><span>[EDG:LocalizedText:RSS]</span></a></div>[/Has:EDG:CategoryShowRss]
+<!--FooterTemplateEnd-->

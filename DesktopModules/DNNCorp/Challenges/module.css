@@ -1,0 +1,667 @@
+/* Detail View */
+@font-face {
+    font-family: 'proxima_nova';
+    src: url('/admin/personabar/css/ProximaNova-Reg-webfont.woff') format('woff'), url('/admin/personabar/css/ProximaNova-Reg-webfont.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'proxima_nova_semibold';
+    src: url('/admin/personabar/css/ProximaNova-Sbold-webfont.woff') format('woff'), url('/admin/personabar/css/ProximaNova-Sbold-webfont.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'proxima_nova_c_semibold';
+    src: url('/admin/personabar/css/ProximaNovaCond-Sbold-webfont.woff') format('woff'), url('/admin/personabar/css/ProximaNovaCond-Sbold-webfont.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+.detail-main-container > .answer-content {
+    display: block;
+    border-left: 1px solid #dfdfdf;
+    margin: 0 0 0 62px;
+    padding: 20px;
+}
+
+select .small {
+    width: 90px;
+}
+
+div.chart-summary {
+    width: 100%;
+}
+
+div.summary-element {
+    padding: 6px 20px 6px 20px;
+    border-right: 1px solid #ddd;
+}
+
+    div.summary-element:last-child {
+        border-right: none;
+        padding-right: 0;
+    }
+
+    div.summary-element span {
+        display: block;
+        text-align: center;
+        font-size: 21px;
+    }
+
+        div.summary-element span sup {
+            font-size: 11px;
+            top: -1em;
+        }
+
+        div.summary-element span.summary-title {
+            font-weight: bold;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+ul.networkCheckboxes {
+    display: inline-block;
+    margin: 0;
+    height: 75px;
+}
+
+    ul.networkCheckboxes > li.networkCheckbox {
+        display: inline-block;
+        cursor: pointer;
+        height: 45px;
+        width: 46px;
+        position: relative;
+        margin-bottom: 0;
+    }
+
+        ul.networkCheckboxes > li.networkCheckbox.selected {
+            background-position: 0 -45px;
+        }
+
+        ul.networkCheckboxes > li.networkCheckbox#Twitter {
+            background-image: url("images/Icon_Tw_Large.png");
+        }
+
+        ul.networkCheckboxes > li.networkCheckbox#LinkedIn {
+            background-image: url("images/Icon_Li_Large.png");
+        }
+
+        ul.networkCheckboxes > li.networkCheckbox#Facebook {
+            background-image: url("images/Icon_Fb_Large.png");
+        }
+
+        ul.networkCheckboxes > li.networkCheckbox#Google {
+            background-image: url("images/Icon_Go_Large.png");
+        }
+
+        ul.networkCheckboxes > li.networkCheckbox > span {
+            display: block;
+            position: absolute;
+            top: 50px;
+            left: 0;
+            width: 46px;
+            text-align: center;
+            color: #000;
+        }
+
+            ul.networkCheckboxes > li.networkCheckbox > span.red {
+                color: red;
+            }
+
+    ul.networkCheckboxes + span {
+        display: inline-block;
+        vertical-align: top;
+        margin: 12px 0 22px 0;
+        color: #999;
+    }
+
+#image-area {
+    position: relative;
+    border-radius: 5px;
+    margin: 15px;
+    padding: 15px;
+    background-color: #F1F1F1;
+    display: block;
+}
+
+    #image-area #imagePreviewer {
+        float: left;
+        margin: 0 30px 15px 0;
+        height: 95px;
+        width: 108px;
+        padding: 0;
+        background-image: url("images/Icon_Image_Uploader.png");
+        display: block;
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-size: 108px auto;
+    }
+
+          #image-area #imagePreviewer span {
+                display: inline-block;
+                border: transparent;
+                text-decoration: none;
+                height: 95px;
+                width: 108px;
+                overflow: hidden;
+                padding: 0;
+                background-color: #f1f1f1;
+          }
+
+           #image-area #imagePreviewer span em {
+               display: table-cell;
+               width: 108px;
+               height: 95px;
+               vertical-align: middle;
+           }
+
+            #image-area #imagePreviewer span em img{
+                display: inline-block;
+                border: none;
+                width: 100%;
+            }
+
+    #image-area #linkInfo {
+        padding: 10px;
+    }
+
+        #image-area #linkInfo > b {
+            display: block;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+
+#webUrl {
+    margin: 0;
+}
+
+.dnnFormItem > ul.token-input-list-facebook {
+    width: 57%;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    margin-bottom: 18px;
+}
+
+div.token-input-dropdown-facebook ul li span.avatar-25 {
+    display: inline-block;
+    border: transparent;
+    text-decoration: none;
+    height: 25px;
+    width: 25px;
+    overflow: hidden;
+    margin: 0 6px 0 0;
+}
+
+    div.token-input-dropdown-facebook ul li span.avatar-25 > em {
+        display: table-cell;
+        width: 25px;
+        height: 25px;
+        vertical-align: middle;
+    }
+
+        div.token-input-dropdown-facebook ul li span.avatar-25 > em > img {
+            display: inline-block;
+            border: none;
+            width: 100%;
+        }
+
+    div.token-input-dropdown-facebook ul li span.avatar-25 + span {
+        display: inline-block;
+        vertical-align: top;
+        margin-top: 6px;
+    }
+
+ul.dnnActions.dnnRight > li > a.dnnPrimaryAction.disabled,
+ul.dnnActions.dnnRight > li > a.dnnPrimaryAction.disabled:hover,
+ul.dnnActions.dnnRight > li > a.dnnPrimaryAction.disabled:active {
+    background: #bbb;
+    border: 1px solid #aaa;
+    color: #fff;
+    font-weight: normal;
+    box-shadow: none;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    text-shadow: none;
+    cursor: default;
+}
+
+
+td.challenge-list-accept {
+    width: 46px;
+    padding: 12px 0 0 12px;
+}
+
+td.list-row-summary-container {
+    padding: 12px;
+}
+
+.accept-button {
+    background-image: url("images/Icon_Challenge.png");
+    background-repeat: no-repeat;
+    display: block;
+    height: 37px;
+    width: 37px;
+}
+
+    .accept-button .points {
+        display: inline-block;
+        color: white;
+        vertical-align: top;
+        margin: 20px 0 0 0;
+        text-align: center;
+        width: 37px;
+    }
+
+.dnnSocial-Challenges div.loading {
+    background-image: url("images/horizontal-loading.gif");
+    width: 16px;
+    height: 11px;
+    position: absolute;
+    right: 24px;
+}
+
+/* d3 svg */
+.line-chart rect.background {
+    fill: #ffffff;
+    stroke: #e1e1e6;
+}
+
+.line-chart .line {
+    fill: none;
+    stroke-width: 2px;
+}
+
+.line-chart .node {
+    stroke: #ffffff;
+    stroke-width: 2px;
+}
+
+    .line-chart .node:hover {
+        stroke: rgba(0,0,0,0);
+    }
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #eeeeee;
+    shape-rendering: crispEdges;
+}
+
+.axis text {
+    fill: #b2aeae;
+    font-size: 10px;
+    font-family: proxima_nova_c_semibold;
+}
+
+ul.graph-legend {
+    background-color: #eeeeee;
+    border-radius: 3px;
+    display: inline-block;
+    padding: 9px 15px;
+    font-weight: bold;
+    color: #878383;
+    float: right;
+    margin: 0;
+}
+
+    ul.graph-legend > li {
+        height: 14px;
+        margin: 0 18px 0 0;
+        display: inline;
+        cursor: pointer;
+    }
+
+        ul.graph-legend > li > span {
+            font-size: 11px;
+            font-weight: normal;
+        }
+
+        ul.graph-legend > li:last-child {
+            margin: 0;
+        }
+
+        ul.graph-legend > li > div {
+            background-position: center;
+            background-color: gray;
+            width: 14px;
+            height: 14px;
+            display: inline-block;
+            margin-right: 7px;
+            vertical-align: top;
+        }
+
+    ul.graph-legend li.checked > div {
+        background-image: url(images/checkmark.png);
+    }
+
+.donut-chart-container ul.graph-legend {
+    display: block;
+    float: none;
+    margin: 10px 0 10px 35px;
+    background-color: transparent;
+}
+
+    .donut-chart-container ul.graph-legend > li {
+        height: 14px;
+        margin: 0 0 16px 0;
+        display: block;
+        width: 50%;
+        float: left;
+    }
+
+        .donut-chart-container ul.graph-legend > li > span {
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+.line-chart-tooltip {
+    background-color: #002e47;
+    opacity: 0.9;
+    position: absolute;
+    border-radius: 7px;
+    padding: 15px;
+    width: 140px;
+    font-size: 13px;
+    z-index: 9999;
+}
+
+    .line-chart-tooltip > span.title {
+        color: #c8c8c8;
+        display: block;
+        margin-bottom: 5px;
+        font-family: proxima_nova_c_semibold;
+        letter-spacing: 1px;
+    }
+
+    .line-chart-tooltip > span.info {
+        color: #ffffff;
+        display: block;
+        line-height: 1.5em;
+        font-family: proxima_nova_semibold;
+        letter-spacing: 1px;
+        line-height: 1.5em;
+    }
+
+    .line-chart-tooltip.align-center > span.title {
+        text-align: center;
+    }
+
+    .line-chart-tooltip.align-center > span.info {
+        text-align: center;
+    }
+
+.line-chart-tooltip-anchor {
+    left: 56px;
+    position: absolute;
+    bottom: 0;
+}
+
+    .line-chart-tooltip-anchor:after {
+        border-left: 7px solid rgba(0, 0, 0, 0);
+        border-right: 7px solid rgba(0, 0, 0, 0);
+        border-top: 7px solid #002e47;
+        bottom: -7px;
+        content: "";
+        height: 0;
+        opacity: 0.9;
+        position: absolute;
+        width: 0;
+    }
+
+.chart-container {
+    position: relative;
+    margin-bottom: 10px;
+}
+
+    .chart-container.donut-chart-container.dnnLeft {
+        width: 49%;
+        border-right: 1px solid #ddd;
+    }
+
+    .chart-container.donut-chart-container.dnnRight {
+        width: 50%;
+    }
+
+    .chart-container.donut-chart-container .donut-chart-center {
+        display: block;
+        position: absolute;
+        height: 46px;
+        width: 120px;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: auto;
+        text-align: center;
+        vertical-align: middle;
+        font-size: 46px;
+        line-height: 1em;
+        font-weight: bold;
+    }
+
+        .chart-container.donut-chart-container .donut-chart-center sup {
+            font-size: 18px;
+            font-weight: normal;
+            top: -1.4em;
+        }
+
+        .chart-container.donut-chart-container .donut-chart-center span {
+            font-size: 24px;
+            font-weight: normal;
+            display: block;
+        }
+
+.challenge-detailview-segment {
+    margin-top: 45px;
+}
+
+    /* user list */
+    .challenge-detailview-segment .two-columns {
+        display: block;
+        width: 50%;
+        float: left;
+        margin: 15px 0 15px 0;
+    }
+
+
+        .challenge-detailview-segment .two-columns > table {
+            overflow: hidden;
+            border: none;
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
+            .challenge-detailview-segment .two-columns > table .col-avatar {
+                width: 65px;
+            }
+
+            .challenge-detailview-segment .two-columns > table .col-info {
+                width: 50px;
+            }
+
+            .challenge-detailview-segment .two-columns > table td,
+            .challenge-detailview-segment .two-columns > table th {
+                padding: 8px 9px 7px 9px;
+                border: none;
+                text-align: left;
+            }
+
+            .challenge-detailview-segment .two-columns > table th {
+                padding: 6px 0 6px 0;
+            }
+
+            .challenge-detailview-segment .two-columns > table tr:nth-child(2n) td {
+                background: rgba(0,0,0,0.04);
+            }
+
+            .challenge-detailview-segment .two-columns > table.rightside {
+                border-left: 1px solid #ddd;
+                border-right: 1px solid #eaeaea;
+                border-bottom: 1px solid #ddd;
+                border-radius: 0;
+                border-top-right-radius: 6px;
+                border-bottom-right-radius: 6px;
+            }
+
+            .challenge-detailview-segment .two-columns > table.leftside {
+                border-left: 1px solid #eaeaea;
+                border-bottom: 1px solid #ddd;
+                border-radius: 0;
+                border-top-left-radius: 6px;
+                border-bottom-left-radius: 6px;
+            }
+
+            .challenge-detailview-segment .two-columns > table td {
+                border-bottom: none;
+                cursor: pointer;
+                vertical-align: middle;
+            }
+
+            .challenge-detailview-segment .two-columns > table th {
+                background-color: #eaeaea;
+                border: none;
+            }
+
+                .challenge-detailview-segment .two-columns > table th > a,
+                .challenge-detailview-segment .two-columns > table td > span {
+                    display: block;
+                    padding: 5px 9px;
+                    letter-spacing: 1px;
+                    font-weight: normal;
+                    color: #777;
+                    text-transform: none;
+                    font-size: 13px;
+                    white-space: nowrap;
+                    max-width: 120px;
+                    overflow: hidden;
+                }
+
+            .challenge-detailview-segment .two-columns > table td > span {
+                max-width: 120px;
+                display: inline-block;
+                overflow: hidden;
+                padding: 0;
+            }
+
+            /* user avatar*/
+            .challenge-detailview-segment .two-columns > table td .useravatar {
+                display: block;
+                width: 40px;
+                height: 40px;
+                float: left;
+                margin: 1px 0 1px 7px;
+            }
+
+                .challenge-detailview-segment .two-columns > table td .useravatar > span {
+                    display: inline-block;
+                    border: none;
+                    text-decoration: none;
+                    height: 40px;
+                    width: 40px;
+                    overflow: hidden;
+                    border-radius: 20px;
+                    background-color: #fafafa;
+                }
+
+                    .challenge-detailview-segment .two-columns > table td .useravatar > span > em {
+                        display: table-cell;
+                        width: 40px;
+                        height: 40px;
+                        vertical-align: middle;
+                    }
+
+                        .challenge-detailview-segment .two-columns > table td .useravatar > span > em > img {
+                            display: inline-block;
+                            border: none;
+                            width: 100%;
+                        }
+
+/* Latest Challenge Module */
+.latest-challenge-container {
+    background-color: #fff;
+    padding: 20px;
+    margin: 0;
+}
+
+    .latest-challenge-container table.sidelist-tbl {
+        width: 100%;
+    }
+
+        .latest-challenge-container table.sidelist-tbl tr {
+            border-bottom: 1px solid #eee;
+        }
+
+            .latest-challenge-container table.sidelist-tbl tr:first-child {
+                border: none;
+            }
+
+        .latest-challenge-container table.sidelist-tbl td {
+            padding: 10px 0 10px 0;
+            vertical-align: middle;
+        }
+
+        .latest-challenge-container > a.create-challenge-button.dnnSecondaryAction {
+            display: block;
+        }
+
+.dnnFormItem #messageToShare {
+    resize: none;
+}
+.edit-message-btn {
+    width: 20px;
+    height: 20px;
+    background-image: url('images/Icon_Edit_Message_Locked.png');
+    position: absolute;
+    bottom: 20px;
+    right: 120px;
+    background-repeat: no-repeat;
+}
+.edit-message-btn.unlocked {
+    background-image: url('images/Icon_Edit_Message_Unlocked.png');
+}
+.journalrow div.journalitem div.challenge-journal-detailview .challenge-socialnetwork-box ul.challenge-socialnetwork-list > li > span.char-count {
+    width: 30px !important;
+    height: 15px !important;
+    position: absolute;
+    text-align: center;
+    bottom: -15px;
+    display: none;
+    left: 5px;
+}
+
+.journalrow div.journalitem div.challenge-journal-detailview .challenge-socialnetwork-box ul.challenge-socialnetwork-list > li > span.char-count.exceeded {
+    color: red;
+}
+
+div[contenteditable=true].answer-add-content {
+    border: 1px solid #c9c9c9;
+    border-radius: 3px;
+    box-shadow: none;    
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    display: inline-block;
+    max-width: inherit;
+    min-height: 80px;
+    width: 57%;
+    margin-bottom: 18px;
+    padding: 8px;
+    background: #ffffff;
+    -webkit-border-radius: 3px;
+    color: #333;
+    font-size: 12px;    
+    outline: 0;
+    margin: 5px 1px 3px 0;
+    -webkit-transition: all .30s ease-in-out;
+    -moz-transition: all .30s ease-in-out;
+    -ms-transition: all .30s ease-in-out;
+    -o-transition: all .30s ease-in-out;
+    transition: all .30s ease-in-out;
+    margin-bottom: 20px;
+}

@@ -1,0 +1,175 @@
+@using System.Dynamic;
+@using CartViper.Modules.Store.Customer;
+@using CartViper.Modules.Store.Catalog;
+@using CartViper.Modules.Store.Extensions;
+
+@inherits DotNetNuke.Web.Razor.DotNetNukeWebPage<dynamic>
+
+<style type="text/css">
+        
+    .variants
+    {
+        font-style:italic; 
+        font-size:small;
+    }
+    .redPriceBold
+    {
+        color:Red;
+        font-weight:bold;
+    }
+    
+    .headerLabel
+    {
+        font-weight:bold;
+    }
+    
+</style>
+
+<table>
+    <tr>
+        <td style="width:200px">
+            <span class="headerLabel">Order ID:</span><br />
+            @Model.Order.OrderID	
+        </td>
+        <td style="width:200px">
+            <span class="headerLabel">Order Date:</span><br />
+            @Model.Order.OrderDate
+        </td>
+        <td>
+            <span class="headerLabel">Order Status</span><br />
+            @Model.Order.GetOrderStatus(true);	
+        </td>
+    </tr>
+    <tr><td colspan="3">&nbsp;</td></tr>
+    <tr>
+        <td style="vertical-align:top">
+            <span class="headerLabel">Billing Address</span><br />
+            @Model.Order.BillingAddress.ToHtml(Model.StoreSettings, true,Model.Order.OrderID,true)
+
+            <br />
+            <span class="headerLabel">Offer Code Used</span><br />
+            @if (Model.Order.IsUsingCoupon)
+            {
+                @Model.Order.OfferCode
+            }
+            else
+            {
+                @:--
+            }
+        </td>
+        <td style="vertical-align:top">
+            <span class="headerLabel">Shipping Address</span><br />
+            @Model.Order.ShippingAddress.ToHtml(Model.StoreSettings, false,Model.Order.OrderID,false)
+        </td>
+        <td style="vertical-align:top">
+            <span class="headerLabel">Shipping Method</span><br />
+            @if (Model.Order.ShippingDescription != "")
+            {
+                @Model.Order.ShippingDescription
+            }
+            else
+            {
+                @:--
+            }
+
+            @if (Model.Order.ShippingDate!=null)
+            {
+               @: - @Model.Order.ShippingDate
+            }
+
+            <br /><br />
+            <span class="headerLabel">Shipping Tracking Number</span><br />
+            @if (Model.Order.ShippingTrackingNumber != "")
+            {
+                @Model.Order.ShippingTrackingNumber
+            }
+            else
+            {
+                @:--
+            }
+            <br /><br />
+            <span class="headerLabel">Payment Method</span><br />
+            @Model.Order.PaymentMethod
+        </td>
+    </tr>
+    <tr><td colspan="3">&nbsp;</td></tr>
+</table>
+
+<table>
+    <tr>
+        <td style="width:450px"><span class="headerLabel">Product</span></td>
+        <td><span class="headerLabel">Qty</span></td>
+        <td><span class="headerLabel">Price</span></td>
+        <td><span class="headerLabel">Subtotal</span></td>
+    </tr>
+    
+    @foreach (var lineItem in new OrderDetailController().GetOrderDetails(Model.Order.OrderID))
+    {
+        <tr>
+            <td>
+                @lineItem.CorrectedProductTitle
+                @if (lineItem.VariantOptions != "")
+                {
+                    @:<br /><span class="variants">@lineItem.VariantOptions</span>
+                }
+            </td>
+            <td>
+                @lineItem.Quantity
+            </td>
+            <td>
+                @lineItem.UnitCost.ToString("C", Model.StoreSettings.LocalFormat)
+            </td>
+            <td class="redPriceBold">
+               @lineItem.ExtendedAmount.ToString("C", Model.StoreSettings.LocalFormat)
+            </td>
+        </tr>
+    }
+    <tr><td colspan="4">&nbsp;</td></tr>
+    <tr>
+        <td>&nbsp;</td>
+        <td colspan="2"><span class="headerLabel">Subtotal</span></td>
+        <td class="redPriceBold">@Model.Order.OrderTotal.ToString("C", Model.StoreSettings.LocalFormat)</td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td>
+        <td colspan="2"><span class="headerLabel">Discount</span></td>
+        <td class="redPriceBold">@Model.Order.DiscountAmount.ToString("C", Model.StoreSettings.LocalFormat)</td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td>
+        <td colspan="2"><span class="headerLabel">Shipping</span></td>
+        <td class="redPriceBold">@Model.Order.ShippingCost.ToString("C", Model.StoreSettings.LocalFormat)</td>
+    </tr>
+     <tr>
+        <td>&nbsp;</td>
+        <td colspan="2"><span class="headerLabel">Tax</span></td>
+        <td class="redPriceBold">@Model.Order.Tax.ToString("C", Model.StoreSettings.LocalFormat)</td>
+    </tr>
+     <tr>
+        <td>&nbsp;</td>
+        <td colspan="2"><span class="headerLabel">Total</span></td>
+        <td class="redPriceBold">@Model.Order.GrandTotal.ToString("C", Model.StoreSettings.LocalFormat)</td>
+    </tr>
+    <tr><td colspan="4">&nbsp;</td></tr>
+    <tr>
+        <td colspan="4"><span class="headerLabel">Order Notes</span></td>
+    </tr>
+    <tr>
+        <td colspan="4">
+            @if (Model.Order.OrderNotes != "")
+            {
+                @Model.Order.OrderNotes
+            }
+            else
+            {
+                @:--
+            }
+        </td>
+    </tr>
+</table>
+
+																 
+
+
+
+

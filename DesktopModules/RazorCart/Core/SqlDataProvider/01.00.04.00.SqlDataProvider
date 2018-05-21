@@ -1,0 +1,475 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****               Create Tables                      *****/
+/************************************************************/
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_SearchKeys') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_SearchKeys
+	(
+		[iIndex] [INT] IDENTITY(1,1) NOT NULL,
+		[ProductID] [INT] NULL,
+		[SearchTerm] [NVARCHAR](250) NULL,
+		[SearchModuleDD1] [NVARCHAR](500) NULL,
+		[SearchModuleDD2] [NVARCHAR](500) NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_SearchKeys] PRIMARY KEY CLUSTERED
+		(
+			[iIndex] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_SubscriptionSC') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_SubscriptionSC
+	(
+		[SubscriptionID] [INT] IDENTITY(1,1) NOT NULL,
+		[CustomerID] [INT] NULL,
+		[ProductID] [INT] NULL,
+		[CreateDate] [DATETIME] NULL,
+		[CancelDate] [DATETIME] NULL,
+		[SubStartDate] [DATETIME] NULL,
+		[SubEndDate] [DATETIME] NULL,
+		[TransID] [VARCHAR](50) NULL,
+		[PortalID] [INT] NULL,
+		[IPAddress] [VARCHAR](50) NULL,
+		[CreatedBy] [NVARCHAR](100) NULL,
+		[ModifiedBy] [NVARCHAR](100) NULL,
+		[DateModified] [DATETIME] NULL,
+		[TabModuleId] [INT] NULL,
+		[OrderID] [INT] NULL,
+		[Amount] [money] NULL,
+		[Interval] [NVARCHAR](50) NULL,
+		[Occurrences] [INT] NULL,
+		[BillingName] [NVARCHAR](50) NULL,
+		[BillingAddress] [NVARCHAR](50) NULL,
+		[BillingCity] [NVARCHAR](50) NULL,
+		[BillingState] [NVARCHAR](50) NULL,
+		[BillingCountry] [NVARCHAR](50) NULL,
+		[BillingZip] [NVARCHAR](50) NULL,
+		[AcctNo] [VARCHAR](64) NULL,
+		[MaskAcctNo] [VARCHAR](50) NULL,
+		[ExpRoute] [VARCHAR](50) NULL,
+		[Active] [BIT] NULL,
+		[Suspend] [SMALLINT] NULL,
+		[NextPaymentDate] [DATE] NULL,
+		[StoreID] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_SubscriptionSC] PRIMARY KEY CLUSTERED
+		(
+			[SubscriptionID] ASC
+		)
+	)
+END
+GO
+
+
+
+/************************************************************/
+/*****                  Alter Tables                    *****/
+/************************************************************/
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_SubscriptionSC') AND type in (N'U'))
+BEGIN
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_SubscriptionSC') AND name = N'Active')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_SubscriptionSC
+		ADD
+			[Active] [BIT]
+	END
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_SubscriptionSC') AND name = N'Suspend')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_SubscriptionSC
+		ADD
+			[Suspend] [SMALLINT]
+	END
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_SubscriptionSC') AND name = N'NextPaymentDate')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_SubscriptionSC
+		ADD
+			[NextPaymentDate] [DATE]
+	END
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_SubscriptionSC') AND name = N'StoreID')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_SubscriptionSC
+		ADD
+			[StoreID] [INT]
+	END
+	IF EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_SubscriptionSC') AND name = N'AcctNo')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_SubscriptionSC
+		ALTER COLUMN
+			[AcctNo] [VARCHAR](64)
+	END
+END
+GO
+
+
+
+/************************************************************/
+/*****                Drop Sprocs                       *****/
+/************************************************************/
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_DeleteStore') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_DeleteStore
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ClearStoreConfig') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ClearStoreConfig
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_CreateSubscription') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateSubscription
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_GetSubscriptionByID') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_GetSubscriptionByID
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListSubscriptionsByOrderID') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListSubscriptionsByOrderID
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListSubscriptionsByFilter') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListSubscriptionsByFilter
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_UpdateSubscription') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateSubscription
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_DeleteSubscription') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_DeleteSubscription
+GO
+
+
+
+/************************************************************/
+/*****               Create Sprocs                      *****/
+/************************************************************/
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_DeleteStore
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	DELETE FROM
+		{databaseOwner}{objectQualifier}Smith_Stores
+	WHERE
+		[StoreID] = @StoreID
+		AND [PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ClearStoreConfig
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	DELETE FROM
+		{databaseOwner}{objectQualifier}Smith_StoreConfig
+	WHERE
+		[StoreID] = @StoreID
+		AND [PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateSubscription
+	@CustomerID INT = NULL,
+	@ProductID INT = NULL,
+	@CreateDate DATETIME = NULL,
+	@CancelDate DATETIME = NULL,
+	@SubStartDate DATETIME = NULL,
+	@SubEndDate DATETIME = NULL,
+	@TransID VARCHAR(50) = NULL,
+	@PortalID INT = NULL,
+	@IPAddress VARCHAR(50) = NULL,
+	@CreatedBy NVARCHAR(100) = NULL,
+	@ModifiedBy NVARCHAR(100) = NULL,
+	@DateModified DATETIME = NULL,
+	@TabModuleId INT = NULL,
+	@OrderID INT = NULL,
+	@Amount MONEY = NULL,
+	@Interval NVARCHAR(50) = NULL,
+	@Occurrences INT = NULL,
+	@BillingName NVARCHAR(50) = NULL,
+	@BillingAddress NVARCHAR(50) = NULL,
+	@BillingCity NVARCHAR(50) = NULL,
+	@BillingState NVARCHAR(50) = NULL,
+	@BillingCountry NVARCHAR(50) = NULL,
+	@BillingZip NVARCHAR(50) = NULL,
+	@AcctNo VARCHAR(50) = NULL,
+	@MaskAcctNo VARCHAR(50) = NULL,
+	@ExpRoute VARCHAR(50) = NULL,
+	@Active BIT = NULL,
+	@Suspend SMALLINT = NULL,
+	@NextPaymentDate DATE = NULL,
+	@StoreID INT = NULL
+AS
+BEGIN
+	INSERT INTO {databaseOwner}{objectQualifier}Smith_SubscriptionSC
+		([CustomerID]
+		,[ProductID]
+		,[CreateDate]
+		,[CancelDate]
+		,[SubStartDate]
+		,[SubEndDate]
+		,[TransID]
+		,[PortalID]
+		,[IPAddress]
+		,[CreatedBy]
+		,[ModifiedBy]
+		,[DateModified]
+		,[TabModuleId]
+		,[OrderID]
+		,[Amount]
+		,[Interval]
+		,[Occurrences]
+		,[BillingName]
+		,[BillingAddress]
+		,[BillingCity]
+		,[BillingState]
+		,[BillingCountry]
+		,[BillingZip]
+		,[AcctNo]
+		,[MaskAcctNo]
+		,[ExpRoute]
+		,[Active]
+		,[Suspend]
+		,[NextPaymentDate]
+		,[StoreID])
+	VALUES
+		(@CustomerID
+		,@ProductID
+		,@CreateDate
+		,@CancelDate
+		,@SubStartDate
+		,@SubEndDate
+		,@TransID
+		,@PortalID
+		,@IPAddress
+		,@CreatedBy
+		,@ModifiedBy
+		,@DateModified
+		,@TabModuleId
+		,@OrderID
+		,@Amount
+		,@Interval
+		,@Occurrences
+		,@BillingName
+		,@BillingAddress
+		,@BillingCity
+		,@BillingState
+		,@BillingCountry
+		,@BillingZip
+		,@AcctNo
+		,@MaskAcctNo
+		,@ExpRoute
+		,@Active
+		,@Suspend
+		,@NextPaymentDate
+		,@StoreID)
+	SELECT SCOPE_IDENTITY()
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_GetSubscriptionByID
+	@SubscriptionID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SELECT
+		S.*
+	FROM
+		{databaseOwner}{objectQualifier}Smith_SubscriptionSC S
+	WHERE
+		S.[SubscriptionID] = @SubscriptionID
+		AND S.[PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListSubscriptionsByOrderID
+	@OrderID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SELECT
+		S.*
+	FROM
+		{databaseOwner}{objectQualifier}Smith_SubscriptionSC S
+	WHERE
+		S.[OrderID] = @OrderID
+		AND S.[PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListSubscriptionsByFilter
+	@PageNumber INT = NULL,
+	@PageSize INT = NULL,
+	@OrderColumn VARCHAR(128) = NULL,
+	@OrderDirection VARCHAR(4) = NULL,
+	@SearchValue NVARCHAR(256) = NULL,
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SET NOCOUNT ON;
+	DECLARE @PageRecordStart INT
+	DECLARE @PageRecordEnd INT
+
+	SET @PageRecordStart = ((@PageNumber - 1) * @PageSize) + 1
+	SET @PageRecordEnd = @PageNumber * @PageSize
+
+	;WITH [SubscriptionsPage] AS
+	(
+		SELECT
+			(
+				CASE
+					WHEN @OrderColumn = 'OrderID' AND @OrderDirection = 'ASC' THEN ROW_NUMBER() OVER (ORDER BY S.[OrderID] ASC)
+					WHEN @OrderColumn = 'OrderID' AND @OrderDirection = 'DESC' THEN ROW_NUMBER() OVER (ORDER BY S.[OrderID] DESC)
+					WHEN @OrderColumn = 'CustomerID' AND @OrderDirection = 'ASC' THEN ROW_NUMBER() OVER (ORDER BY S.[CustomerID] ASC)
+					WHEN @OrderColumn = 'CustomerID' AND @OrderDirection = 'DESC' THEN ROW_NUMBER() OVER (ORDER BY S.[CustomerID] DESC)
+					WHEN @OrderColumn = 'CreateDate' AND @OrderDirection = 'ASC' THEN ROW_NUMBER() OVER (ORDER BY S.[CreateDate] ASC)
+					WHEN @OrderColumn = 'CreateDate' AND @OrderDirection = 'DESC' THEN ROW_NUMBER() OVER (ORDER BY S.[CreateDate] DESC)
+					WHEN @OrderColumn = 'CancelDate' AND @OrderDirection = 'ASC' THEN ROW_NUMBER() OVER (ORDER BY S.[CancelDate] ASC)
+					WHEN @OrderColumn = 'CancelDate' AND @OrderDirection = 'DESC' THEN ROW_NUMBER() OVER (ORDER BY S.[CancelDate] DESC)
+					WHEN @OrderColumn = 'Amount' AND @OrderDirection = 'ASC' THEN ROW_NUMBER() OVER (ORDER BY S.[Amount] ASC)
+					WHEN @OrderColumn = 'Amount' AND @OrderDirection = 'DESC' THEN ROW_NUMBER() OVER (ORDER BY S.[Amount] DESC)
+					WHEN @OrderColumn = 'Active' AND @OrderDirection = 'ASC' THEN ROW_NUMBER() OVER (ORDER BY S.[Active] ASC)
+					WHEN @OrderColumn = 'Active' AND @OrderDirection = 'DESC' THEN ROW_NUMBER() OVER (ORDER BY S.[Active] DESC)
+					WHEN @OrderColumn = 'Suspend' AND @OrderDirection = 'ASC' THEN ROW_NUMBER() OVER (ORDER BY S.[Suspend] ASC)
+					WHEN @OrderColumn = 'Suspend' AND @OrderDirection = 'DESC' THEN ROW_NUMBER() OVER (ORDER BY S.[Suspend] DESC)
+					WHEN @OrderColumn = 'NextPaymentDate' AND @OrderDirection = 'ASC' THEN ROW_NUMBER() OVER (ORDER BY S.[NextPaymentDate] ASC)
+					WHEN @OrderColumn = 'NextPaymentDate' AND @OrderDirection = 'DESC' THEN ROW_NUMBER() OVER (ORDER BY S.[NextPaymentDate] DESC)
+				ELSE ROW_NUMBER() OVER (ORDER BY S.[SubscriptionID] ASC)
+				END
+			) AS [RowNo], S.*
+		FROM
+			{databaseOwner}{objectQualifier}Smith_SubscriptionSC S
+		WHERE
+			(S.[StoreID] = @StoreID OR @StoreID = -1)
+			AND S.[PortalID] = @PortalID
+			AND (
+				S.[BillingName] LIKE '%' + @SearchValue + '%'
+				OR S.[BillingAddress] LIKE '%' + @SearchValue + '%'
+				OR S.[BillingCity] LIKE '%' + @SearchValue + '%'
+				OR S.[BillingZip] LIKE '%' + @SearchValue + '%'
+				OR S.[BillingState] LIKE '%' + @SearchValue + '%'
+				OR S.[BillingCountry] LIKE '%' + @SearchValue + '%'
+				OR S.[IPAddress] LIKE '%' + @SearchValue + '%'
+				OR S.[TransID] LIKE '%' + @SearchValue + '%'
+			)
+	)
+	SELECT
+		*,
+		TotalRecords = (
+			SELECT COUNT(*) FROM [SubscriptionsPage]
+		),
+		MoreRecords = (
+			SELECT COUNT(*) FROM [SubscriptionsPage]
+			WHERE [RowNo] > @PageRecordEnd
+		)
+	FROM
+		[SubscriptionsPage]
+	WHERE
+		[RowNo] BETWEEN @PageRecordStart AND @PageRecordEnd
+	ORDER BY
+		[RowNo];
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateSubscription
+	@SubscriptionID INT = NULL,
+	@CustomerID INT = NULL,
+	@ProductID INT = NULL,
+	@CreateDate DATETIME = NULL,
+	@CancelDate DATETIME = NULL,
+	@SubStartDate DATETIME = NULL,
+	@SubEndDate DATETIME = NULL,
+	@TransID VARCHAR(50) = NULL,
+	@PortalID INT = NULL,
+	@IPAddress VARCHAR(50) = NULL,
+	@CreatedBy NVARCHAR(100) = NULL,
+	@ModifiedBy NVARCHAR(100) = NULL,
+	@DateModified DATETIME = NULL,
+	@TabModuleId INT = NULL,
+	@OrderID INT = NULL,
+	@Amount MONEY = NULL,
+	@Interval NVARCHAR(50) = NULL,
+	@Occurrences INT = NULL,
+	@BillingName NVARCHAR(50) = NULL,
+	@BillingAddress NVARCHAR(50) = NULL,
+	@BillingCity NVARCHAR(50) = NULL,
+	@BillingState NVARCHAR(50) = NULL,
+	@BillingCountry NVARCHAR(50) = NULL,
+	@BillingZip NVARCHAR(50) = NULL,
+	@AcctNo VARCHAR(50) = NULL,
+	@MaskAcctNo VARCHAR(50) = NULL,
+	@ExpRoute VARCHAR(50) = NULL,
+	@Active BIT = NULL,
+	@Suspend SMALLINT = NULL,
+	@NextPaymentDate DATE = NULL,
+	@StoreID INT = NULL
+AS
+BEGIN
+	UPDATE
+		{databaseOwner}{objectQualifier}Smith_SubscriptionSC
+	SET
+		[CustomerID] = @CustomerID,
+		[ProductID] = @ProductID,
+		[CreateDate] = @CreateDate,
+		[CancelDate] = @CancelDate,
+		[SubStartDate] = @SubStartDate,
+		[SubEndDate] = @SubEndDate,
+		[TransID] = @TransID,
+		[IPAddress] = @IPAddress,
+		[CreatedBy] = @CreatedBy,
+		[ModifiedBy] = @ModifiedBy,
+		[DateModified] = @DateModified,
+		[TabModuleId] = @TabModuleId,
+		[OrderID] = @OrderID,
+		[Amount] = @Amount,
+		[Interval] = @Interval,
+		[Occurrences] = @Occurrences,
+		[BillingName] = @BillingName,
+		[BillingAddress] = @BillingAddress,
+		[BillingCity] = @BillingCity,
+		[BillingState] = @BillingState,
+		[BillingCountry] = @BillingCountry,
+		[BillingZip] = @BillingZip,
+		[AcctNo] = @AcctNo,
+		[MaskAcctNo] = @MaskAcctNo,
+		[ExpRoute] = @ExpRoute,
+		[Active] = @Active,
+		[Suspend] = @Suspend,
+		[NextPaymentDate] = @NextPaymentDate,
+		[StoreID] = @StoreID
+	WHERE
+		[SubscriptionID] = @SubscriptionID
+		AND [PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_DeleteSubscription
+	@SubscriptionID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	DELETE FROM
+		{databaseOwner}{objectQualifier}Smith_SubscriptionSC
+	WHERE
+		[SubscriptionID] = @SubscriptionID
+		AND [PortalID] = @PortalID
+END
+GO
+
+
+
+/************************************************************/
+/*****               End of Script                      *****/
+/************************************************************/

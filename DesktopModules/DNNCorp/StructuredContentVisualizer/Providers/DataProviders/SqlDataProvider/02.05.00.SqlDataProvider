@@ -1,0 +1,32 @@
+﻿
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StructuredContent_Visualizers_RenderResult_UpdateCacheKeyBatch]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_RenderResult_UpdateCacheKeyBatch]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_RenderResult_UpdateCacheKeyBatch]
+	@BatchSize INT
+AS 
+	UPDATE TOP(@BatchSize) {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_RenderResult] 
+	   SET CacheKey = SUBSTRING(CacheKey , 1, charindex('_', CacheKey, len('DNN_Visualizer_RenderResult_') + 1)) + '1' +
+					  SUBSTRING(CacheKey , charindex('_', CacheKey, len('DNN_Visualizer_RenderResult_') + 1), len(CacheKey))
+	WHERE SUBSTRING(CacheKey , charindex('_', CacheKey, len('DNN_Visualizer_RenderResult_') + 1) + 1, len(CacheKey)) LIKE 'List_%'
+	   OR SUBSTRING(CacheKey , charindex('_', CacheKey, len('DNN_Visualizer_RenderResult_') + 1) + 1, len(CacheKey)) LIKE 'Detail_%'
+
+	SELECT  @@ROWCOUNT
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StructuredContent_Visualizers_GetRelationshipsByItemIdAndType]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_GetRelationshipsByItemIdAndType]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_GetRelationshipsByItemIdAndType]
+	@ItemId uniqueidentifier,
+	@Type nvarchar(100)
+AS 
+	SELECT [ModuleId], [Version], [Type], [ItemId], [VisualizerInstanceType]
+	FROM    {databaseOwner}[{objectQualifier}StructuredContent_Visualizers]
+	WHERE ItemId = @ItemId AND type = @Type
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StructuredContent_Visualizers_RenderResult_Get_ModifiedDate]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}StructuredContent_Visualizers_RenderResult_Get_ModifiedDate]
+GO

@@ -1,0 +1,301 @@
+﻿
+if exists (select * from dbo.sysobjects where id = object_id(N'DF_{objectQualifier}RelatedContent_CreatedOnDate') and OBJECTPROPERTY(id, N'IsConstraint') = 1)
+	ALTER TABLE {databaseOwner}{objectQualifier}RelatedContent DROP CONSTRAINT DF_{objectQualifier}RelatedContent_CreatedOnDate
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}RelatedContent') and OBJECTPROPERTY(id, N'IsTable') = 1)
+	DROP TABLE {databaseOwner}{objectQualifier}RelatedContent
+GO
+
+CREATE TABLE {databaseOwner}[{objectQualifier}RelatedContent](
+	[RelationshipId] [int] IDENTITY(1,1) NOT NULL,
+	[ContentItemId] [int] NOT NULL,
+	[RelatedContentItemId] [int] NOT NULL,
+	[CreatedOnDate] [datetime] NOT NULL
+)
+GO
+
+ALTER TABLE {databaseOwner}[{objectQualifier}RelatedContent]
+	ADD CONSTRAINT [DF_{objectQualifier}RelatedContent_CreatedOnDate] DEFAULT (getutcdate()) FOR [CreatedOnDate]
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}RelatedContent]') AND name = N'IX_{objectQualifier}RelatedContent')
+CREATE UNIQUE CLUSTERED INDEX IX_{objectQualifier}RelatedContent ON {databaseOwner}{objectQualifier}RelatedContent
+	 (
+		 ContentItemId DESC,
+		 RelatedContentItemId DESC
+	 ) 
+	 WITH( STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'FK_{objectQualifier}ContentItems_History_{objectQualifier}ContentItems') and OBJECTPROPERTY(id, N'IsConstraint') = 1)
+	ALTER TABLE {databaseOwner}{objectQualifier}ContentItems_History DROP CONSTRAINT FK_{objectQualifier}ContentItems_History_{objectQualifier}ContentItems
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}ContentItems_History') and OBJECTPROPERTY(id, N'IsTable') = 1)
+	DROP TABLE {databaseOwner}{objectQualifier}ContentItems_History
+GO
+
+CREATE TABLE {databaseOwner}[{objectQualifier}ContentItems_History]
+(
+	  [ContentItemHistoryId] [int] NOT NULL ,
+	  [ContentItemId] [int] NOT NULL ,
+	  [Title] [nvarchar](MAX) NULL ,
+	  [Content] [nvarchar](MAX) NULL ,
+	  [Notes] [nvarchar](2000) NULL ,
+	  [Revision] [int] NOT NULL ,
+	  [Approved] [bit] NOT NULL ,
+	  [RevisedByUserId] [int] NOT NULL ,
+	  [RevisedOnDate] [datetime] NOT NULL
+)
+GO
+
+ALTER TABLE {databaseOwner}{objectQualifier}ContentItems_History
+		WITH NOCHECK
+ADD CONSTRAINT PK_{objectQualifier}ContentItems_History PRIMARY KEY CLUSTERED ( [ContentItemHistoryId] )
+GO
+
+ALTER TABLE {databaseOwner}{objectQualifier}ContentItems_History
+ADD CONSTRAINT FK_{objectQualifier}ContentItems_History_{objectQualifier}ContentItems FOREIGN KEY ( [ContentItemId] ) REFERENCES {databaseOwner}{objectQualifier}ContentItems ( [ContentItemID] ) ON DELETE CASCADE
+		ON UPDATE CASCADE
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}RelatedContent_GetRelationships]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}RelatedContent_GetRelationships]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}RelatedContent_GetRelationships]
+	@ContentItemId int
+AS
+BEGIN
+	SELECT * FROM {databaseOwner}[{objectQualifier}RelatedContent] WHERE ContentItemId = @ContentItemId OR RelatedContentItemId = @ContentItemId
+END
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}RelatedContent_DeleteRelationship]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}RelatedContent_DeleteRelationship]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}RelatedContent_DeleteRelationship]
+	@RelationshipId int
+AS
+BEGIN
+	DELETE FROM {databaseOwner}[{objectQualifier}RelatedContent] WHERE RelationshipId = @RelationshipId
+END
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}RelatedContent_DeleteMatchingRelationship]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}RelatedContent_DeleteMatchingRelationship]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}RelatedContent_DeleteMatchingRelationship]
+	@ContentItemId int,
+	@RightContentItemId int
+AS
+BEGIN
+	DELETE FROM {databaseOwner}[{objectQualifier}RelatedContent] WHERE ContentItemId = @ContentItemId and RelatedContentItemId = @RightContentItemId
+END
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}RelatedContent_AddRelationship]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}RelatedContent_AddRelationship]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}RelatedContent_AddRelationship]
+	@ContentItemId int,
+	@RelatedContentItemId int
+AS
+BEGIN
+	DECLARE @RelationshipId INT
+	SELECT @RelationshipId = RelationshipId FROM {databaseOwner}[{objectQualifier}RelatedContent] WHERE ContentItemId = @ContentItemId AND RelatedContentItemId = @RelatedContentItemId
+
+	IF @RelationshipId IS NOT NULL
+		RETURN @RelationshipId
+	ELSE
+	BEGIN
+		INSERT INTO {databaseOwner}[{objectQualifier}RelatedContent] (ContentItemId, RelatedContentItemId) VALUES (@ContentItemId, @RelatedContentItemId)
+	
+		SELECT SCOPE_IDENTITY()
+	END
+END
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}RelatedContent_AreRelated]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}RelatedContent_AreRelated]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}RelatedContent_AreRelated]
+	@ContentLeftId int,
+	@ContentRightId int
+AS
+BEGIN
+	IF EXISTS(SELECT * FROM {databaseOwner}[{objectQualifier}RelatedContent] WHERE (ContentItemId = @ContentLeftId AND RelatedContentItemId = @ContentRightId) OR (ContentItemId = @ContentRightId AND RelatedContentItemId = @ContentLeftId))
+		RETURN 1
+	ELSE
+		RETURN 0
+END
+GO
+
+IF object_id(N'{databaseOwner}[{objectQualifier}RelatedContent_IsPortalMatch]', N'FN') IS NOT NULL
+	DROP FUNCTION {databaseOwner}[{objectQualifier}RelatedContent_IsPortalMatch]
+GO
+
+CREATE FUNCTION {databaseOwner}[{objectQualifier}RelatedContent_IsPortalMatch](
+		@PortalID int = null,
+		@TabID    int = null,
+		@ModuleID int = null)
+RETURNS BIT
+AS
+BEGIN
+	IF @TabID IS NOT NULL AND EXISTS(SELECT TabID FROM {databaseOwner}[{objectQualifier}Tabs] WHERE [TabID] = @TabID AND COALESCE([PortalID], @PortalID) = @PortalID)
+		RETURN 1
+		
+	IF @ModuleID IS NOT NULL AND EXISTS(SELECT ModuleID FROM {databaseOwner}[{objectQualifier}Modules] WHERE [ModuleID] = @ModuleID AND COALESCE([PortalID], @PortalID) = @PortalID)
+		RETURN 1
+		
+	IF (@TabID IS NULL OR @TabID = -1) AND (@ModuleID IS NULL OR @TabID = -1)
+		RETURN 1
+
+	RETURN 0
+END
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}RelatedContent_GetRelatedContentByKeywords]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}RelatedContent_GetRelatedContentByKeywords]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}RelatedContent_GetRelatedContentByKeywords]
+	@PortalID int,
+	@ContentItemId int, -- exclude this because it's the primary document we are working with
+	@ContentTypeList nvarchar(max),
+	@Keywords nvarchar(max),
+	@PageIndex int,
+	@PageSize int,
+	@SortField nvarchar(25) = 'CreatedOnDate',
+	@SortAscending bit = 0
+AS
+BEGIN
+	-- Get a list of Content Type IDs that we are filtering on (in the event it is empty, all types are accepted)
+	CREATE TABLE #ContentTypes (ContentTypeId int)
+
+	INSERT INTO #ContentTypes SELECT RowValue FROM {databaseOwner}{objectQualifier}ConvertListToTable(',', @ContentTypeList)
+
+	-- Turn our keyword into a pattern
+	IF @Keywords IS NOT NULL AND LEN(@Keywords) > 0
+		SELECT @Keywords = '%' + @Keywords + '%'
+	ELSE
+		SET @Keywords = NULL
+
+	DECLARE @MetaDataTitleId INT
+	SELECT @MetaDataTitleId = MetaDataID FROM {databaseOwner}[{objectQualifier}MetaData] WHERE MetaDataName = 'Title'
+
+	-- First record set is the total records for the query.
+	SELECT COUNT(*) as [TotalRecords]
+		FROM {databaseOwner}[{objectQualifier}ContentItems] ci
+		INNER JOIN {databaseOwner}[{objectQualifier}ContentItems_MetaData] cimd
+			ON cimd.ContentItemID = ci.ContentItemID and cimd.MetaDataID = @MetaDataTitleId
+		WHERE
+			(ci.[ContentTypeID] IN (SELECT ContentTypeId FROM #ContentTypes) or (SELECT COUNT(*) FROM #ContentTypes) = 0)
+			AND ci.[ContentItemID] != @contentItemId
+			AND (@Keywords IS NULL OR cimd.[MetaDataValue] LIKE @Keywords)
+			AND {databaseOwner}[{objectQualifier}RelatedContent_IsPortalMatch](@PortalID, ci.[TabID], ci.[ModuleID]) = 1
+
+	-- Set the page bounds
+	DECLARE 
+		@PageLowerBound INT, 
+		@PageUpperBound INT, 
+		@RowsToReturn INT
+
+	EXEC {databaseOwner}[{objectQualifier}CalculatePagingInformation] @PageIndex, @PageSize, @RowsToReturn output, @PageLowerBound output, @PageUpperBound output
+
+	IF @PageLowerBound > 0
+		SELECT @PageLowerBound = @PageLowerBound + 1
+
+	-- Second result set is the actual table of results.
+	;WITH contentItems AS
+	(
+		SELECT
+			ci.[ContentItemID],
+			ci.[Content],
+			ci.[ContentTypeID],
+			ci.[TabID],
+			ci.[ModuleID],
+			ci.[ContentKey],
+			ci.[Indexed],
+			ci.[CreatedByUserID],
+			ci.[CreatedOnDate],
+			ci.[LastModifiedByUserID],
+			ci.[LastModifiedOnDate],
+			ROW_NUMBER() OVER(ORDER BY
+					CASE WHEN @SortField = 'CreatedOnDate' AND @SortAscending = 1 THEN ci.[CreatedOnDate] END ASC,
+					CASE WHEN @SortField = 'CreatedOnDate' AND @SortAscending = 0 THEN ci.[CreatedOnDate] END DESC,
+					CASE WHEN @SortField = 'LastModifiedOnDate' AND @SortAscending = 1 THEN ci.[LastModifiedOnDate] END ASC,
+					CASE WHEN @SortField = 'LastModifiedOnDate' AND @SortAscending = 0 THEN ci.[LastModifiedOnDate] END DESC,
+					CASE WHEN @SortField = 'Title' AND @SortAscending = 1 THEN cimd.[MetaDataValue] END ASC,
+					CASE WHEN @SortField = 'Title' AND @SortAscending = 0 THEN cimd.[MetaDataValue] END DESC,
+					CASE WHEN @SortField = 'Page' AND @SortAscending = 1 THEN t.[TabName] END ASC,
+					CASE WHEN @SortField = 'Page' AND @SortAscending = 0 THEN t.[TabName] END DESC,
+					CASE WHEN @SortField = 'Module' AND @SortAscending = 1 THEN md.[FriendlyName] END ASC,
+					CASE WHEN @SortField = 'Module' AND @SortAscending = 0 THEN md.[FriendlyName] END DESC)
+			AS RowNumber
+		FROM {databaseOwner}[{objectQualifier}ContentItems] ci
+		INNER JOIN {databaseOwner}[{objectQualifier}ContentItems_MetaData] cimd
+			ON cimd.ContentItemID = ci.ContentItemID and cimd.MetaDataID = @MetaDataTitleId
+		LEFT OUTER JOIN {databaseOwner}{objectQualifier}Tabs t on t.TabID = ci.TabID
+		LEFT OUTER JOIN {databaseOwner}{objectQualifier}Modules m on m.ModuleID = ci.ModuleID
+		LEFT OUTER JOIN {databaseOwner}{objectQualifier}ModuleDefinitions md on md.ModuleDefID = m.ModuleDefID
+		WHERE
+			(ci.[ContentTypeID] IN (SELECT ContentTypeId FROM #ContentTypes) or (SELECT COUNT(*) FROM #ContentTypes) = 0)
+			AND ci.[ContentItemID] != @contentItemId
+			AND (@Keywords IS NULL OR cimd.[MetaDataValue] LIKE @Keywords)
+			AND {databaseOwner}[{objectQualifier}RelatedContent_IsPortalMatch](@PortalID, ci.[TabID], ci.[ModuleID]) = 1
+	)
+	SELECT TOP (@PageSize) * FROM contentItems
+	WHERE RowNumber >= @PageLowerBound AND RowNumber <= @PageUpperBound	
+	ORDER BY RowNumber ASC
+
+	DROP TABLE #ContentTypes
+END
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}ContentItems_History_Add') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}ContentItems_History_Add
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}ContentItems_History_Add]
+	@ContentItemId INT ,
+	@Title NVARCHAR(MAX) ,
+	@Content NVARCHAR(MAX) ,
+	@Notes NVARCHAR(2000) ,
+	@Approved BIT ,
+	@RevisedByUserId INT ,
+	@RevisedOnDate DATETIME
+AS 
+	BEGIN
+		DECLARE @Revision INT
+		SET @Revision = ISNULL(( SELECT MAX(Revision)
+								 FROM   {databaseOwner}{objectQualifier}ContentItems_History
+								 WHERE  ContentItemId = @ContentItemId
+							   ), 0) + 1
+		INSERT  INTO {databaseOwner}{objectQualifier}ContentItems_History
+				( ContentItemId ,
+				  Title ,
+				  [Content] ,
+				  Notes ,
+				  Revision ,
+				  Approved ,
+				  RevisedByUserId ,
+				  RevisedOnDate
+				)
+		VALUES  ( @ContentItemId ,
+				  @Title ,
+				  @Content ,
+				  @Notes ,
+				  @Revision ,
+				  @Approved ,
+				  @RevisedByUserId ,
+				  @RevisedOnDate
+				)
+		SELECT  SCOPE_IDENTITY()
+	END
+GO

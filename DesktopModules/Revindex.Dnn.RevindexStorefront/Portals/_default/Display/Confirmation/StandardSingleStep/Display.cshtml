@@ -1,0 +1,273 @@
+﻿@using Revindex.Business.Revindex.Revindex.Storefront;
+@using Revindex.Dnn.RevindexStorefront.Models;
+@using Revindex.Globalization;
+@using Revindex.Web.Mvc.Dnn.Helpers;
+@inherits Revindex.Dnn.RevindexStorefront.Views.ConfirmationWebViewPage<ConfirmationViewModel>
+
+<div id="rvdsfConfirmationPanelContainer" class="rvdsf rvdsf-confirmation-container">
+    @if (Model.ValidationResults.Count > 0)
+    {
+        <div class="alert alert-danger">
+            @foreach (var validationResult in Model.ValidationResults)
+            {
+                <div>
+                    <span class='glyphicon glyphicon-remove'></span> <span>@validationResult.Message</span>
+                </div>
+            }
+        </div>
+    }
+    <div>
+        <div class="page-header dnnFormSectionHead">
+            <h4><span>@Html.LocalizeString("OrderConfirmationSectionLabel")</span></h4>
+        </div>
+        <p>@Html.LocalizeString("ConfirmationMessageLabel")</p>
+        <div class="row">
+            <div class="col-sm-6">
+                <h6 class="dnnFormSectionHead"><span>@Html.LocalizeString("OrderInformationLabel") @String.Join(", ", Model.SalesOrderSet.SalesOrders.Select(so => so.SalesOrderNumber).DefaultIfEmpty())</span></h6>
+                <div class="form-horizontal">
+                    
+                    @if (!String.IsNullOrEmpty(Model.SalesOrderSet.PurchaseOrderNumber))
+                    {
+                        <div class="form-group">
+                            <label class="col-xs-2">@Html.LocalizeString("PurchaseOrderNumberLabel")</label>
+                            <div class="col-sm-10">
+                                <span class="form-control-static">@Model.SalesOrderSet.PurchaseOrderNumber</span>
+                            </div>
+                        </div>
+                    }
+                    <div class="form-group">
+                        <label class="col-xs-2">@Html.LocalizeString("OrderDateLabel")</label>
+                        <div class="col-sm-10">
+                            <span class="form-control-static">@Model.SalesOrderSet.FormattedOrderDate</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <h6 class="dnnFormSectionHead"><span>@Html.LocalizeString("PaymentInformationLabel")</span></h6>
+                <div class="form-horizontal">
+                    @foreach (var sp in Model.SalesOrderSet.SalesPayments)
+                    {
+                        <div class="form-group">
+                            <label class="col-xs-2">@Html.LocalizeString(((int)sp.PaymentMethod).ToString(), Global.FilePaths.LocalPaymentMethodTypeResourceFile):</label>
+                            <div class="col-sm-10">
+                                <span class="form-control-static">@sp.FormattedAmount @(String.IsNullOrEmpty(sp.FormattedHint) ? null : " (" + sp.FormattedHint + ")")</span>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <h6 class="dnnFormSectionHead"><span>@Html.LocalizeString("BillingInformationLabel")</span></h6>
+                <div>
+                    @if (!String.IsNullOrEmpty(Model.SalesOrderSet.BillingCompany))
+                    {
+                        <text>@Model.SalesOrderSet.BillingCompany</text><br />
+                    }
+                    @Model.SalesOrderSet.BillingFirstName @Model.SalesOrderSet.BillingLastName<br/>
+                    @Model.SalesOrderSet.BillingStreet1<br/>
+                    @if (!String.IsNullOrEmpty(Model.SalesOrderSet.BillingStreet2))
+                    {
+                        <text>@Model.SalesOrderSet.BillingStreet2</text><br/>
+                    }
+                    @Model.SalesOrderSet.BillingCity, @Model.SalesOrderSet.BillingSubdivisionName<br />
+                    @Model.SalesOrderSet.BillingPostalCode @Model.SalesOrderSet.BillingCountryName<br/>
+                    @Model.SalesOrderSet.BillingPhone<br />
+                    @Model.SalesOrderSet.BillingEmail<br />
+                    @Model.SalesOrderSet.BusinessTaxNumber<br />
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <h6 class="dnnFormSectionHead"><span>@Html.LocalizeString("ShippingInformationLabel")</span></h6>
+                <div>
+                    @if (!String.IsNullOrEmpty(Model.SalesOrderSet.ShippingCompany))
+                    {
+                        <text>@Model.SalesOrderSet.ShippingCompany</text><br />
+                    }
+                    @Model.SalesOrderSet.ShippingFirstName @Model.SalesOrderSet.ShippingLastName<br />
+                    @Model.SalesOrderSet.ShippingStreet1<br />
+                    @if (!String.IsNullOrEmpty(Model.SalesOrderSet.ShippingStreet2))
+                    {
+                        <text>@Model.SalesOrderSet.ShippingStreet2</text><br />
+                    }
+                    @Model.SalesOrderSet.ShippingCity, @Model.SalesOrderSet.ShippingSubdivisionName<br />
+                    @Model.SalesOrderSet.ShippingPostalCode @Model.SalesOrderSet.ShippingCountryName<br />
+                    @Model.SalesOrderSet.ShippingPhone<br />
+                    @Model.SalesOrderSet.ShippingEmail<br />
+                </div>
+            </div>
+        </div>
+        <table class="table table-striped rvdsf-salesorderdetail-table">
+            <thead>
+                <tr>
+                    <th class="col-sm-1 hidden-xs"></th>
+                    <th class="col-sm-6">@Html.LocalizeString("ProductColumn")</th>
+                    <th class="col-sm-1">@Html.LocalizeString("QuantityColumn")</th>
+                    <th class="col-sm-1 hidden-xs">@Html.LocalizeString("AmountColumn")</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var sod in Model.SalesOrderSet.MainSalesOrderDetails)
+                {
+                    <tr>
+                    <td class="hidden-xs">
+                        @if (sod.ProductVariant.MainThumbnailGallery != null)
+                        {
+                            <a href="@sod.ProductVariant.ProductDetail.TabUrl"><img src="@sod.ProductVariant.MainThumbnailGallery.MediaUrl" /></a>
+                        }
+                    </td>
+                    <td>
+                        <a href="@sod.ProductVariant.ProductDetail.TabUrl" >@sod.ProductName</a>
+                        @if (!String.IsNullOrEmpty(sod.ProductVariantName))
+                        {
+                            <div class="rvdsf-productvariant-name" >@sod.ProductVariantName</div>
+                        }
+                        @if (!String.IsNullOrEmpty(sod.FormattedBookingStartDate))
+                        {
+                            <dl class="rvdsf-bookingdates">
+                                <dt>@Html.LocalizeString("BookingStartDateLabel")</dt>
+                                <dd>@sod.FormattedBookingStartDate</dd>
+                                <dt>@Html.LocalizeString("BookingStopDateLabel")</dt>
+                                <dd>@sod.FormattedBookingStopDate</dd>
+                            </dl>
+                        }
+                        @if (sod.DynamicFormResult.Count > 0)
+                        {
+                            <dl class="rvdsf-dynamicformresult">
+                                @foreach (var key in sod.DynamicFormResult.Keys)
+                                {
+                                    <dt>@key</dt>
+                                    <dd>@String.Join(", ", sod.DynamicFormResult[key].ToArray())</dd>
+                                }
+                            </dl>
+                        }
+                        <dl class="rvdsf-productparts">
+                            @foreach (var csod in Model.SalesOrderSet.SalesOrderDetails.Where(s => s.ParentSalesOrderDetailID == sod.SalesOrderDetailID))
+                            {
+                                <dt><span>@csod.ProductName</span>
+                                    @if (!String.IsNullOrEmpty(csod.ProductVariantName))
+                                    {
+                                        <span> - @csod.ProductVariantName</span>
+                                    }
+                                </dt>
+                                <dd>@csod.PartQuantity</dd>
+                            }
+                        </dl>
+                    </td>
+                    <td class="rvdsf-field-qty" >
+                        <span>@sod.Quantity</span>
+                        <div class="visible-xs rvdsf-label-amount">
+                        @if (sod.Status != SalesOrderDetailStatusType.Quoted)
+                        {
+                            <text>@sod.FormattedCombinedTotalAmount</text>
+                        }
+                        </div>
+                    </td>
+                    <td class="rvdsf-label-amount hidden-xs">
+                        @if (sod.Status != SalesOrderDetailStatusType.Quoted)
+                        {
+                            <text>@sod.FormattedCombinedTotalAmount</text>
+                        }
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+        @if (Model.SalesOrderSet.DynamicFormResult.Count > 0)
+        {
+            <dl class="rvdsf-dynamicformresult clearfix">
+                @foreach (var key in Model.SalesOrderSet.DynamicFormResult.Keys)
+                {
+                    <dt>@key</dt>
+                    <dd>@String.Join(", ", Model.SalesOrderSet.DynamicFormResult[key].ToArray())</dd>
+                }
+            </dl>
+        }
+        @if (!Model.SalesOrderSet.HasQuotedProduct)
+        {
+            <div class="form-horizontal rvdsf-cart-amount-container">
+                <div class="col-sm-offset-6 col-sm-6 col-xs-12">
+                    @if (Model.SalesOrderSet.TotalSalesOrderDetailDiscountAmount < 0)
+                    {
+                        <div class="form-group rvdsf-label-totalsalesorderdetaildiscountamount" >
+                            <label class="control-label col-xs-7">@Html.LocalizeString("TotalSalesOrderDetailDiscountLabel")</label>
+                            <div class="col-xs-5">
+                                <p class="form-control-static">@Model.SalesOrderSet.FormattedTotalSalesOrderDetailDiscountAmount</p>
+                            </div>
+                        </div>
+                    }
+                    <div class="form-group rvdsf-label-subtotalamount">
+                        <label class="control-label col-xs-7">@Html.LocalizeString("SubTotalLabel")</label>
+                        <div class="col-xs-5">
+                            <p class="form-control-static">@Model.SalesOrderSet.FormattedSubTotalAmount</p>
+                        </div>
+                    </div>
+                    <div class="form-group rvdsf-label-totalhandlingamount">
+                        <label class="control-label col-xs-7">@Html.LocalizeString("TotalHandlingLabel")</label>
+                        <div class="col-xs-5">
+                            <p class="form-control-static">@Model.SalesOrderSet.FormattedTotalHandlingAmount</p>
+                        </div>
+                    </div>
+                    <div class="form-group rvdsf-label-totalshippingamount">
+                        <label class="control-label col-xs-7">@Html.LocalizeString("TotalShippingLabel")</label>
+                        <div class="col-xs-5">
+                            <p class="form-control-static">@Model.SalesOrderSet.FormattedTotalShippingAmount</p>
+                        </div>
+                    </div>
+                    <div class="form-group rvdsf-label-totaltaxamount">
+                        <label class="control-label col-xs-7">@Html.LocalizeString("TotalTaxLabel")</label>
+                        <div class="col-xs-5">
+                            <p class="form-control-static">@Model.SalesOrderSet.FormattedTotalTaxAmount</p>
+                        </div>
+                    </div>
+                    <div class="form-group rvdsf-label-totalamount">
+                        <label class="control-label col-xs-7">@Html.LocalizeString("TotalLabel")</label>
+                        <div class="col-xs-5">
+                            <p class="form-control-static">@Model.SalesOrderSet.FormattedTotalAmount</p>
+                        </div>
+                    </div>
+                    <div class="form-group rvdsf-label-totalpaymentreceived">
+                        <label class="control-label col-xs-7">@Html.LocalizeString("TotalPaymentLabel")</label>
+                        <div class="col-xs-5">
+                            <p class="form-control-static">@Model.SalesOrderSet.FormattedTotalPaymentReceived</p>
+                        </div>
+                    </div>
+                    <div class="form-group rvdsf-label-balancedue">
+                        <label class="control-label col-xs-7">@Html.LocalizeString("BalanceDueLabel")</label>
+                        <div class="col-xs-5">
+                            <p class="form-control-static">@Model.SalesOrderSet.FormattedBalanceDue</p>
+                        </div>
+                    </div>
+                    @if (Model.SalesOrderSet.TotalSavingsAmount < 0)
+                    {
+                        <div class="form-group rvdsf-label-totalsavingsamount">
+                            <label class="control-label col-xs-7">@Html.LocalizeString("TotalSavingsLabel")</label>
+                            <div class="col-xs-5">
+                                <p class="form-control-static">@Model.SalesOrderSet.FormattedTotalSavingsAmount</p>
+                            </div>
+                        </div>
+                    }
+                    @if (Model.ShowRewardsPoint)
+                    {
+                        <div class="form-group rvdsf-label-totalrewardspoint">
+                            <label class="control-label col-xs-7">@Html.LocalizeString("RewardsPointQualifiedLabel")</label>
+                            <div class="col-xs-5">
+                                <p class="form-control-static">@Model.SalesOrderSet.FormattedRewardsPointsQualified</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+        <div class="btn-toolbar">
+            <button type="button" class="btn btn-primary rvdsf-btn-print" onclick="window.open('@Model.PrintUrl'); return false;">@Html.LocalizeString("PrintLink")</button>
+            <button type="button" class="btn btn-primary rvdsf-btn-continueshopping" onclick="location.href = '@Model.Shopping.TabUrl'">@Html.LocalizeString("ContinueShoppingLink")</button>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    @Html.Raw(Model.StartupScript)
+</script>
+

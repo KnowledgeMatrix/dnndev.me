@@ -1,0 +1,16 @@
+<nav class="eds_sideMenu">
+	<ul>
+		[*>NODE]
+	</ul>
+</nav>
+
+[>NODE]
+	<li class="eds_item[?FIRST] eds_first[/?][?LAST] eds_last[/?][?BREADCRUMB] eds_active[/?][?NODE] eds_hasChild[/?][?!ENABLED] eds_disabled[/?]">
+		<a href="[?ENABLED][=URL][?ELSE]#[/?]" [?TARGET]target="[=TARGET]"[/?]>[=TEXT]</a>
+		[?NODE]
+			<ul>
+				[*>NODE]
+			</ul>
+		[/?]
+	</li>
+[/>]

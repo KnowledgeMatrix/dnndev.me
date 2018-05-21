@@ -1,0 +1,279 @@
+﻿/* New ContentType: Group */
+IF NOT EXISTS (SELECT 1 FROM {databaseOwner}{objectQualifier}ContentTypes WHERE ContentType = 'Group')
+BEGIN
+	INSERT INTO {databaseOwner}{objectQualifier}ContentTypes (ContentType) VALUES ('Group')
+END
+
+/* Group Search */
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}GroupDirectory_Group_Search]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}GroupDirectory_Group_Search
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GroupDirectory_Group_Search]
+	@PortalId INT,
+	@RoleGroupId INT,
+	@PageSize INT,
+	@PageIndex INT,
+	@Filter INT,
+	@SortColumn NVARCHAR(32),
+	@SortAscending BIT,
+	@Keyword NVARCHAR(128),
+	@UserId INT,
+	@Tags NVARCHAR(256)
+AS
+BEGIN
+	DECLARE @AdminRoleId INT
+	DECLARE @TagLength Int
+
+	SELECT @AdminRoleId = roleId FROM {databaseOwner}{objectQualifier}Roles WHERE RoleName='Administrators'
+	Set @TagLength = (SELECT LEN(@Tags) - LEN(REPLACE(@Tags, ',', '')) + 1)
+
+	Create Table #Tags(
+		RowNumber smallint,
+		RowValue nvarchar(50))
+
+	Create Table #Taxonomy(
+		TermID Int,
+		Name nvarchar(250))
+
+	Insert Into #Tags
+		Select	RowNumber,RowValue
+		From	{databaseOwner}{objectQualifier}ConvertListToTable(',', @Tags);
+
+	Insert Into #Taxonomy
+		Select	TermID, Name
+		From	{databaseOwner}{objectQualifier}Taxonomy_Terms TT
+				Inner Join #Tags T on TT.Name = T.RowValue;
+
+	WITH GroupSet
+	AS (
+		SELECT	COUNT(*) OVER () AS TotalRecords,
+				R.PortalID As PortalId,
+				R.RoleID AS GroupId,
+				R.RoleName AS GroupName,
+				R.Description,
+				R.IsPublic,
+				R.IconFile,
+				R.Status,
+				R.SecurityMode,
+				R.IsSystemRole,
+				R.RoleGroupId AS RoleGroupId,
+				R.CreatedByUserID,
+				R.CreatedOnDate,
+				R.LastModifiedOnDate,
+				(SELECT TOP 1 LastModifiedOnDate
+					FROM {databaseOwner}{objectQualifier}ContentItems CI INNER JOIN {databaseOwner}{objectQualifier}Journal J ON J.ContentItemId = CI.ContentItemID
+					WHERE	CI.ContentKey LIKE ('%groupid=' +  CAST(R.RoleID AS VARCHAR(10)) + '%')
+							OR
+							J.GroupId = R.RoleID
+					ORDER BY LastModifiedOnDate DESC) AS LastActivityDate,
+				(SELECT CAST ((SELECT SettingValue FROM {databaseOwner}{objectQualifier}RoleSettings WHERE RoleId = R.RoleId AND SettingName = 'ReviewMembers') AS BIT)) AS ReviewMembers,
+				(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}UserRoles U WHERE U.RoleID = R.RoleID AND U.Status = 1) AS MemberCount
+					FROM    {databaseOwner}{objectQualifier}Roles AS R
+							LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems AS CI
+								ON CI.ContentKey = ('groupid=' +  CAST( r.RoleID AS VARCHAR(10)))
+								AND CI.ContentTypeID = ( SELECT ContentTypeID FROM {databaseOwner}{objectQualifier}ContentTypes WHERE ContentType = 'Group')
+					WHERE
+						R.SecurityMode IN (1,2)
+					AND (	IsPublic = 1
+						 OR
+							-- Super User
+							(EXISTS (SELECT UserID FROM {databaseOwner}{objectQualifier}Users WHERE @UserId = UserID AND IsSuperUser = 1))
+						 OR
+							-- Admin
+							(EXISTS (SELECT UserID FROM {databaseOwner}{objectQualifier}UserRoles WHERE @AdminRoleId = RoleID AND @UserId = UserID))
+						 OR
+							(IsPublic = 0 AND EXISTS (SELECT RoleID FROM {databaseOwner}{objectQualifier}UserRoles WHERE R.RoleID = RoleID AND @UserId = UserID))
+						)
+					AND
+						(	@RoleGroupId = -1
+						OR
+							R.RoleGroupId = @RoleGroupId
+						)
+					/*** FILTERS ***/
+					AND (	/*** ALL GROUPS ***/
+							@Filter = 0
+						 OR /*** MY GROUPS FILTER ***/
+							( @Filter = 1 AND EXISTS (SELECT RoleID FROM {databaseOwner}{objectQualifier}UserRoles WHERE R.RoleID = RoleID AND @UserId = UserID))
+						)
+					/*** TAGS ***/
+                    AND (	@Tags IS NULL OR LEN(@Tags) = 0
+							OR (SELECT	COUNT(*)
+								FROM	{databaseOwner}{objectQualifier}ContentItems_Tags CIT
+										INNER JOIN #Taxonomy T On CIT.TermID = T.TermID
+								WHERE	CIT.ContentItemID = CI.ContentItemId ) = @TagLength
+						)
+		),
+		GroupSort
+		AS (
+				SELECT	G.*,
+						ROW_NUMBER() OVER (
+							ORDER BY
+								CASE WHEN @SortColumn = 'GroupName' AND @SortAscending = 1 THEN G.GroupName END ASC,
+								CASE WHEN @SortColumn = 'GroupName' AND @SortAscending = 0 THEN G.GroupName END DESC,
+
+								CASE WHEN @SortColumn = 'CreatedOnDate' AND @SortAscending = 1 THEN G.CreatedOnDate END ASC,
+								CASE WHEN @SortColumn = 'CreatedOnDate' AND @SortAscending = 0 THEN G.CreatedOnDate END DESC,
+
+								CASE WHEN @SortColumn = 'MemberCount' AND @SortAscending = 1 THEN G.MemberCount END ASC,
+								CASE WHEN @SortColumn = 'MemberCount' AND @SortAscending = 0 THEN G.MemberCount END DESC,
+
+								CASE WHEN @SortColumn = 'LastActivityDate' AND @SortAscending = 1 THEN G.LastActivityDate END ASC,
+								CASE WHEN @SortColumn = 'LastActivityDate' AND @SortAscending = 0 THEN G.LastActivityDate END DESC
+							) AS [RowNumber]
+				FROM    GroupSet G
+			)
+		SELECT	TOP (@PageSize) *
+		FROM    GroupSort
+		WHERE   PortalId = @PortalId AND RowNumber >= (@PageIndex * @PageSize) + 1
+
+	Drop Table #Tags
+	Drop Table #Taxonomy
+END
+GO
+
+/* Group Get TOP Group Tags */
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}GroupDirectory_Group_GetTopGroupTags]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}GroupDirectory_Group_GetTopGroupTags
+GO
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GroupDirectory_Group_GetTopGroupTags]
+	@PortalId INT,
+	@RoleGroupId INT,
+    @TabId INT ,
+    @ContentTypeId INT ,
+    @VocabularyId INT ,
+    @PageIndex INT ,
+    @PageSize INT
+AS 
+BEGIN
+    WITH TermResults
+    AS	(SELECT	TermID ,
+                Name ,
+                VRT.[Description],
+				VocabularyID ,
+                (SELECT	COUNT(TermID)
+				 FROM	{databaseOwner}{objectQualifier}vw_RelatedContent_Terms T
+					INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI ON T.ContentItemID = CI.ContentItemID
+					INNER JOIN {databaseOwner}{objectQualifier}Roles R ON R.RoleID = CONVERT(INT,REPLACE(CI.ContentKey, 'groupid=',''))
+				 WHERE	TermID = VRT.TermID
+					AND (( @ContentTypeId < 1 ) OR ( T.ContentTypeID = @ContentTypeId ))
+					AND ( @RoleGroupId = -1 OR R.RoleGroupID = @RoleGroupId )
+					AND T.TabID = @TabId
+                ) AS TotalTermUsage,
+                ROW_NUMBER() OVER (ORDER BY (SELECT	COUNT(TermID)
+											 FROM	{databaseOwner}{objectQualifier}vw_RelatedContent_Terms T
+                                             WHERE	TermID = VRT.TermID
+                                                    AND (( @ContentTypeId < 1 )
+                                                    OR ( ContentTypeID = @ContentTypeId ))
+                                                    AND T.TabID = @TabId)
+									DESC) AS RowNumber
+        FROM		{databaseOwner}{objectQualifier}vw_RelatedContent_Terms VRT
+					INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI ON VRT.ContentItemID = CI.ContentItemID
+					INNER JOIN {databaseOwner}{objectQualifier}Roles R ON R.RoleID = CONVERT(INT,REPLACE(CI.ContentKey, 'groupid=',''))
+        WHERE		VRT.TabID = @TabId
+					AND VocabularyID = @VocabularyId
+					AND ((@ContentTypeId < 1) OR (VRT.ContentTypeID = @ContentTypeId))
+					AND CI.ContentTypeId = @ContentTypeId
+					AND R.PortalID = @PortalId
+					AND ( @RoleGroupId = -1 OR R.RoleGroupID = @RoleGroupId )
+        GROUP BY	TermID ,
+					Name ,
+					VRT.[Description] ,
+					VocabularyID
+        )
+
+    SELECT  *
+    FROM    TermResults
+    WHERE   RowNumber BETWEEN (@PageIndex * @PageSize + 1)
+            AND (( @PageIndex + 1 ) * @PageSize)
+END
+GO
+
+
+/* Group Get Last Activity Date */
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}GroupDirectory_Group_GetLastActivityDate]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}GroupDirectory_Group_GetLastActivityDate
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GroupDirectory_Group_GetLastActivityDate]
+	@GroupId INT
+AS
+BEGIN
+	SELECT TOP 1 LastModifiedOnDate
+	FROM {databaseOwner}{objectQualifier}ContentItems CI
+	INNER JOIN {databaseOwner}{objectQualifier}Journal J ON J.ContentItemId = CI.ContentItemID
+	WHERE	CI.ContentKey LIKE ('%groupid=' +  CAST(@GroupId AS VARCHAR(10)) + '%')
+			OR
+			J.GroupId = @GroupId
+	ORDER BY LastModifiedOnDate DESC
+END
+GO
+
+
+/* Group Get Recent Activity*/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}GroupDirectory_Group_GetRecentActivity]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}GroupDirectory_Group_GetRecentActivity
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GroupDirectory_Group_GetRecentActivity]
+	@GroupId INT,
+	@Count INT
+AS
+BEGIN
+	;WITH GroupActivity AS(
+		SELECT	JournalId, JournalTypeId, DateUpdated, PortalId, GroupId, Summary as RecentActivitySummary, ItemData as SummaryData, J.IsDeleted as JournalDeleted, U.UserId, U.DisplayName, U.IsDeleted as UserDeleted, 
+				ROW_NUMBER() OVER (PARTITION BY GroupId, U.UserId ORDER BY DateUpdated DESC) AS RowNumber
+		FROM {databaseOwner}{objectQualifier}Journal J
+		INNER JOIN {databaseOwner}{objectQualifier}Users U ON J.UserId = U.UserId
+	)
+	SELECT	TOP(@Count) * 
+	FROM	GroupActivity
+	WHERE	JournalDeleted = 0
+			AND UserDeleted = 0
+			AND GroupId = @GroupId
+			AND RowNumber = 1
+	ORDER BY DateUpdated DESC
+END
+GO
+
+
+/* Group Get Searchable*/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}GroupDirectory_Group_GetSearchable]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}GroupDirectory_Group_GetSearchable
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GroupDirectory_Group_GetSearchable]
+	@PortalId int,
+	@StartDate datetime,
+	@EndDate datetime
+AS
+BEGIN
+	SELECT	R.PortalId,
+			R.RoleID AS GroupId,
+			R.RoleName AS GroupName,
+			R.[Description],
+			R.IsPublic,
+			R.IconFile,
+			R.[Status],
+			R.SecurityMode,
+			R.IsSystemRole,
+			R.CreatedByUserID,
+			R.CreatedOnDate,
+			CI.ContentItemId,
+			CI.Content,
+			CI.ContentTypeID,
+			CI.TabID,
+			CI.ModuleID,
+			CI.ContentKey,
+			CI.Indexed,
+			CI.CreatedByUserID,
+			CI.[CreatedOnDate],
+			CI.LastModifiedByUserID,
+			COALESCE(CI.[LastModifiedOnDate], R.LastModifiedOnDate) AS LastModifiedOnDate
+	FROM	{databaseOwner}{objectQualifier}Roles R WITH (NOLOCK)
+			LEFT JOIN {databaseOwner}{objectQualifier}ContentItems CI WITH (NOLOCK) ON CI.[ContentKey] = ('groupid=' +  CAST( R.RoleID AS VARCHAR(10)))
+	WHERE	PortalID = @PortalId 
+	  AND	SecurityMode = 1
+	  AND	R.LastModifiedOnDate >= @StartDate AND R.LastModifiedOnDate <= @EndDate
+END
+GO

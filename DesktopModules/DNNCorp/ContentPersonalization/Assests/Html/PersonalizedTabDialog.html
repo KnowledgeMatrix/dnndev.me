@@ -1,0 +1,36 @@
+﻿<div class="personalizedPageDialog" data-bind="validationOptions: {errorMessageClass: 'ruleNameValidationMessage'}">
+    <span data-bind="text: resx.versionName" /> <input type="text" data-bind="value: tab.name, attr: {placeholder: resx.inputVersionNameType}, valueUpdate: 'afterkeydown'" aria-label="Name" />
+    <div class="rulesBox" id="rulesBox">
+        <div class="headers">
+            <span data-bind="text: resx.rulesBox.rules" />
+            <ul class="errors" data-bind="foreach: errors">
+                <li>
+                    <span class="backError" data-bind="text: description"></span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="rulesBoxColumn rules availableRules">
+            <ul data-bind="foreach: availableRules">
+                <li class="rule draggable" data-bind="draggable: {item: $data, revert: 'invalid', cursor: 'move', appendTo: '#rulesBox'}"><span data-bind="text: name" /></li>
+            </ul>
+        </div>
+        <div class="rulesBoxColumn rulesWorkArea" data-bind="validationOptions: {errorMessageClass: 'rulesValidationMessage'}">
+            <div class="droppableZone" data-bind="attr: {style: dropZoneStyle}, droppable: {accept: '.draggable', activeClass:'activeDrop', addMethod: addNewRule}">
+                <table cellspacing="0" cellpadding="0" border="0">
+                    <tbody>
+                        <tr valign="middle">
+                            <td align="center">
+                                <span data-bind="text: resx.labels.dropZone" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <h2 data-bind="text: resx.titles.rules, visible: showSelectedRules" />
+            <div class="rules selectedRules" data-bind="visible: showSelectedRules, attr: {style: selectedRulesStyle}">
+                <ul id="selectedRulesExtensionPoint"></ul>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,59 @@
+﻿<div id="{0}" class="contentPersonalizationUserProfileRule">
+    <span data-bind="text: resx.RulesUserProfileName" class="caption"></span>
+    <select data-bind="options: allowedProperties,
+						optionsText: 'PropertyText',
+						value: selectedProperty, hasFocus: true" aria-label="Property"></select>
+    <!-- ko if: !$data.changes() -->
+    <div class="matchPlaceHolder" data-bind="template: { name: matchTemplate(), data: matchValue }, css: matchTemplate"></div>
+    <!-- /ko -->
+
+    <span class="rulesValidationMessage" data-bind="validationMessage: selectedProperty"></span>
+    <div data-bind="text: resx.RulesRemoveRule, click: remove" class="deleteRule"></div>
+</div>
+
+<script id="textTemplate" type="text/html">
+    <input type="text" class=".dnnFormItem" data-bind="value: value, hasFocus: true" aria-label="Value"/>
+</script>
+<script id="integerTemplate" type="text/html">
+    <input type="text" class=".dnnFormItem" data-bind="value: value, hasFocus: true" aria-label="Number"/>
+</script>
+<script id="datetimeTemplate" type="text/html">
+    <div class="calendarPopup" data-bind=" attr: {'id': calendarId}, visible: dateCalendarVisible, style: {top: topPosition}">
+
+        <div data-bind="datePicker: tempDate"></div>
+        <span class="calSelect calOption" data-bind="css: {'is-selected': tempCurrentDate}">
+            <button class="pika-button currentDateCal" data-bind="html: resx.UserProfileRule_CurrentDate, click: currentDateDatePicker"></button>
+        </span>
+        <span class="calSelect">
+            <a class="cancelCal" data-bind="html: resx.UserProfileRule_CalendarCancel, click: cancelDatePicker"></a>
+            <a class="applyCal" data-bind="html: resx.UserProfileRule_CalendarApply, click: applySelectedDate"></a>
+        </span>
+    </div>
+
+    <div class="dateValue" data-bind="click: showDatePicker, css: { selected: dateCalendarVisible }">
+        <span data-bind="html: resx.UserProfileRule_SelectDate, visible: selectedDate() === null && currentDate() === false"></span>
+        <span data-bind="html: resx.UserProfileRule_CurrentDate, visible: currentDate() === true"></span>
+        <a href="javascript:void(0)" class="clearDate" data-bind='click: clearSelectedDate, clickBubble: false, visible: selectedDate() !== null'></a>
+        <span data-bind="text: formattedSelectedDate, visible: currentDate() === false"></span>
+    </div>
+</script>
+<script id="booleanTemplate" type="text/html">
+    <div class="booleanValue">
+        <input type="checkbox" data-bind="checked: value" />        
+        <span data-bind="text: value() ? resx.UserProfileRule_BooleanCheckedLabel : resx.UserProfileRule_BooleanUnCheckedLabel"></span>
+    </div>
+</script>
+<script id="imageTemplate" type="text/html">
+    <div class="imageValue">
+        <input type="checkbox" data-bind="checked: value"/>
+        <span data-bind="text: value() ? resx.UserProfileRule_ImageCheckedLabel : resx.UserProfileRule_ImageUnCheckedLabel"></span>
+    </div>
+</script>
+<script id="collectionTemplate" type="text/html">
+    <div class="collectionValue">
+        <input type="text" class=".dnnFormItem .token-input-list-facebook" data-bind="tokenInput: tokens, settings: { url: url, theme:'facebook', tokenLimit: 1, resultsFormatter: tokenInputResultsFormatter }, hasFocus: true"/>
+        <span class="rulesValidationMessage" data-bind="validationMessage: tokens" />
+    </div>
+</script>
+
+

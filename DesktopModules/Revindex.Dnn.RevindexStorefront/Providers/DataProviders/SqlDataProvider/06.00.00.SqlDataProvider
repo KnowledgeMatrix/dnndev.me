@@ -1,0 +1,132 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+SET XACT_ABORT ON
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+	
+	-- Support Avalara tax code
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_TaxClass ADD TaxCode varchar(50) NULL
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		TaxGatewaysAvalaraTaxAccountNumber varchar(255) NULL,
+		TaxGatewaysAvalaraTaxLicenseKey varchar(255) NULL,
+		TaxGatewaysAvalaraTaxCompanyCode varchar(255) NULL,
+		TaxGatewaysAvalaraTaxGatewayUrl varchar(255) NULL,
+		TaxGatewaysAvalaraTaxTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_TaxGatewaysAvalaraTaxTestMode DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_TaxGatewaysAvalaraTaxTestMode
+
+	-- Support Avalara address validation
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		AddressValidationGatewaysAvalaraTaxAccountNumber varchar(255) NULL,
+		AddressValidationGatewaysAvalaraTaxLicenseKey varchar(255) NULL,
+		AddressValidationGatewaysAvalaraTaxGatewayUrl varchar(255) NULL,
+		AddressValidationGatewaysAvalaraTaxTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_AddressValidationGatewaysAvalaraTaxTestMode DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_AddressValidationGatewaysAvalaraTaxTestMode
+
+	-- Support AddressValidationMethod table
+	CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_AddressValidationMethod](
+		[AddressValidationMethodID] [int] IDENTITY(1,1) NOT NULL,
+		[PortalID] [int] NOT NULL,
+		[CountryCode] [varchar](2) NOT NULL,
+		[AddressValidationGateway] [varchar](50) NULL,
+		[ValidationSeverity] [int] NOT NULL,
+		[CreateDate] [datetime] NOT NULL,
+		[UpdateDate] [datetime] NOT NULL,
+		[RowVersion] [timestamp] NOT NULL,
+	 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_AddressValidationMethod] PRIMARY KEY CLUSTERED 
+	(
+		[AddressValidationMethodID] ASC
+	)
+	) 
+
+	CREATE UNIQUE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_AddressValidationMethod] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_AddressValidationMethod] 
+	(
+		[PortalID] ASC,
+		[CountryCode] ASC
+	)
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_AddressValidationMethod]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_AddressValidationMethod_Portals] FOREIGN KEY([PortalID])
+	REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID])
+	ON DELETE CASCADE
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_AddressValidationMethod] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_AddressValidationMethod_Portals]
+
+	-- Support Customer table
+	CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Customer](
+		[CustomerID] [int] IDENTITY(1,1) NOT NULL,
+		[UserID] [int] NOT NULL,
+		[PortalID] [int] NOT NULL,
+		[TaxExemptionNumber1] [varchar](255) NULL,
+		[TaxExemptionNumber2] [varchar](255) NULL,
+		[TaxExemptionNumber3] [varchar](255) NULL,
+		[TaxExemptionNumber4] [varchar](255) NULL,
+		[TaxExemptionNumber5] [varchar](255) NULL,
+		[CreateDate] [datetime] NOT NULL,
+		[UpdateDate] [datetime] NOT NULL,
+		[RowVersion] [timestamp] NOT NULL,
+		[AdminNotes] [nvarchar](4000) NULL,
+		[TaxExempt1] [bit] NOT NULL,
+		[TaxExempt2] [bit] NOT NULL,
+		[TaxExempt3] [bit] NOT NULL,
+		[TaxExempt4] [bit] NOT NULL,
+		[TaxExempt5] [bit] NOT NULL,
+	 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_Customer] PRIMARY KEY CLUSTERED 
+	(
+		[CustomerID] ASC
+	))
+
+	CREATE UNIQUE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_Customer] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_Customer] 
+	(
+		[UserID] ASC,
+		[PortalID] ASC
+	)
+
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_Customer_1] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_Customer] 
+	(
+		[PortalID] ASC
+	)
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Customer]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Customer_Portals] FOREIGN KEY([PortalID]) REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID]) ON DELETE CASCADE
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Customer] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Customer_Portals]
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Customer]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Customer_Users] FOREIGN KEY([UserID]) REFERENCES {databaseOwner}[{objectQualifier}Users] ([UserID]) ON DELETE CASCADE
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Customer] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_Customer_Users]
+
+	-- Support exemption rule in tax methods
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_TaxClass ADD ExemptionRule xml NULL
+	
+	-- Support changing measurement units
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD GeneralUnitsLength varchar(50) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_GeneralUnitsLength DEFAULT 'Centimeter'
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_GeneralUnitsLength
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD GeneralUnitsMass varchar(50) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_GeneralUnitsMass DEFAULT 'Gram'
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_GeneralUnitsMass
+	
+COMMIT TRANSACTION
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+
+		-- Move "Top Payment Customers by Sales Order" report to Customer group
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ReportDefinition SET ReportGroup = 4 WHERE ReportDefinitionGUID = '78D2D6CB-738C-4BB9-8C8E-962F47965549'
+		
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

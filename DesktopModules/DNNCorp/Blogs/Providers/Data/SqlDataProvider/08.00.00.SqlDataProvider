@@ -1,0 +1,79 @@
+﻿/********************************************************
+ * SPROC: Blogs_Blog_GetSearchable
+ ********************************************************/
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Blog_GetSearchable') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Blog_GetSearchable
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Blogs_Blog_GetSearchable]
+	@PortalId INT,
+	@StartDate DATETIME,
+	@EndDate DATETIME,
+	@StartDateUtc DATETIME,
+	@EndDateUtc DATETIME,
+	@LastBlogId INT = -1
+AS
+	SELECT  TOP 100 B.*
+	FROM    {databaseOwner}{objectQualifier}Blogs_Blog B
+	WHERE   B.Created >= @StartDateUTC AND B.Created <= @EndDateUTC AND BlogId > @LastBlogId 
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Entry_GetSearchable') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Blogs_Entry_GetSearchable
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Blogs_Entry_GetSearchable]
+	@ModuleID INT,
+	@StartDate DATETIME,
+	@EndDate DATETIME,
+	@StartDateUTC DATETIME,
+	@EndDateUTC DATETIME,
+	@LastEntryId INT = -1
+AS
+	SELECT  TOP 100 E.* ,
+			B.UserId ,
+			B.PortalId,
+			B.AuthorMode,
+			(CASE B.GroupId WHEN NULL THEN -1 ELSE B.GroupId END) AS [GroupId],
+			CI.CreatedByUserID ,
+			CI.CreatedOnDate ,
+			CI.ContentKey ,
+			CI.Indexed ,
+			CI.Content ,
+			CI.ContentItemID ,
+			CI.LastModifiedByUserID ,
+			CI.LastModifiedOnDate ,
+			CI.ModuleID ,
+			CI.TabID ,
+			CI.ContentTypeID ,
+			COUNT(*) OVER () AS TotalRecords,
+			CIMD.[MetaDataValue] AS [ContentTitle]
+	FROM    {databaseOwner}{objectQualifier}Blogs_Entry E
+			INNER JOIN {databaseOwner}{objectQualifier}Blogs_Blog B ON B.BlogId = E.BlogId
+			INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI ON E.ContentItemId = CI.ContentItemID
+			LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD ON CIMD.ContentItemID = E.ContentItemId
+				AND CIMD.MetaDataID = (SELECT MetaDataID FROM {databaseOwner}[{objectQualifier}MetaData] WHERE MetaDataName = 'Title')
+	WHERE   CI.ModuleID = @ModuleID
+			AND B.Authorized = 1
+			AND
+			(
+			  (LastModifiedOnDate >= @StartDate AND LastModifiedOnDate <= @EndDate 
+					AND E.PublishOnDate <= @EndDateUTC)
+			  OR 
+			  (
+				E.PublishOnDate >= @StartDateUTC AND E.PublishOnDate <= @EndDateUTC 
+			  )
+			  OR
+			  (										
+			    (SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}Journal_Comments JC 
+				 WHERE JC.[JournalId] IN (SELECT JournalId FROM {databaseOwner}{objectQualifier}Journal J WHERE J.[ContentItemId] = E.[ContentItemId]) 
+				  AND 
+				  ((JC.[DateCreated] >= @StartDateUTC AND JC.[DateCreated] <= @EndDateUTC)
+				    OR
+				  (JC.[DateUpdated] >= @StartDateUTC AND JC.[DateUpdated] <= @EndDateUTC)
+				  )
+				) > 0 
+			  )
+			)
+			AND E.EntryId > @LastEntryId
+GO

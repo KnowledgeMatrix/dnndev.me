@@ -1,0 +1,22 @@
+﻿<div>
+    <div>
+        <label data-bind="html: configurations[0].localizedName"></label>
+        <input data-bind="value: configurations[0].value" class="senseField appId" type="text"/>
+    </div>
+    <div>
+        <label data-bind="html: configurations[1].localizedName"></label>
+        <input data-bind="value: configurations[1].value" class="senseField appSecret" type="password"/>
+    </div>
+    <!-- ko if: foldersData().length > 0 && parentFolder() -->
+    <div class="full-row">
+        <label data-bind="html: resx.RootFolder"></label>
+        <select id="DropboxFoldersDropDown" name="DropboxFoldersDropDown"
+            data-bind="value: parentFolder, options: foldersData" >
+        </select>
+    </div>
+    <!-- /ko -->
+    <!-- ko if: loadingFolders -->
+        <div class="loading"></div>
+    <!-- /ko -->
+    <div class="clear"></div>
+</div>

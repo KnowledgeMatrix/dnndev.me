@@ -1,0 +1,29 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetFolderMappingBySetting]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetFolderMappingBySetting]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetFolderMappingBySetting]
+ 	@SettingName NVARCHAR(50),
+    @SettingValue NVARCHAR(2000)
+AS
+BEGIN
+	SELECT MIN(f.FolderMappingID) AS FolderMappingId FROM {databaseOwner}[{objectQualifier}FolderMappingsSettings] s
+        INNER JOIN {databaseOwner}[{objectQualifier}FolderMappings] f ON s.FolderMappingID = f.FolderMappingID
+        WHERE s.SettingName = @SettingName AND s.SettingValue = @SettingValue
+        GROUP BY s.SettingName
+        HAVING COUNT(1) = 1
+END
+GO
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/

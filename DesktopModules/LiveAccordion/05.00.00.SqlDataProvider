@@ -1,0 +1,123 @@
+﻿/****** Fix for azure as it does not allow to drop constraint, so we need to create a temp table and copy the existing data to new and delete the old ******/
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES where TABLE_NAME='LiveAccordion_Pane')
+BEGIN
+EXECUTE sp_rename 'PK_LiveAccordion_Pane', 'PK_LiveAccordion_Pane_old', 'OBJECT'
+
+
+CREATE TABLE {databaseOwner}[LiveAccordion_Pane_New](
+	[PaneId] [int] NOT NULL,
+	[ModuleId] [int] NOT NULL,
+	[Permissions] [nvarchar](max) NOT NULL,
+	[EmbeddedModule] [nvarchar](max) NOT NULL,
+	[Locale] [nvarchar](255) NOT NULL,
+	[PaneName] [nvarchar](max) NOT NULL,
+	[PaneHeader] [nvarchar](max) NULL,
+	[Content] [nvarchar](max) NULL,
+	[SearchSummary] [nvarchar](max) NOT NULL,
+	[Searchable] [bit] NOT NULL,
+	[SortOrder] [int] NOT NULL,
+	[LegacyPaneId] [int] NULL,
+	[NavigateUrl] [varchar](255) NULL,
+	[BreakLine] [nvarchar](max) NOT NULL,
+	[LoadOnDemand] [bit] NOT NULL,
+	[Version] [int] NOT NULL,
+	[CreatedBy] [int] NOT NULL,
+	[CreatedOn] [datetime] NOT NULL,
+	[UpdatedBy] [int] NULL,
+	[UpdatedOn] [datetime] NULL,
+	[PublishedBy] [int] NULL,
+	[PublishedOn] [datetime] NULL,
+	[IsPublished] [bit] NOT NULL,
+	[LockedBy] [int] NOT NULL,
+ CONSTRAINT [PK_LiveAccordion_Pane] PRIMARY KEY CLUSTERED 
+(
+	[PaneId] ASC,
+	[ModuleId] ASC,
+	[Version] ASC
+)WITH (STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF)
+)
+
+
+
+ALTER TABLE {databaseOwner}[LiveAccordion_Pane_New] ADD  CONSTRAINT [DF_LiveAccordion_Pane_Version]  DEFAULT ((1)) FOR [Version]
+
+
+ALTER TABLE {databaseOwner}[LiveAccordion_Pane_New] ADD  CONSTRAINT [DF_LiveAccordion_Pane_CreatedBy]  DEFAULT ((-1)) FOR [CreatedBy]
+
+
+ALTER TABLE {databaseOwner}[LiveAccordion_Pane_New] ADD  CONSTRAINT [DF_LiveAccordion_Pane_CreatedOn]  DEFAULT (getdate()) FOR [CreatedOn]
+
+
+ALTER TABLE {databaseOwner}[LiveAccordion_Pane_New] ADD  CONSTRAINT [DF_LiveAccordion_Pane_IsPublished]  DEFAULT ((1)) FOR [IsPublished]
+
+
+ALTER TABLE {databaseOwner}[LiveAccordion_Pane_New] ADD  CONSTRAINT [DF_LiveAccordion_Pane_LockedBy]  DEFAULT ((-1)) FOR [LockedBy]
+
+
+Insert into {databaseOwner}[LiveAccordion_Pane_New] ([PaneId],[ModuleId],[Permissions],[EmbeddedModule],[Locale],[PaneName],[PaneHeader],[Content],[SearchSummary],[Searchable],[SortOrder],[LegacyPaneId],[NavigateUrl],[BreakLine],[LoadOnDemand])
+Select [PaneId],[ModuleId],[Permissions],[EmbeddedModule],[Locale],[PaneName],[PaneHeader],[Content],[SearchSummary],[Searchable],[SortOrder],[LegacyPaneId],[NavigateUrl],[BreakLine],[LoadOnDemand] from {databaseOwner}[LiveAccordion_Pane]
+
+
+DROP TABLE {databaseOwner}[LiveAccordion_Pane]
+
+
+EXECUTE sp_rename '{databaseOwner}LiveAccordion_Pane_New', 'LiveAccordion_Pane', 'OBJECT'
+
+
+END
+GO
+
+/****** Object:  Table {databaseOwner}[LiveAccordion]    Script Date: 01/20/2014 ******/
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='Mandeeps_Workflow' and COLUMN_NAME='WorkflowID')
+BEGIN
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='LiveAccordion' and COLUMN_NAME='WorkflowId')
+BEGIN
+declare @WorkflowId int
+set @WorkflowId=(Select top(1) WorkflowID from Mandeeps_Workflow )
+EXEC ('ALTER TABLE {databaseOwner}[LiveAccordion] ADD WorkflowId INT NOT NULL  DEFAULT  '+@WorkflowId)
+END
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='LiveAccordion' and COLUMN_NAME='VersionHistory')
+BEGIN
+ALTER TABLE {databaseOwner}LiveAccordion ADD
+	VersionHistory int NOT NULL CONSTRAINT DF_LiveAccordion_VersionHistory DEFAULT 5
+END
+GO
+
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='Mandeeps_Workflow_State' and COLUMN_NAME='WorkflowID')
+BEGIN
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='LiveAccordion_Pane' and COLUMN_NAME='Stateid')
+BEGIN
+declare @Stateid int
+set @Stateid=(Select top(1) Stateid from Mandeeps_Workflow_State )
+EXEC ('ALTER TABLE LiveAccordion_Pane ADD StateId INT NOT NULL  DEFAULT  '+@Stateid)
+END
+END
+GO
+
+/****** Object:  Table {databaseOwner}[LiveAccordion_WorkflowLog]    Script Date: 02/26/2014 10:04:54 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[LiveAccordion_WorkflowLog]') AND type in (N'U'))
+BEGIN
+CREATE TABLE {databaseOwner}[LiveAccordion_WorkflowLog](
+	[WorkflowLogID] [int] IDENTITY(1,1) NOT NULL,
+	[ModuleID] [int] NOT NULL,
+	[PaneId] [int] NOT NULL,
+	[Version] [int] NOT NULL,
+	[StateID] [int] NOT NULL,
+	[Comment] [nvarchar](max) NULL,
+	[Approved] [bit] NOT NULL,
+	[ReviewedBy] [int] NOT NULL,
+	[ReviewedOn] [datetime] NOT NULL,
+ CONSTRAINT [PK_LiveAccordion_WorkflowLog] PRIMARY KEY CLUSTERED 
+(
+	[WorkflowLogID] ASC
+)WITH (STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF)
+)
+END
+GO

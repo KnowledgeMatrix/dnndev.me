@@ -1,0 +1,14 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+UPDATE {databaseOwner}[{objectQualifier}PersonaBarMenu]
+        SET Controller = 'Dnn.PersonaBar.SiteSettings.MenuControllers.SiteSettingsMenuController, Dnn.PersonaBar.SiteSettings'
+        WHERE Identifier = 'Dnn.SiteSettings'
+GO

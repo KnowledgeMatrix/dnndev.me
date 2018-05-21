@@ -1,0 +1,128 @@
+﻿IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}SocialEvents_Event_GetByDates]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Event_GetByDates]
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}SocialEvents_Event_GetByDates
+	@ModuleID INT,
+	@PortalId INT ,
+	@StartDate DATETIME ,
+	@EndDate DATETIME 
+AS 
+	BEGIN
+
+		SELECT  SE.*
+		FROM    {databaseOwner}{objectQualifier}SocialEvents_Event SE
+		INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI
+			ON SE.ContentItemID = CI.ContentItemID
+		WHERE   SE.PortalId = @PortalId
+				AND CI.ModuleID = @ModuleID
+				AND SE.StartTime BETWEEN @StartDate AND @EndDate
+	END
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}SocialEvents_IsSearchMatch]', N'FN') IS NOT NULL
+	DROP FUNCTION {databaseOwner}[{objectQualifier}SocialEvents_IsSearchMatch]
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}SocialEvents_IsTagMatch]', N'FN') IS NOT NULL
+	DROP FUNCTION {databaseOwner}[{objectQualifier}SocialEvents_IsTagMatch]
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}SocialEvents_Event_Search]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Event_Search]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}SocialEvents_Event_Search]
+	@ModuleId INT ,
+	@GroupId INT ,
+	@PageSize INT ,
+	@PageIndex INT ,
+	@Filter INT ,
+	@SortColumn VARCHAR(32) ,
+	@SortAscending BIT ,
+	@Keyword NVARCHAR(128) ,
+	@UserId INT ,
+	@Tags NVARCHAR(256)
+AS 
+	BEGIN
+		WITH TopicSet AS (
+			SELECT  COUNT(*) OVER () AS TotalRecords,
+					EventId,
+					E.ContentItemId,
+					GroupId,
+					PortalId,
+					ViewCount,
+					Approved,
+					Deleted,
+					Content,
+					ContentTypeID,
+					TabID,
+					ModuleID,
+					ContentKey,
+					Indexed,
+					[MaxAttendees],
+					[InvitationOnly],
+					[ShowGuests],
+					[Attending],
+					[NotAttending],
+					[MayAttend],
+					[StartTime],
+					[EndTime],
+					[Street],
+					[City],
+					[Region],
+					[PostalCode],
+					[Country],
+					[InviteType],
+					CI.CreatedByUserID,
+					CI.CreatedOnDate,
+					CI.LastModifiedByUserID,
+					CI.LastModifiedOnDate,
+					CIMD.MetaDataValue AS ContentTitle,
+					U.DisplayName AS DisplayName,
+					ROW_NUMBER() OVER (
+						ORDER BY
+						CASE WHEN @SortColumn = 'CreatedDate' AND @SortAscending = 1 THEN CI.CreatedOnDate END ASC,
+						CASE WHEN @SortColumn = 'CreatedDate' AND @SortAscending = 0 THEN CI.CreatedOnDate END DESC,
+						CASE WHEN @SortColumn = 'LastActive' AND @SortAscending = 1 THEN CI.LastModifiedOnDate END ASC,
+						CASE WHEN @SortColumn = 'LastActive' AND @SortAscending = 0 THEN CI.LastModifiedOnDate END DESC,
+						CASE WHEN @SortColumn = 'Title' AND @SortAscending = 1 THEN MetaDataValue END ASC,
+						CASE WHEN @SortColumn = 'Title' AND @SortAscending = 0 THEN MetaDataValue END DESC,
+						CASE WHEN @SortColumn = 'Author' AND @SortAscending = 1 THEN DisplayName END ASC,
+						CASE WHEN @SortColumn = 'Author' AND @SortAscending = 0 THEN DisplayName END DESC,
+						CASE WHEN @SortColumn = 'Views' AND @SortAscending = 0 THEN [ViewCount] END DESC,
+						CASE WHEN @SortColumn = 'Views' AND @SortAscending = 1 THEN [ViewCount] END ASC)
+					AS [RowNumber]
+			FROM    {databaseOwner}{objectQualifier}SocialEvents_Event AS E
+					INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI ON CI.ContentItemID = E.ContentItemId
+					INNER JOIN {databaseOwner}{objectQualifier}Users U ON U.UserID = CI.CreatedByUserID
+					LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD ON CIMD.ContentItemID = E.ContentItemId
+							AND CIMD.MetaDataID = (SELECT MetaDataID FROM {databaseOwner}[{objectQualifier}MetaData] WHERE MetaDataName = 'Title')
+			WHERE    CI.ModuleId = @ModuleId
+					AND Deleted = 0
+					AND (@GroupId < 1 OR E.GroupId = @GroupId)
+					AND (@Filter < 0
+						OR (@Filter = 0 AND (Approved = 1 OR E.UserId = @UserId))
+						OR (@Filter = 2 AND
+								(SELECT		COUNT(CommentId)
+								FROM			{databaseOwner}{objectQualifier}Journal_Comments JC
+								INNER JOIN	{databaseOwner}{objectQualifier}Journal J ON JC.JournalId = J.JournalId
+								WHERE			ContentItemId = J.ContentItemId AND ContentItemId = E.ContentItemId) < 1)
+						OR (@Filter = 3 AND CI.CreatedByUserID = @UserId)
+						OR (@Filter = 4 AND
+								(SELECT		COUNT(CommentId)
+								FROM			{databaseOwner}{objectQualifier}Journal AS J
+								INNER JOIN	{databaseOwner}{objectQualifier}Journal_Comments JC ON JC.JournalId = J.JournalId
+								WHERE			ContentItemId = J.ContentItemId AND ContentItemId = E.ContentItemId AND JC.UserId = @UserId) > 0))
+		AND 	(@Tags IS NULL OR LEN(@Tags) = 0 OR (SELECT		COUNT(*)
+						FROM		{databaseOwner}{objectQualifier}ContentItems_Tags CIT
+						INNER JOIN	{databaseOwner}{objectQualifier}Taxonomy_Terms TT ON CIT.TermID = TT.TermID
+						INNER JOIN	{databaseOwner}[{objectQualifier}ConvertListToTable](',', @Tags) T ON TT.Name = T.RowValue
+						WHERE		CIT.ContentItemID = E.ContentItemId
+						AND			(SELECT [Approved] FROM {databaseOwner}{objectQualifier}SocialEvents_Event WHERE EventId = E.EventId) = 1) = (SELECT LEN(@Tags) - LEN(REPLACE(@Tags, ',', '')) + 1))
+				)
+	SELECT  TOP (@PageSize) *
+	FROM    TopicSet
+	WHERE   RowNumber >= (@PageIndex * @PageSize) + 1
+	END
+GO

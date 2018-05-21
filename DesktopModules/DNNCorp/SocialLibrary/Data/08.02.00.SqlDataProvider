@@ -1,0 +1,45 @@
+﻿/********************************************************
+ * SPROC: Social_ContentExchange_SearchByTitle
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_ContentExchange_SearchByTitle]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_ContentExchange_SearchByTitle] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Social_ContentExchange_SearchByTitle]
+	@ModuleId INT,
+	@GroupId INT,
+	@SearchText NVARCHAR(MAX),
+	@MaxResults INT
+AS 
+BEGIN
+
+	DECLARE @MetadadataTitleId INT
+	SELECT TOP 1 @MetadadataTitleId = MetaDataID 
+	FROM {databaseOwner}[{objectQualifier}MetaData]
+	WHERE [MetaDataName] = 'Title'
+
+	IF @GroupId < 1
+		BEGIN
+			SELECT TOP (@MaxResults) ci.*, cim.[MetaDataValue] ContentTitle
+			FROM {databaseOwner}[{objectQualifier}ContentItems] ci
+				INNER JOIN {databaseOwner}[{objectQualifier}ContentItems_MetaData] cim ON cim.[ContentItemID] = ci.[ContentItemID] AND cim.MetaDataID = @MetadadataTitleId				
+			WHERE ci.[ModuleID] = @ModuleId 
+				  AND cim.[MetaDataValue] LIKE '%' + @SearchText + '%' 
+				  AND (ci.[ContentKey] NOT LIKE '%groupId=%')
+			ORDER BY LEN(cim.[MetaDataValue]) ASC
+		END
+	ELSE
+		BEGIN
+			DECLARE @GroupContentKey1 NVARCHAR(250) = '%&groupId=' + LTRIM(RTRIM(CONVERT(NVARCHAR,@GroupId)))
+			DECLARE @GroupContentKey2 NVARCHAR(250) = 'groupId=' + LTRIM(RTRIM(CONVERT(NVARCHAR,@GroupId))) + '&%'
+
+			SELECT TOP (@MaxResults) ci.*, cim.[MetaDataValue] ContentTitle
+			FROM {databaseOwner}[{objectQualifier}ContentItems] ci
+				INNER JOIN {databaseOwner}[{objectQualifier}ContentItems_MetaData] cim ON cim.[ContentItemID] = ci.[ContentItemID] AND cim.MetaDataID = @MetadadataTitleId
+			WHERE ci.[ModuleID] = @ModuleId 
+				  AND cim.[MetaDataValue] LIKE '%' + @SearchText + '%' 
+				  AND (ci.[ContentKey] LIKE @GroupContentKey1 OR ci.[ContentKey] LIKE @GroupContentKey2)
+			ORDER BY LEN(cim.[MetaDataValue]) ASC
+		END
+END
+GO

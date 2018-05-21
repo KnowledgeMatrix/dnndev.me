@@ -1,0 +1,1 @@
+<%@ Control Language="C#" AutoEventWireup="false" Codebehind="ActivityStreamFeed.ascx.cs" Inherits="DotNetNuke.Professional.ActivityStream.ActivityStreamFeed" %>

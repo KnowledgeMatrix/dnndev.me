@@ -1,0 +1,982 @@
+/********************************************************
+ * CONTENT-5399 Remove current data from Fact tables as we will start over
+ ********************************************************/
+
+DECLARE @740InstallDate AS DATETIME
+DECLARE @BeginDateId AS INT
+
+SELECT @740InstallDate = CreatedDate FROM {databaseOwner}{objectQualifier}Version
+WHERE Major = 7 AND Minor = 4 AND Build = 0
+
+DECLARE @offset INT = DATEDIFF(minute, GetUTCDate(), GetDate())
+DECLARE @740InstallDateUtc DATETIME = DATEADD(minute, -@offset, @740InstallDate)
+
+SET @BeginDateId = 0
+
+IF @740InstallDateUtc IS NOT NULL
+BEGIN
+	SET @BeginDateId = CAST(SUBSTRING(REPLACE(REPLACE(REPLACE(REPLACE(CONVERT(varchar(25), @740InstallDateUtc, 120),'-',''),' ',''),':00',''),':',''),0,11) AS INT)
+END
+
+/****************************************************************************************
+ * CONTENT-5523 Disable the indexes prior to delete the rows, to improve the performance
+ ***************************************************************************************/
+ALTER INDEX IX_{objectQualifier}Analytics_Fact_Devices ON {databaseOwner}{objectQualifier}Analytics_Fact_Devices DISABLE
+
+ALTER INDEX IX_{objectQualifier}Analytics_Fact_PageViews ON {databaseOwner}{objectQualifier}Analytics_Fact_PageViews DISABLE
+
+ALTER INDEX IX_{objectQualifier}Analytics_Fact_Sessions ON {databaseOwner}{objectQualifier}Analytics_Fact_Sessions DISABLE
+
+ALTER INDEX IX_{objectQualifier}Analytics_Fact_Visitors ON {databaseOwner}{objectQualifier}Analytics_Fact_Visitors DISABLE
+
+ALTER INDEX IX_{objectQualifier}Analytics_Fact_Users ON {databaseOwner}{objectQualifier}Analytics_Fact_Users DISABLE
+
+ALTER INDEX IX_{objectQualifier}Analytics_Fact_Referrers ON {databaseOwner}{objectQualifier}Analytics_Fact_Referrers DISABLE
+
+DELETE FROM {databaseOwner}{objectQualifier}Analytics_Fact_Devices WHERE DateId >= @BeginDateId
+
+DELETE FROM {databaseOwner}{objectQualifier}Analytics_Fact_ExitPages WHERE DateId >= @BeginDateId
+
+DELETE FROM {databaseOwner}{objectQualifier}Analytics_Fact_PageViews WHERE DateId >= @BeginDateId
+
+DELETE FROM {databaseOwner}{objectQualifier}Analytics_Fact_Sessions WHERE DateId >= @BeginDateId
+
+DELETE FROM {databaseOwner}{objectQualifier}Analytics_Fact_Visitors WHERE DateId >= @BeginDateId
+
+DELETE FROM {databaseOwner}{objectQualifier}Analytics_Fact_Users WHERE DateId >= @BeginDateId
+
+DELETE FROM {databaseOwner}{objectQualifier}Analytics_Fact_Referrers WHERE DateId >= @BeginDateId
+
+/****************************************************************************************
+ * CONTENT-5523 Must rebuild the indexes after finishing the delete of the rows
+ ***************************************************************************************/
+ ALTER INDEX IX_{objectQualifier}Analytics_Fact_Devices ON {databaseOwner}{objectQualifier}Analytics_Fact_Devices REBUILD
+
+ALTER INDEX IX_{objectQualifier}Analytics_Fact_PageViews ON {databaseOwner}{objectQualifier}Analytics_Fact_PageViews REBUILD
+
+ALTER INDEX IX_{objectQualifier}Analytics_Fact_Sessions ON {databaseOwner}{objectQualifier}Analytics_Fact_Sessions REBUILD
+
+ALTER INDEX IX_{objectQualifier}Analytics_Fact_Visitors ON {databaseOwner}{objectQualifier}Analytics_Fact_Visitors REBUILD
+
+ALTER INDEX IX_{objectQualifier}Analytics_Fact_Users ON {databaseOwner}{objectQualifier}Analytics_Fact_Users REBUILD
+
+ALTER INDEX IX_{objectQualifier}Analytics_Fact_Referrers ON {databaseOwner}{objectQualifier}Analytics_Fact_Referrers REBUILD
+
+GO
+
+/********************************************************
+* CONTENT-5557 - Clean Analytics Schedule Jobs. ONly one is needed.
+********************************************************/
+
+--Temp table to store Ids to remove
+DECLARE @ScheduleIdsToRemove TABLE (ScheduleID INT)
+
+-- Find the only item that won't be deleted
+DECLARE @EnabledScheduleId INT
+SELECT @EnabledScheduleId = min(ScheduleID) FROM {databaseOwner}{objectQualifier}Schedule
+WHERE FriendlyName = 'Analytics RollUp'
+AND Enabled = 1
+
+--Identify the ones that needs to be deleted
+INSERT @ScheduleIdsToRemove
+SELECT ScheduleID FROM {databaseOwner}{objectQualifier}Schedule 
+WHERE ScheduleId !=@EnabledScheduleId 
+AND FriendlyName = 'Analytics RollUp'
+
+DELETE {databaseOwner}{objectQualifier}ScheduleItemSettings
+WHERE ScheduleID IN (Select ScheduleID FROM @ScheduleIdsToRemove)
+
+DELETE {databaseOwner}{objectQualifier}ScheduleHistory
+WHERE ScheduleID IN (Select ScheduleID FROM @ScheduleIdsToRemove)
+
+DELETE {databaseOwner}{objectQualifier}Schedule
+WHERE ScheduleID IN (Select ScheduleID FROM @ScheduleIdsToRemove)
+
+GO
+
+
+/********************************************************
+ * CONTENT-5399 Reset scheduler settting so we do processing from beginning 
+ ********************************************************/
+DECLARE @ScheduleId INT
+SELECT @ScheduleId = ScheduleID FROM {databaseOwner}{objectQualifier}Schedule where FriendlyName = 'Analytics RollUp'
+DELETE FROM {databaseOwner}{objectQualifier}ScheduleItemSettings WHERE ScheduleID = @ScheduleId AND SettingName IN ('LastPageViewProcessed')
+DELETE FROM {databaseOwner}{objectQualifier}ScheduleItemSettings WHERE ScheduleID = @ScheduleId AND SettingName IN ('LastPageTimeProcessed')
+DELETE FROM {databaseOwner}{objectQualifier}ScheduleItemSettings WHERE ScheduleID = @ScheduleId AND SettingName IN ('PageTimeProcessed')
+
+GO
+
+
+/********************************************************
+ * Remove Content Layout SProcs
+ ********************************************************/
+ 
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}GetContentLayouts]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}GetContentLayouts]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}SaveContentLayout]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}SaveContentLayout]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}DeleteContentLayout]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}DeleteContentLayout]
+GO
+
+/********************************************************
+ * DROP ContentLayouts Table when empty
+ * If Content Layout table is empty means that is a new 8.2 or above install.
+ * In this scenario we can drop it.
+ ********************************************************/ 
+IF EXISTS (SELECT * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}ContentLayouts') and OBJECTPROPERTY(id, N'IsTable') = 1)
+BEGIN
+	DECLARE @NumberOfContentLayout AS INT
+
+	SELECT @NumberOfContentLayout = Count(*) FROM {databaseOwner}{objectQualifier}ContentLayouts
+	IF @NumberOfContentLayout = 0
+	BEGIN
+		DROP TABLE {databaseOwner}{objectQualifier}ContentLayouts
+	END
+END	
+GO
+
+/********************************************************
+ * CONTENT-4951 - Removed obsolete Function used in 8.0.0 to show personalized pages in Navigation Summary
+ ********************************************************/
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Analytics_IsPagePersonalized]') AND type IN (N'FN', N'IF', N'TF'))
+	DROP FUNCTION {databaseOwner}[{objectQualifier}Analytics_IsPagePersonalized]
+GO
+
+/********************************************************
+ * Analytics
+ ********************************************************/
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_IncrementDate]') IS NOT NULL
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_IncrementDate
+GO
+
+CREATE FUNCTION {databaseOwner}[{objectQualifier}Analytics_IncrementDate]
+(
+	@Date DATETIME,
+	@MaxDate DATETIME,
+	@Count INT,
+	@Grouping CHAR(1)
+)
+RETURNS DATETIME
+AS
+BEGIN	
+	DECLARE @Return DATETIME = CASE @Grouping
+		WHEN 'h' THEN DATEADD(HOUR, @Count, @Date)
+		WHEN 'd' THEN DATEADD(DAY, @Count, @Date)
+		WHEN 'm' THEN DATEADD(MONTH, @Count, @Date)
+		ELSE NULL
+	END
+
+	IF @MaxDate IS NOT NULL AND @Return > @MaxDate 
+		RETURN @MaxDate
+	RETURN @Return
+END
+GO
+
+IF OBJECT_ID(N'{databaseOwner}{objectQualifier}Analytics_DateToDateId') IS NOT NULL
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_DateToDateId
+GO
+
+CREATE FUNCTION {databaseOwner}{objectQualifier}Analytics_DateToDateId
+(
+	@Date DATETIME
+)
+RETURNS INT
+AS
+BEGIN
+	RETURN CAST(SUBSTRING(REPLACE(REPLACE(CONVERT(VARCHAR, @Date, 120), '-', ''), ' ', ''), 1, 10) AS INT)
+END
+GO
+
+IF OBJECT_ID('{databaseOwner}{objectQualifier}Analytics_GetAllDatesFromCsv', 'TF') IS NOT NULL
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_GetAllDatesFromCsv
+GO
+
+CREATE FUNCTION {databaseOwner}{objectQualifier}Analytics_GetAllDatesFromCsv
+(	
+	@Dates VARCHAR(MAX)
+)
+RETURNS @ResultsTable TABLE 
+(
+	StartDate SMALLDATETIME,
+	EndDate SMALLDATETIME
+)
+AS
+BEGIN
+	DECLARE @datetable TABLE(RowNumber INT, Date DATETIME)
+
+	INSERT @datetable
+	SELECT ROW_NUMBER() OVER (ORDER BY CONVERT(DATETIME, val)) RowNumber, CONVERT(DATETIME, val) Date 
+	FROM {databaseOwner}{objectQualifier}CsvSplit(@dates, ',');
+
+	INSERT @ResultsTable
+	SELECT d1.Date StartDate, d2.Date EndDate
+	FROM @datetable d1
+		JOIN @datetable d2 ON d1.RowNumber = (d2.RowNumber - 1)	
+
+	RETURN
+END
+GO
+
+IF OBJECT_ID(N'{databaseOwner}{objectQualifier}Analytics_DateIdToDate') IS NOT NULL
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_DateIdToDate
+GO
+
+CREATE FUNCTION {databaseOwner}{objectQualifier}Analytics_DateIdToDate
+(
+	@DateId INT
+)
+RETURNS SMALLDATETIME
+AS
+BEGIN		
+	RETURN DATEADD(HOUR, @DateId % 100, CONVERT(DATETIME, CONVERT(VARCHAR, @DateId / 100), 112))
+END
+GO
+
+IF OBJECT_ID('{databaseOwner}{objectQualifier}Analytics_GetPageViews', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_GetPageViews
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_GetPageViews
+    @PortalId INT,
+    @PageId INT,
+    @ContentItemId INT,
+    @Dates VARCHAR(MAX)
+AS
+BEGIN
+	WITH AllDates AS (
+		SELECT {databaseOwner}{objectQualifier}Analytics_DateToDateId(StartDate) StartDate, 
+			   {databaseOwner}{objectQualifier}Analytics_DateToDateId(EndDate) EndDate
+		FROM {databaseOwner}{objectQualifier}Analytics_GetAllDatesFromCsv(@Dates) 
+	)
+	SELECT  
+		{databaseOwner}{objectQualifier}Analytics_DateIdToDate(StartDate) StartDate, 
+		{databaseOwner}{objectQualifier}Analytics_DateIdToDate(EndDate) EndDate, 
+		ISNULL(SUM(PageViews), 0) Count, 
+		ISNULL(SUM(TimeOnPage), 0) TimeOnPage
+	FROM AllDates d 
+	LEFT JOIN {databaseOwner}{objectQualifier}Analytics_Fact_PageViews r
+		ON PortalId = @PortalId 
+			AND (@PageId = -1 OR PageId = @PageId AND ContentItemId = @ContentItemId)  
+			AND DateId >= d.StartDate
+			AND DateId < d.EndDate
+	GROUP BY d.StartDate, d.EndDate 
+	ORDER BY d.StartDate
+END
+GO
+
+IF OBJECT_ID('{databaseOwner}{objectQualifier}Analytics_GetVisitors', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_GetVisitors
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_GetVisitors
+    @PortalId INT,
+    @PageId INT,
+    @ContentItemId INT,
+    @Dates VARCHAR(MAX)
+AS
+BEGIN
+	WITH AllDates AS (
+		SELECT {databaseOwner}{objectQualifier}Analytics_DateToDateId(StartDate) StartDate, 
+			   {databaseOwner}{objectQualifier}Analytics_DateToDateId(EndDate) EndDate
+		FROM {databaseOwner}{objectQualifier}Analytics_GetAllDatesFromCsv(@Dates) 
+	)
+	SELECT  
+		{databaseOwner}{objectQualifier}Analytics_DateIdToDate(StartDate) StartDate, 
+		{databaseOwner}{objectQualifier}Analytics_DateIdToDate(EndDate) EndDate, 
+		ISNULL(COUNT(DISTINCT r.VisitorGuid), 0) [Count]
+	FROM AllDates d 
+	LEFT JOIN {databaseOwner}{objectQualifier}Analytics_Fact_Visitors r
+		ON PortalId = @PortalId 
+			AND (@PageId = -1 OR PageId = @PageId AND ContentItemId = @ContentItemId)  
+			AND DateId >= d.StartDate
+			AND DateId < d.EndDate
+	GROUP BY d.StartDate, d.EndDate
+	ORDER BY d.StartDate 
+END
+GO
+
+IF OBJECT_ID('{databaseOwner}{objectQualifier}Analytics_GetChannels', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_GetChannels
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_GetChannels
+    @PortalId INT,
+    @PageId INT,
+    @ContentItemId INT,
+    @StartDate DATETIME,
+    @EndDate DATETIME
+AS
+BEGIN
+	DECLARE @StartDateId INT = {databaseOwner}{objectQualifier}Analytics_DateToDateId(@StartDate),
+		    @EndDateId INT = {databaseOwner}{objectQualifier}Analytics_DateToDateId(@EndDate);
+
+	SELECT Channel AS Label, SUM(PageViews) AS Count
+	FROM {databaseOwner}{objectQualifier}Analytics_Fact_Referrers 
+	WHERE PortalId = @PortalId 
+	  AND (@PageId = -1 OR PageId = @PageId AND ContentItemId = @ContentItemId)		
+	  AND DateId >= @StartDateId
+	  AND DateId < @EndDateId
+	GROUP BY Channel
+END
+GO
+
+IF OBJECT_ID('{databaseOwner}{objectQualifier}Analytics_GetDevices', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_GetDevices
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_GetDevices
+    @PortalId INT,
+    @PageId INT,
+    @ContentItemId INT,
+    @StartDate DATETIME,
+    @EndDate DATETIME
+AS
+BEGIN
+	DECLARE @StartDateId INT = {databaseOwner}{objectQualifier}Analytics_DateToDateId(@StartDate),
+		    @EndDateId INT = {databaseOwner}{objectQualifier}Analytics_DateToDateId(@EndDate);
+
+	SELECT Device AS Label, SUM(PageViews) AS Count
+	FROM {databaseOwner}{objectQualifier}Analytics_Fact_Devices 
+	WHERE PortalId = @PortalId 
+	  AND (@PageId = -1 OR PageId = @PageId AND ContentItemId = @ContentItemId)		
+	  AND DateId >= @StartDateId
+	  AND DateId < @EndDateId
+	GROUP BY Device
+END
+GO
+
+IF OBJECT_ID('{databaseOwner}{objectQualifier}Analytics_GetBounceSessionCount', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_GetBounceSessionCount
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_GetBounceSessionCount
+    @PortalId INT,
+    @PageId INT,
+    @ContentItemId INT,
+    @StartDate DATETIME,
+    @EndDate DATETIME
+AS
+BEGIN
+	DECLARE @StartDateId INT = {databaseOwner}{objectQualifier}Analytics_DateToDateId(@StartDate),
+		    @EndDateId INT = {databaseOwner}{objectQualifier}Analytics_DateToDateId(@EndDate);
+
+	SELECT COUNT(*) 
+	FROM (SELECT [SessionGuid] AS Count 
+			FROM {databaseOwner}{objectQualifier}Analytics_Fact_Sessions 
+			WHERE PortalId = @PortalId 
+			  AND (@PageId = -1 OR PageId = @PageId AND ContentItemId = @ContentItemId)		
+			  AND DateId >= @StartDateId
+			  AND DateId < @EndDateId
+			GROUP BY SessionGuid 
+			HAVING SUM(PageViews) = 1) Bounces
+END
+GO
+
+IF OBJECT_ID('{databaseOwner}{objectQualifier}Analytics_GetTotalVisitsCount', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_GetTotalVisitsCount
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_GetTotalVisitsCount
+    @PortalId INT,
+    @PageId INT,
+    @ContentItemId INT,
+    @StartDate DATETIME,
+    @EndDate DATETIME
+AS
+BEGIN
+	DECLARE @StartDateId INT = {databaseOwner}{objectQualifier}Analytics_DateToDateId(@StartDate),
+		    @EndDateId INT = {databaseOwner}{objectQualifier}Analytics_DateToDateId(@EndDate);
+
+	SELECT COUNT(*)
+	FROM (SELECT DISTINCT VisitorGuid  
+            FROM {databaseOwner}{objectQualifier}Analytics_Fact_Visitors 
+			WHERE PortalId = @PortalId 
+			  AND (@PageId = -1 OR PageId = @PageId AND ContentItemId = @ContentItemId)		
+			  AND DateId >= @StartDateId
+			  AND DateId < @EndDateId) Visits
+END
+GO
+
+IF OBJECT_ID('{databaseOwner}{objectQualifier}Analytics_GetTotalSessionsCount', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_GetTotalSessionsCount
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_GetTotalSessionsCount
+    @PortalId INT,
+    @PageId INT,
+    @ContentItemId INT,
+    @StartDate DATETIME,
+    @EndDate DATETIME
+AS
+BEGIN
+	DECLARE @StartDateId INT = {databaseOwner}{objectQualifier}Analytics_DateToDateId(@StartDate),
+		    @EndDateId INT = {databaseOwner}{objectQualifier}Analytics_DateToDateId(@EndDate);
+
+	SELECT COUNT(*)
+	FROM (SELECT DISTINCT SessionGuid  
+            FROM {databaseOwner}{objectQualifier}Analytics_Fact_Sessions 
+			WHERE PortalId = @PortalId 
+			  AND (@PageId = -1 OR PageId = @PageId AND ContentItemId = @ContentItemId)		
+			  AND DateId >= @StartDateId
+			  AND DateId < @EndDateId) Count
+END
+GO
+
+IF OBJECT_ID('{databaseOwner}{objectQualifier}Analytics_GetTotalConversionsCount', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_GetTotalConversionsCount
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_GetTotalConversionsCount
+    @PortalId INT,
+    @PageId INT,
+    @ContentItemId INT,
+    @StartDate DATETIME,
+    @EndDate DATETIME
+AS
+BEGIN
+	DECLARE @StartDateId INT = {databaseOwner}{objectQualifier}Analytics_DateToDateId(@StartDate),
+		    @EndDateId INT = {databaseOwner}{objectQualifier}Analytics_DateToDateId(@EndDate);
+
+	SELECT COUNT(*)
+	FROM (SELECT DISTINCT EventName
+            FROM {databaseOwner}{objectQualifier}Analytics_Fact_Conversions
+			WHERE PortalId = @PortalId 
+			  AND (@PageId = -1 OR PageId = @PageId AND ContentItemId = @ContentItemId)			  
+			  AND DateId >= @StartDateId
+			  AND DateId < @EndDateId) Count
+END
+GO
+
+IF OBJECT_ID('{databaseOwner}{objectQualifier}Analytics_GetTotalOperatingSystemsCount', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_GetTotalOperatingSystemsCount
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_GetTotalOperatingSystemsCount
+    @PortalId INT,
+    @PageId INT,
+    @ContentItemId INT,
+    @StartDate DATETIME,
+    @EndDate DATETIME
+AS
+BEGIN
+	DECLARE @StartDateId INT = {databaseOwner}{objectQualifier}Analytics_DateToDateId(@StartDate),
+		    @EndDateId INT = {databaseOwner}{objectQualifier}Analytics_DateToDateId(@EndDate);
+
+	SELECT COUNT(*)
+	FROM (SELECT DISTINCT OperatingSystem
+            FROM {databaseOwner}{objectQualifier}Analytics_Fact_Devices
+			WHERE PortalId = @PortalId 
+			  AND (@PageId = -1 OR PageId = @PageId AND ContentItemId = @ContentItemId)			  
+			  AND DateId >= @StartDateId
+			  AND DateId < @EndDateId) Count
+END
+GO
+
+IF OBJECT_ID('{databaseOwner}{objectQualifier}Analytics_GetTotalPageViewsCount', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_GetTotalPageViewsCount
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_GetTotalPageViewsCount
+    @PortalId INT,
+    @PageId INT,
+    @ContentItemId INT,
+    @StartDate DATETIME,
+    @EndDate DATETIME
+AS
+BEGIN
+	DECLARE @StartDateId INT = {databaseOwner}{objectQualifier}Analytics_DateToDateId(@StartDate),
+		    @EndDateId INT = {databaseOwner}{objectQualifier}Analytics_DateToDateId(@EndDate);
+
+	SELECT COUNT(*)
+	FROM (SELECT DISTINCT PageId
+            FROM {databaseOwner}{objectQualifier}Analytics_Fact_PageViews
+			WHERE PortalId = @PortalId 
+			  AND (@PageId = -1 OR PageId = @PageId AND ContentItemId = @ContentItemId)			  
+			  AND DateId >= @StartDateId
+			  AND DateId < @EndDateId) Count
+END
+GO
+
+IF OBJECT_ID('{databaseOwner}{objectQualifier}Analytics_GetTotalReferrersCount', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_GetTotalReferrersCount
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_GetTotalReferrersCount
+    @PortalId INT,
+    @PageId INT,
+    @ContentItemId INT,
+    @StartDate DATETIME,
+    @EndDate DATETIME
+AS
+BEGIN
+	DECLARE @StartDateId INT = {databaseOwner}{objectQualifier}Analytics_DateToDateId(@StartDate),
+		    @EndDateId INT = {databaseOwner}{objectQualifier}Analytics_DateToDateId(@EndDate);
+
+	SELECT COUNT(*)
+	FROM (SELECT DISTINCT ReferrerHost
+            FROM {databaseOwner}{objectQualifier}Analytics_Fact_Referrers
+			WHERE PortalId = @PortalId 
+			  AND (@PageId = -1 OR PageId = @PageId AND ContentItemId = @ContentItemId)			  
+			  AND Channel > 0
+			  AND DateId >= @StartDateId
+			  AND DateId < @EndDateId) Count
+END
+GO
+
+IF OBJECT_ID('{databaseOwner}{objectQualifier}Analytics_GetTotalConversionsPage', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_GetTotalConversionsPage
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_GetTotalConversionsPage
+    @PortalId INT,
+    @PageId INT,
+    @ContentItemId INT,
+    @StartDate DATETIME,
+    @EndDate DATETIME,
+	@StartIndex INT,
+	@EndIndex INT
+AS
+BEGIN
+	DECLARE @StartDateId INT = {databaseOwner}{objectQualifier}Analytics_DateToDateId(@StartDate),
+		    @EndDateId INT = {databaseOwner}{objectQualifier}Analytics_DateToDateId(@EndDate);
+
+    WITH OrderedTable AS ( 
+        SELECT ROW_NUMBER() OVER (ORDER BY SUM(EventCount) DESC) AS RowNumber, 
+            EventName AS Label, 
+            SUM(EventCount) AS Count 
+		FROM {databaseOwner}{objectQualifier}Analytics_Fact_Conversions
+		WHERE PortalId = @PortalId 
+			  AND (@PageId = -1 OR PageId = @PageId AND ContentItemId = @ContentItemId)			  
+			  AND DateId >= @StartDateId
+			  AND DateId < @EndDateId
+        GROUP BY EventName
+	)
+    SELECT Label, Count 
+    FROM OrderedTable
+    WHERE  RowNumber BETWEEN @StartIndex AND @EndIndex
+END
+GO
+
+IF OBJECT_ID('{databaseOwner}{objectQualifier}Analytics_GetTotalOperatingSystemsPage', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_GetTotalOperatingSystemsPage
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_GetTotalOperatingSystemsPage
+    @PortalId INT,
+    @PageId INT,
+    @ContentItemId INT,
+    @StartDate DATETIME,
+    @EndDate DATETIME,
+	@StartIndex INT,
+	@EndIndex INT
+AS
+BEGIN
+	DECLARE @StartDateId INT = {databaseOwner}{objectQualifier}Analytics_DateToDateId(@StartDate),
+		    @EndDateId INT = {databaseOwner}{objectQualifier}Analytics_DateToDateId(@EndDate);
+
+    WITH OrderedTable AS ( 
+        SELECT ROW_NUMBER() OVER (ORDER BY SUM(PageViews) DESC) AS RowNumber, 
+            OperatingSystem AS Label, 
+            SUM(PageViews) AS Count 
+		FROM {databaseOwner}{objectQualifier}Analytics_Fact_Devices
+		WHERE PortalId = @PortalId 
+			  AND (@PageId = -1 OR PageId = @PageId AND ContentItemId = @ContentItemId)			  
+			  AND DateId >= @StartDateId
+			  AND DateId < @EndDateId
+        GROUP BY OperatingSystem
+	)
+    SELECT Label, Count 
+    FROM OrderedTable
+    WHERE  RowNumber BETWEEN @StartIndex AND @EndIndex
+END
+GO
+
+IF OBJECT_ID('{databaseOwner}{objectQualifier}Analytics_GetTotalPageViewsPage', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_GetTotalPageViewsPage
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_GetTotalPageViewsPage
+    @PortalId INT,
+    @PageId INT,
+    @ContentItemId INT,
+    @StartDate DATETIME,
+    @EndDate DATETIME,
+	@StartIndex INT,
+	@EndIndex INT
+AS
+BEGIN
+	DECLARE @StartDateId INT = {databaseOwner}{objectQualifier}Analytics_DateToDateId(@StartDate),
+		    @EndDateId INT = {databaseOwner}{objectQualifier}Analytics_DateToDateId(@EndDate);
+
+    WITH OrderedTable AS ( 
+        SELECT ROW_NUMBER() OVER (ORDER BY SUM(PageViews) DESC) AS RowNumber, 
+            PageName AS Label, 
+            SUM(PageViews) AS Count 
+		FROM {databaseOwner}{objectQualifier}Analytics_Fact_PageViews
+		WHERE PortalId = @PortalId 
+			  AND (@PageId = -1 OR PageId = @PageId AND ContentItemId = @ContentItemId)			  
+			  AND DateId >= @StartDateId
+			  AND DateId < @EndDateId
+        GROUP BY PageName
+	)
+    SELECT Label, Count 
+    FROM OrderedTable
+    WHERE  RowNumber BETWEEN @StartIndex AND @EndIndex
+END
+GO
+
+IF OBJECT_ID('{databaseOwner}{objectQualifier}Analytics_GetTotalReferrersPage', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_GetTotalReferrersPage
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_GetTotalReferrersPage
+    @PortalId INT,
+    @PageId INT,
+    @ContentItemId INT,
+    @StartDate DATETIME,
+    @EndDate DATETIME,
+	@StartIndex INT,
+	@EndIndex INT
+AS
+BEGIN
+	DECLARE @StartDateId INT = {databaseOwner}{objectQualifier}Analytics_DateToDateId(@StartDate),
+		    @EndDateId INT = {databaseOwner}{objectQualifier}Analytics_DateToDateId(@EndDate);
+
+    WITH OrderedTable AS ( 
+        SELECT ROW_NUMBER() OVER (ORDER BY SUM(PageViews) DESC) AS RowNumber, 
+            ReferrerHost AS Label, 
+            SUM(PageViews) AS Count 
+		FROM {databaseOwner}{objectQualifier}Analytics_Fact_Referrers
+		WHERE PortalId = @PortalId 
+			  AND (@PageId = -1 OR PageId = @PageId AND ContentItemId = @ContentItemId)			  
+			  AND Channel > 0
+			  AND DateId >= @StartDateId
+			  AND DateId < @EndDateId
+        GROUP BY ReferrerHost
+	)
+    SELECT Label, Count 
+    FROM OrderedTable
+    WHERE  RowNumber BETWEEN @StartIndex AND @EndIndex
+END
+GO
+
+IF OBJECT_ID('{databaseOwner}{objectQualifier}Analytics_GetNavigationSummaryReferrers', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_GetNavigationSummaryReferrers
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_GetNavigationSummaryReferrers
+    @PortalId INT,
+    @PageId INT,
+    @ContentItemId INT,
+    @StartDate DATETIME,
+    @EndDate DATETIME,
+	@Count INT
+AS
+BEGIN
+	DECLARE @StartDateId INT = {databaseOwner}{objectQualifier}Analytics_DateToDateId(@StartDate),
+		    @EndDateId INT = {databaseOwner}{objectQualifier}Analytics_DateToDateId(@EndDate);
+
+	WITH OrderedTable AS ( 
+        SELECT ROW_NUMBER() OVER (ORDER BY SUM(PageViews) DESC) AS RowNumber, 
+            Channel as Category,
+            ReferrerHost AS Label, 
+            SUM(PageViews) AS Count,
+		    CASE WHEN Channel = -1 THEN ReferrerPageId ELSE -1 END AS ReferrerPageId,
+            ContentItemReferrerId AS ReferrerContentItemId
+        FROM {databaseOwner}{objectQualifier}Analytics_Fact_Referrers 
+        WHERE PortalId = @PortalId 
+			  AND (@PageId = -1 OR PageId = @PageId AND ContentItemId = @ContentItemId)
+			  AND DateId >= @StartDateId
+			  AND DateId < @EndDateId
+		GROUP BY Channel, ReferrerHost, ReferrerPageId, ContentItemReferrerId
+    )                        
+    SELECT Category, Label, Count, ReferrerPageId, ReferrerContentItemId
+    FROM OrderedTable
+    WHERE  RowNumber BETWEEN 1 AND @Count
+END
+GO
+
+IF OBJECT_ID('{databaseOwner}{objectQualifier}Analytics_GetNavigationSummaryExitPages', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_GetNavigationSummaryExitPages
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_GetNavigationSummaryExitPages
+    @PortalId INT,
+    @PageId INT,
+    @ContentItemId INT,
+    @StartDate DATETIME,
+    @EndDate DATETIME,
+	@Count INT
+AS
+BEGIN
+	DECLARE @StartDateId INT = {databaseOwner}{objectQualifier}Analytics_DateToDateId(@StartDate),
+		    @EndDateId INT = {databaseOwner}{objectQualifier}Analytics_DateToDateId(@EndDate);
+
+    WITH OrderedTable AS ( 
+        SELECT ROW_NUMBER() OVER (ORDER BY SUM(PageViews) DESC) AS RowNumber, 
+            ExitPage AS Label, 
+            SUM(PageViews) AS Count,
+            ExitPageId AS ReferrerPageId, 
+            ExitPageContentItemId AS  ReferrerContentItemId
+        FROM {databaseOwner}{objectQualifier}Analytics_Fact_ExitPages 
+		WHERE PortalId = @PortalId 
+			  AND (@PageId = -1 OR PageId = @PageId AND ContentItemId = @ContentItemId)			  
+			  AND DateId >= @StartDateId
+			  AND DateId < @EndDateId
+		GROUP BY ExitPage, ExitPageId, ExitPageContentItemId 
+    )
+                        
+    SELECT Label, Count, ReferrerPageId, ReferrerContentItemId 
+    FROM OrderedTable
+    WHERE  RowNumber BETWEEN 0 AND @Count 
+END
+GO
+
+
+/********************************************************
+ * Update Index on Analytics_Fact_PageViews Table
+ ********************************************************/
+IF EXISTS (SELECT * FROM sys.indexes WHERE name = 'IX_{objectQualifier}Analytics_Fact_PageViews')
+	BEGIN
+		DROP INDEX IX_{objectQualifier}Analytics_Fact_PageViews ON {databaseOwner}{objectQualifier}Analytics_Fact_PageViews		
+	END
+GO
+
+CREATE NONCLUSTERED INDEX IX_{objectQualifier}Analytics_Fact_PageViews ON {databaseOwner}{objectQualifier}Analytics_Fact_PageViews 
+			([PortalId],[DateId]) INCLUDE ([PageId], [PageViews], [TimeOnPage], [ContentItemId]) 
+GO
+
+/********************************************************
+ * Update Index on Analytics_Fact_Visitors Table
+ ********************************************************/
+IF EXISTS (SELECT * FROM sys.indexes WHERE name = 'IX_{objectQualifier}Analytics_Fact_Visitors')
+	BEGIN
+		DROP INDEX IX_{objectQualifier}Analytics_Fact_Visitors ON {databaseOwner}{objectQualifier}Analytics_Fact_Visitors		
+	END
+GO
+
+CREATE NONCLUSTERED INDEX IX_{objectQualifier}Analytics_Fact_Visitors ON {databaseOwner}{objectQualifier}Analytics_Fact_Visitors 
+			([PortalId],[DateId]) INCLUDE ([PageId],[VisitorGuid],[ContentItemId])
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_LogPageView]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Analytics_LogPageView]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Analytics_LogPageView]
+	@DateId				INT,
+	@VisitorGuid		UNIQUEIDENTIFIER,
+	@SessionGuid		UNIQUEIDENTIFIER,
+	@PortalId			INT,
+	@TabId				INT,
+	@UserId				INT,
+	@Device				INT,
+	@OperatingSystem	NVARCHAR(200),
+	@Channel			INT,
+	@ReferrerHost		NVARCHAR(200),
+	@ReferrerDetail		NVARCHAR(200),
+	@ReferrerPageId		INT,
+	@ExitPage			NVARCHAR(200),
+	@TotalSeconds		INT,
+	@UserAgent			NVARCHAR(200),
+	@PageLanguage		NVARCHAR(10),
+	@IPAddress			NVARCHAR(50),
+	@UrlQuery			NVARCHAR(200),
+	@ContentItemId		INT,
+	@ContentItemReferrerId		INT
+
+AS
+BEGIN
+	IF @ContentItemId > 0 
+		 (SELECT @ExitPage = cim.MetaDataValue
+			FROM {databaseOwner}{objectQualifier}ContentItems ci
+				JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData cim ON ci.ContentItemID = cim.ContentItemID
+				JOIN {databaseOwner}{objectQualifier}MetaData m ON cim.MetaDataID = m.MetaDataID
+			WHERE m.MetaDataName = 'Title' AND ci.ContentItemID = @ContentItemId)
+
+	IF @ContentItemReferrerId > 0 
+		 (SELECT @ReferrerHost = cim.MetaDataValue, @ReferrerDetail = cim.MetaDataValue
+			FROM {databaseOwner}{objectQualifier}ContentItems ci
+				JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData cim ON ci.ContentItemID = cim.ContentItemID
+				JOIN {databaseOwner}{objectQualifier}MetaData m ON cim.MetaDataID = m.MetaDataID
+			WHERE m.MetaDataName = 'Title' AND ci.ContentItemID = @ContentItemReferrerId)
+
+	INSERT INTO {objectQualifier}Analytics_PageViews (
+		DateId,
+		VisitorGuid,
+		SessionGuid,
+		PortalId,
+		TabId,
+		UserId,
+		Device,
+		OperatingSystem,
+		Channel,
+		ReferrerHost,
+		ReferrerDetail,
+		ReferrerPageId,
+		ExitPage,
+		TotalSeconds,
+		UserAgent,
+		PageLanguage,
+		IPAddress,
+		UrlQuery,
+		ContentItemId,
+		ContentItemReferrerId,
+		CreatedOnDate
+	)
+	VALUES (
+		@DateId,
+		@VisitorGuid,
+		@SessionGuid,
+		@PortalId,
+		@TabId,
+		@UserId,
+		@Device,
+		@OperatingSystem,
+		@Channel,
+		@ReferrerHost,
+		@ReferrerDetail,
+		@ReferrerPageId,
+		@ExitPage,
+		@TotalSeconds,
+		@UserAgent,
+		@PageLanguage,
+		@IPAddress,
+		@UrlQuery,
+		@ContentItemId,
+		@ContentItemReferrerId,
+		getutcdate()
+	)END
+GO
+
+-- CONTENT-5388 restrict time on page to maximum 5 minutes
+-- This should not time out (hopefully)
+-- CONTENT-5523 Changed update sentence to another that takes less time, after testing it with huge amount of rows
+
+    CREATE TABLE #tmpview(PageViewId int)
+
+    INSERT INTO #tmpview SELECT PageViewId FROM {databaseOwner}{objectQualifier}Analytics_PageViews
+    WHERE TotalSeconds > 300
+
+    UPDATE {databaseOwner}{objectQualifier}Analytics_PageViews SET TotalSeconds = 300 
+        WHERE PageViewId in (SELECT PageViewId FROM #tmpview)
+GO
+
+-- CONTENT-5388 clean records with negative TimeOnPage -- Begins
+UPDATE {objectQualifier}Analytics_PageViews SET TotalSeconds = 0 WHERE TotalSeconds < 0
+GO
+
+UPDATE {objectQualifier}Analytics_Fact_PageViews SET TimeOnPage = 0 WHERE TimeOnPage < 0
+GO
+
+UPDATE {objectQualifier}Analytics_Fact_Sessions SET TimeOnPage = 0 WHERE TimeOnPage < 0
+GO
+
+UPDATE {objectQualifier}Analytics_Fact_Users SET TimeOnPage = 0 WHERE TimeOnPage < 0
+GO
+
+UPDATE {objectQualifier}Analytics_Fact_Visitors SET TimeOnPage = 0 WHERE TimeOnPage < 0
+GO
+
+UPDATE {objectQualifier}Analytics_Fact_Users SET TimeOnPage = PageViews * 300 WHERE TimeOnPage > PageViews * 300
+GO
+
+-- CONTENT-5388 clean records with negative TimeOnPage -- Ends
+
+/********************************************************
+ * PROCEDURE: Analytics_MigratePageViews
+ ********************************************************/
+
+IF OBJECT_ID(N'{databaseOwner}{objectQualifier}Analytics_GetContentItemIdFromUrl') IS NOT NULL
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_GetContentItemIdFromUrl
+GO
+
+CREATE FUNCTION {databaseOwner}{objectQualifier}Analytics_GetContentItemIdFromUrl
+(
+	@UrlQuery NVARCHAR(200)
+)
+RETURNS INT
+AS
+BEGIN
+	IF NOT (@UrlQuery LIKE '%[&?]cid=%') 
+		RETURN -1;
+
+	DECLARE @FirstIndexCidValue INT =  PATINDEX('%[&?]cid=%', @UrlQuery) + 5;
+	DECLARE @FirstIndexAmpersadAfterCidValue INT = CHARINDEX('&', @UrlQuery, @FirstIndexCidValue)
+	DECLARE @LastIndexUrlQuery INT = LEN(@UrlQuery) - @FirstIndexCidValue + 1
+
+	DECLARE @contentItemIdStr NVARCHAR(200) = SUBSTRING(@UrlQuery, @FirstIndexCidValue,
+			CASE WHEN (@FirstIndexAmpersadAfterCidValue - @FirstIndexCidValue) > 0
+			     THEN @FirstIndexAmpersadAfterCidValue - @FirstIndexCidValue
+				 ELSE LEN(@UrlQuery) - @FirstIndexCidValue + 1 
+			END)
+
+	IF ISNUMERIC(@contentItemIdStr + '.0e0') = 1 -- CHECK IT IS AN INTEGER VALUE
+	BEGIN
+		DECLARE @FloatValue FLOAT = CONVERT(FLOAT, @contentItemIdStr)
+
+		If (@FloatValue <= 2147483647)
+			RETURN CONVERT(INT, @FloatValue)
+	END
+
+	RETURN -1
+END
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_MigratePageViews]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Analytics_MigratePageViews]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Analytics_MigratePageViews]
+	@FirstPageId		INT,
+	@BatchSize			INT
+AS
+BEGIN
+	DECLARE @LastPageId BIGINT
+	--Find LastPageId based on batch size
+	;WITH PageViews AS
+	(
+	SELECT TOP (@BatchSize) PageViewId FROM {databaseOwner}{objectQualifier}Analytics_PageViews WHERE PageViewId > @FirstPageId ORDER BY PageViewId
+	)
+	SELECT @LastPageId = MAX(PageViewId) FROM PageViews
+	IF @LastPageId IS NULL
+	BEGIN
+		SELECT @FirstPageId
+		RETURN
+	END
+	SELECT @LastPageId
+
+	--Update ContentItemId. 
+	--Note we want to find CID fromUrlQuery, e.g. find 334 from ?TabId=68&cid=334&language=en-US
+	--5 is the lenght of &cid= or ?cid=
+	;WITH Source as (
+		SELECT PageViewId,		
+			{databaseOwner}{objectQualifier}Analytics_GetContentItemIdFromUrl(UrlQuery) AS ContentItemId
+		FROM {databaseOwner}{objectQualifier}Analytics_PageViews WITH (NOLOCK)
+		WHERE PageviewId > @FirstPageId AND PageViewId <=  @LastPageId
+		AND ContentItemId = -1
+		AND UrlQuery LIKE '%[&?]cid=%'
+	) 
+	MERGE {databaseOwner}{objectQualifier}Analytics_PageViews AS pv
+	USING Source AS s
+		ON (pv.PageViewId = s.PageViewId)  AND EXISTS (SELECT ContentItemId FROM {databaseOwner}{objectQualifier}ContentItems c WHERE c.ContentItemId = s.ContentItemId)
+	WHEN MATCHED 
+		THEN UPDATE SET pv.ContentItemId = s.ContentItemId;
+
+END
+GO
+/********************************************************
+ * SOCIAL-4283 Create new index on Analytics_Fact_Users Table
+ ********************************************************/
+IF EXISTS (SELECT * FROM sys.indexes WHERE name = 'IX_{objectQualifier}Analytics_Fact_Users_PortalId_UserId')	
+		DROP INDEX IX_{objectQualifier}Analytics_Fact_Users_PortalId_UserId ON {databaseOwner}{objectQualifier}Analytics_Fact_Users		
+
+CREATE NONCLUSTERED INDEX IX_{objectQualifier}Analytics_Fact_Users_PortalId_UserId ON {databaseOwner}{objectQualifier}Analytics_Fact_Users 
+			([PortalId], [UserId]) 	
+GO

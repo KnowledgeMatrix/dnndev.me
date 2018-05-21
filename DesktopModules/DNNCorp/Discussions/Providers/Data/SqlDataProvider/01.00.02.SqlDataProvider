@@ -1,0 +1,178 @@
+﻿IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Discussions_IsSearchMatch]', N'FN') IS NOT NULL
+	DROP FUNCTION {databaseOwner}[{objectQualifier}Discussions_IsSearchMatch]
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Answers_IsSearchMatch]', N'FN') IS NOT NULL
+	DROP FUNCTION {databaseOwner}[{objectQualifier}Answers_IsSearchMatch]
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Discussions_IsTagMatch]', N'FN') IS NOT NULL
+	DROP FUNCTION {databaseOwner}[{objectQualifier}Discussions_IsTagMatch]
+GO
+
+CREATE FUNCTION {databaseOwner}{objectQualifier}Discussions_IsTagMatch(@ContentItemId INT, @Tags NVARCHAR(256))
+	RETURNS BIT
+AS
+BEGIN
+	IF @Tags IS NULL OR LEN(@Tags) = 0
+		RETURN 1
+
+	IF (SELECT		COUNT(*)
+		FROM		{databaseOwner}{objectQualifier}ContentItems_Tags CIT
+		INNER JOIN	{databaseOwner}{objectQualifier}Taxonomy_Terms TT ON CIT.TermID = TT.TermID
+		INNER JOIN	{databaseOwner}[{objectQualifier}ConvertListToTable](',', @Tags) T ON TT.Name = T.RowValue
+		WHERE		CIT.ContentItemID = @ContentItemID
+		AND			(SELECT [Approved] FROM {databaseOwner}[{objectQualifier}Discussions_Topic] WHERE ContentItemId = @ContentItemId) = 1) !=
+	(SELECT LEN(@Tags) - LEN(REPLACE(@Tags, ',', '')) + 1) 
+		RETURN 0
+
+	RETURN 1
+END
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Discussions_Topic_Search_ByTags') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Discussions_Topic_Search_ByTags
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Discussions_Topic_Search') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Discussions_Topic_Search
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Discussions_Topic_Search]
+	@ModuleId INT ,
+	@GroupId INT ,
+	@PageSize INT ,
+	@PageIndex INT ,
+	@Filter INT ,
+	@SortColumn VARCHAR(32) ,
+	@SortAscending BIT ,
+	@Keyword NVARCHAR(128) ,
+	@UserId INT,
+	@Tags NVARCHAR(256)
+AS 
+BEGIN
+	SELECT  COUNT(*) AS TotalResults
+	FROM    {databaseOwner}{objectQualifier}Discussions_Topic AS T
+			INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI ON CI.ContentItemID = T.ContentItemId
+	WHERE   CI.ModuleId = @ModuleId
+			AND Deleted = 0
+			AND ( @GroupId < 1 OR T.GroupId = @GroupId )
+			AND ((@Filter <= 0  AND T.Approved = 1)
+			 OR (@Filter = 1 AND Pinned = 1 AND Approved = 1)
+			 OR (@Filter = 2 AND Approved = 1 AND
+					(SELECT		COUNT(CommentId)
+					 FROM		{databaseOwner}{objectQualifier}Journal_Comments JC
+					 INNER JOIN {databaseOwner}{objectQualifier}Journal J ON JC.JournalId = J.JournalId
+					 WHERE		J.ContentItemId = ContentItemId) < 1)
+			 OR (@Filter = 3 AND CI.CreatedByUserID = @UserId)
+			 OR (@Filter = 4 AND Approved = 1 AND
+					(SELECT		COUNT(CommentId)
+					 FROM		{databaseOwner}{objectQualifier}Journal AS J
+					 INNER JOIN	{databaseOwner}{objectQualifier}Journal_Comments AS JC ON J.JournalId = JC.JournalId
+					 WHERE		J.ContentItemId = ContentItemId AND JC.UserId = @UserId) > 0))
+
+	;WITH    TopicSet
+				AS ( SELECT   TopicId ,
+							T.ContentItemId ,
+							GroupId ,
+							PortalId ,
+							ViewCount ,
+							Approved ,
+							ApprovedDate ,
+							Deleted ,
+							Closed ,
+							ClosedDate ,
+							Protected ,
+							ProtectedDate ,
+							Pinned ,
+							PinnedDate ,
+							Content ,
+							ContentTypeID ,
+							TabID ,
+							ModuleID ,
+							ContentKey ,
+							Indexed ,
+							CI.CreatedByUserID ,
+							CI.CreatedOnDate ,
+							CI.LastModifiedByUserID ,
+							CI.LastModifiedOnDate ,
+							CIMD.MetaDataValue AS ContentTitle ,
+							U.DisplayName AS DisplayName
+					FROM     {databaseOwner}{objectQualifier}Discussions_Topic AS T
+							INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI ON CI.ContentItemID = T.ContentItemId
+							INNER JOIN {databaseOwner}{objectQualifier}Users U ON U.UserID = CI.CreatedByUserID
+							LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD ON CIMD.ContentItemID = T.ContentItemId
+															AND CIMD.MetaDataID = ( SELECT
+															MetaDataID
+															FROM
+															{databaseOwner}[{objectQualifier}MetaData]
+															WHERE
+															MetaDataName = 'Title'
+															)
+					WHERE    CI.ModuleId = @ModuleId
+							AND Deleted = 0
+							AND ( @GroupId < 1 OR T.GroupId = @GroupId )
+							AND ((@Filter <= 0  AND T.Approved = 1)
+							 OR (@Filter = 1 AND Pinned = 1 AND Approved = 1)
+							 OR (@Filter = 2 AND Approved = 1 AND
+									(SELECT		COUNT(CommentId)
+									 FROM		{databaseOwner}{objectQualifier}Journal_Comments JC
+									 INNER JOIN {databaseOwner}{objectQualifier}Journal J ON JC.JournalId = J.JournalId
+									 WHERE		J.ContentItemId = ContentItemId) < 1)
+							 OR (@Filter = 3 AND CI.CreatedByUserID = @UserId)
+							 OR (@Filter = 4 AND Approved = 1 AND
+									(SELECT		COUNT(CommentId)
+									 FROM		{databaseOwner}{objectQualifier}Journal AS J
+									 INNER JOIN	{databaseOwner}{objectQualifier}Journal_Comments AS JC ON J.JournalId = JC.JournalId
+									 WHERE		J.ContentItemId = ContentItemId AND JC.UserId = @UserId) > 0))),
+			TopicSort
+				AS ( SELECT   ROW_NUMBER() OVER ( ORDER BY CASE
+															WHEN @SortColumn = 'CreatedDate'
+															AND @SortAscending = 1
+															THEN T.CreatedOnDate
+															END ASC, CASE
+															WHEN @SortColumn = 'CreatedDate'
+															AND @SortAscending = 0
+															THEN T.CreatedOnDate
+															END DESC, CASE
+															WHEN @SortColumn = 'LastActive'
+															AND @SortAscending = 1
+															THEN T.LastModifiedOnDate
+															END ASC, CASE
+															WHEN @SortColumn = 'LastActive'
+															AND @SortAscending = 0
+															THEN T.LastModifiedOnDate
+															END DESC, CASE
+															WHEN @SortColumn = 'Title'
+															AND @SortAscending = 1
+															THEN T.ContentTitle
+															END ASC, CASE
+															WHEN @SortColumn = 'Title'
+															AND @SortAscending = 0
+															THEN T.ContentTitle
+															END DESC, CASE
+															WHEN @SortColumn = 'Author'
+															AND @SortAscending = 1
+															THEN T.DisplayName
+															END ASC, CASE
+															WHEN @SortColumn = 'Author'
+															AND @SortAscending = 0
+															THEN T.DisplayName
+															END DESC, CASE
+															WHEN @SortColumn = 'Views'
+															AND @SortAscending = 0
+															THEN T.ViewCount
+															END DESC, CASE
+															WHEN @SortColumn = 'Views'
+															AND @SortAscending = 1
+															THEN T.ViewCount
+															END ASC, T.CreatedOnDate DESC ) AS RowNumber ,
+							T.*
+					FROM     TopicSet T
+					WHERE	(@Tags IS NULL OR LEN(@Tags) = 0 OR {databaseOwner}{objectQualifier}Discussions_IsTagMatch(ContentItemId, @Tags) = 1)
+					)
+		SELECT  *
+		FROM    TopicSort
+		WHERE   RowNumber BETWEEN (@PageIndex * @PageSize + 1) AND ((@PageIndex + 1) * @PageSize)
+END
+GO

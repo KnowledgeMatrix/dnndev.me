@@ -1,0 +1,52 @@
+﻿IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}StdRegModule_Items]') AND type in (N'U'))
+DROP TABLE {databaseOwner}[{objectQualifier}StdRegModule_Items]
+GO
+
+/************ DROP TABLE WHILE UNINSTALLING THE MODULE******************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}StdRegModule_Students]') AND type in (N'U'))
+DROP TABLE {databaseOwner}[{objectQualifier}StdRegModule_Students]
+GO
+
+/************END SCRIPT DROP TABLE WHILE UNINSTALLING THE MODULE******************/
+
+/*********DROP PROCEDURE*************/
+
+IF EXISTS (select * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StdRegModule_getStudents]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}StdRegModule_getStudents
+GO
+
+/*******************END SCRIPT******************/
+
+/***********DROP StdRegModule_AddStudent PROCEDURE *************/
+
+IF EXISTS (select * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StdRegModule_AddStudent]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}StdRegModule_AddStudent
+GO
+
+/****************END SCRIPT***********************************/
+
+/***********DROP StdRegModule_UpdateStudent PROCEDURE *************/
+
+
+IF EXISTS (select * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StdRegModule_UpdateStudent]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}StdRegModule_UpdateStudent
+GO
+
+/****************END SCRIPT***********************************/
+
+/***********DROP StdRegModule_DeleteStudent PROCEDURE *************/
+
+IF EXISTS (select * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StdRegModule_DeleteStudent]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}StdRegModule_DeleteStudent
+GO
+
+/****************END SCRIPT***********************************/
+
+/***********DROP StdRegModule_DeleteStudent PROCEDURE *************/
+
+IF EXISTS (select * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}StdRegModule_getStudent]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE {databaseOwner}{objectQualifier}StdRegModule_getStudent
+GO
+
+/****************END SCRIPT***********************************/

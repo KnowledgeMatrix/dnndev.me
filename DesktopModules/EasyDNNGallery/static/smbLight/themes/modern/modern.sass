@@ -1,0 +1,1345 @@
+body.smbLightFixed
+	overflow: hidden
+
+$defaultTextFont: Arial, sans-serif
+
+.smbLightOverlayWrapper.modern
+	display: block
+	position: fixed
+	max-height: none
+	max-width: none
+	height: auto
+	width: auto
+	top: 0
+	right: 0
+	bottom: 0
+	left: 0
+	border: 0
+	margin: 0
+	padding: 0
+	background: rgba(0, 0, 0, .7)
+	opacity: 0
+	z-index: 99999
+	transition: opacity linear .2s
+
+	&.show
+		opacity: 1
+
+	> .contentWrapper
+		display: block
+		position: absolute
+		max-height: none
+		max-width: none
+		height: auto
+		width: auto
+		top: 0
+		right: 0
+		bottom: 0
+		left: 0
+		border: 0
+		margin: 0
+		padding: 0
+		background: none
+		opacity: 1
+
+	.socialButtonsWrapper
+		position: absolute
+		display: none
+		top: auto
+		left: auto
+		right: 0
+		bottom: 0
+		margin: 0
+		padding: 10px 0 3px 10px
+		border: 0
+		z-index: 1
+		background: rgba(0, 0, 0, .8)
+		border-radius: 4px 0 0 0
+
+		> div
+			display: block
+			margin: 0 0 1px
+			padding: 0
+			border: 0
+			height: 25px
+			width: 135px
+
+		&.show
+			display: block
+
+	.mainWrapper
+		display: block
+		background: #2F2F2F
+		border: 1px solid #fff
+		border-radius: 1px
+		margin: 52px
+		position: absolute
+		top: 0
+		bottom: auto
+		left: 0
+		right: auto
+		box-shadow: 0 0 18px rgba(0, 0, 0, .7)
+		height: 50px
+		width: 50px
+
+		.viewWrapper
+			display: block
+			background: transparent
+			border: 0
+			margin: 0
+			padding: 0
+			overflow: hidden
+			height: 100%
+			width: 100%
+			position: relative
+
+			> div
+				display: block
+				background: transparent
+				border: 0
+				margin: 0
+				padding: 0
+				overflow: hidden
+				height: 100%
+				width: 100%
+				position: absolute
+				top: 0
+				left: 100%
+				bottom: auto
+				right: auto
+
+				&.activeElement
+					left: 0
+
+				&.audioVideo
+
+					iframe
+						display: block
+						width: 100%
+						height: 100%
+						margin: 0
+						padding: 0
+						border: 0
+
+				&.images
+
+					img,
+					p
+						display: block
+						border: 0
+						padding: 0
+						margin: 0
+						height: auto
+						max-height: none
+						width: auto
+						max-width: none
+						position: absolute
+						top: 0
+						left: 100%
+						right: auto
+						bottom: auto
+
+					img
+
+						&.activeElement
+							left: 0
+							height: 100%
+							width: 100%
+
+					p
+						text-align: center
+						font: 16px/20px $defaultTextFont
+						top: 50%
+						margin: -10px 0 0
+						padding: 0 30px
+						height: auto
+						color: #fff
+						box-sizing: border-box
+						-webkit-box-sizing: border-box
+						-moz-box-sizing: border-box
+						height: 100%
+						width: 100%
+
+					&.imageNotLoaded
+
+						> p
+							left: 0
+
+
+		.loadingOverlay
+			display: block
+			position: absolute
+			top: 0
+			left: 0
+			right: 0
+			bottom: 0
+			background: url(images/loader.gif) 500% 0 #2F2F2F no-repeat
+			z-index: 1
+
+			&.inProgress
+				background-position: center center
+
+		.itemTitle
+			display: block
+			font: 17px/0.8 $defaultTextFont
+			margin: 0 70px 10px 0
+			padding: 0
+			border: 0
+			background: none
+			color: #fff
+			text-shadow: 1px 1px 0 #333
+			position: absolute
+			top: auto
+			bottom: 100%
+			left: 0
+			right: 0
+			opacity: 0
+
+		.navigation,
+		.close,
+		.socialButtonsTrigger
+			display: block
+			margin: 0
+			padding: 0
+			border: 0
+			background: none
+			position: absolute
+			bottom: auto
+			left: auto
+			right: auto
+			cursor: pointer
+
+		.navigation
+			top: 50%
+			width: 34px
+			height: 70px
+			background: #fff
+			margin-top: -35px
+
+			> span
+				display: block
+				position: absolute
+				top: 50%
+				bottom: auto
+				left: 50%
+				right: auto
+				width: 12px
+				height: 20px
+				background: url(images/icons.png) no-repeat -28px 0
+				margin: -10px 0 0 -6px
+				padding: 0
+				border: 0
+
+			&.prev
+				right: 100%
+				border-radius: 4px 0 0 4px
+
+				> span
+					background-position: -28px 0
+
+			&.next
+				left: 100%
+				border-radius: 0 4px 4px 0
+
+				> span
+					background-position: -28px -20px
+
+			&:hover
+
+				&.prev > span
+					background-position: -40px 0
+
+				&.next > span
+					background-position: -40px -20px
+
+		.close
+			top: auto
+			bottom: 100%
+			right: 20px
+			width: 42px
+			height: 31px
+			background: #fff
+			border-radius: 4px 4px 0 0
+			margin-bottom: 1px
+			opacity: 1
+
+			> span
+				display: block
+				position: absolute
+				top: 50%
+				bottom: auto
+				left: 50%
+				right: auto
+				width: 14px
+				height: 15px
+				background: url(images/icons.png) no-repeat 0 0
+				margin: -7px 0 0 -7px
+				padding: 0
+				border: 0
+
+			&:hover
+				background: #ce0000
+
+				> span
+					background-position: -14px 0
+
+		.socialButtonsTrigger
+			top: 100%
+			width: 40px
+			height: 31px
+			right: 20px
+			background: #fff
+			border-radius: 0 0 4px 4px
+
+			> span
+				display: block
+				position: absolute
+				top: 50%
+				bottom: auto
+				left: 50%
+				right: auto
+				width: 13px
+				height: 15px
+				background: url(images/icons.png) no-repeat 0 -15px
+				margin: -7px 0 0 -8px
+				padding: 0
+				border: 0
+				font-size: 0
+				line-height: 0
+
+			&:hover
+
+				> span
+					background-position: -13px -15px
+
+		&.audioItem
+
+			.navigation
+				height: 30px
+				margin-top: -15px
+
+	&.smbPlus
+		top: auto
+		height: 100%
+		background: rgba(0, 0, 0, .85)
+		bottom: -1px
+
+		> .contentWrapper
+			margin: 0
+			position: absolute
+			top: 0
+			bottom: 0
+			left: auto
+			right: auto
+
+			&.positionAnimation
+				transition: transform ease-in-out .5s
+
+			&.swipeAnimation
+				transition: transform cubic-bezier(0.25, 0.46, 0.45, 0.94) .2s
+
+			> div
+				display: inline-block
+				height: 100%
+				margin: 0
+				padding: 0
+				border: 0
+				overflow: hidden
+				position: relative
+
+				&.imageItem
+
+					> img
+						width: auto
+						height: auto
+						max-width: none
+						max-height: none
+						position: absolute
+						top: auto
+						bottom: auto
+						left: auto
+						right: auto
+						opacity: 1
+						transition: opacity ease-in-out .2s
+
+					&:before
+						content: '\f251'
+						font: 200px/1 FontAwesome
+						position: absolute
+						color: #6F6F6F
+						text-align: center
+						top: 50%
+						left: 0
+						right: 0
+						margin: -100px 0 0
+						opacity: 0
+						transition: opacity ease-in-out .2s
+
+				&.videoItem,
+				&.audioItem
+					position: relative
+
+					> div
+						width: auto
+						height: auto
+						max-width: none
+						max-height: none
+						position: absolute
+						top: auto
+						bottom: auto
+						left: auto
+						right: auto
+
+						> iframe
+							display: block
+							width: 100%
+							height: 100%
+							margin: 0
+							padding: 0
+							border: 0
+
+				&.audioItem
+
+					> div
+						padding: 0 40px
+						box-sizing: border-box
+
+						> .audiojs
+							.play-pause
+								p
+									width: 100%
+
+				&.loading
+
+					&.imageItem
+
+						> img
+							opacity: 0
+
+						&:before
+							opacity: 1
+
+		> .mobileOverlay
+			background: none
+			height: 100%
+			width: 100%
+			display: block
+			border: 0
+			padding: 0
+			margin: 0
+			box-shadow: 0 -160px 110px -135px #000 inset, -115px 0 120px -100px #000 inset, 115px 0 120px -100px #000 inset
+			position: absolute
+			top: 0
+			left: 0
+			bottom: auto
+			right: auto
+			z-index: 1
+			transition: box-shadow ease-in-out .2s
+
+		> .navigation
+			margin: -27px 0 0
+			height: 54px
+			width: 30px
+			background: none
+			display: block
+			border: 0
+			padding: 0
+			position: absolute
+			top: 50%
+			font-size: 0
+			line-height: 0
+			z-index: 2
+			opacity: 1
+			transition: opacity ease-in-out .2s
+			cursor: pointer
+
+			> span
+				position: relative
+				top: 15px
+				left: 7px
+				right: auto
+
+				&:after
+					font-size: 20px
+					line-height: 1.3
+					font-family: FontAwesome
+					color: #fff
+					text-shadow: 1px 1px 2px rgba(0, 0, 0, .8), 0px 0px 1px rgba(0, 0, 0, .5)
+					transition: color ease-in-out .2s
+
+			&:hover
+
+				> span
+
+					&:after
+						color: #aaa
+
+			&.prev
+				left: 0
+				right: auto
+
+				> span
+
+					&:after
+						content: '\f053'
+
+			&.next
+				right: 0
+				left: auto
+
+				> span
+
+					&:after
+						content: '\f054'
+
+		> .close
+			margin: 0
+			height: 45px
+			width: 40px
+			background: none
+			display: block
+			border: 0
+			padding: 0
+			position: absolute
+			top: 0
+			left: auto
+			right: 0
+			font-size: 0
+			line-height: 0
+			z-index: 2
+			opacity: 1
+			transition: opacity ease-in-out .2s
+			cursor: pointer
+
+			> span
+				position: relative
+				top: 9px
+				left: 14px
+				right: auto
+
+				&:after
+					font-size: 20px
+					line-height: 1.3
+					font-family: FontAwesome
+					color: #fff
+					text-shadow: 1px 1px 2px rgba(0, 0, 0, .8), 0px 0px 1px rgba(0, 0, 0, .5)
+					content: '\f00d'
+					transition: color ease-in-out .2s
+
+			&:hover
+
+				> span
+
+					&:after
+						color: #aaa
+
+		> .itemTitle
+			margin: 0
+			top: auto
+			bottom: 35px
+			font: 16px/1.3 $defaultTextFont
+			color: #fff
+			text-align: left
+			position: absolute
+			text-shadow: 1px 1px 2px rgba(0, 0, 0, .8), 0px 0px 1px rgba(0, 0, 0, .5)
+			padding: 0 15px
+			z-index: 2
+			opacity: 1
+			transition: opacity ease-in-out .2s, bottom ease-in-out .2s
+
+		> .actions
+			position: absolute
+			top: auto
+			bottom: 0
+			font-size: 0
+			line-height: 0
+			padding: 5px 15px 10px
+			z-index: 2
+			opacity: 1
+			transition: opacity ease-in-out .2s
+			cursor: pointer
+
+			> span
+				font: 16px/1.3 $defaultTextFont
+				font-weight: bold
+				color: #fff
+				padding: 0 0 0 3px
+				text-shadow: 1px 1px 2px rgba(0, 0, 0, .8), 0px 0px 1px rgba(0, 0, 0, .5)
+				transition: color ease-in-out .2s
+
+				&:before,
+				&:after
+					font: 18px/1.3 FontAwesome
+					color: #fff
+					position: relative
+					left: -3px
+					text-shadow: 1px 1px 2px rgba(0, 0, 0, .8), 0px 0px 1px rgba(0, 0, 0, .5)
+					transition: color ease-in-out .2s
+
+				&:after
+					left: auto
+					right: -3px
+
+			&:hover
+
+				> span
+					color: #aaa
+
+					&:before,
+					&:after
+						color: #aaa
+
+			&.commentsTrigger
+				left: 0
+
+				> span
+
+					&:before
+						content: '\f075'
+
+			&.likeTrigger
+				right: 0
+
+				> span
+					padding: 0 3px 0 0
+
+					&:after
+						transition: color ease-in-out .2s
+						content: '\f004'
+
+				&.liked
+
+					> span
+
+						&:after
+							color: #ff3939
+
+					&:hover
+
+						> span
+
+							&:after
+								color: #bb1919
+
+			&.socialButtonsTrigger
+				left: 50%
+				margin-left: -24px
+
+				> span
+					font-size: 0
+					line-height: 0
+
+					&:before
+						content: '\f1e0'
+
+		> .socialButtonsWrapper
+			width: 150px
+			right: auto
+			left: 50%
+			margin-left: -75px
+			bottom: 45px
+			z-index: 3
+			border-radius: 5px
+			box-sizing: border-box
+			opacity: 1
+			transition: opacity ease-in-out .2s
+
+			> div
+				margin-bottom: 5px
+
+			&:after
+				content: ''
+				display: block
+				position: absolute
+				top: 100%
+				width: 0
+				height: 0
+				border:
+					color: rgba(0, 0, 0, .8) transparent transparent
+					style: solid
+					width: 10px 20px 0
+				left: 50%
+				margin: 0 0 0 -20px
+
+		> .modalOverlay
+			background: rgba(0, 0, 0, .9)
+			display: block
+			width: 100%
+			height: 100%
+			top: 100%
+			bottom: auto
+			left: auto
+			right: auto
+			position: absolute
+			opacity: 0
+			z-index: 3
+
+		> .commentsModalWrapper
+			padding: 0
+			margin: 0
+			position: absolute
+			z-index: 4
+			top: 0
+			bottom: auto
+			left: 0
+			right: 0
+			height: 100%
+			border: 14px solid transparent
+				bottom: 0
+				radius: 5px 5px 0 0
+			box-sizing: border-box
+			display: block
+			overflow: hidden
+			transform: translate3d(0, 100%, 0)
+			transition: transform ease-in-out .2s
+
+			> p.loading
+				margin: -15px 0 0
+				padding: 0
+				border: 0
+				width: 100%
+				text-align: center
+				font-size: 16px
+				line-height: 1.3
+				color: #666
+				position: absolute
+				top: 200%
+				left: auto
+				right: auto
+				bottom: auto
+
+			> div
+				display: block
+				height: 100%
+				width: 100%
+				position: absolute
+				padding: 20px 20px 0
+				overflow: hidden
+				border: 0
+					radius: 5px 5px 0 0
+				margin: 0
+				box-sizing: border-box
+				background: #fff
+
+				&.anonymCommentWrapper
+					top: 0
+					left: 100%
+					right: auto
+					bottom: auto
+					padding-top: 40px
+					overflow-y: scroll
+					z-index: 1
+
+					> p
+						font-size: 14px
+						line-height: 1.3
+						margin-bottom: 10px
+
+					input,
+					textarea
+						margin: 0 0 20px
+						padding: 5px 10px
+						background: #f1f1f1
+						border: 1px solid #c4c4c4
+						border-radius: 4px
+						width: 100%
+						font-size: 14px
+						line-height: 1.3
+						box-sizing: border-box
+
+					textarea
+						resize: vertical
+
+					> div
+
+						&.error
+
+							input,
+							textarea
+								border-color: #e97f7f
+								color: #f00
+
+						&.actions
+							text-align: right
+
+							button
+								text-transform: uppercase
+								background: #a7a7a7
+								border: 0
+								padding: 5px 10px 4px
+								margin: 0 0 0 20px
+								border-radius: 3px
+								font-size: 14px
+								line-height: 1.3
+								color: #fff
+								transition: opacity ease-in-out .2s, background ease-in-out .2s
+
+								&:hover
+									background: #7B7B7B
+
+						&.captchaContainer
+
+							> .captchaError
+								display: none
+								font-size: 14px
+								line-height: 1.3
+								color: #f00
+								padding: 10px 5px
+								margin: 0 0 5px
+
+							&.error
+
+								> .captchaError
+									display: block
+
+					&.addingAnonComment
+
+						> div
+
+							&.actions
+
+								.post
+									opacity: .4
+
+				&.main
+
+					> .top
+						border: 0
+							bottom: 1px solid #dbdbdb
+						height: 25px
+						opacity: 1
+						transition: opacity ease-in-out .2s
+
+						> span
+							font: 14px/1.3 $defaultTextFont
+							color: #949494
+							position: relative
+							margin: 0
+							padding: 0 30px 0 0
+
+							&:after
+								color: #c4c4c4
+								font: 18px/1.3 FontAwesome
+								position: absolute
+								display: block
+								top: -4px
+								left: auto
+								right: 10px
+								bottom: auto
+
+							&.comments
+
+								&:after
+									content: '\f075'
+
+							&.likes
+
+								&:after
+									transition: color ease-in-out .2s
+									content: '\f004'
+									top: -3px
+
+								&.liked
+
+									&:after
+										color: #FF6D6D
+
+							&.sort
+								position: absolute
+								right: 10px
+								left: auto
+								top: auto
+								bottom: auto
+								cursor: pointer
+								transition: color ease-in-out .2s
+
+								&:after
+									content: '\f160'
+									transition: color ease-in-out .2s
+
+								&.desc
+
+									&:after
+										content: '\f161'
+
+								&:hover
+									color: #5b5b5b
+
+									&:after
+										color: #8f8f8f
+
+					> .newCommentWrapper
+						position: absolute
+						top: auto
+						bottom: 0
+						left: 20px
+						right: 20px
+						border: 0
+							top: 1px solid #dbdbdb
+						padding: 0 65px 0 0
+						background: #fff
+						z-index: 1
+
+						&:before
+							color: #c4c4c4
+							font: 33px/1 FontAwesome
+							position: absolute
+							display: block
+							top: 50%
+							left: auto
+							right: auto
+							bottom: auto
+							margin: -17px 0 0
+							content: '\f14b'
+
+						> button
+							background: #a7a7a7
+							border: 0
+								radius: 2px
+							margin: -14px 0 0
+							padding: 5px 10px 4px
+							font: 14px/1.3 $defaultTextFont
+							color: #fff
+							text-transform: uppercase
+							position: absolute
+							top: 50%
+							left: auto
+							right: 0
+							transition: background ease-in-out .2s
+
+							&:hover
+								background: #7B7B7B
+
+						> textarea
+							color: #878787
+							font: 16px/1.3 $defaultTextFont
+							margin: 0
+							padding: 10px 0 0 40px
+							border: 0
+							background: none
+							resize: none
+							width: 100%
+							height: 40px
+							box-shadow: none
+							box-sizing: border-box
+
+						&.filledIn
+
+							> button
+								background: #1287bd
+
+					> .noComments
+						display: none
+						margin: -10px 0 0
+						padding: 0
+						border: 0
+						font: 16px/1.3 $defaultTextFont
+						text-align: center
+						position: absolute
+						top: 50%
+						left: 20px
+						right: 20px
+						color: #747474
+
+					> ul
+						margin: 0
+						padding: 0
+						border: 0
+						overflow-y: scroll
+
+						> li
+							display: block
+							margin: 0
+							padding: 10px 0 12px 60px
+							border: 0
+								bottom: 1px solid #dbdbdb
+							position: relative
+							font: 0/0 Arial
+							min-height: 44px
+
+							> .authorAvatar
+								position: absolute
+								top: 12px
+								left: 0
+								right: auto
+								bottom: auto
+								border: 1px solid #adadad
+								display: block
+								text-decoration: none
+								font-size: 0
+								line-height: 0
+
+								> img
+									border: 0
+									padding: 0
+									margin: 0
+									width: 40px
+									height: 40px
+									display: block
+
+							> .author
+								color: #1287bd
+								font: 12px/1.3 $defaultTextFont
+								text-decoration: none
+								display: inline
+								margin: 0
+								padding: 0
+								font-weight: bold
+
+							> div
+								margin: 4px 0 0
+								padding: 0
+								border: 0
+								display: block
+
+								> p
+									margin: 10px 0 0
+									padding: 0
+									border: 0
+									display: block
+									font: 12px/1.3 $defaultTextFont
+									font-weight: normal
+									color: #000
+
+									&:first-child
+										margin: 0
+
+							> .datetime
+								margin: 4px 0 0
+								padding: 0
+								border: 0
+								display: block
+								font: 11px/1.3 $defaultTextFont
+								font-weight: normal
+								color: #949494
+
+							&:last-child
+								border: 0
+
+			> span.closeComments
+				position: absolute
+				top: 0
+				left: 50%
+				right: auto
+				bottom: auto
+				background: #dadada
+				padding: 0 10px 10px
+				margin: 0 0 0 -40px
+				border: 0
+					radius: 0 0 4px 4px
+				width: 60px
+				height: 25px
+				z-index: 2
+				transition: background ease-in-out .2s
+				cursor: pointer
+				font-size: 0
+				line-height: 0
+
+				&:after
+					content: '\f103'
+					font: 18px/1 FontAwesome
+					color: #767676
+					display: block
+					width: 100%
+					margin: 8px 0 0
+					padding: 0
+					border: 0
+					padding: absolute
+					top: 0
+					left: 0
+					text-align: center
+					transition: color ease-in-out .2s
+
+				&:hover
+					background: #cbcbcb
+
+					&:after
+						color: #3c3c3c
+
+			&.noComments
+
+				> div.main
+
+					> .noComments
+						display: block
+
+			&.showAnonymWindow
+
+				> div
+
+					&.anonymCommentWrapper
+						left: 0
+
+			&.loading
+
+				> p.loading
+					top: 50%
+
+				> div
+
+					&.main
+
+						> .top
+
+							> span.sort
+								right: -100%
+
+						> ul
+							opacity: 0
+
+						> .newCommentWrapper
+							bottom: 100%
+
+		&.modalActive
+
+			> .modalOverlay
+				top: 0
+
+			> .commentsModalWrapper
+				transform: translate3d(0, 0, 0)
+
+		&.firstItem
+
+			> .navigation.prev
+				opacity: 0
+
+		&.lastItem
+
+			> .navigation.next
+				opacity: 0
+
+		&.videoActive,
+		&.audioActive
+
+			> .contentWrapper
+				z-index: 2
+
+		&.desktopUserAgent
+
+			> .mobileOverlay
+				box-shadow: 0 160px 110px -135px #000 inset, -115px 0 120px -100px #000 inset, 115px 0 120px -100px #000 inset, 0 -160px 110px -135px #000 inset
+
+			> .navigation
+				width: 46px
+				height: 72px
+				margin-top: -36px
+				opacity: .5
+				transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out
+
+				> span
+					top: 9px
+
+					&:after
+						font-size: 45px
+
+				&:hover
+					opacity: 1
+
+					> span
+
+						&:after
+							color: #fff
+
+			&.lastItem
+
+				> .navigation.next
+					transform: translate3d(100%, 0, 0)
+
+			&.firstItem
+
+				> .navigation.prev
+					transform: translate3d(-100%, 0, 0px)
+
+			> .commentsModalWrapper
+				border-width: 0
+				border-radius: 0
+				width: 400px
+				transform: translate3d(0, 0, 0)
+				transition: none
+				right: auto
+				left: 100%
+
+				> div
+					border-radius: 0
+					padding: 20px 10px 0
+
+					&.main
+
+						> .top
+
+							> span.sort
+								left: 50%
+								margin: 0 0 0 -21px
+								position: absolute
+								right: auto
+
+						> .newCommentWrapper
+							left: 10px
+							right: 10px
+
+					&.anonymCommentWrapper
+						border-top: 37px solid #ffffff
+						padding: 5px
+
+				> span.closeComments
+					padding: 0
+					margin: 0
+					left: auto
+					right: 10px
+					background: transparent !important
+					width: auto
+					height: auto
+					top: 9px
+					padding: 3px 21px 3px 5px
+					border-radius: 0
+					font: 17px/1.3 $defaultTextFont
+					color: #c4c4c4
+					transition: color ease-in-out .2s
+
+					&:after
+						font: 20px/1.3 FontAwesome
+						color: #c4c4c4
+						text-shadow: none
+						content: '\f061'
+						transition: color ease-in-out .2s
+						margin-top: 0
+						position: absolute
+						top: 0
+						left: auto
+						right: 0
+						bottom: auto
+						width: auto
+						display: inline
+
+					&:hover
+						color: #9F9F9F
+
+						&:after
+							color: #9F9F9F
+
+			&.animateComments
+
+				> .commentsModalWrapper
+					transition: transform 0.3s cubic-bezier(.215, .61, .355, 1)
+
+			&.moveComments
+
+				> .commentsModalWrapper
+					transform: translate3d(-100%, 0, 0)
+
+			> .modalOverlay
+				display: none
+
+			> .close
+				height: 45px
+				width: 45px
+				opacity: .5
+
+				> span
+					left: 10px
+					top: 5px
+
+					&:after
+						font-size: 29px
+
+				&:hover
+					opacity: 1
+
+					> span
+
+						&:after
+							color: #fa3222
+
+			> .actions
+				padding: 8px 10px
+				top: 0
+				bottom: auto
+				opacity: .5
+				left: 50%
+				right: auto
+
+				> span
+
+					&:after,
+					&:before
+						font-size: 26px
+
+				&:hover
+					opacity: 1
+
+					> span
+						color: #fff
+
+						&:after,
+						&:before
+							color: #fff
+
+				&.likeTrigger
+					margin: 0 0 0 50px
+
+				&.commentsTrigger
+					margin: 0 0 0 -108px
+
+				&.socialButtonsTrigger
+
+					> span
+						position: relative
+						top: 2px
+
+						&:before
+							left: -1
+
+			.socialButtonsWrapper
+				bottom: auto
+				top: 55px
+
+				&:after
+					top: auto
+					bottom: 100%
+					border:
+						color: transparent transparent rgba(0, 0, 0, 0.8)
+						width: 0 20px 10px
+
+			> .itemTitle
+				bottom: 10px
+				font-size: 26px
+
+
+		&.fadeOutControls
+
+			> .mobileOverlay
+				box-shadow: none
+
+			> .navigation,
+			> .close,
+			> .actions,
+			> .socialButtonsWrapper,
+			> .itemTitle
+				opacity: 0
+
+			> .itemTitle
+				bottom: -100px
+
+		&.hideControls
+
+			> .navigation,
+			> .close,
+			> .actions,
+			> .socialButtonsWrapper,
+			> .itemTitle
+				display: none
+
+
+	&.initializing
+
+		.mainWrapper
+
+			.navigation,
+			.close,
+			.socialButtonsTrigger
+				display: none
+
+		> .actions,
+		> .navigation,
+		> .itemTitle
+			opacity: 0 !important

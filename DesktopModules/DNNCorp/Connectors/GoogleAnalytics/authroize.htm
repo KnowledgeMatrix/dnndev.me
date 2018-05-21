@@ -1,0 +1,35 @@
+﻿<div class="loadingStatusPanel" data-bind="visible: checkingAuthorizationStatus(), html: resx.CheckingStatus">
+</div>
+
+<div class="connectPanel" data-bind="visible: !checkingAuthorizationStatus() && !authorized()">
+    <div class="edit-buttons">
+        <a class="secondarybtn" data-bind="html: resx.Cancel, click: onCancel" />
+        <a class="primarybtn" data-bind="html: resx.ConnectToGA, click: onAuthorize" />
+    </div>
+</div>
+
+<div class="connectedPanel" data-bind="visible: !checkingAuthorizationStatus() && authorized()">
+    <div class="connectedFields">
+        <div class="connectedField" data-bind="css: {'data-loading': integration.loadingAccounts()}">
+            <label data-bind="html: integration.resx.Account" for="AccountDropDown"></label>
+            <select id="AccountDropDown" name="AccountDropDown"
+                    data-bind="value: integration.account, options: integration.accountsData, optionsText: 'name', optionsValue: 'accountId', optionsCaption: integration.resx.ChooseAccount"></select>
+        </div>
+        <div class="connectedField" data-bind="css: {'data-loading': integration.loadingWebProperties()}">
+            <label data-bind="html: integration.resx.WebProperty" for="WebPropertiesDropDown"></label>
+            <select id="WebPropertiesDropDown" name="WebPropertiesDropDown"
+                    data-bind="value: integration.webProperty, options: integration.webPropertiesData, optionsText: 'description', optionsValue: 'webPropertyId', optionsCaption: integration.resx.ChooseWebProperty"></select>
+        </div>
+        <div class="connectedField" data-bind="css: {'data-loading': integration.loadingProfiles()}">
+            <label data-bind="html: integration.resx.Profile" for="ProfilesDropDown"></label>
+            <select id="ProfilesDropDown" name="ProfilesDropDown"
+                    data-bind="value: integration.profile, options: integration.profilesData, optionsText: 'name', optionsValue: 'profileId', optionsCaption: integration.resx.ChooseProfile"></select>
+        </div>
+    </div>
+
+    <div class="edit-buttons">
+        <a class="secondarybtn" data-bind="html: resx.Cancel, click: onCancel" />
+        <a class="plainbtn" data-bind="html: resx.Disconnect, click: onUnAuthorize, css: {'disabled': integration.disableDisconnect()}" />
+        <a class="primarybtn" data-bind="html: resx.Save, click: onSave, css: {'disabled': integration.disableSave()}" />
+    </div>
+</div>

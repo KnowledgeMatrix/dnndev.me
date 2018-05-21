@@ -1,0 +1,324 @@
+.moduleZendesk {
+    color: #666;
+    background: #f1f1f1;
+    text-align: left;
+    word-wrap: break-word;
+}
+.moduleZendesk .hd-view-list .dnnTableDisplay {
+    width: 100%;
+    border-collapse: separate;
+    empty-cells: hide;
+    table-layout: fixed;
+}
+
+.moduleZendesk .hd-view-list .dnnTableDisplay td em {
+    font-style: normal;
+    font-weight: bold;
+}
+
+.moduleZendesk .td-subject { width: 60%; }
+
+.moduleZendesk .td-date { min-width: 150px; }
+
+.moduleZendesk .ticket-id-col { width: 65px;}
+
+.moduleZendesk .date-created-col { width: 40%; }
+
+.moduleZendesk .ticket-table tr :hover { cursor: pointer; }
+
+.moduleZendesk .hd-view-details h2 { margin-top: 18px; }
+
+.moduleZendesk .hd-view-details h6 { font-size: 13px; font-weight: normal;}
+
+.moduleZendesk .hd-view-details h6 span.user,
+.moduleZendesk .hd-view-details h6 span.date { font-weight: bold; }
+
+.moduleZendesk .hd-view-details p {
+    font-size: 16px;
+    margin-bottom: 18px;
+    line-height: 24px;
+    text-indent: 3px;
+}
+
+.moduleZendesk .created-on { float: left; }
+
+.moduleZendesk .last-activity { float: right; }
+
+.moduleZendesk .info-panel {
+    -ms-border-radius: 4px;
+    border-radius: 4px;
+    background-color: #f1f1f1;
+    padding: 30px 20px 20px 20px;
+    margin-bottom: 25px;
+}
+
+.moduleZendesk .hd-view-details ul.ticket-comments {
+    margin: 0;
+    padding: 0;
+}
+
+.moduleZendesk .hd-view-details ul.ticket-comments li .fileThumb{
+    max-width: 150px;
+    height: auto;
+}
+.moduleZendesk .ticket-comments .fileLinkTitle {
+    display: block;
+    font-size: 11px;
+    margin-bottom: 10px;
+}
+.moduleZendesk .ticket-comments .fileLinkContainer {
+    float: left;
+    width: 150px;
+    height: 65px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.moduleZendesk .ticket-comments .fileLink {
+    display: inline-block;
+    margin-top: 10px;
+    height: 100%;
+    width: 100%;
+    text-align: center;
+}
+
+.moduleZendesk .ticket-comments .fileLink span {
+    position: relative;
+    vertical-align: middle;
+    top: 35%;
+    display: inline-block;
+    width: 85%;
+    text-align: center;
+    font-size: 11px;
+}
+
+.moduleZendesk .ticket-comments .fileLink:hover {
+    color: #000;
+}
+
+.moduleZendesk .ticket-comments .fileLink:hover span:before{
+    background: url('images/FileDownload_Black.png');
+}
+
+.moduleZendesk .ticket-comments .fileLink span:before {
+    content: " ";
+    width: 34px;
+    height: 34px;
+    position: relative;
+    background: url('images/FileDownload_Blue.png');
+    position: absolute;
+    top: -30px;
+    margin-right: 3px;
+    left: 35%;
+}
+
+.moduleZendesk .hd-view-details ul.ticket-comments li {
+    list-style-type: none;
+    border-radius: 4px;
+    background-color: #f1f1f1;
+    padding: 10px;
+    margin-bottom: 12px;
+    float: left;
+    width: 100%;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+
+.moduleZendesk .hd-view-details .commentArea {
+    overflow-y: hidden;
+    max-height: 500px; /* approximate max height */
+
+    transition-property: all;
+    transition-duration: 1.5s;
+    transition-timing-function: cubic-bezier(0, 1, 1.5, 1);
+}
+
+.moduleZendesk .hd-view-details .commentArea.closed { max-height: 0px; }
+
+.moduleZendesk .hd-view-details .commentArea textarea {
+    font-size: 14px;
+    width: 100%;
+    height: 80px;
+    float: left;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+
+.moduleZendesk .hd-view-create .dnnForm {
+    width: 100%;
+}
+
+.moduleZendesk .hd-view-create .dnnForm input {
+    width: 100%;
+    float: left;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+
+.moduleZendesk .hd-view-create .dnnForm textarea {
+    width: 100%;
+    height: 150px;
+    float: left;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+
+.moduleZendesk .hd-view-create .zd-field {
+    width: 100%;
+    padding-top: 10px;
+}
+
+.moduleZendesk .hd-view-create .zd-select-field {
+    width: 100%;
+    float: left;
+}
+
+
+.moduleZendesk .hd-view-create .zd-select-field select {
+    width: 100%;
+    float: left;
+}
+
+.moduleZendesk label {
+    font-weight: bold;
+    display: block;
+}
+
+.successmessage {
+    width: 300px;
+    height: 120px;
+    position: fixed;
+    background-image: url(images/bluecheck.png);
+    background-repeat: no-repeat;
+    background-position: center 20px;
+    background-color: #042f47;
+    color: #33ace5;
+    border-radius: 6px;
+    display: block;
+    left: 50%;
+    top: 50%;
+}
+
+.successmessage span {
+    display: block;
+    position: relative;
+    top: 70px;
+    left: 45px;
+    font-size: 18px;
+}
+
+.moduleZendesk .file-area {
+    width: 100%;
+    float: left;
+    margin-bottom: 15px;
+    margin-top: 5px;
+}
+
+.moduleZendesk .title-container {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 15px;
+}
+
+.moduleZendesk .title-container > p.title-returnPrev { margin-top: 15px; }
+
+.moduleZendesk .btn-reply-container {
+    margin-top: 10px;
+    padding-top: 25px;
+    border-top: 1px solid #edeae9;
+    width: 100%;
+    float: left;
+}
+
+.moduleZendesk .dnnFormItem span.dnnFormMessage.dnnFormError {
+    display: table;
+    bottom: 75%;
+    left: 39%;
+    min-width: 115px;
+    width: auto;
+    max-width: 500px;
+}
+
+.moduleZendesk .dnnFormItem span.dnnFormMessage.dnnFormError:after {
+    bottom: -7px;
+    left: 15px;
+}
+
+.zd-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba(255, 255, 255, .8)
+                url("images/loading.gif")
+                50% 50%
+                no-repeat;
+}
+
+body.loading { overflow: hidden; }
+
+body.loading .modal { display: block; }
+
+.loading {
+    background-image: url("images/loading.gif");
+    background-position: center center;
+    background-repeat: no-repeat;
+    opacity: 0.75;
+}
+
+.moduleZendesk .dnnTableDisplay {
+    border: none;
+    margin-top: 10px;
+}
+
+.moduleZendesk .dnnTableDisplay th {
+    border-top: 1px solid #d1d1d1;
+}
+.moduleZendesk .dnnTableDisplay th:last-child {
+    border-right: 1px solid #d1d1d1;
+}
+.moduleZendesk .dnnTableDisplay th a:hover {
+    cursor: default;
+    background: transparent;
+}
+
+.moduleZendesk .dnnTableDisplay td:last-child {
+    border-right: 1px solid #d1d1d1;
+}
+
+.moduleZendesk .dnnTableDisplay tr:nth-child(2n) td {
+    background: none;
+}
+
+.moduleZendesk .dnnTableDisplay tfoot {
+    display: none;
+}
+
+.moduleZendesk .create-toolbar {
+    background: #E8E8E8;
+    display: block;
+    height: 83px;    
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    padding: 25px 15px;
+}
+
+.moduleZendesk .create-toolbar p {
+    float: right;
+    font-size: 13px;
+    font-weight: bold;
+    margin-top: 7px;
+    margin-right: 10px;
+}
+
+@media (max-width: 500px) and only screen and (max-width: 500px) {
+    .moduleZendesk .last-activity { float: left; }
+}

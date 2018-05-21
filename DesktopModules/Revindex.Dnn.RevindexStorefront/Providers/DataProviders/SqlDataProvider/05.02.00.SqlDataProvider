@@ -1,0 +1,197 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+SET XACT_ABORT ON
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+	
+	-- Fix bug in 5.1.0 where the BillingStreet column was accidentally set to 50 max length, where it used to be 200.
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder ALTER COLUMN BillingStreet NVARCHAR(200) NULL
+	
+	-- Fix bug in 5.1.0 where the BillingCountryCode column was accidentally set to NVARCHAR(50) max length, where it used to be VARCHAR(2).
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder ALTER COLUMN BillingCountryCode VARCHAR(2) NULL
+	
+	-- Support cart abandonment email
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD CommunicationCartAbandonEmailTemplate xml NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD CartAbandonTimeout int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CartAbandonmentTimeout DEFAULT 86400
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CartAbandonmentTimeout
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD CommunicationCartAbandonEmailActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CommunicationCartAbandonEmailActive DEFAULT 1
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CommunicationCartAbandonEmailActive
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder ADD CartAbandonNotified bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrder_CartAbandonNotified DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrder_CartAbandonNotified
+	
+	-- Allow locking order from cart session changes
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder ADD OrderLocked bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrder_OrderLocked DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrder_OrderLocked
+	
+	-- Support group deal type promotion on voucher
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_VoucherDefinition ADD
+			MaxRedemption int NULL,
+			PromotionStartDate datetime NULL,
+			PromotionStopDate datetime NULL,
+			PromotionExpiryInterval int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_VoucherDefinition_PromotionExpiryInterval DEFAULT 0,
+			PromotionExpiryIntervalType int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_VoucherDefinition_PromotionExpiryIntervalType DEFAULT 1,
+			PromotionRule xml NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_VoucherDefinition DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_VoucherDefinition_PromotionExpiryInterval
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_VoucherDefinition DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_VoucherDefinition_PromotionExpiryIntervalType	
+	
+	-- Support autogenerate voucher on product purchase
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant ADD VoucherDefinitionID int NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant ADD CONSTRAINT FK_{objectQualifier}Revindex_Storefront_ProductVariant_Revindex_Storefront_VoucherDefinition FOREIGN KEY (VoucherDefinitionID) REFERENCES {databaseOwner}{objectQualifier}Revindex_Storefront_VoucherDefinition (VoucherDefinitionID) ON UPDATE NO ACTION ON DELETE NO ACTION 
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Voucher ADD	SalesOrderDetailID int NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Voucher ADD CONSTRAINT FK_{objectQualifier}Revindex_Storefront_Voucher_Revindex_Storefront_SalesOrderDetail FOREIGN KEY (SalesOrderDetailID) REFERENCES {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrderDetail (SalesOrderDetailID) ON UPDATE NO ACTION ON DELETE NO ACTION 
+	CREATE NONCLUSTERED INDEX IX_{objectQualifier}Revindex_Storefront_Voucher_1 ON {databaseOwner}{objectQualifier}Revindex_Storefront_Voucher
+	(
+		SalesOrderDetailID
+	)
+	
+	-- Support voucher receipt
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		CommunicationVoucherReceiptEmailTemplate xml NULL,
+		CommunicationVoucherReceiptEmailActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CommunicationVoucherReceiptEmailActive DEFAULT 1
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CommunicationVoucherReceiptEmailActive
+	
+	-- Support rewards point
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD RewardsPointActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_RewardsPointActive DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_RewardsPointActive
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD RewardsPointRewardOrderActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_RewardsPointRewardOrderActive DEFAULT 1
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_RewardsPointRewardOrderActive
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD RewardsPointRewardOrderMinAmount decimal(19, 4) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_RewardsPointRewardOrderMinAmount DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_RewardsPointRewardOrderMinAmount
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD RewardsPointRewardOrderPointRate decimal(19, 4) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_RewardsPointRewardOrderPointRate DEFAULT 1
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_RewardsPointRewardOrderPointRate
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD RewardsPointRewardOrderDelay int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_RewardsPointRewardOrderDelay DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_RewardsPointRewardOrderDelay
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD RewardsPointMonetaryRate decimal(19, 4) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_RewardsPointMonetaryRate DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_RewardsPointMonetaryRate
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD RewardsPointRedeemMinPointQuantity int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_RewardsPointRedeemMinPointQuantity DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_RewardsPointRedeemMinPointQuantity
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD RewardsPointExpiryInterval int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_RewardsPointExpiryInterval DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_RewardsPointExpiryInterval
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD RewardsPointExpiryIntervalType int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_RewardsPointExpiryIntervalType DEFAULT 1
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_RewardsPointExpiryIntervalType
+	
+	CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RewardsPoint](
+		[RewardsPointID] [int] IDENTITY(1,1) NOT NULL,
+		[PortalID] [int] NOT NULL,
+		[UserID] [int] NOT NULL,
+		[Points] [int] NOT NULL,
+		[Status] [int] NOT NULL,
+		[CreateDate] [datetime] NOT NULL,
+		[UpdateDate] [datetime] NOT NULL,
+		[RowVersion] [timestamp] NOT NULL,
+		[AdminNotes] [nvarchar](4000) NULL,
+	CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_RewardsPoint] PRIMARY KEY CLUSTERED 
+	(
+		[RewardsPointID] ASC
+	))
+	 
+	CREATE UNIQUE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_RewardsPoint] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_RewardsPoint] 
+	(
+		[PortalID] ASC,
+		[UserID] ASC
+	)
+	 
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RewardsPoint]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_RewardsPoint_Portals] FOREIGN KEY([PortalID]) REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID]) ON DELETE CASCADE
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RewardsPoint] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_RewardsPoint_Portals]
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RewardsPoint]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_RewardsPoint_Users] FOREIGN KEY([UserID]) REFERENCES {databaseOwner}[{objectQualifier}Users] ([UserID]) ON DELETE CASCADE
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RewardsPoint] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_RewardsPoint_Users]
+
+	-- RewardsPointHistory
+	CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RewardsPointHistory](
+		[RewardsPointHistoryID] [int] IDENTITY(1,1) NOT NULL,
+		[RewardsPointID] [int] NOT NULL,
+		[HistoryDate] [datetime] NOT NULL,
+		[PointsAdjustment] [int] NOT NULL,
+		[Operation] [int] NOT NULL,
+		[CreateDate] [datetime] NOT NULL,
+		[UpdateDate] [datetime] NOT NULL,
+		[RowVersion] [timestamp] NOT NULL,
+		[SalesOrderID] [int] NULL,
+	 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_RewardsPointHistory] PRIMARY KEY CLUSTERED 
+	(
+		[RewardsPointHistoryID] ASC
+	))
+	
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_RewardsPointHistory] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_RewardsPointHistory] 
+	(
+		[RewardsPointID] ASC
+	)
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RewardsPointHistory]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_RewardsPointHistory_Revindex_Storefront_RewardsPoint] FOREIGN KEY([RewardsPointID]) REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_RewardsPoint] ([RewardsPointID]) ON DELETE CASCADE
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RewardsPointHistory] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_RewardsPointHistory_Revindex_Storefront_RewardsPoint]
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RewardsPointHistory]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_RewardsPointHistory_Revindex_Storefront_SalesOrder] FOREIGN KEY([SalesOrderID]) REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder] ([SalesOrderID])
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RewardsPointHistory] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_RewardsPointHistory_Revindex_Storefront_SalesOrder]
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		PaymentMethodsRewardsPointActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsRewardsPointActive DEFAULT 0,
+		PaymentMethodsRewardsPointAvailabilityRule xml NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsRewardsPointActive
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD ProductDetailRewardPointsShow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductDetailRewardPointsShow DEFAULT 1
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductDetailRewardPointsShow
+
+	-- Alter product variant to support rewards point
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant ADD
+		AllowRewardsPoint bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ProductVariant_AllowRewardsPoint DEFAULT 1,
+		RewardPoints int NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ProductVariant_AllowRewardsPoint
+	
+	-- Add RewardsPoints to SalesOrder table
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder ADD RewardsPointsRewarded int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrder_RewardsPointsRewarded DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrder_RewardsPointsRewarded
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder ADD RewardsPointsQualified int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrder_RewardsPointsQualified DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrder_RewardsPointsQualified
+
+	-- Fix VoucherHistory.Operation column should be NOT NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_VoucherHistory ALTER COLUMN Operation INTEGER NOT NULL
+
+	-- Support retry declined payment
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD RecurringSalesOrderPaymentIncompleteRetryActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_RecurringSalesOrderPaymentIncompleteRetryActive DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_RecurringSalesOrderPaymentIncompleteRetryActive
+
+COMMIT TRANSACTION
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+
+		-- Upgrade default Cart template to "Standard10"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CartDisplayTemplate = 'Standard10' WHERE CartDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default QuickOrder template to "Standard3"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET QuickOrderDisplayTemplate = 'Standard3' WHERE QuickOrderDisplayTemplate LIKE 'Standard%'
+		
+		-- Set new email template for cart abandon
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CommunicationCartAbandonEmailTemplate = '<locale en-US="&lt;rule version=&quot;1.0&quot; type=&quot;data&quot;&gt;&amp;lt;data method=&quot;BasicCartAbandonEmail&quot; version=&quot;1.0&quot;&amp;gt;&#xD;&#xA;  &amp;lt;mailFrom&amp;gt;&amp;lt;/mailFrom&amp;gt;&#xD;&#xA;  &amp;lt;mailTo&amp;gt;&amp;lt;/mailTo&amp;gt;&#xD;&#xA;  &amp;lt;mailBcc&amp;gt;&amp;lt;/mailBcc&amp;gt;&#xD;&#xA;  &amp;lt;subject&amp;gt;Thank you for visiting [[xsl:value-of select=&quot;in/configuration/generalStoreName&quot; /]] [Order #[[xsl:value-of select=&quot;in/salesOrder/salesOrderNumber&quot; /]]]&amp;lt;/subject&amp;gt;&#xD;&#xA;  &amp;lt;htmlBody&amp;gt;Hi [[xsl:if test=&quot;in/user/profile/profileProperties/FirstName&quot; ]]&amp;#160;[[xsl:value-of select=&quot;in/user/profile/profileProperties/FirstName&quot; /]]&amp;amp;amp;#160;[[xsl:value-of select=&quot;in/user/profile/profileProperties/LastName&quot; /]][[/xsl:if]],&amp;amp;lt;br /&amp;amp;gt;&#xD;&#xA;&amp;amp;lt;br /&amp;amp;gt;&#xD;&#xA;We notice that you left something in your shopping cart. We hope you didn''t experience any problems when trying to place an order with us. Just in case, we''ve kept your recent selections for a limited time so you don''t have to start all over again. Simply click the link below to resume your shopping.&amp;amp;lt;br /&amp;amp;gt;&#xD;&#xA;&amp;amp;lt;br /&amp;amp;gt;&#xD;&#xA;[[xsl:variable name=&quot;CartUrl&quot; select=&quot;concat(''http://'', in/portal/portalAliases/portalAlias[isPrimary=''true''][1]/httpAlias, ''?tabid='', in/portal/cartTabs/tab[1]/tabID, ''&amp;amp;amp;amp;rvdsfsoguid='', in/salesOrder/salesOrderGUID)&quot; /]]&#xD;&#xA;&amp;amp;lt;a href=&quot;[[xsl:value-of select=''$CartUrl'' /]]&quot;&amp;amp;gt;Click here to resume shopping&amp;amp;lt;/a&amp;amp;gt;&amp;amp;lt;br /&amp;amp;gt;&#xD;&#xA;&amp;amp;lt;br /&amp;amp;gt;&#xD;&#xA;If you have any questions or need assistance, please do not hesitate to contact us.&amp;lt;/htmlBody&amp;gt;&#xD;&#xA;&amp;lt;/data&amp;gt;&lt;/rule&gt;" />'
+		
+		-- Set new email template for voucher receipt
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CommunicationVoucherReceiptEmailTemplate = '<locale en-US="&lt;rule version=&quot;1.0&quot; type=&quot;data&quot;&gt;&amp;lt;data method=&quot;BasicVoucherReceiptEmail&quot; version=&quot;1.0&quot;&amp;gt;&#xD;&#xA;  &amp;lt;mailFrom&amp;gt;&amp;lt;/mailFrom&amp;gt;&#xD;&#xA;  &amp;lt;mailTo&amp;gt;&amp;lt;/mailTo&amp;gt;&#xD;&#xA;  &amp;lt;mailBcc&amp;gt;&amp;lt;/mailBcc&amp;gt;&#xD;&#xA;  &amp;lt;subject&amp;gt;[[xsl:value-of select=&quot;in/configuration/generalStoreName&quot; /]] Vouchers&amp;lt;/subject&amp;gt;&#xD;&#xA;  &amp;lt;htmlBody&amp;gt;&amp;amp;lt;p&amp;amp;gt;Hi [[xsl:value-of select=&quot;in/user/firstName&quot; /]]&amp;#160;[[xsl:value-of select=&quot;in/user/lastName&quot; /]],&amp;amp;lt;/p&amp;amp;gt;&#xD;&#xA;&amp;amp;lt;p&amp;amp;gt;Here are your vouchers issued to you with the following codes:&amp;amp;lt;/p&amp;amp;gt;&#xD;&#xA;&amp;amp;lt;p&amp;amp;gt;[[xsl:for-each select=&quot;in/vouchers/voucher&quot; ]]&#xD;&#xA;&amp;amp;lt;strong&amp;amp;gt;[[xsl:value-of select=&quot;code&quot; /]]&amp;amp;lt;/strong&amp;amp;gt; - [[xsl:choose]][[xsl:when test=&quot;promotionAmount/text()&quot; ]][[xsl:value-of select=&quot;format-number(promotionAmount, ''$#,##0.00'')&quot; /]][[/xsl:when]][[xsl:otherwise]][[xsl:value-of select=&quot;format-number(amount, ''$#,##0.00'')&quot; /]][[/xsl:otherwise]][[/xsl:choose]]&amp;amp;lt;br /&amp;amp;gt;&#xD;&#xA;[[/xsl:for-each]]&amp;amp;lt;/p&amp;amp;gt;&#xD;&#xA;[[xsl:variable name=&quot;ManageVoucherUrl&quot; select=&quot;concat(''http://'', in/portal/portalAliases/portalAlias[isPrimary=''true''][1]/httpAlias, ''?tabid='', in/portal/manageVoucherTabs/tab[1]/tabID)&quot; /]]&#xD;&#xA;&amp;amp;lt;p&amp;amp;gt;Remember, vouchers are like cash so keep the codes in a safe place and delete this email after reading. You can visit &amp;amp;lt;a href=&quot;[[xsl:value-of select=''$ManageVoucherUrl'' /]]&quot;&amp;amp;gt;your account page&amp;amp;lt;/a&amp;amp;gt; anytime to obtain more information about your vouchers.&amp;amp;amp;#160;&amp;amp;lt;/p&amp;amp;gt;&#xD;&#xA;&amp;amp;lt;p&amp;amp;gt;If you have any questions, please do not hesitate to contact customer support.&amp;amp;lt;/p&amp;amp;gt;&amp;lt;/htmlBody&amp;gt;&#xD;&#xA;&amp;lt;/data&amp;gt;&lt;/rule&gt;" />'
+		
+		-- Upgrade default Checkout template to "Standard17"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CheckoutDisplayTemplate = 'Standard17' WHERE CheckoutDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default ProductDetail template to "Standard13"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductDetailDisplayTemplate = 'Standard13' WHERE ProductDetailDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default ProductShowcase template to "Standard5"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductShowcaseDisplayTemplate = 'Standard5' WHERE ProductShowcaseDisplayTemplate LIKE 'Standard%'
+		
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

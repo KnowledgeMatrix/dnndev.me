@@ -1,0 +1,5 @@
+IF NOT EXISTS (SELECT UpdateVersion FROM {databaseOwner} [{objectQualifier}EasyGalleryUpdate] WHERE UpdateVersion = '08.07.00')
+BEGIN
+	INSERT {databaseOwner}[{objectQualifier}EasyGalleryUpdate] ([UpdateVersion],[Finished],[InstallType]) VALUES (N'08.07.00',0,'DNN')
+END
+GO

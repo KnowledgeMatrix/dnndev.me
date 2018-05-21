@@ -1,0 +1,33 @@
+﻿IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_GetUserFriendCount') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_GetUserFriendCount
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_GetUserFriendCount]
+	@PortalId INT,
+	@UserId INT,
+	@SearchText NVARCHAR(255) = ''
+AS
+BEGIN
+	DECLARE @Count INT
+
+	;WITH friendList AS (
+		SELECT	DISTINCT
+					CASE
+						WHEN ur.[UserID] = @UserId THEN ur.[RelatedUserID]
+						ELSE ur.[UserID]
+					END AS [UserId]
+		FROM			{databaseOwner}[{objectQualifier}UserRelationships] ur
+		INNER JOIN		{databaseOwner}[{objectQualifier}Relationships] r ON r.RelationshipID = ur.RelationshipID
+		LEFT OUTER JOIN {databaseOwner}[{objectQualifier}UserPortals] up ON up.UserID = CASE WHEN ur.[UserID] = @UserId THEN ur.[RelatedUserID] ELSE ur.[UserID] END
+		LEFT OUTER JOIN {databaseOwner}[{objectQualifier}Users] u ON u.UserID = CASE WHEN ur.[UserID] = @UserId THEN ur.[RelatedUserID] ELSE ur.[UserID] END
+		WHERE			up.[PortalID] = @PortalId
+		AND				(up.[Authorised] = 1 AND up.[IsDeleted] = 0)
+		AND				(@SearchText IS NULL OR LEN(@SearchText) = 0 OR u.DisplayName LIKE '%' + @SearchText + '%')
+		AND				(ur.UserID = @UserId OR ur.RelatedUserID = @UserId)
+		AND				r.Name = 'Friends'
+		AND				ur.Status = 2) -- Accepted
+	SELECT @Count = COUNT(*) FROM friendList
+
+	SELECT @Count AS [FriendCount]
+END
+GO

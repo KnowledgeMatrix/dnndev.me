@@ -1,0 +1,1013 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****               Create Tables                      *****/
+/************************************************************/
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_EmailCampaign') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_EmailCampaign
+	(
+		[EmailCampaignID] [INT] IDENTITY(1,1) NOT NULL,
+		[Name] [NVARCHAR](128) NULL,
+		[Type] [NVARCHAR](32) NULL,
+		[EmailFrom] [NVARCHAR](256) NULL,
+		[Subject] [NVARCHAR](256) NULL,
+		[Template] [NTEXT] NULL,
+		[Active] [BIT] NULL,
+		[Interval] [SMALLINT] NULL,
+		[Units] [NVARCHAR](10) NULL,
+		[CouponID] [INT] NULL,
+		[EmailsSent] [INT] NULL CONSTRAINT [DF_{objectQualifier}Smith_EmailCampaign_EmailsSent] DEFAULT ((0)),
+		[LanguageLocale] [NVARCHAR](20) NULL,
+		[TabModuleID] [INT] NULL,
+		[StoreID] [INT] NULL,
+		[PortalID] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_EmailCampaign] PRIMARY KEY CLUSTERED
+		(
+			[EmailCampaignID] ASC
+		)
+	)
+END
+GO
+
+
+
+/************************************************************/
+/*****                  Alter Tables                    *****/
+/************************************************************/
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ShoppingCart') AND type in (N'U'))
+BEGIN
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ShoppingCart') AND name = N'Email')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_ShoppingCart
+		ADD
+			[Email] [NVARCHAR](256)
+	END
+END
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_Analytics') AND type in (N'U'))
+BEGIN
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_Analytics') AND name = N'Date')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_Analytics
+		ADD
+			[Date] [DATETIME]
+	END
+END
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_Analytics') AND type in (N'U'))
+BEGIN
+	IF EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_Analytics') AND name = N'Date')
+	BEGIN
+		UPDATE
+			{databaseOwner}{objectQualifier}Smith_Analytics
+		SET
+			[Date] = CAST(-53690 AS DATETIME)
+		WHERE
+			[Date] IS NULL
+	END
+END
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_EmailCampaign') AND type in (N'U'))
+BEGIN
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_EmailCampaign') AND name = N'StoreID')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_EmailCampaign
+		ADD
+			[StoreID] [INT]
+	END
+END
+GO
+
+
+
+/************************************************************/
+/*****                Drop Sprocs                       *****/
+/************************************************************/
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_UpdateCategory') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateCategory
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_CreateAnalyticsEvent') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateAnalyticsEvent
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListCouponsByFilter') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListCouponsByFilter
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_GetOrdersRevenueStatistics') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_GetOrdersRevenueStatistics
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_GetAbandonedCartSummary') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_GetAbandonedCartSummary
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_GetAbandonedCartRevenueStatistics') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_GetAbandonedCartRevenueStatistics
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListAbandonedCartByFilter') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListAbandonedCartByFilter
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_CreateShoppingCartItem') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateShoppingCartItem
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListShoppingCartByUser') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListShoppingCartByUser
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListShoppingCartByTimeLapse') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListShoppingCartByTimeLapse
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_UpdateShoppingCartItem') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateShoppingCartItem
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_UpdateShoppingCartEmail') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateShoppingCartEmail
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_DeleteShoppingCartItem') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_DeleteShoppingCartItem
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ClearShoppingCartByUser') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ClearShoppingCartByUser
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_CreateEmailCampaign') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateEmailCampaign
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_GetEmailCampaignByID') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_GetEmailCampaignByID
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListEmailCampaigns') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListEmailCampaigns
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_UpdateEmailCampaign') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateEmailCampaign
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_DeleteEmailCampaign') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_DeleteEmailCampaign
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListAdvancedSearchProducts') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListAdvancedSearchProducts
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListCategoriesByFilter') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListCategoriesByFilter
+GO
+
+
+
+/************************************************************/
+/*****               Create Sprocs                      *****/
+/************************************************************/
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateCategory
+	@CategoryID INT = NULL,
+	@CategoryName VARCHAR(50) = NULL,
+	@SortOrder INT = NULL,
+	@Share BIT = NULL,
+	@TabModuleId INT = NULL,
+	@ParentID INT = NULL,
+	@PortalID INT = NULL,
+	@CatSEOURL VARCHAR(50) = NULL,
+	@CatDescription NTEXT = NULL,
+	@ShowCategoryRole BIT = NULL,
+	@MinOrderAmount MONEY = NULL,
+	@MinOrderQty INT = NULL,
+	@DepartmentID INT = NULL,
+	@Featured BIT = NULL,
+	@CatImage NVARCHAR(500) = NULL,
+	@BreadCrumb NVARCHAR(200) = NULL,
+	@StoreID INT = NULL
+AS
+BEGIN
+	UPDATE
+		{databaseOwner}{objectQualifier}Smith_Category
+	SET
+		[CategoryName] = @CategoryName,
+		[SortOrder] = @SortOrder,
+		[Share] = @Share,
+		[TabModuleId] = @TabModuleId,
+		[ParentID] = @ParentID,
+		[PortalID] = @PortalID,
+		[CatSEOURL] = @CatSEOURL,
+		[CatDescription] = @CatDescription,
+		[ShowCategoryRole] = @ShowCategoryRole,
+		[MinOrderAmount] = @MinOrderAmount,
+		[MinOrderQty] = @MinOrderQty,
+		[DepartmentID] = @DepartmentID,
+		[Featured] = @Featured,
+		[CatImage] = @CatImage,
+		[BreadCrumb] = @BreadCrumb,
+		[StoreID] = @StoreID
+	WHERE
+		[CategoryID] = @CategoryID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateAnalyticsEvent
+	@Action VARCHAR(64) = NULL,
+	@ProductID INT = NULL,
+	@UserID INT = NULL,
+	@CartID INT = NULL,
+	@PortalID INT = NULL,
+	@StoreID INT = NULL
+AS
+BEGIN
+	INSERT INTO {databaseOwner}{objectQualifier}Smith_Analytics
+		([Date]
+		,[Action]
+		,[ProductID]
+		,[UserID]
+		,[CartID]
+		,[PortalID]
+		,[StoreID])
+	VALUES
+		(GETDATE()
+		,@Action
+		,@ProductID
+		,@UserID
+		,@CartID
+		,@PortalID
+		,@StoreID)
+	SELECT SCOPE_IDENTITY()
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListCouponsByFilter
+	@PageNumber INT = NULL,
+	@PageSize INT = NULL,
+	@SearchValue NVARCHAR(256) = NULL,
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SET NOCOUNT ON;
+	DECLARE @PageRecordStart INT
+	DECLARE @PageRecordEnd INT
+
+	SET @PageRecordStart = ((@PageNumber - 1) * @PageSize) + 1
+	SET @PageRecordEnd = @PageNumber * @PageSize
+
+	;WITH [CouponsPage] AS
+	(
+		SELECT
+			ROW_NUMBER() OVER (ORDER BY C.[CouponID] ASC) AS [RowNo], C.*
+		FROM
+			{databaseOwner}{objectQualifier}Smith_Coupons C
+		WHERE
+			(C.[StoreID] = @StoreID)
+			AND C.[PortalID] = @PortalID
+			AND (
+				C.[CouponCode] LIKE '%' + @SearchValue + '%'
+				OR C.[CouponName] LIKE '%' + @SearchValue + '%'
+			)
+	)
+	SELECT
+		*,
+		TotalRecords = (
+			SELECT COUNT(*) FROM [CouponsPage]
+		),
+		MoreRecords = (
+			SELECT COUNT(*) FROM [CouponsPage]
+			WHERE [RowNo] > @PageRecordEnd
+		)
+	FROM
+		[CouponsPage]
+	WHERE
+		[RowNo] BETWEEN @PageRecordStart AND @PageRecordEnd
+	ORDER BY
+		[RowNo];
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_GetOrdersRevenueStatistics
+	@Frame VARCHAR(16) = NULL,
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	;WITH [Summary] ([YearVal], [QuarterVal], [MonthVal], [WeekVal], [DayVal], [TotalVal])
+	AS
+	(
+		SELECT
+			(CASE WHEN @Frame IN ('Yearly', 'Quarterly','Monthly', 'Weekly', 'Daily') THEN YEAR(O.[OrderDate]) ELSE 0 END),
+			(CASE WHEN @Frame IN ('Quarterly') THEN DATEPART(QUARTER, O.[OrderDate]) ELSE 0 END),
+			(CASE WHEN @Frame IN ('Monthly', 'Daily') THEN MONTH(O.[OrderDate]) ELSE 0 END),
+			(CASE WHEN @Frame IN ('Weekly') THEN DATEPART(WEEK, O.[OrderDate]) ELSE 0 END),
+			(CASE WHEN @Frame IN ('Daily') THEN DAY(O.[OrderDate]) ELSE 0 END),
+			O.[GrandTotal]
+		FROM
+			{databaseOwner}{objectQualifier}Smith_StoreOrders O
+		INNER JOIN
+			{databaseOwner}{objectQualifier}Smith_PayHist P
+		ON
+			P.[OrderID] = O.[OrderID]
+		WHERE
+			O.[DeletedFlag] <> 1
+			AND O.[Status] NOT IN ('BillMeLater', 'Cancelled', 'Incomplete', 'Returned')
+			AND P.[Success] = 1
+			AND P.[TransType] = 'Sale'
+			AND (O.[StoreID] = @StoreID OR O.[TabModuleID] = @StoreID)
+			AND O.[PortalID] = @PortalID
+	)
+	SELECT
+		[YearVal] AS [Year], [QuarterVal] AS [Quarter], [MonthVal] AS [Month], [WeekVal] AS [Week], [DayVal] AS [Day],
+		COUNT(*) AS [Total], SUM(CONVERT(DECIMAL(18,2), [TotalVal])) AS [Revenue]
+	FROM
+		[Summary]
+	GROUP BY
+		[YearVal], [QuarterVal], [MonthVal], [WeekVal], [DayVal]
+	ORDER BY
+		[YearVal] DESC, [QuarterVal] DESC, [MonthVal] DESC, [WeekVal] DESC, [DayVal] DESC
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_GetAbandonedCartSummary
+	@Frame VARCHAR(16) = NULL,
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	DECLARE @StartDate DATETIME
+	SET @StartDate = CASE @Frame
+		WHEN 'Yearly' THEN DATEADD(YEAR, DATEDIFF(YEAR, 0, GETDATE()), 0)
+		WHEN 'Quarterly' THEN DATEADD(QUARTER, DATEDIFF(QUARTER, 0, GETDATE()), 0)
+		WHEN 'Monthly' THEN DATEADD(MONTH, DATEDIFF(MONTH, 0, GETDATE()), 0)
+		WHEN 'Weekly' THEN DATEADD(WEEK, DATEDIFF(WEEK, 0, GETDATE()), - 1)
+		WHEN 'Daily' THEN DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()), 0)
+		ELSE GETDATE() END
+
+	;WITH [Summary] ([CartCount], [CartRevenue], [OrderCount] ,[OrderRevenue], [CartRecovered])
+	AS
+	(
+		SELECT
+			C.*, O.*, A.*
+		FROM
+		(
+			SELECT
+				COUNT(SC.[CartID]) [CartCount], CAST(ISNULL(SUM((SC.[UnitCost] * SC.[Quantity])), 0) AS MONEY) [CartRevenue]
+			FROM
+				{databaseOwner}{objectQualifier}Smith_ShoppingCart SC
+			WHERE
+				SC.[CreateDate] >= @StartDate
+				AND (SC.[StoreID] = @StoreID OR @StoreID = -1)
+				AND SC.[PortalID] = @PortalID
+		) C,
+		(
+			SELECT
+				COUNT(SO.[OrderID]) [OrderCount], CAST(ISNULL(SUM(SO.[GrandTotal]), 0) AS MONEY) [OrderRevenue]
+			FROM
+				{databaseOwner}{objectQualifier}Smith_StoreOrders SO
+			WHERE
+				SO.[OrderDate] >= @StartDate
+				AND (SO.[StoreID] = @StoreID OR @StoreID = -1)
+				AND SO.[PortalID] = @PortalID
+		) O,
+		(
+			SELECT
+				COUNT(SOD.[OrderDetailID]) [CartRecovered]
+			FROM
+				{databaseOwner}{objectQualifier}Smith_StoreOrders SO
+			JOIN
+				{databaseOwner}{objectQualifier}Smith_StoreOrderDetails SOD
+			ON
+				SOD.[OrderID] = SO.[OrderID]
+			WHERE
+				SO.[OrderDate] >= @StartDate
+				AND DATEDIFF(HOUR, SO.[OrderDate], SOD.[CartAddDate]) > 24
+				AND (SO.[StoreID] = @StoreID OR @StoreID = -1)
+				AND SO.[PortalID] = @PortalID
+		) A
+	)
+	SELECT
+		S.*,
+		CAST(CONVERT(DECIMAL, S.[CartCount]) / ISNULL(NULLIF(S.[OrderCount], 0), 1) AS MONEY) [Rate]
+	FROM
+		[Summary] S
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_GetAbandonedCartRevenueStatistics
+	@Frame VARCHAR(16) = NULL,
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	;WITH [Summary] ([YearVal], [QuarterVal], [MonthVal], [WeekVal], [DayVal], [TotalVal])
+	AS
+	(
+		SELECT
+			(CASE WHEN @Frame IN ('Yearly', 'Quarterly','Monthly', 'Weekly', 'Daily') THEN YEAR(SC.[CreateDate]) ELSE 0 END),
+			(CASE WHEN @Frame IN ('Quarterly') THEN DATEPART(QUARTER, SC.[CreateDate]) ELSE 0 END),
+			(CASE WHEN @Frame IN ('Monthly', 'Daily') THEN MONTH(SC.[CreateDate]) ELSE 0 END),
+			(CASE WHEN @Frame IN ('Weekly') THEN DATEPART(WEEK, SC.[CreateDate]) ELSE 0 END),
+			(CASE WHEN @Frame IN ('Daily') THEN DAY(SC.[CreateDate]) ELSE 0 END),
+			(SC.[UnitCost] * SC.[Quantity])
+		FROM
+			{databaseOwner}{objectQualifier}Smith_ShoppingCart SC
+		WHERE
+			(SC.[StoreID] = @StoreID OR @StoreID = -1)
+			AND SC.[PortalID] = @PortalID
+	)
+	SELECT
+		[YearVal] AS [Year], [QuarterVal] AS [Quarter], [MonthVal] AS [Month], [WeekVal] AS [Week], [DayVal] AS [Day],
+		COUNT(*) AS [Total], CAST(SUM([TotalVal]) AS MONEY) AS [Revenue]
+	FROM
+		[Summary]
+	GROUP BY
+		[YearVal], [QuarterVal], [MonthVal], [WeekVal], [DayVal]
+	ORDER BY
+		[YearVal] DESC, [QuarterVal] DESC, [MonthVal] DESC, [WeekVal] DESC, [DayVal] DESC
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListAbandonedCartByFilter
+	@Frame VARCHAR(16) = NULL,
+	@PageNumber INT = NULL,
+	@PageSize INT = NULL,
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SET NOCOUNT ON;
+	DECLARE @PageRecordStart INT
+	DECLARE @PageRecordEnd INT
+	DECLARE @StartDate DATETIME
+
+	SET @PageRecordStart = ((@PageNumber - 1) * @PageSize) + 1
+	SET @PageRecordEnd = @PageNumber * @PageSize
+	SET @StartDate = CASE @Frame
+		WHEN 'Yearly' THEN DATEADD(YEAR, DATEDIFF(YEAR, 0, GETDATE()), 0)
+		WHEN 'Quarterly' THEN DATEADD(QUARTER, DATEDIFF(QUARTER, 0, GETDATE()), 0)
+		WHEN 'Monthly' THEN DATEADD(MONTH, DATEDIFF(MONTH, 0, GETDATE()), 0)
+		WHEN 'Weekly' THEN DATEADD(WEEK, DATEDIFF(WEEK, 0, GETDATE()), - 1)
+		WHEN 'Daily' THEN DATEADD(DAY, DATEDIFF(DAY, 0, GETDATE()), 0)
+		ELSE GETDATE() END
+
+	;WITH [CartPage] AS
+	(
+		SELECT
+			ROW_NUMBER() OVER (ORDER BY SC.[CartID] ASC) AS [RowNo], SC.*
+		FROM
+			{databaseOwner}{objectQualifier}Smith_ShoppingCart SC
+		INNER JOIN
+			{databaseOwner}{objectQualifier}Smith_Products P
+		ON 
+			SC.[ProductID] = P.[ProductID]
+		WHERE
+			SC.[CreateDate] >= @StartDate
+			AND (SC.[StoreID] = @StoreID OR @StoreID = -1)
+			AND SC.[PortalID] = @PortalID
+	)
+	SELECT
+		*,
+		TotalRecords = (
+			SELECT COUNT(*) FROM [CartPage]
+		),
+		MoreRecords = (
+			SELECT COUNT(*) FROM [CartPage]
+			WHERE [RowNo] > @PageRecordEnd
+		)
+	FROM
+		[CartPage]
+	WHERE
+		[RowNo] BETWEEN @PageRecordStart AND @PageRecordEnd
+	ORDER BY
+		[RowNo];
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateShoppingCartItem
+	@Persistent VARCHAR(16) = NULL,
+	@ProductID INT = NULL,
+	@ProductName VARCHAR(255) = NULL,
+	@ProductSku VARCHAR(50) = NULL,
+	@Quantity DECIMAL(10, 2) = NULL,
+	@UnitCost MONEY = NULL,
+	@CartCookie VARCHAR(100) = NULL,
+	@IsRequired BIT = NULL,
+	@PriceClass VARCHAR(20) = NULL,
+	@VariantCost DECIMAL(10, 2) = NULL,
+	@ImageName VARCHAR(200) = NULL,
+	@BundleID INT = NULL,
+	@DNNLogin NVARCHAR(100) = NULL,
+	@Email NVARCHAR(256) = NULL,
+	@Weight DECIMAL(12,2) = NULL,
+	@CreateDate DATETIME = NULL,
+	@OtherCartFields NVARCHAR(MAX) = NULL,
+	@IsBooking BIT = NULL,
+	@PortalID INT = NULL,
+	@StoreID INT = NULL
+AS
+BEGIN
+	DECLARE @CartID [INT],
+			@CartVariantID [INT]
+
+	SELECT
+		@CartID = SC.[CartID]
+	FROM
+		{databaseOwner}{objectQualifier}Smith_ShoppingCart SC
+	WHERE
+		SC.[ProductID] = @ProductID
+		AND SC.[ProductName] = @ProductName
+		AND SC.[ProductSku] = @ProductSku
+		AND (SC.[CartCookie] = @CartCookie OR (@Persistent <> 'Machine' AND @DNNLogin <> ''))
+		AND (SC.[DNNLogin] = @DNNLogin OR @Persistent <> 'User')
+		AND SC.[StoreID] = @StoreID
+		AND SC.[PortalID] = @PortalID
+
+	SELECT
+		@CartVariantID = SCV.[CartVariantID]
+	FROM
+		{databaseOwner}{objectQualifier}Smith_ShoppingCartVariant SCV
+	WHERE
+		SCV.[CartID] = @CartID
+
+	IF (@CartID IS NOT NULL) AND (@CartVariantID IS NULL AND @IsBooking <> 1)
+		BEGIN
+			UPDATE
+				{databaseOwner}{objectQualifier}Smith_ShoppingCart
+			SET
+				[Quantity] += @Quantity,
+				[UnitCost] = @UnitCost
+			WHERE
+				[CartID] = @CartID
+			SELECT @CartID
+		END
+	ELSE
+		BEGIN
+			INSERT INTO {databaseOwner}{objectQualifier}Smith_ShoppingCart
+				([ProductID]
+				,[ProductName]
+				,[ProductSku]
+				,[Quantity]
+				,[UnitCost]
+				,[CartCookie]
+				,[IsRequired]
+				,[PriceClass]
+				,[VariantCost]
+				,[ImageName]
+				,[BundleID]
+				,[DNNLogin]
+				,[Email]
+				,[Weight]
+				,[CreateDate]
+				,[OtherCartFields]
+				,[PortalID]
+				,[StoreID])
+			 VALUES
+				(@ProductID
+				,@ProductName
+				,@ProductSku
+				,@Quantity
+				,@UnitCost
+				,@CartCookie
+				,@IsRequired
+				,@PriceClass
+				,@VariantCost
+				,@ImageName
+				,@BundleID
+				,@DNNLogin
+				,@Email
+				,@Weight
+				,@CreateDate
+				,@OtherCartFields
+				,@PortalID
+				,@StoreID)
+			SELECT SCOPE_IDENTITY()
+		END
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListShoppingCartByUser
+	@Persistent VARCHAR(16) = NULL,
+	@CartCookie VARCHAR(100) = NULL,
+	@DNNLogin NVARCHAR(100) = NULL,
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SELECT
+		SC.*
+	FROM
+		{databaseOwner}{objectQualifier}Smith_ShoppingCart SC
+		INNER JOIN {databaseOwner}{objectQualifier}Smith_Products P
+		ON 
+			SC.[ProductID] = P.[ProductID]
+	WHERE
+		(SC.[CartCookie] = @CartCookie OR (@Persistent <> 'Machine' AND @DNNLogin <> ''))
+		AND (SC.[DNNLogin] = @DNNLogin OR @Persistent <> 'User')
+		AND SC.[StoreID] = @StoreID
+		AND SC.[PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListShoppingCartByTimeLapse
+	@Hours INT = NULL,
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SELECT
+		SC.*
+	FROM
+		{databaseOwner}{objectQualifier}Smith_ShoppingCart SC
+		INNER JOIN {databaseOwner}{objectQualifier}Smith_Products P
+		ON 
+			SC.[ProductID] = P.[ProductID]
+	WHERE
+		DATEDIFF(HOUR, SC.[CreateDate], GETDATE()) < @Hours + 1
+		AND DATEDIFF(HOUR, SC.[CreateDate], GETDATE()) > @Hours - 1
+		AND SC.[StoreID] = @StoreID
+		AND SC.[PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateShoppingCartItem
+	@Persistent VARCHAR(16) = NULL,
+	@CartCookie VARCHAR(100) = NULL,
+	@DNNLogin NVARCHAR(100) = NULL,
+	@CartID INT = NULL,
+	@Quantity DECIMAL(10,2) = NULL,
+	@UnitCost MONEY = NULL,
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	UPDATE
+		{databaseOwner}{objectQualifier}Smith_ShoppingCart
+	SET
+		[Quantity] = @Quantity,
+		[UnitCost] = @UnitCost
+	WHERE
+		([CartCookie] = @CartCookie OR (@Persistent <> 'Machine' AND @DNNLogin <> ''))
+		AND ([DNNLogin] = @DNNLogin OR @Persistent <> 'User')
+		AND [CartID] = @CartID
+		AND [StoreID] = @StoreID
+		AND [PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateShoppingCartEmail
+	@Persistent VARCHAR(16) = NULL,
+	@CartCookie VARCHAR(100) = NULL,
+	@DNNLogin NVARCHAR(100) = NULL,
+	@Email NVARCHAR(256) = NULL,
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	UPDATE
+		{databaseOwner}{objectQualifier}Smith_ShoppingCart
+	SET
+		[Email] = @Email
+	WHERE
+		([CartCookie] = @CartCookie OR (@Persistent <> 'Machine' AND @DNNLogin <> ''))
+		AND ([DNNLogin] = @DNNLogin OR @Persistent <> 'User')
+		AND [StoreID] = @StoreID
+		AND [PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_DeleteShoppingCartItem
+	@Persistent VARCHAR(16) = NULL,
+	@CartCookie VARCHAR(100) = NULL,
+	@DNNLogin NVARCHAR(100) = NULL,
+	@CartID INT = NULL,
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	DELETE FROM
+		{databaseOwner}{objectQualifier}Smith_ShoppingCartVariant
+	WHERE
+		[CartID] IN (
+			SELECT
+				SC.[CartID]
+			FROM
+				{databaseOwner}{objectQualifier}Smith_ShoppingCart SC
+			WHERE
+				(SC.[CartCookie] = @CartCookie OR (@Persistent <> 'Machine' AND @DNNLogin <> ''))
+				AND (SC.[DNNLogin] = @DNNLogin OR @Persistent <> 'User')
+				AND SC.[CartID] = @CartID
+				AND SC.[StoreID] = @StoreID
+				AND SC.[PortalID] = @PortalID
+		)
+
+	DELETE FROM
+		{databaseOwner}{objectQualifier}Smith_ShoppingCart
+	WHERE
+		([CartCookie] = @CartCookie OR (@Persistent <> 'Machine' AND @DNNLogin <> ''))
+		AND ([DNNLogin] = @DNNLogin OR @Persistent <> 'User')
+		AND [CartID] = @CartID
+		AND [StoreID] = @StoreID
+		AND [PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ClearShoppingCartByUser
+	@Persistent VARCHAR(16) = NULL,
+	@CartCookie VARCHAR(100) = NULL,
+	@DNNLogin NVARCHAR(100) = NULL,
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	DELETE FROM
+		{databaseOwner}{objectQualifier}Smith_ShoppingCartVariant
+	WHERE
+		[CartID] IN (
+			SELECT
+				SC.[CartID]
+			FROM
+				{databaseOwner}{objectQualifier}Smith_ShoppingCart SC
+			WHERE
+				(SC.[CartCookie] = @CartCookie OR (@Persistent <> 'Machine' AND @DNNLogin <> ''))
+				AND (SC.[DNNLogin] = @DNNLogin OR @Persistent <> 'User')
+				AND SC.[StoreID] = @StoreID
+				AND SC.[PortalID] = @PortalID
+		)
+
+	DELETE FROM
+		{databaseOwner}{objectQualifier}Smith_ShoppingCart
+	WHERE
+		([CartCookie] = @CartCookie OR (@Persistent <> 'Machine' AND @DNNLogin <> ''))
+		AND ([DNNLogin] = @DNNLogin OR @Persistent <> 'User')
+		AND [StoreID] = @StoreID
+		AND [PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateEmailCampaign
+	@Name NVARCHAR(128) = NULL,
+	@Type NVARCHAR(32) = NULL,
+	@EmailFrom NVARCHAR(256) = NULL,
+	@Subject NVARCHAR(256) = NULL,
+	@Template NTEXT = NULL,
+	@Active BIT = NULL,
+	@Interval SMALLINT = NULL,
+	@Units NVARCHAR(10) = NULL,
+	@CouponID INT = NULL,
+	@EmailsSent INT = NULL,
+	@LanguageLocale NVARCHAR(20) = NULL,
+	@TabModuleID INT = NULL,
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	INSERT INTO
+		{databaseOwner}{objectQualifier}Smith_EmailCampaign
+		([Name]
+		,[Type]
+		,[EmailFrom]
+		,[Subject]
+		,[Template]
+		,[Active]
+		,[Interval]
+		,[Units]
+		,[CouponID]
+		,[EmailsSent]
+		,[LanguageLocale]
+		,[TabModuleID]
+		,[StoreID]
+		,[PortalID])
+	VALUES
+		(@Name
+		,@Type
+		,@EmailFrom
+		,@Subject
+		,@Template
+		,@Active
+		,@Interval
+		,@Units
+		,@CouponID
+		,@EmailsSent
+		,@LanguageLocale
+		,@TabModuleID
+		,@StoreID
+		,@PortalID)
+	SELECT SCOPE_IDENTITY()
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_GetEmailCampaignByID
+	@EmailCampaignID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SELECT
+		EC.*
+	FROM
+		{databaseOwner}{objectQualifier}Smith_EmailCampaign EC
+	WHERE
+		EC.[EmailCampaignID] = @EmailCampaignID
+		AND EC.[PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListEmailCampaigns
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SELECT
+		EC.*
+	FROM
+		{databaseOwner}{objectQualifier}Smith_EmailCampaign EC
+	WHERE
+		(EC.[StoreID] = @StoreID OR EC.[TabModuleId] = @StoreID)
+		AND EC.[PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateEmailCampaign
+	@EmailCampaignID INT = NULL,
+	@Name NVARCHAR(128) = NULL,
+	@Type NVARCHAR(32) = NULL,
+	@EmailFrom NVARCHAR(256) = NULL,
+	@Subject NVARCHAR(256) = NULL,
+	@Template NTEXT = NULL,
+	@Active BIT = NULL,
+	@Interval SMALLINT = NULL,
+	@Units NVARCHAR(10) = NULL,
+	@CouponID INT = NULL,
+	@EmailsSent INT = NULL,
+	@LanguageLocale NVARCHAR(20) = NULL,
+	@TabModuleID INT = NULL,
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	UPDATE
+		{databaseOwner}{objectQualifier}Smith_EmailCampaign
+	SET
+		[Name] = @Name,
+		[Type] = @Type,
+		[EmailFrom] = @EmailFrom,
+		[Subject] = @Subject,
+		[Template] = @Template,
+		[Active] = @Active,
+		[Interval] = @Interval,
+		[Units] = @Units,
+		[CouponID] = @CouponID,
+		[EmailsSent] = @EmailsSent,
+		[LanguageLocale] = @LanguageLocale,
+		[TabModuleID] = @TabModuleID,
+		[StoreID] = @StoreID,
+		[PortalID] = @PortalID
+	WHERE
+		[EmailCampaignID] = @EmailCampaignID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_DeleteEmailCampaign
+	@EmailCampaignID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	DELETE FROM
+		{databaseOwner}{objectQualifier}Smith_EmailCampaign
+	WHERE
+		[EmailCampaignID] = @EmailCampaignID
+		AND [PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListAdvancedSearchProducts
+	@MinPrice DECIMAL = NULL,
+	@MaxPrice DECIMAL = NULL,
+	@Keywords NVARCHAR(MAX) = '',
+	@CatList NVARCHAR(MAX) = '',
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	DECLARE @KeywordsTable TABLE
+	(
+		[Keyword] NVARCHAR(250)
+	)
+	INSERT INTO
+		@KeywordsTable ([Keyword])
+	SELECT
+		LTRIM(RTRIM([Value]))
+	FROM
+		{databaseOwner}{objectQualifier}RZC_FxSplit(@Keywords, ',')
+	DELETE FROM
+		@KeywordsTable
+	WHERE
+		[Keyword] IS NULL
+		OR [Keyword] = ''
+
+	DECLARE @CatListTable TABLE
+	(
+		[CategoryID] INT
+	)
+	INSERT INTO
+		@CatListTable ([CategoryID])
+	SELECT
+		CONVERT(INT, LTRIM(RTRIM([Value])))
+	FROM
+		{databaseOwner}{objectQualifier}RZC_FxSplit(@CatList, ',')
+	DELETE FROM
+		@CatListTable
+	WHERE
+		[CategoryID] IS NULL
+		OR [CategoryID] < 1
+
+	SELECT
+		P.[ProductID]
+	FROM
+		{databaseOwner}{objectQualifier}Smith_Products P
+	LEFT JOIN
+	(
+		SELECT S1.[ProductID]
+		FROM @KeywordsTable T1
+		LEFT JOIN {databaseOwner}{objectQualifier}Smith_SearchKeys S1
+		ON S1.[SearchTerm] LIKE '%' + T1.[Keyword] + '%'
+		UNION
+		SELECT P1.[ProductID]
+		FROM @KeywordsTable T1
+		LEFT JOIN dbo.Smith_Products P1
+		ON	P1.[ModelName] LIKE '%' + T1.[Keyword] + '%'
+			OR P1.[ModelNumber] LIKE '%' + T1.[Keyword] + '%'
+			OR P1.[Description] Like '%' + T1.[Keyword] + '%'
+			OR P1.[Summary] Like '%' + T1.[Keyword] + '%'
+	) S2
+	ON S2.[ProductID] = P.[ProductID]
+	LEFT JOIN
+	(
+		SELECT CP1.[ProductID]
+		FROM {databaseOwner}{objectQualifier}Smith_CategoryProduct CP1
+		INNER JOIN @CatListTable CT
+		ON CT.[CategoryID] = CP1.[CategoryID]
+	) CP2
+	ON CP2.[ProductID] = P.[ProductID]
+	WHERE
+		(P.[PortalID] = @PortalID)
+		AND (P.[StoreID] = @StoreID OR P.[TabModuleId] = @StoreID OR P.[Share] = 1)
+		AND (P.[LogicallyDeleted] <> 1 AND P.[Archived] <> 1 AND P.[HideProduct] <> 1)
+		AND (P.[UnitCost] >= @MinPrice OR @MinPrice = -1)
+		AND (P.[UnitCost] <= @MaxPrice OR @MaxPrice = -1)
+		AND (S2.[ProductID] IS NOT NULL OR (SELECT COUNT(T2.[Keyword]) FROM @KeywordsTable T2) < 1)
+		AND (CP2.[ProductID] IS NOT NULL OR (SELECT COUNT(C2.[CategoryID]) FROM @CatListTable C2) < 1)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListCategoriesByFilter
+	@PageNumber INT = NULL,
+	@PageSize INT = NULL,
+	@SearchValue NVARCHAR(256) = NULL,
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SET NOCOUNT ON;
+	DECLARE @PageRecordStart INT
+	DECLARE @PageRecordEnd INT
+
+	SET @PageRecordStart = ((@PageNumber - 1) * @PageSize) + 1
+	SET @PageRecordEnd = @PageNumber * @PageSize
+
+	;WITH [CategoriesPage] AS
+	(
+		SELECT
+			ROW_NUMBER() OVER (ORDER BY C.[CategoryID] ASC) AS [RowNo], C.*
+		FROM
+			{databaseOwner}{objectQualifier}Smith_Category C
+		WHERE
+			(C.[StoreID] = @StoreID)
+			AND C.[PortalID] = @PortalID
+			AND (
+				C.[CategoryName] LIKE '%' + @SearchValue + '%'
+				OR C.[CatDescription] LIKE '%' + @SearchValue + '%'
+			)
+	)
+	SELECT
+		*,
+		TotalRecords = (
+			SELECT COUNT(*) FROM [CategoriesPage]
+		),
+		MoreRecords = (
+			SELECT COUNT(*) FROM [CategoriesPage]
+			WHERE [RowNo] > @PageRecordEnd
+		)
+	FROM
+		[CategoriesPage]
+	WHERE
+		[RowNo] BETWEEN @PageRecordStart AND @PageRecordEnd
+	ORDER BY
+		[RowNo];
+END
+GO
+
+
+
+/************************************************************/
+/*****               End of Script                      *****/
+/************************************************************/

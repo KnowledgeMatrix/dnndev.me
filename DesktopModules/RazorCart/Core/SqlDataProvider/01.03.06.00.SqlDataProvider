@@ -1,0 +1,196 @@
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****               Create Tables                      *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****                  Alter Tables                    *****/
+/************************************************************/
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_StorePermissions') AND type in (N'U'))
+BEGIN
+	IF EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_StorePermissions') AND name = N'Access')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_StorePermissions
+		ALTER COLUMN
+			[Access] [NVARCHAR](64)
+			
+		UPDATE
+			{databaseOwner}{objectQualifier}Smith_StorePermissions
+		SET
+			[Access] = (
+				CASE [Access]
+					WHEN '0' THEN 'None'
+					WHEN '1' THEN 'View'
+					WHEN '2' THEN 'Edit'
+					WHEN '3' THEN 'Delete'
+					ELSE [Access]
+				END
+			)
+	END
+	IF EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_StorePermissions') AND name = N'Section')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_StorePermissions
+		ALTER COLUMN
+			[Section] [NVARCHAR](64)
+			
+		UPDATE
+			{databaseOwner}{objectQualifier}Smith_StorePermissions
+		SET
+			[Section] = (
+				CASE [Section]
+					WHEN '0' THEN 'None'
+					WHEN '1' THEN 'Any'
+					WHEN '2' THEN 'Store'
+					WHEN '3' THEN 'Payment'
+					WHEN '4' THEN 'Shipping'
+					WHEN '5' THEN 'Tax'
+					WHEN '6' THEN 'Templates'
+					WHEN '7' THEN 'Extensions'
+					WHEN '8' THEN 'License'
+					WHEN '9' THEN 'APIKeys'
+					WHEN '10' THEN 'Permissions'
+					WHEN '11' THEN 'Coupons'
+					WHEN '12' THEN 'Discounts'
+					WHEN '13' THEN 'EmailCampaigns'
+					WHEN '14' THEN 'Products'
+					WHEN '15' THEN 'Categories'
+					WHEN '16' THEN 'Manufacturers'
+					WHEN '17' THEN 'TemplateFields'
+					WHEN '18' THEN 'Reviews'
+					WHEN '19' THEN 'Customers'
+					WHEN '20' THEN 'Orders'
+					WHEN '21' THEN 'Reports'
+					ELSE [Section]
+				END
+			)
+	END
+END
+GO
+
+
+
+/************************************************************/
+/*****              Drop Functions                      *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****              Create Functions                    *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****                Drop Sprocs                       *****/
+/************************************************************/
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_CreateStorePermission') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateStorePermission
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListStorePermissionsBySection') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListStorePermissionsBySection
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_UpdateStorePermission') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateStorePermission
+GO
+
+
+
+/************************************************************/
+/*****               Create Sprocs                      *****/
+/************************************************************/
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateStorePermission
+	@RoleID INT = NULL,
+	@Access NVARCHAR(64) = NULL,
+	@Section NVARCHAR(64) = NULL,
+	@CreatedBy INT = NULL,
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	INSERT INTO {databaseOwner}{objectQualifier}Smith_StorePermissions
+		([RoleID]
+		,[Access]
+		,[Section]
+		,[CreatedBy]
+		,[DateCreated]
+		,[StoreID]
+		,[PortalID])
+	VALUES
+		(@RoleID
+		,@Access
+		,@Section
+		,@CreatedBy
+		,GETDATE()
+		,@StoreID
+		,@PortalID)
+	SELECT SCOPE_IDENTITY()
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListStorePermissionsBySection
+	@Section NVARCHAR(64) = NULL,
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SELECT
+		P.*, R.RoleName
+	FROM
+		{databaseOwner}{objectQualifier}Smith_StorePermissions P
+	LEFT JOIN
+		{databaseOwner}{objectQualifier}Roles R
+	ON
+		R.[RoleID] = P.[RoleID]
+	WHERE
+		P.[Section] = @Section
+		AND P.[StoreID] = @StoreID
+		AND P.[PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateStorePermission
+	@ID INT = NULL,
+	@RoleID INT = NULL,
+	@Access NVARCHAR(64) = NULL,
+	@Section NVARCHAR(64) = NULL,
+	@ModifiedBy INT = NULL,
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	UPDATE
+		{databaseOwner}{objectQualifier}Smith_StorePermissions
+	SET
+		[RoleID] = @RoleID,
+		[Access] = @Access,
+		[Section] = @Section,
+		[ModifiedBy] = @ModifiedBy,
+		[DateModified] = GETDATE()
+	WHERE
+		[ID] = @ID
+		AND [StoreID] = @StoreID
+		AND [PortalID] = @PortalID
+END
+GO
+
+
+
+/************************************************************/
+/*****               End of Script                      *****/
+/************************************************************/

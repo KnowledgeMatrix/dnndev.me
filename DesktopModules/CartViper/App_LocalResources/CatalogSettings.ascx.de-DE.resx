@@ -1,0 +1,567 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="lblCatTemplate.Text" xml:space="preserve">
+    <value>Katalog Vorlage:</value>
+  </data>
+  <data name="lblDefaultCategory.Text" xml:space="preserve">
+    <value>Standard Kategorie:</value>
+  </data>
+  <data name="lblUseDefaultCategory.Text" xml:space="preserve">
+    <value>Standard Kategorie Verhalten:</value>
+  </data>
+  <data name="lblShowCategoryMsg.Text" xml:space="preserve">
+    <value>Zeige Kategorie Nachricht:</value>
+  </data>
+  <data name="lblShowProductDetail.Text" xml:space="preserve">
+    <value>Zeige Produkt-Detail:</value>
+  </data>
+  <data name="lblPDSThumbnailWidth.Text" xml:space="preserve">
+    <value>Vorschaubild Breite:</value>
+  </data>
+  <data name="lblPDSShowThumbnail.Text" xml:space="preserve">
+    <value>Zeige Vorschaubild:</value>
+  </data>
+  <data name="lblDetailTemplate.Text" xml:space="preserve">
+    <value>Detail Vorlage:</value>
+  </data>
+  <data name="lblPPSDetailPage.Text" xml:space="preserve">
+    <value>Detailseite:</value>
+  </data>
+  <data name="lblCSThumbnailWidth.Text" xml:space="preserve">
+    <value>Vorschaubild Breite:</value>
+  </data>
+  <data name="lblCSShowThumbnail.Text" xml:space="preserve">
+    <value>Zeige Vorschaubild:</value>
+  </data>
+  <data name="lblCSRows.Text" xml:space="preserve">
+    <value>Zeilen:</value>
+  </data>
+  <data name="lblCSListTemplate.Text" xml:space="preserve">
+    <value>Vorlage für die Liste:</value>
+  </data>
+  <data name="lblCSColumnWidth.Text" xml:space="preserve">
+    <value>Spaltenbreite:</value>
+  </data>
+  <data name="lblCSDetailPage.Text" xml:space="preserve">
+    <value>Detailseite:</value>
+  </data>
+  <data name="lblPPSListTemplate.Text" xml:space="preserve">
+    <value>Vorlage für die Liste:</value>
+  </data>
+  <data name="lblPPSRows.Text" xml:space="preserve">
+    <value>Zeilen:</value>
+  </data>
+  <data name="lblPPSColumns.Text" xml:space="preserve">
+    <value>Spalten:</value>
+  </data>
+  <data name="lblPPSColumnWidth.Text" xml:space="preserve">
+    <value>Spaltenbreite:</value>
+  </data>
+  <data name="lblPPSShowThumbnail.Text" xml:space="preserve">
+    <value>Zeige Vorschaubild:</value>
+  </data>
+  <data name="lblPPSThumbnailWidth.Text" xml:space="preserve">
+    <value>Vorschaubild Breite:</value>
+  </data>
+  <data name="lblCSColumns.Text" xml:space="preserve">
+    <value>Spalten:</value>
+  </data>
+  <data name="SelectDefaultCategory.Text" xml:space="preserve">
+    <value>(None)</value>
+  </data>
+  <data name="FPLSamePage.Text" xml:space="preserve">
+    <value>Gleiche Seite</value>
+  </data>
+  <data name="PPLSamePage.Text" xml:space="preserve">
+    <value>Gleiche Seite</value>
+  </data>
+  <data name="CPLSamePage.Text" xml:space="preserve">
+    <value>Gleiche Seite</value>
+  </data>
+  <data name="dshGenSettings.Text" xml:space="preserve">
+    <value>Allgemeine Einstellungen</value>
+  </data>
+  <data name="dshFeaturedProductList.Text" xml:space="preserve">
+    <value>Featured Product Einstellungen</value>
+  </data>
+  <data name="dshCategoryProductList.Text" xml:space="preserve">
+    <value>Kategorie Produkt-Einstellungen</value>
+  </data>
+  <data name="dshProductDetails.Text" xml:space="preserve">
+    <value>Produktinformation Einstellungen</value>
+  </data>
+  <data name="ControlTitle_settings.Text" xml:space="preserve">
+    <value>Katalogeinstellungen</value>
+  </data>
+  <data name="NPLSamePage.Text" xml:space="preserve">
+    <value>Gleiche Seite</value>
+  </data>
+  <data name="lblPDSReturnPage.Text" xml:space="preserve">
+    <value>Return To:</value>
+  </data>
+  <data name="PDSSamePage.Text" xml:space="preserve">
+    <value>Gleiche Seite</value>
+  </data>
+  <data name="lblCSShowPageInfo.Text" xml:space="preserve">
+    <value>Zeige Seite Info:</value>
+  </data>
+  <data name="lblCSShowPageNav.Text" xml:space="preserve">
+    <value>Zeige Seite Navigation:</value>
+  </data>
+  <data name="lblCSContainerTemplate.Text" xml:space="preserve">
+    <value>Container Vorlage:</value>
+  </data>
+  <data name="lblPPSContainerTemplate.Text" xml:space="preserve">
+    <value>Container Vorlage:</value>
+  </data>
+  <data name="lblPDSShowReviews.Text" xml:space="preserve">
+    <value>Show Reviews:</value>
+  </data>
+  <data name="lblCSRepeatDirection.Text" xml:space="preserve">
+    <value>Wiederholen Richtung:</value>
+  </data>
+  <data name="lblPPSRepeatDirection.Text" xml:space="preserve">
+    <value>Wiederholen Richtung:</value>
+  </data>
+  <data name="RepeatDirectionHoriz.Text" xml:space="preserve">
+    <value>Horizontal</value>
+  </data>
+  <data name="RepeatDirectionVert.Text" xml:space="preserve">
+    <value>Vertikale</value>
+  </data>
+  <data name="chkSortCreatedDate.Text" xml:space="preserve">
+    <value>Neuesten Surpac</value>
+  </data>
+  <data name="chkSortManufacturer.Text" xml:space="preserve">
+    <value>Hersteller</value>
+  </data>
+  <data name="chkSortModelName.Text" xml:space="preserve">
+    <value>Model Name</value>
+  </data>
+  <data name="chkSortModelNumber.Text" xml:space="preserve">
+    <value>Modellnummer</value>
+  </data>
+  <data name="chkSortUnitPrice.Text" xml:space="preserve">
+    <value>Einheitspreis</value>
+  </data>
+  <data name="SortAscending.Text" xml:space="preserve">
+    <value>Aufsteigend</value>
+  </data>
+  <data name="SortDescending.Text" xml:space="preserve">
+    <value>Absteigend</value>
+  </data>
+  <data name="lblCSSortBy.Text" xml:space="preserve">
+    <value>Sortieren nach:</value>
+  </data>
+  <data name="lblCSSortDir.Text" xml:space="preserve">
+    <value>Richtung:</value>
+  </data>
+  <data name="lblCSSubCategories.Text" xml:space="preserve">
+    <value>Sub-Kategorien:</value>
+  </data>
+  <data name="lblCatTemplate.Help" xml:space="preserve">
+    <value>Wählen Sie eine Vorlage für den Katalog. Default Template catalog.htm.</value>
+  </data>
+  <data name="lblCSColumns.Help" xml:space="preserve">
+    <value>Geben Sie die Nummer der Spalte, um Produkte.</value>
+  </data>
+  <data name="lblCSColumnWidth.Help" xml:space="preserve">
+    <value>Geben Sie die Spaltenbreite in Pixel. Ist der Wert größer als 0, wird der Wert auf das style-Attribut der entsprechenden Tabellenzelle eingefügt werden. Für eine bessere Kontrolle angezeigt, sollten Sie diesen Wert auf 0 gesetzt und die CSS-Klassen: td.StoreCategoryProductItem und td.StoreCategoryProductAlternatingItem in der Datei StoreFront.css definiert.</value>
+  </data>
+  <data name="lblCSContainerTemplate.Help" xml:space="preserve">
+    <value>Wählen Sie eine Vorlage für die Kategorie Produkt-Container. Default Template CategoryContainer.htm.</value>
+  </data>
+  <data name="lblCSDetailPage.Help" xml:space="preserve">
+    <value>Wählen Sie die Seite, wo die Viper Einkaufswagen Katalog-Modul, um ein Produkt Detail-Anzeige platziert wird. Im Allgemeinen ist es die gleiche Seite, wenn Sie mehrere Einkaufswagen Viper Katalog Module verwenden.</value>
+  </data>
+  <data name="lblCSListTemplate.Help" xml:space="preserve">
+    <value>Wählen Sie eine Vorlage für den Artikel Liste. Default Template ProductList.htm.</value>
+  </data>
+  <data name="lblCSRepeatDirection.Help" xml:space="preserve">
+    <value>Wählen Sie die directon zum Produkt anzuzeigen.</value>
+  </data>
+  <data name="lblCSRows.Help" xml:space="preserve">
+    <value>Geben Sie die Nummer der Zeile, um Produkte.</value>
+  </data>
+  <data name="lblCSShowThumbnail.Help" xml:space="preserve">
+    <value>Überprüfen Sie die Produktinformationen Miniaturansicht angezeigt.</value>
+  </data>
+  <data name="lblCSSortBy.Help" xml:space="preserve">
+    <value>Wählen Sie das Produkt Säule, auf der die Liste sortiert werden soll.</value>
+  </data>
+  <data name="lblCSSortDir.Help" xml:space="preserve">
+    <value>Wählen Sie die Sortierrichtung an.</value>
+  </data>
+  <data name="lblCSSubCategories.Help" xml:space="preserve">
+    <value>Überprüfen Sie in der Liste Produkte der Unterkategorien der ausgewählten Kategorie gehören.</value>
+  </data>
+  <data name="lblCSThumbnailWidth.Help" xml:space="preserve">
+    <value>Geben Sie die Breite des Pixel-Produkte Miniaturansicht.</value>
+  </data>
+  <data name="lblDefaultCategory.Help" xml:space="preserve">
+    <value>Wählen Sie die Standard-Kategorie angezeigt werden soll.</value>
+  </data>
+  <data name="lblDetailTemplate.Help" xml:space="preserve">
+    <value>Wählen Sie eine Vorlage für das Produkt Detailbereich. Default Template ProductDetail.htm.</value>
+  </data>
+  <data name="lblPDSReturnPage.Help" xml:space="preserve">
+    <value>Wählen Sie die Seite zurück zum Katalog. Im Allgemeinen ist es die gleiche Seite, wenn Sie mehrere Einkaufswagen ViperCatalog Module verwenden.</value>
+  </data>
+  <data name="lblPDSShowReviews.Help" xml:space="preserve">
+    <value>Überprüfen Sie die Bewertungen zu sehen.</value>
+  </data>
+  <data name="lblPDSShowThumbnail.Help" xml:space="preserve">
+    <value>Überprüfen Sie die Produktinformationen der Miniaturansicht angezeigt.</value>
+  </data>
+  <data name="lblPDSThumbnailWidth.Help" xml:space="preserve">
+    <value>Geben Sie die Thumbnail-Breite in Pixel.</value>
+  </data>
+  <data name="lblPPSColumns.Help" xml:space="preserve">
+    <value>Geben Sie die Nummer der Spalte, um Produkte.</value>
+  </data>
+  <data name="lblPPSColumnWidth.Help" xml:space="preserve">
+    <value>Geben Sie die Spaltenbreite in Pixel. Ist der Wert größer als 0, wird der Wert auf den Stil Attribut der entsprechenden Tabellenzelle eingefügt werden. Für eine bessere Kontrolle angezeigt, sollten Sie diesen Wert auf 0 gesetzt und die CSS-Klassen: td.StorePopularProductItem und td.StorePopularProductAlternatingItem in der Datei StoreFront.css definiert.</value>
+  </data>
+  <data name="lblPPSContainerTemplate.Help" xml:space="preserve">
+    <value>Wählen Sie eine Vorlage für das beliebte Produkt-Container. Default Template ListContainer.htm.</value>
+  </data>
+  <data name="lblPPSDetailPage.Help" xml:space="preserve">
+    <value>Wählen Sie die Seite, wo die Viper Einkaufswagen Katalog-Modul, um ein Produkt Detail-Anzeige platziert wird. Im Allgemeinen ist es die gleiche Seite, wenn Sie mehrere Einkaufswagen Viper Katalog Module verwenden.</value>
+  </data>
+  <data name="lblPPSListTemplate.Help" xml:space="preserve">
+    <value>Wählen Sie eine Vorlage für den Artikel Liste. Standardvorlagen sind PopularProduct.htm und PopularProduct_Small.htm.</value>
+  </data>
+  <data name="lblPPSRepeatDirection.Help" xml:space="preserve">
+    <value>Wählen Sie die directon zum Produkt anzuzeigen.</value>
+  </data>
+  <data name="lblPPSRows.Help" xml:space="preserve">
+    <value>Geben Sie die Nummer der Zeile, um Produkte.</value>
+  </data>
+  <data name="lblPPSShowThumbnail.Help" xml:space="preserve">
+    <value>Überprüfen Sie die Produktinformationen Miniaturansicht angezeigt.</value>
+  </data>
+  <data name="lblPPSThumbnailWidth.Help" xml:space="preserve">
+    <value>Geben Sie die Thumbnail-Breite in Pixel.</value>
+  </data>
+  <data name="lblShowCategoryMsg.Help" xml:space="preserve">
+    <value>Überprüfen Sie die Kategorie Meldung anzuzeigen.</value>
+  </data>
+  <data name="lblShowProductDetail.Help" xml:space="preserve">
+    <value>Überprüfen Sie die Details Produkt Abschnitt anzuzeigen.</value>
+  </data>
+  <data name="lblUseDefaultCategory.Help" xml:space="preserve">
+    <value>Auswählen, wie der Katalog verhalten soll, wenn der Benutzer gerade im Katalog Seite, aber noch nicht eine Kategorie ausgewählt. z. B. nichts tun, Anzeige der ausgewählten Kategorie oder alle Produkte anzeigen.</value>
+  </data>
+  <data name="lblEnableContentIndexing.Help" xml:space="preserve">
+    <value>Überprüfen Sie die Content-Indizierung durch die DotNetNuke Suchmaschinen ermöglichen. Wenn Sie mehrere Einkaufswagen Viper Katalog-Modul verwenden, sollten Sie diese Einstellung nur einen Warenkorb Viper Katalog-Modul-Instanz. Andernfalls werden Ihre Produkte zweimal (oder mehr) von den Suchmaschinen indexiert.</value>
+  </data>
+  <data name="lblEnableContentIndexing.Text" xml:space="preserve">
+    <value>Enable Content Indexing:</value>
+  </data>
+  <data name="lblCPSGIFBgColor.Help" xml:space="preserve">
+    <value>Geben Sie den Hex-Wert der Hintergrundfarbe, um mit GIF-Bild-Format verwenden. Gültige Werte: # FFFFFF, # F00, FF0000, F09, ...</value>
+  </data>
+  <data name="lblCPSGIFBgColor.Text" xml:space="preserve">
+    <value>GIF Hintergrund:</value>
+  </data>
+  <data name="lblPDSGIFBgColor.Help" xml:space="preserve">
+    <value>Geben Sie den Hex-Wert der Hintergrundfarbe, um mit GIF-Bild-Format verwenden. Gültige Werte: # FFFFFF, # F00, FF0000, F09, ...</value>
+  </data>
+  <data name="lblPDSGIFBgColor.Text" xml:space="preserve">
+    <value>GIF Hintergrund:</value>
+  </data>
+  <data name="lblPPSGIFBgColor.Help" xml:space="preserve">
+    <value>Geben Sie den Hex-Wert der Hintergrundfarbe, um mit GIF-Bild-Format verwenden. Gültige Werte: # FFFFFF, # F00, FF0000, F09, ...</value>
+  </data>
+  <data name="lblPPSGIFBgColor.Text" xml:space="preserve">
+    <value>GIF Hintergrund:</value>
+  </data>
+  <data name="lblSSListTemplate.Help" xml:space="preserve">
+    <value>Wählen Sie eine Vorlage für die Liste der Suchergebnisse. Standard-Templates ist SearchResultsList.htm.</value>
+  </data>
+  <data name="lblSSListTemplate.Text" xml:space="preserve">
+    <value>Search Results Vorlage:</value>
+  </data>
+  <data name="lblSSSearchColumn.Help" xml:space="preserve">
+    <value>Wählen Sie die Standard-Such-Spalte.</value>
+  </data>
+  <data name="lblSSSearchColumn.Text" xml:space="preserve">
+    <value>Suchen nach:</value>
+  </data>
+  <data name="chkSearchSummary.Text" xml:space="preserve">
+    <value>Produktübersicht</value>
+  </data>
+  <data name="dshSearchProduct.Text" xml:space="preserve">
+    <value>Suche Einstellungen</value>
+  </data>
+  <data name="lblCSSortColumns.Help" xml:space="preserve">
+    <value>Wählen Sie die Spalten zu sortieren erlaubt auf.</value>
+  </data>
+  <data name="lblCSSortColumns.Text" xml:space="preserve">
+    <value>Spalten sortieren:</value>
+  </data>
+  <data name="lblCSSearchColumns.Help" xml:space="preserve">
+    <value>Wählen Sie die Spalten erlaubt, auf Suche.</value>
+  </data>
+  <data name="lblCSSearchColumns.Text" xml:space="preserve">
+    <value>Suche Spalten:</value>
+  </data>
+  <data name="lblEnableImageCaching.Help" xml:space="preserve">
+    <value>Überprüfen Sie, Bild-Caching aktivieren. Bitte deaktivieren Sie beim Entwerfen der Store oder Sie müssen für den Cache Dauer warten, um Ihr Bild zu sehen Änderungen (betroffen sind die Einstellungen Größe und Hintergrundfarbe für GIF-Bilder).</value>
+  </data>
+  <data name="lblEnableImageCaching.Text" xml:space="preserve">
+    <value>Aktivieren Image Caching:</value>
+  </data>
+  <data name="lblCacheDuration.Help" xml:space="preserve">
+    <value>Geben Sie den Cache Dauer (in Minuten) für Bilder. Standardwert: 2 Minuten.</value>
+  </data>
+  <data name="lblCacheDuration.Text" xml:space="preserve">
+    <value>Cache Dauer:</value>
+  </data>
+  <data name="dshSortProduct.Text" xml:space="preserve">
+    <value>Sortieren Einstellungen</value>
+  </data>
+  <data name="lblAllowPrint.Help" xml:space="preserve">
+    <value>Wenn diese Option aktiviert die Standard-Druckmodul Einstellung deaktiviert ist. Sie müssen die StorePrint.Action Schaltfläche, um Ihre Haut Container hinzufügen zu können, um diese Funktion zu nutzen. Bitte lesen Sie die Vorlagen für weitere Details.</value>
+  </data>
+  <data name="lblAllowPrint.Text" xml:space="preserve">
+    <value>Lassen Sie drucken?</value>
+  </data>
+  <data name="lblProductSpecificationTemplate.Help" xml:space="preserve">
+    <value>Die Vorlage, die wir nutzen sollten, um ein Produkt Spezifikation anzuzeigen.</value>
+  </data>
+  <data name="lblProductSpecificationTemplate.Text" xml:space="preserve">
+    <value>Produktbeschreibung Vorlage</value>
+  </data>
+  <data name="lblEnableDefaultImage.Help" xml:space="preserve">
+    <value>Wenn diese Option aktiviert alle Produkte, die nicht über ein Bild definiert wird eine Standard Bild anzuzeigen.</value>
+  </data>
+  <data name="lblEnableDefaultImage.Text" xml:space="preserve">
+    <value>Enable Default Image</value>
+  </data>
+  <data name="lblLargeImageWidth.Help" xml:space="preserve">
+    <value>Größe in Pixel der Breite der das große Bild</value>
+  </data>
+  <data name="lblLargeImageWidth.Text" xml:space="preserve">
+    <value>Große Bildbreite</value>
+  </data>
+  <data name="lblMediumImageWidth.Help" xml:space="preserve">
+    <value>Größe in Pixel der Breite des Mediums Bild</value>
+  </data>
+  <data name="lblMediumImageWidth.Text" xml:space="preserve">
+    <value>Mittlere Bildbreite</value>
+  </data>
+  <data name="lblThumbnailImageWidth.Help" xml:space="preserve">
+    <value>Größe in Pixel der Breite der Miniaturansicht</value>
+  </data>
+  <data name="lblThumbnailImageWidth.Text" xml:space="preserve">
+    <value>Minibild Breite</value>
+  </data>
+  <data name="lblRelatedProductsTemplate.Help" xml:space="preserve">
+    <value>Die Vorlage, die wir nutzen sollten, um die Produkte auf der Produkt-Details anzuzeigen.</value>
+  </data>
+  <data name="lblRelatedProductsTemplate.Text" xml:space="preserve">
+    <value>Verwandte Produkte Vorlage</value>
+  </data>
+  <data name="lblShowProcSpec.Help" xml:space="preserve">
+    <value>Legt fest, ob wir Anzeige der Produktspezifikation Registerkarte.</value>
+  </data>
+  <data name="lblShowProcSpec.Text" xml:space="preserve">
+    <value>Produktspezifikation</value>
+  </data>
+  <data name="lblReviewProfanityFilter.Help" xml:space="preserve">
+    <value>Wenn ausgewählt, die Profanität Bewertungen haben sie akzeptiert.</value>
+  </data>
+  <data name="lblReviewProfanityFilter.Text" xml:space="preserve">
+    <value>Lassen Review Obszönität enthalten</value>
+  </data>
+  <data name="lblEnableGoToCart.Help" xml:space="preserve">
+    <value>Wenn diese Option aktiviert, sobald der Benutzer hat ein Element, um seinen Warenkorb gelegt hat sie in den Korb Seite umgeleitet werden.</value>
+  </data>
+  <data name="lblEnableGoToCart.Text" xml:space="preserve">
+    <value>Aktivieren Zum Warenkorb</value>
+  </data>
+  <data name="lblAjaxCartSuccessNotification.Help" xml:space="preserve">
+    <value>Wenn diese Option aktiviert zeigen wir ein Javascript-Popup modal, wenn ein Artikel dem Warenkorb hinzugefügt erfolgreich. Ansonsten benutzen wir eine Meldung steuern, um diese Informationen anzuzeigen.</value>
+  </data>
+  <data name="lblAjaxCartSuccessNotification.Text" xml:space="preserve">
+    <value>Aktivieren Modal Popup für Ajax Warenkorb</value>
+  </data>
+  <data name="rdDefaultAllProducts.Text" xml:space="preserve">
+    <value>Alle Produkte</value>
+  </data>
+  <data name="rdDefaultCategory.Text" xml:space="preserve">
+    <value>Standard Kategorie</value>
+  </data>
+  <data name="rdDefaultNone.Text" xml:space="preserve">
+    <value>Keine</value>
+  </data>
+  <data name="lblProductBundlesTemplate.Help" xml:space="preserve">
+    <value>Die Vorlage verwenden wir bei der Ausgabe des Produktes Rabatt bündelt Daten sollten.</value>
+  </data>
+  <data name="lblProductBundlesTemplate.Text" xml:space="preserve">
+    <value>Produkt-Bundles Vorlage</value>
+  </data>
+  <data name="dshRssFeeds.Text" xml:space="preserve">
+    <value>RSS Feed-Einstellungen</value>
+  </data>
+  <data name="lblEnableRssFeeds.Help" xml:space="preserve">
+    <value>Wenn prüfen RSS sind am unteren Rand des Katalog-Modul angezeigt Feeds.</value>
+  </data>
+  <data name="lblEnableRssFeeds.Text" xml:space="preserve">
+    <value>Aktivieren Sie RSS-Feeds:</value>
+  </data>
+  <data name="lblRssItemLimit.Help" xml:space="preserve">
+    <value>Definiert die maximale Anzahl der Elemente in einem RSS-Feed zurückzukehren. Wenn dieser Wert 0 ist dann keine Grenze angewendet wird.</value>
+  </data>
+  <data name="lblRssItemLimit.Text" xml:space="preserve">
+    <value>RSS Eintragsgrenze</value>
+  </data>
+  <data name="lblProductAnchorName.Help" xml:space="preserve">
+    <value>Optional Anker Name zu den Produktdetails Links anhängen, können Sie so direkt zu einem Anker-Tag in die Seite.</value>
+  </data>
+  <data name="lblProductAnchorName.Text" xml:space="preserve">
+    <value>Anker Name</value>
+  </data>
+  <data name="lblShowAddVariantCaption.Help" xml:space="preserve">
+    <value>Wenn ausgewählt, wenn die sich den Produktkatalog und ein Produkt-Varianten, anstatt die Standard Warenkorb-Button werden wir ein Bild, das besser erklärt Molke der Benutzer das Produkt Details Seite wird umgeleitet zu zeigen.</value>
+  </data>
+  <data name="lblShowAddVariantCaption.Text" xml:space="preserve">
+    <value>Anzeigen Hinzufügen zum Warenkorb Variant Bildunterschrift</value>
+  </data>
+  <data name="lblPDImageMode.Help" xml:space="preserve">
+    <value>Definieren Sie den Modus verwendet, um die Bilder für den Artikel über die Details anzuzeigen.</value>
+  </data>
+  <data name="lblPDImageMode.Text" xml:space="preserve">
+    <value>Image Mode</value>
+  </data>
+  <data name="ProductDetailsImageMode.ModalPopup.Text" xml:space="preserve">
+    <value>Modal Popup</value>
+  </data>
+  <data name="ProductDetailsImageMode.Zoom.Text" xml:space="preserve">
+    <value>Bild vergrößern</value>
+  </data>
+  <data name="lblDisableStoreForAnonymous.Help" xml:space="preserve">
+    <value>Wenn diese Option aktiviert die Preise und Shop Kasse sind deaktivieren für anonyme Benutzer. Dies kann verwendet werden, um eine B2B-Website, die nur Listen Preise authenicated Benutzer zu erstellen.</value>
+  </data>
+  <data name="lblDisableStoreForAnonymous.Text" xml:space="preserve">
+    <value>Deaktivieren Preis / Checkout für Anonymous</value>
+  </data>
+</root>

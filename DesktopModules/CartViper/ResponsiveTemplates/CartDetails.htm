@@ -1,0 +1,109 @@
+<div class="form-group cvCartDetails" style="position:relative">
+    <div id="updateCartDiv" style="position:absolute;width:100%; height:100%;z-index:1000;background:#fff;opacity:0.9;margin-top:20px;display:none;"><h2><em class="fa fa-shopping-cart"></em> Updating the cart</h2></div>
+	
+	<div class="row hidden-xs hidden-sm">
+		<div class="col-xs-6"><strong>[PRODUCTHEADER]</strong></div>
+		<div class="col-xs-1"><strong>[QUANTITYHEADER]</strong></div>
+		<div class="col-xs-1"><strong>[PRICEHEADER]</strong></div>
+		<div class="col-xs-2"><strong>[LINETOTALHEADER]</strong></div>
+	</div>
+	[CARTITEMS]
+
+     <div class="row" style="margin-top:20px;">
+	    <div class="col-sm-11">
+		    <a href="javascript:UpdateCart()" class="CvStandardButton UpdateCart">
+			    [LOCALIZATION:lblUpdateEntireCart.Text]
+		    </a>
+		    <a href="javascript:DeleteAllItemsFromCart()" class="CvStandardButton DeleteCart">
+			    [LOCALIZATION:lblDeleteCart.Text]
+		    </a>
+	    </div>
+     </div>
+
+	<div class="row cvCartItemRowFooter">
+		<div class="col-xs-8 col-sm-3 col-sm-offset-5 cartItemRowFooterCaption"><strong>[SUBTOTALLABEL]</strong></div>
+		<div class="col-xs-1 cartTotal">[SUBTOTAL]</div>
+	</div>
+	
+	#if(SHOWSHIPPINGEST)
+	<div class="row cvCartItemRowFooter">
+		<div class="col-xs-8 col-sm-3 col-sm-offset-5 cartItemRowFooterCaption"><strong>[SHIPPINGLABEL]</strong></div>
+		<div class="col-xs-1 cartShippingEstimate">[SHIPPING]</div>
+		<div class="col-xs-3">
+			<span class="imgShippingEstHelp cvHelpIcon">
+				<i class="fa fa-question-circle fa-lg"></i>
+			</span>
+		</div>
+	</div>
+	#end
+	
+	#if(SHOWHANDLINGFEE)
+	<div class="row cvCartItemRowFooter">
+		<div class="col-xs-8 col-sm-3 col-sm-offset-5 cartItemRowFooterCaption"><strong>[HANDLINGLABEL]</strong></div> 
+		<div class="col-xs-1 cartHandling">[HANDLING]</div>
+	</div>
+	#end
+	#if(SHOWTAX)
+	<div class="row cvCartItemRowFooter">
+	  <div class="col-xs-8 col-sm-3 col-sm-offset-5 cartItemRowFooterCaption"><strong>[TAXLABEL]</strong></div> 
+	  <div class="col-xs-1 cartTax">[TAX]</div>
+	  <div class="col-xs-3">
+		 <span class="imgTaxEst cvHelpIcon">
+			<i class="fa fa-question-circle fa-lg"></i>
+		 </span>
+	  </div>
+	</div>
+	#end
+	<div class="row cvCartItemRowFooter">
+	  <div class="col-xs-8 col-sm-3 col-sm-offset-5 cartItemRowFooterCaption"><strong>[DISCOUNTLABEL]</strong></div> 
+	  <div class="col-xs-1 cartDiscountAmount">[DISCOUNT]</div>
+	</div>
+	#if(SHOWTAX)
+	<div class="row cvCartItemRowFooter">
+	  <div class="col-xs-8 col-sm-3 col-sm-offset-5 cartItemRowFooterCaption"><strong>[LOCALIZATION:lblTotal]</strong></div> 
+	  <div class="col-xs-1 cartGrandTotal">[GRANDTOTAL]</div>
+	</div>
+	#end
+	<div class="row cvCartItemRowFooter">
+		<div class="col-xs-8 col-sm-3 col-sm-offset-5 cartItemRowFooterCaption"><strong>[LOCALIZATION:lblCouponCode]</strong></div>
+		<div class="col-xs-4">[COUPONCODE]</div>
+	</div>
+     #if(ENABLEVIPPROCESSING)
+        <div class="row cvCartItemRowFooter">
+        <div class="col-sm-offset-8">
+        [VIPPROCESSING]
+        
+        <span class="imgVIPOrderProcessingHelp cvHelpIcon">
+            <i class="fa fa-question-circle fa-lg"></i>
+        </span>
+        </div>
+        
+        </div>
+        #end
+    #if(SHOWNOTES)
+	<div class="row cvCartItemRowFooter">
+	  <div class="col-xs-8 col-sm-3 col-sm-offset-5 cartItemRowFooterCaption"><strong>[LOCALIZATION:lblNotesToStore]</strong></div>
+		<div class="col-xs-4">[NOTES]
+			<span class="imgNotesToStoreHelp cvHelpIcon">
+				<i class="fa fa-question-circle fa-lg"></i>
+			</span>
+		</div>
+	</div>
+    #end
+	#if(SHOWTANDC)
+	<div class="row cvCartItemRowFooter">
+		<div class="col-xs-6 col-sm-offset-5">
+			<input type="checkbox" id="chkAgreeToStoreTerms" value="true"/>[LOCALIZATION:chkAgreeToStoreTerms]
+			<span class="imgTermsHelp cvHelpIcon">
+				<i class="fa fa-question-circle fa-lg"></i>
+			</span>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-6 col-sm-offset-5">
+			<div id="tandcWarning" style="display:none;" class="warningCaption">[LOCALIZATION:lblTandcError]</div>
+		</div>
+	</div>
+	#end
+ </div>
+ 

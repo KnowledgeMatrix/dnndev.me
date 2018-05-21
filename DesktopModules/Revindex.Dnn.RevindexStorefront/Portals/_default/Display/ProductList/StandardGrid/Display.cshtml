@@ -1,0 +1,330 @@
+﻿@using Revindex.Business.Revindex.Revindex.Storefront;
+@using Revindex.Dnn.RevindexStorefront.Models;
+@using Revindex.Web.Mvc.Dnn.Helpers;
+@inherits Revindex.Dnn.RevindexStorefront.Views.ProductListWebViewPage<ProductListViewModel>
+
+<div class="rvdsf rvdsf-productlist-container container-fluid">
+    @if (Model.Category != null || Model.Distributor != null || Model.Manufacturer != null)
+    {
+        <div class="rvdsf-field-description">
+            @Html.Raw(Model.Category == null ? (Model.Distributor == null ? (Model.Manufacturer == null ? "" : Model.Manufacturer.Description) : Model.Distributor.Description) : Model.Category.Description)
+        </div>
+    }
+    @if (Model.ShowSubCategory)
+    {
+        <ul class="row list-group rvdsf-productlist-subcategories hidden-xs">
+            @foreach (var category in Model.SubCategories)
+            {
+                <li class="list-group-item col-sm-4">
+                    <div class="rvdsf-category-gallery-container">
+                        @if (category.DefaultThumbnailGallery != null)
+                        {
+                            <a href="@category.ProductList.TabUrl"><img class="img-responsive center-block" src="@category.DefaultThumbnailGallery.MediaUrl" alt="@category.DefaultThumbnailGallery.AlternateText" /></a>
+                        }
+                    </div>
+                    <div class="rvdsf-category-info-container">
+                        <div class="rvdsf-field-name">
+                            <a href="@category.ProductList.TabUrl">@category.Name</a>
+                        </div>
+                    </div>
+                </li>
+            }
+        </ul>
+    }
+    <div class="rvdsf-productlist-navbar row">
+        <div class="form-inline col-xs-12">
+            <div class="form-group pull-right rvdsf-field-pageviewmode hidden-xs">
+                @{
+                    var urlParams = HttpUtility.ParseQueryString(Request.Url.Query);
+                }
+                @{urlParams.Set(Global.QueryStringKeys.PageViewMode, "grid");}<a href="@Url.NavigateUrl(urlParams)" class="@(String.IsNullOrEmpty(Model.PageViewMode) || Model.PageViewMode == "grid" ? "active" : "")"><span class="glyphicon glyphicon-th-large"></span></a> 
+                @{urlParams.Set(Global.QueryStringKeys.PageViewMode, "list");}<a href="@Url.NavigateUrl(urlParams)" class="@(Model.PageViewMode == "list" ? "active" : "")"><span class="glyphicon glyphicon-th-list"></span></a>
+            </div>
+            <div class="form-group rvdsf-field-pageviewdisplayorder">
+                @{
+                    urlParams = HttpUtility.ParseQueryString(Request.Url.Query);
+                    urlParams.Remove(Global.QueryStringKeys.PageViewNumber);
+                }
+                <select class="selectpicker" data-style="btn-default" onchange="location.href = this.options[this.selectedIndex].getAttribute('data-url');">
+                    @{urlParams.Set(Global.QueryStringKeys.PageViewDisplayOrder, "1");}<option value="1" @(Model.PageViewDisplayOrder == ProductListPageViewDisplayOrderType.Recommended ? "selected" : "") data-url="@Url.NavigateUrl(urlParams)">@Html.LocalizeString("RecommendedDisplayOrderLabel")</option>
+                    @{urlParams.Set(Global.QueryStringKeys.PageViewDisplayOrder, "8");}<option value="8" @(Model.PageViewDisplayOrder == ProductListPageViewDisplayOrderType.Newest ? "selected" : "") data-url="@Url.NavigateUrl(urlParams)">@Html.LocalizeString("NewestDisplayOrderLabel")</option>
+                    @{urlParams.Set(Global.QueryStringKeys.PageViewDisplayOrder, "9");}<option value="9" @(Model.PageViewDisplayOrder == ProductListPageViewDisplayOrderType.Oldest ? "selected" : "") data-url="@Url.NavigateUrl(urlParams)">@Html.LocalizeString("OldestDisplayOrderLabel")</option>
+                    @{urlParams.Set(Global.QueryStringKeys.PageViewDisplayOrder, "4");}<option value="4" @(Model.PageViewDisplayOrder == ProductListPageViewDisplayOrderType.LowestPrice ? "selected" : "") data-url="@Url.NavigateUrl(urlParams)">@Html.LocalizeString("LowestPriceDisplayOrderLabel")</option>
+                    @{urlParams.Set(Global.QueryStringKeys.PageViewDisplayOrder, "5");}<option value="5" @(Model.PageViewDisplayOrder == ProductListPageViewDisplayOrderType.HighestPrice ? "selected" : "") data-url="@Url.NavigateUrl(urlParams)">@Html.LocalizeString("HighestPriceDisplayOrderLabel")</option>
+                    @{urlParams.Set(Global.QueryStringKeys.PageViewDisplayOrder, "2");}<option value="2" @(Model.PageViewDisplayOrder == ProductListPageViewDisplayOrderType.AlphabeticalName ? "selected" : "") data-url="@Url.NavigateUrl(urlParams)">@Html.LocalizeString("AlphabeticalNameDisplayOrderLabel")</option>
+                    @{urlParams.Set(Global.QueryStringKeys.PageViewDisplayOrder, "3");}<option value="3" @(Model.PageViewDisplayOrder == ProductListPageViewDisplayOrderType.ReverseName ? "selected" : "") data-url="@Url.NavigateUrl(urlParams)">@Html.LocalizeString("ReverseNameDisplayOrderLabel")</option>
+                    @{urlParams.Set(Global.QueryStringKeys.PageViewDisplayOrder, "6");}<option value="6" @(Model.PageViewDisplayOrder == ProductListPageViewDisplayOrderType.LowestRatings ? "selected" : "") data-url="@Url.NavigateUrl(urlParams)">@Html.LocalizeString("LowestRatingsDisplayOrderLabel")</option>
+                    @{urlParams.Set(Global.QueryStringKeys.PageViewDisplayOrder, "7");}<option value="7" @(Model.PageViewDisplayOrder == ProductListPageViewDisplayOrderType.HighestRatings ? "selected" : "") data-url="@Url.NavigateUrl(urlParams)">@Html.LocalizeString("HighestRatingsDisplayOrderLabel")</option>
+                </select>
+            </div>
+            <div class="form-group rvdsf-field-pageviewsize">
+                @{ 
+                    urlParams = HttpUtility.ParseQueryString(Request.Url.Query);
+                    urlParams.Remove(Global.QueryStringKeys.PageViewNumber);
+                 }
+                <select class="selectpicker" data-style="btn-default" onchange="location.href = this.options[this.selectedIndex].getAttribute('data-url');">
+                    @{urlParams.Set(Global.QueryStringKeys.PageViewSize, "12");}<option value="12" @(Model.PageViewSize == 12 ? "selected" : "") data-url="@Url.NavigateUrl(urlParams)">12 @Html.LocalizeString("PerPageSizeLabel")</option>
+                    @{urlParams.Set(Global.QueryStringKeys.PageViewSize, "24");}<option value="24" @(Model.PageViewSize == 24 ? "selected" : "") data-url="@Url.NavigateUrl(urlParams)">24 @Html.LocalizeString("PerPageSizeLabel")</option>
+                    @{urlParams.Set(Global.QueryStringKeys.PageViewSize, "48");}<option value="48" @(Model.PageViewSize == 48 ? "selected" : "") data-url="@Url.NavigateUrl(urlParams)">48 @Html.LocalizeString("PerPageSizeLabel")</option>
+                    @{urlParams.Set(Global.QueryStringKeys.PageViewSize, "96");}<option value="96" @(Model.PageViewSize == 96 ? "selected" : "") data-url="@Url.NavigateUrl(urlParams)">96 @Html.LocalizeString("PerPageSizeLabel")</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="row @(Model.PageViewMode == "list" && !Request.Browser.IsMobileDevice ? "rvdsf-productlist-list" : "rvdsf-productlist-grid")" >
+        @if (Model.FilteredProducts.Count == 0)
+        {
+            <div class="alert alert-info">@Html.LocalizeString(Global.LocalizedStrings.Message_ProductsNotFound, Global.FilePaths.LocalSharedResourceFile)</div>
+        }
+        @foreach (var product in Model.PagedFilteredProducts)
+        {
+            <div class="@(Model.PageViewMode == "list" && !Request.Browser.IsMobileDevice ? "col-xs-12" : "col-sm-4")">
+                <div class="rvdsf-product-container">
+                    @if (product.ShowPrice && product.DefaultProductVariant.CombinedSavings > 0)
+                    {
+                        <div class="rvdsf-label-savings">@Html.LocalizeString("SavingsLabel")@if (product.ProductVariants.Count == 1) {<span> @product.DefaultProductVariant.FormattedCombinedPercentSavings</span>}</div>
+                    }
+                    <div class="rvdsf-product-gallery-container">
+                        @if (product.DefaultThumbnailGallery != null)
+                        {
+                            <a href="@product.ProductDetail.TabUrl"><img class="img-responsive center-block" src="@product.DefaultThumbnailGallery.MediaUrl" alt="@product.DefaultThumbnailGallery.AlternateText" /></a>
+                        }
+                    </div>
+                    <div class="rvdsf-product-info-container">
+                        <div class="rvdsf-field-name">
+                            <a class="rvdsf-label-name" href="@product.ProductDetail.TabUrl">@product.Name</a>
+                        </div>
+                        @if (product.ShowProductReviews)
+                        {
+                            <div class="rvdsf-field-rating">
+                                <input type="hidden" class="rating" data-readonly data-fractions="2" value="@product.AverageOverallRating" data-filled="glyphicon glyphicon-star" data-empty="glyphicon glyphicon-star-empty" />
+                            </div>
+                        }
+                        @if (product.ShowPrice)
+                        {
+                            if (product.ProductVariants.Count == 1)
+                            {
+                                if (String.IsNullOrEmpty(product.DefaultProductVariant.PriceText) && product.DefaultProductVariant.SalesType != SalesType.Quote)
+                                {
+                                    <div class="rvdsf-field-price">
+                                        @if (product.DefaultProductVariant.CombinedPromotionPrice.HasValue)
+                                        {
+                                            <span class="rvdsf-label-price"><s>@product.DefaultProductVariant.FormattedCombinedPrice</s></span>
+                                            <span class="rvdsf-label-promotionprice">@product.DefaultProductVariant.FormattedCombinedPromotionPrice</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="rvdsf-label-price">@product.DefaultProductVariant.FormattedCombinedPrice</span>
+                                        }
+                                    </div>
+                                }
+                                else if (!String.IsNullOrEmpty(product.DefaultProductVariant.PriceText))
+                                {
+                                    <div class="rvdsf-field-price">
+                                        <span class="rvdsf-label-pricetext">@product.DefaultProductVariant.PriceText</span>
+                                    </div>
+                                }
+                            }
+                            else if (product.ProductVariants.Count > 1 && !String.IsNullOrEmpty(product.FormattedMinCombinedSellingPrice) && !String.IsNullOrEmpty(product.FormattedMaxCombinedSellingPrice))
+                            {
+                                <div class="rvdsf-field-price">
+                                    <span class="rvdsf-label-price">@(product.FormattedMinCombinedSellingPrice == product.FormattedMaxCombinedSellingPrice ? product.FormattedMinCombinedSellingPrice : product.FormattedMinCombinedSellingPrice + " - " + product.FormattedMaxCombinedSellingPrice)</span>
+                                </div>
+                            }
+                        }
+                    </div>
+                    @if (product.ShowQuantity && product.AllowInternetOrder && !product.DefaultProductVariant.HasFormFields && product.ProductVariants.Count == 1)
+                    {
+                        <div class="rvdsf-product-form-container form-horizontal">
+                            <div class="form-group rvdsf-field-qty">
+                                    <label class="control-label col-xs-6 text-right" for="rvdsfProductListQuantityInput_@(product.ProductID)">@Html.LocalizeString("QuantityLabel")</label>
+                                    <div class="col-xs-6 text-left">
+                                        @if (product.DefaultProductVariant.AllowableOrderQuantityList.Count == 0)
+                                        {
+                                            <input id="rvdsfProductListQuantityInput_@(product.ProductID)" name="rvdsfProductListQuantityInput_@(product.ProductID)" type="number" required step="1" min="@(product.DefaultProductVariant.MinOrderQuantity.HasValue ? product.DefaultProductVariant.MinOrderQuantity : product.DefaultProductVariant.DefaultQuantity)" max="@(product.DefaultProductVariant.MaxOrderQuantity.HasValue ? product.DefaultProductVariant.MaxOrderQuantity : 9999 )" value="@product.DefaultProductVariant.DefaultQuantity" onchange="if (this.value == '') this.value = this.min; else if (parseInt(this.value) > this.max) this.value = this.max; else if (parseInt(this.value) < this.min) this.value = this.min;" onkeypress="return event.charCode >= 48 && event.charCode <= 57" />
+                                        }
+                                        else
+                                        {
+                                            <select id="rvdsfProductListQuantityInput_@(product.ProductID)" name="rvdsfProductListQuantityInput_@(product.ProductID)" class="form-control">
+                                                @foreach (var qty in product.DefaultProductVariant.AllowableOrderQuantityList)
+                                                {
+                                                    <option value="@qty">@qty</option>
+                                                }
+                                            </select>
+                                        }
+                                    </div>                                
+                            </div>
+                        </div>
+                    }
+                    <div class="btn-toolbar">
+                        @if (product.DefaultProductVariant.AllowProductComparison)
+                        {
+                            <div class="rvdsf-field-compare">
+                                <label><input type="checkbox" @(product.DefaultProductVariant.IsCompared ? "checked" : "") onchange="if (this.checked) rvdsfProductList.addProductComparison(@product.DefaultProductVariant.ProductVariantID); else rvdsfProductList.removeProductComparison(@product.DefaultProductVariant.ProductVariantID);" /> <a href="@Model.ProductComparison.TabUrl">@Html.LocalizeString("CompareLink")</a></label>
+                            </div>
+                        }
+                        @if (product.ShowSeeDetails)
+                        {
+                            <button type="button" class="rvdsf-btn-seedetails btn btn-primary" onclick="location.href = '@product.ProductDetail.TabUrl'">@Html.LocalizeString("SeeDetailsLink")</button>
+                        }
+
+                        @if (product.AllowInternetOrder && product.ProductVariants.Count == 1 && !product.DefaultProductVariant.HasFormFields && product.DefaultProductVariant.HasAcceptableInventory)
+                        {
+                            if (product.ShowAddToCart)
+                            {
+                                <button type="button" class="rvdsf-btn-addtocart btn btn-primary" onclick="rvdsfProductList.addProductToCart(@product.DefaultProductVariant.ProductVariantID, ($('#rvdsfProductListQuantityInput_@(product.ProductID)').length ? $('#rvdsfProductListQuantityInput_@(product.ProductID)').val() : @product.DefaultProductVariant.DefaultQuantity), 'rvdsfProductListMessage_@(product.ProductID)', null)">@(product.DefaultProductVariant.SalesType == SalesType.Quote ? Html.LocalizeString("AddToQuoteLink") : Html.LocalizeString("AddToCartLink"))</button>
+                            }
+
+                            if (product.ShowBuyNow)
+                            {
+                                <button type="button" class="rvdsf-btn-buynow btn btn-primary" onclick="rvdsfProductList.addProductToCart(@product.DefaultProductVariant.ProductVariantID, ($('#rvdsfProductListQuantityInput_@(product.ProductID)').length ? $('#rvdsfProductListQuantityInput_@(product.ProductID)').val() : @product.DefaultProductVariant.DefaultQuantity), 'rvdsfProductListMessage_@(product.ProductID)', '@Model.Checkout.TabUrl')">@(product.DefaultProductVariant.SalesType == SalesType.Quote ? Html.LocalizeString("QuoteNowLink") : Html.LocalizeString("BuyNowLink"))</button>
+                            }
+                        }
+                    </div>
+                    @if (!product.ProductVariants.Exists(pv => pv.HasAcceptableInventory))
+                    {
+                        <div class="alert alert-info rvdsf-label-soldout">@Html.LocalizeString("SoldOutLabel")</div>
+                    }
+                    <div id="rvdsfProductListMessage_@(product.ProductID)" style="display:none"></div>
+                </div>
+            </div>
+        }
+    </div>
+    @if (Model.Pager.TotalPages > 1)
+    {
+        var maxNumerators = 5;
+        var beginNumerator = (Math.Ceiling((decimal)Model.Pager.CurrentPageNumber / maxNumerators) * maxNumerators) - maxNumerators + 1;
+        var endNumerator = Math.Min(Model.Pager.TotalPages, beginNumerator + maxNumerators - 1);
+        urlParams = HttpUtility.ParseQueryString(Request.Url.Query);
+
+        <div class="rvdsf-productlist-pager">
+            <ul class="pagination @(Request.Browser.IsMobileDevice ? "pagination-sm" : "")">
+                @if (Model.Pager.CurrentPageNumber > 1)
+                {
+                    urlParams.Set(Global.QueryStringKeys.PageViewNumber, (Model.Pager.CurrentPageNumber - 1).ToString());
+
+                    <li>
+                        <a href="@(Url.NavigateUrl(urlParams))"><span class="glyphicon glyphicon-chevron-left"></span></a>
+                    </li>
+                }
+
+                @if (!Request.Browser.IsMobileDevice && beginNumerator > 1)
+                {
+                    urlParams.Set(Global.QueryStringKeys.PageViewNumber, (beginNumerator - maxNumerators).ToString());
+
+                    <li>
+                        <a href="@(Url.NavigateUrl(urlParams))"><span class="glyphicon glyphicon-option-horizontal"></span></a>
+                    </li>
+                }
+
+                @for (var page = beginNumerator; page <= endNumerator; page++)
+                {
+                    urlParams.Set(Global.QueryStringKeys.PageViewNumber, page.ToString());
+
+                    <li class="@(page == Model.Pager.CurrentPageNumber ? "active" : "")">
+                        <a href="@(Url.NavigateUrl(urlParams))">@page</a>
+                    </li>
+                }
+
+                @if (!Request.Browser.IsMobileDevice && endNumerator < Model.Pager.TotalPages)
+                {
+                    urlParams.Set(Global.QueryStringKeys.PageViewNumber, (endNumerator + 1).ToString());
+
+                    <li>
+                        <a href="@(Url.NavigateUrl(urlParams))"><span class="glyphicon glyphicon-option-horizontal"></span></a>
+                    </li>
+                }
+
+                @if (Model.Pager.CurrentPageNumber < Model.Pager.TotalPages)
+                {
+                    urlParams.Set(Global.QueryStringKeys.PageViewNumber, (Model.Pager.CurrentPageNumber + 1).ToString());
+
+                    <li>
+                        <a href="@(Url.NavigateUrl(urlParams))"><span class="glyphicon glyphicon-chevron-right"></span></a>
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+</div>
+@* Uses Bootstrap Select. See https://silviomoreto.github.io/bootstrap-select *@
+<link href="~/DesktopModules/Revindex.Dnn.RevindexStorefront/Scripts/bootstrap-select/css/bootstrap-select.min.css" media="all" rel="stylesheet" type="text/css" />
+<script src="~/DesktopModules/Revindex.Dnn.RevindexStorefront/Scripts/bootstrap-select/js/bootstrap-select.min.js"></script>
+
+@* Uses Bootstrap Rating. See https://github.com/dreyescat/bootstrap-rating *@
+<link href="~/DesktopModules/Revindex.Dnn.RevindexStorefront/Scripts/bootstrap-rating/bootstrap-rating.css" media="all" rel="stylesheet" type="text/css" />
+<script src="~/DesktopModules/Revindex.Dnn.RevindexStorefront/Scripts/bootstrap-rating/bootstrap-rating.min.js"></script>
+<script type="text/javascript">
+    var rvdsfProductList = rvdsfProductList || {}
+    rvdsfProductList.addProductToCart = function (productVariantID, quantity, messageContainerID, redirect) {
+        var salesOrderDetailData = {
+            ProductVariantID: productVariantID,
+            Quantity: quantity
+        }
+
+        var servicesFramework = $.ServicesFramework(@Dnn.Module.ModuleID);
+
+        $.ajax({
+            type: "POST",
+            headers: { "Accept-Language": "@Dnn.Portal.CultureCode" },
+            beforeSend: servicesFramework.setModuleHeaders,
+            url: servicesFramework.getServiceRoot("@Dnn.Module.DesktopModule.FolderName") + "Cart/SalesOrderDetail",
+            data: salesOrderDetailData
+        })
+        .done(function (data, textStatus, jqXHR) {
+
+            // Notify all Cart Summary modules to rebind
+            $(".rvdsf-cartsummary-container").each(function () {
+                this.databind()
+            })
+
+            $("#" + messageContainerID).attr("class", "alert alert-success").html("<span class='glyphicon glyphicon-ok'></span> @HttpUtility.JavaScriptStringEncode(Html.LocalizeString(Global.LocalizedStrings.Message_ProductAddedToCart, Global.FilePaths.LocalSharedResourceFile)) <a class='btn btn-link' href='@Model.Cart.TabUrl'>@HttpUtility.JavaScriptStringEncode(Html.LocalizeString("CartLink"))</a>").show()
+
+            if (redirect)
+                location.href = redirect
+        })
+        .fail(function (data, textStatus, errorThrown) {
+            $("#" + messageContainerID).attr("class", "alert alert-danger").html("<span class='glyphicon glyphicon-remove'></span> @HttpUtility.JavaScriptStringEncode(Html.LocalizeString(Global.LocalizedStrings.Message_ProductNotAvailable, Global.FilePaths.LocalSharedResourceFile))").show()
+        })
+    }
+
+    rvdsfProductList.addProductComparison = function (productVariantID) {
+        var servicesFramework = $.ServicesFramework(@Dnn.Module.ModuleID);
+        var productVariantData = {
+            ProductVariantID: productVariantID
+        }
+
+        $.ajax({
+            type: "POST",
+            headers: { "Accept-Language": "@Dnn.Portal.CultureCode" },
+            beforeSend: servicesFramework.setModuleHeaders,
+            url: servicesFramework.getServiceRoot("@Dnn.Module.DesktopModule.FolderName") + "ProductComparison/ProductVariant",
+            data: productVariantData
+        })
+        .done(function (data, textStatus, jqXHR) {
+
+        })
+        .fail(function (data, textStatus, errorThrown) {
+            $("#" + messageContainerID).attr("class", "alert alert-danger").html("<span class='glyphicon glyphicon-remove'></span> @HttpUtility.JavaScriptStringEncode(Html.LocalizeString(Global.LocalizedStrings.Message_UnknownErrorOccured, Global.FilePaths.LocalSharedResourceFile))").show()
+        })
+    }
+
+    rvdsfProductList.removeProductComparison = function (productVariantID) {
+        var servicesFramework = $.ServicesFramework(@Dnn.Module.ModuleID);
+
+        $.ajax({
+            type: "DELETE",
+            headers: { "Accept-Language": "@Dnn.Portal.CultureCode" },
+            beforeSend: servicesFramework.setModuleHeaders,
+            url: servicesFramework.getServiceRoot("@Dnn.Module.DesktopModule.FolderName") + "ProductComparison/ProductVariant?productVariantID=" + productVariantID
+        })
+    }
+
+    $(document).ready(function () {
+        // Change module title
+        var moduleTitle = "@(Model.Category == null ? (Model.Distributor == null ? (Model.Manufacturer == null ? "" : Model.Manufacturer.Name) : Model.Distributor.Name) : Model.Category.Name)";
+
+        if (moduleTitle)
+            $("#dnn_ctr@(Dnn.Module.ModuleID)_dnnTITLE_titleLabel").html(moduleTitle)
+    })
+</script>

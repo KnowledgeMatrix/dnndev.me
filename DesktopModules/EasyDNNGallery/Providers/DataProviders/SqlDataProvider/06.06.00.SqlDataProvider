@@ -1,0 +1,15 @@
+IF NOT EXISTS (SELECT UpdateVersion FROM {databaseOwner} [{objectQualifier}EasyGalleryUpdate] WHERE UpdateVersion = '06.06.00')
+BEGIN
+	INSERT {databaseOwner}[{objectQualifier}EasyGalleryUpdate] ([UpdateVersion],[Finished]) VALUES (N'06.06.00',0)
+END
+GO
+if not exists (select * from INFORMATION_SCHEMA.columns where table_name = '{objectQualifier}EasyGalleryPortalSettings' and column_name = 'WistiaAPIKey')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryPortalSettings] ADD WistiaAPIKey NVARCHAR(128) NULL
+END
+GO
+if not exists (select * from INFORMATION_SCHEMA.columns where table_name = '{objectQualifier}EasyGalleryPortfolioProSettings' and column_name = 'MediaUrlTarget')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryPortfolioProSettings] ADD MediaUrlTarget NVARCHAR(7) CONSTRAINT DF_{objectQualifier}EasyGalleryPortfolioProSettings_MediaUrlTarget DEFAULT (N'_self') NOT NULL
+END
+GO

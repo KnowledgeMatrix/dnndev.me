@@ -1,0 +1,225 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+SET XACT_ABORT ON
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+	
+	-- Support filter by distributor
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		ProductFilterDistributorFilterable bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductFilterDistributorFilterable DEFAULT 1,
+		ProductFilterDistributorDisplayOrder int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductFilterDistributorDisplayOrder DEFAULT 1000
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductFilterDistributorFilterable
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductFilterDistributorDisplayOrder
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD DistributorDisplayTemplate varchar(255) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_DistributorDisplayTemplate DEFAULT 'Standard1' FOR DistributorDisplayTemplate
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_DistributorDisplayTemplate
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Distributor ADD	UrlName xml NULL
+
+	-- Support custom price text
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant ADD PriceText xml NULL
+
+	-- Support affiliate tracking
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder ADD AffiliateID int NULL
+
+	-- Support PayU Business payment gateway
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		PaymentGatewaysPayUBusinessTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysPayUBusinessTestMode DEFAULT 0,
+		PaymentGatewaysPayUBusinessUsername varchar(255) NULL,
+		PaymentGatewaysPayUBusinessPassword varchar(255) NULL,
+		PaymentGatewaysPayUBusinessSafekey varchar(255) NULL
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysPayUBusinessTestMode
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		PaymentMethodsPayUBusinessActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsPayUBusinessActive DEFAULT 0,
+		PaymentMethodsPayUBusinessAvailabilityRule xml NULL
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsPayUBusinessActive
+
+	-- Support category availability rule
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Category ADD AvailabilityRule xml NULL
+
+	-- Support Authorize.Net duplicate window setting
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		PaymentGatewaysAuthorizeNetAIMDuplicateWindow int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysAuthorizeNetAIMDuplicateWindow DEFAULT 120,
+		PaymentGatewaysAuthorizeNetCIMDuplicateWindow int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysAuthorizeNetCIMDuplicateWindow DEFAULT 120,
+		PaymentGatewaysAuthorizeNetSIMDuplicateWindow int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysAuthorizeNetSIMDuplicateWindow DEFAULT 120
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysAuthorizeNetAIMDuplicateWindow
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysAuthorizeNetCIMDuplicateWindow
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysAuthorizeNetSIMDuplicateWindow
+
+	-- Support recurring order reminder email
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		CommunicationRecurringSalesOrderReminderEmailActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CommunicationRecurringSalesOrderReminderEmailActive DEFAULT 1,
+		CommunicationRecurringSalesOrderReminderEmailTemplate xml NULL,
+		CommunicationRecurringSalesOrderReminderCountdown int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CommunicationRecurringSalesOrderReminderCountdown DEFAULT 259200
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CommunicationRecurringSalesOrderReminderEmailActive
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CommunicationRecurringSalesOrderReminderCountdown
+
+	-- Support configurable show page elements by product
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Product ADD
+		ShowPrice bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Product_ShowPrice DEFAULT 1,
+		ShowSavings bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Product_ShowSavings DEFAULT 1,
+		ShowMSRP bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Product_ShowMSRP DEFAULT 1,
+		ShowQuantity bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Product_ShowQuantity DEFAULT 1,
+		ShowSeeDetails bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Product_ShowSeeDetails DEFAULT 1,
+		ShowAddToCart bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Product_ShowAddToCart DEFAULT 1,
+		ShowBuyNow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Product_ShowBuyNow DEFAULT 1,
+		ShowAddToWishList bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Product_ShowAddToWishList DEFAULT 1,
+		ShowInventory bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Product_ShowInventory DEFAULT 1,
+		ShowSKU bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Product_ShowSKU DEFAULT 1,
+		ShowRewardPoints bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Product_ShowRewardPoints DEFAULT 1,
+		ShowUpdate bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Product_ShowUpdate DEFAULT 1
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Product DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Product_ShowPrice
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Product DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Product_ShowSavings
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Product DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Product_ShowMSRP
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Product	DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Product_ShowQuantity
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Product	DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Product_ShowSeeDetails
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Product	DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Product_ShowAddToCart
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Product	DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Product_ShowBuyNow
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Product	DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Product_ShowAddToWishList
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Product	DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Product_ShowInventory
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Product	DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Product_ShowSKU
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Product	DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Product_ShowRewardPoints
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Product DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Product_ShowUpdate
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD ProductDetailUpdateShow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductDetailUpdateShow DEFAULT 1
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductDetailUpdateShow
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD ProductListSummaryShow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductListSummaryShow DEFAULT 1
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductListSummaryShow
+
+COMMIT TRANSACTION
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+
+		-- Affiliate performance report
+		INSERT {databaseOwner}[{objectQualifier}Revindex_Storefront_ReportDefinition] ([ReportDefinitionGUID], [PortalID], [Name], [Description], [Active], [DefinitionRule], [Standard], [ReportGroup], [CreateDate], [UpdateDate]) VALUES (N'A096534C-0578-49CF-BC68-E27CC0809821', NULL, N'Affiliate performance', N'Show sales performance by affiliate.', 1, N'<rule version="1.0" type="data">&lt;data method="ReportDefinition" version="1.0"&gt;
+  &lt;dataSources&gt;
+    &lt;sqlDataSource&gt;
+      &lt;query&gt;SELECT v.VendorName AS VendorName, count(*) AS TotalOrders, sum(so.SubTotalAmount) AS TotalOrderAmount
+FROM {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder so
+JOIN {databaseOwner}{objectQualifier}Affiliates a
+ON a.AffiliateId = so.AffiliateID
+JOIN {databaseOwner}{objectQualifier}Vendors v
+ON v.VendorId = a.VendorId
+WHERE so.Status = 4
+AND so.OrderDate BETWEEN @StartDate AND @StopDate 
+GROUP BY v.VendorId, v.VendorName
+ORDER BY v.VendorName&lt;/query&gt;
+      &lt;parameters&gt;
+        &lt;controlParameter&gt;
+          &lt;name&gt;@StartDate&lt;/name&gt;
+          &lt;dataType&gt;6&lt;/dataType&gt;
+          &lt;field&gt;
+            &lt;datePicker&gt;
+              &lt;autoPostBack&gt;False&lt;/autoPostBack&gt;
+              &lt;id&gt;StartDate&lt;/id&gt;
+              &lt;inputControlHeight&gt;&lt;/inputControlHeight&gt;
+              &lt;inputControlWidth&gt;&lt;/inputControlWidth&gt;
+              &lt;label&gt;
+                &lt;locale en-US="Start date:" /&gt;
+              &lt;/label&gt;
+              &lt;required&gt;True&lt;/required&gt;
+              &lt;selectedDates /&gt;
+              &lt;validatorText&gt;
+                &lt;locale en-US="Start date is required." /&gt;
+              &lt;/validatorText&gt;
+            &lt;/datePicker&gt;
+          &lt;/field&gt;
+        &lt;/controlParameter&gt;
+        &lt;controlParameter&gt;
+          &lt;name&gt;@StopDate&lt;/name&gt;
+          &lt;dataType&gt;6&lt;/dataType&gt;
+          &lt;field&gt;
+            &lt;datePicker&gt;
+              &lt;autoPostBack&gt;False&lt;/autoPostBack&gt;
+              &lt;id&gt;StopDate&lt;/id&gt;
+              &lt;inputControlHeight&gt;&lt;/inputControlHeight&gt;
+              &lt;inputControlWidth&gt;&lt;/inputControlWidth&gt;
+              &lt;label&gt;
+                &lt;locale en-US="Stop date:" /&gt;
+              &lt;/label&gt;
+              &lt;required&gt;True&lt;/required&gt;
+              &lt;selectedDates /&gt;
+              &lt;validatorText&gt;
+                &lt;locale en-US="Stop date is required." /&gt;
+              &lt;/validatorText&gt;
+            &lt;/datePicker&gt;
+          &lt;/field&gt;
+        &lt;/controlParameter&gt;
+      &lt;/parameters&gt;
+    &lt;/sqlDataSource&gt;
+  &lt;/dataSources&gt;
+  &lt;visualizers&gt;
+    &lt;htmlVisualizer&gt;
+      &lt;html&gt;&amp;lt;table cellspacing="0" cellpadding="3" style="border-top-width: 1px; border-top-style: solid; border-top-color: #cccccc; border-left-width: 1px; border-left-style: solid; border-left-color: #cccccc; border-right-width: 1px; border-right-style: solid; border-right-color: #cccccc; width: 100%;" bgcolor="#eeeeee"&amp;gt;
+    &amp;lt;colgroup&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;/colgroup&amp;gt;
+    &amp;lt;tbody&amp;gt;
+        &amp;lt;tr&amp;gt;
+            &amp;lt;td width="20%"&amp;gt;&amp;lt;strong&amp;gt;Vendor&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+            &amp;lt;td width="40%"&amp;gt;&amp;lt;strong&amp;gt;Total orders&amp;lt;br /&amp;gt;
+            &amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+            &amp;lt;td width="40%"&amp;gt;&amp;lt;strong&amp;gt;Total order amount&amp;lt;/strong&amp;gt;&amp;lt;/td&amp;gt;
+        &amp;lt;/tr&amp;gt;
+    &amp;lt;/tbody&amp;gt;
+&amp;lt;/table&amp;gt;
+[[xsl:for-each select="/in/dataSet/dataTable/dataRow" ]]
+&amp;lt;table cellspacing="0" cellpadding="3" style="width: 100%;"&amp;gt;
+    &amp;lt;colgroup&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;col /&amp;gt;&amp;lt;/colgroup&amp;gt;
+    &amp;lt;tbody&amp;gt;
+        &amp;lt;tr&amp;gt;
+            &amp;lt;td style="border: 1px solid #cccccc;" width="20%"&amp;gt;[[xsl:value-of select="VendorName" /]]&amp;lt;/td&amp;gt;
+            &amp;lt;td style="border: 1px solid #cccccc;" width="40%"&amp;gt;[[xsl:value-of select="TotalOrders" /]]&amp;lt;/td&amp;gt;
+            &amp;lt;td style="border: 1px solid #cccccc;" width="40%"&amp;gt;[[xsl:value-of select="format-number(TotalOrderAmount, ''#,##0.00'')" /]]&amp;lt;/td&amp;gt;
+        &amp;lt;/tr&amp;gt;
+    &amp;lt;/tbody&amp;gt;
+&amp;lt;/table&amp;gt;
+[[/xsl:for-each]]&lt;/html&gt;
+    &lt;/htmlVisualizer&gt;
+  &lt;/visualizers&gt;
+&lt;/data&gt;</rule>', 1, 3, GETDATE(), GETDATE())
+
+		-- Upgrade default Checkout template to "Standard19"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CheckoutDisplayTemplate = 'Standard19' WHERE CheckoutDisplayTemplate LIKE 'Standard%'
+
+		-- Upgrade default ProductList template to "Standard9"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductListDisplayTemplate = 'Standard9' WHERE ProductListDisplayTemplate LIKE 'Standard%'
+
+		-- Upgrade default ProductShowcase template to "Standard6"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductShowcaseDisplayTemplate = 'Standard6' WHERE ProductShowcaseDisplayTemplate LIKE 'Standard%'
+
+		-- Upgrade default WishList template to "Standard3"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET WishListDisplayTemplate = 'Standard3' WHERE WishListDisplayTemplate LIKE 'Standard%'
+
+		-- Set new email template for recurring order reminder
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CommunicationRecurringSalesOrderReminderEmailTemplate = '<locale en-US="&lt;rule version=&quot;1.0&quot; type=&quot;data&quot;&gt;&amp;lt;data method=&quot;BasicRecurringSalesOrderReminderEmail&quot; version=&quot;1.0&quot;&amp;gt;&#xD;&#xA;  &amp;lt;mailFrom&amp;gt;&amp;lt;/mailFrom&amp;gt;&#xD;&#xA;  &amp;lt;mailTo&amp;gt;&amp;lt;/mailTo&amp;gt;&#xD;&#xA;  &amp;lt;mailBcc&amp;gt;&amp;lt;/mailBcc&amp;gt;&#xD;&#xA;  &amp;lt;subject&amp;gt;[[xsl:value-of select=&quot;in/configuration/generalStoreName&quot; /]] Recurring Order Reminder&amp;lt;/subject&amp;gt;&#xD;&#xA;  &amp;lt;htmlBody&amp;gt;&amp;amp;lt;p&amp;amp;gt;Hi [[xsl:if test=&quot;in/user/profile/profileProperties/FirstName&quot; ]] [[xsl:value-of select=&quot;in/user/profile/profileProperties/FirstName&quot; /]]&amp;amp;amp;nbsp;[[xsl:value-of select=&quot;in/user/profile/profileProperties/LastName&quot; /]][[/xsl:if]],&amp;amp;lt;/p&amp;amp;gt;&#xD;&#xA;&amp;amp;lt;p&amp;amp;gt;&#xD;&#xA;This is a friendly reminder that your recurring order will be processed on [[xsl:value-of select=&quot;format-dateTime(in/recurringSalesOrders/recurringSalesOrder[1]/nextRecurringDate, ''[FNn], [MNn] [D1o], [Y]'')&quot; /]]. Please ensure that your address and payment information on file are up-to-date to prevent any service interruption. We hope you continue enjoying our service. If you have any questions, please do not hesitate to contact us.&amp;amp;lt;/p&amp;amp;gt;&#xD;&#xA;[[xsl:variable name=&quot;ManageRecurringOrderUrl&quot; select=&quot;concat(''http://'', in/portal/portalAliases/portalAlias[isPrimary=''true''][1]/httpAlias, ''?tabid='', in/portal/manageRecurringOrderTabs/tab[1]/tabID)&quot; /]]&#xD;&#xA;&amp;amp;lt;a href=&quot;[[xsl:value-of select=''$ManageRecurringOrderUrl'' /]]&quot;&amp;amp;gt;Click here to manage your recurring orders&amp;amp;lt;/a&amp;amp;gt;&amp;amp;lt;br /&amp;amp;gt;&#xD;&#xA;&amp;amp;lt;br /&amp;amp;gt;&#xD;&#xA;&amp;amp;lt;table cellspacing=&quot;0&quot; cellpadding=&quot;3&quot; border=&quot;1&quot; style=&quot;width: 100%;&quot;&amp;amp;gt;&#xD;&#xA;    &amp;amp;lt;colgroup&amp;amp;gt;&amp;amp;lt;col /&amp;amp;gt;&amp;amp;lt;col /&amp;amp;gt;&amp;amp;lt;col /&amp;amp;gt;&amp;amp;lt;/colgroup&amp;amp;gt;&#xD;&#xA;    &amp;amp;lt;tbody&amp;amp;gt;&#xD;&#xA;        &amp;amp;lt;tr&amp;amp;gt;&#xD;&#xA;            &amp;amp;lt;td width=&quot;60%&quot;&amp;amp;gt;&amp;amp;lt;strong&amp;amp;gt;Item&amp;amp;lt;/strong&amp;amp;gt;&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;            &amp;amp;lt;td width=&quot;15%&quot;&amp;amp;gt;&amp;amp;lt;strong&amp;amp;gt;Quantity&amp;amp;lt;/strong&amp;amp;gt;&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;        &amp;amp;lt;/tr&amp;amp;gt;&#xD;&#xA;    &amp;amp;lt;/tbody&amp;amp;gt;&#xD;&#xA;&amp;amp;lt;/table&amp;amp;gt;&#xD;&#xA;[[xsl:for-each select=&quot;in/recurringSalesOrders/recurringSalesOrder&quot;]]&#xD;&#xA;&amp;amp;lt;table cellspacing=&quot;0&quot; cellpadding=&quot;3&quot; border=&quot;1&quot; style=&quot;width: 100%;&quot;&amp;amp;gt;&#xD;&#xA;    &amp;amp;lt;colgroup&amp;amp;gt;&amp;amp;lt;col /&amp;amp;gt;&amp;amp;lt;col /&amp;amp;gt;&amp;amp;lt;col /&amp;amp;gt;&amp;amp;lt;/colgroup&amp;amp;gt;&#xD;&#xA;    &amp;amp;lt;tbody&amp;amp;gt;&#xD;&#xA;        &amp;amp;lt;tr&amp;amp;gt;&#xD;&#xA;            &amp;amp;lt;td width=&quot;60%&quot;&amp;amp;gt;&#xD;&#xA;            &amp;amp;lt;span&amp;amp;gt;[[xsl:value-of select=&quot;productVariant/product/name&quot; /]] -&amp;amp;amp;nbsp;&amp;amp;lt;/span&amp;amp;gt;[[xsl:value-of select=&quot;productVariant/name&quot; /]]&amp;amp;lt;br /&amp;amp;gt;&#xD;&#xA;            [[xsl:for-each select=&quot;dynamicFormResult/fields/field&quot;]][[xsl:value-of select=&quot;@id&quot; /]]: [[xsl:value-of select=&quot;.&quot; /]], [[/xsl:for-each]]&#xD;&#xA;            &amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;            &amp;amp;lt;td width=&quot;15%&quot;&amp;amp;gt;[[xsl:value-of select=&quot;quantity&quot; /]]&amp;amp;lt;/td&amp;amp;gt;&#xD;&#xA;        &amp;amp;lt;/tr&amp;amp;gt;&#xD;&#xA;    &amp;amp;lt;/tbody&amp;amp;gt;&#xD;&#xA;&amp;amp;lt;/table&amp;amp;gt;&#xD;&#xA;[[/xsl:for-each]]&amp;lt;/htmlBody&amp;gt;&#xD;&#xA;&amp;lt;/data&amp;gt;&lt;/rule&gt;" />'
+
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

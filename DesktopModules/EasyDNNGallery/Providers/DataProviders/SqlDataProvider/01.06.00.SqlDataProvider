@@ -1,0 +1,90 @@
+﻿/**** obj qualif checks ****/
+if '{objectQualifier}' <> ''
+BEGIN
+
+/**** 010000 ****/
+BEGIN TRY
+ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGalleryCategory]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyGalleryCategory]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyGalleryCategory]', N'{objectQualifier}EasyGalleryCategory', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyGalleryCategory', N'PK_{objectQualifier}EasyGalleryCategory', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyGallery_EasyGalleryCategory', N'FK_{objectQualifier}EasyGallery_{objectQualifier}EasyGalleryCategory', 'OBJECT'
+  END
+ END
+END TRY
+BEGIN CATCH
+END CATCH
+
+BEGIN TRY
+  IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGallery]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyGallery]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyGallery]', N'{objectQualifier}EasyGallery', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyGallery', N'PK_{objectQualifier}EasyGallery', 'OBJECT'
+  END
+ END
+ END TRY
+BEGIN CATCH
+END CATCH
+
+BEGIN TRY
+   IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyDNNThumbs]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyDNNThumbs]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyDNNThumbs]', N'{objectQualifier}EasyDNNThumbs', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyDNNThumbs', N'PK_{objectQualifier}EasyDNNThumbs', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyDNNThumbs_EasyGallery', N'FK_{objectQualifier}EasyDNNThumbs_{objectQualifier}EasyGallery', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyDNNThumbs_{objectQualifier}Modules', N'FK_{objectQualifier}EasyDNNThumbs_{objectQualifier}Modules', 'OBJECT'
+  END
+ END
+ END TRY
+BEGIN CATCH
+END CATCH
+ 
+BEGIN TRY
+   IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGalleryPictures]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyGalleryPictures]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyGalleryPictures]', N'{objectQualifier}EasyGalleryPictures', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyGalleryPictures', N'PK_{objectQualifier}EasyGalleryPictures', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyGalleryPictures_EasyGallery', N'FK_{objectQualifier}EasyGalleryPictures_{objectQualifier}EasyGallery', 'OBJECT'
+  END
+ END
+ END TRY
+BEGIN CATCH
+END CATCH
+
+BEGIN TRY
+   IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGalleryIntegration]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyGalleryIntegration]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyGalleryIntegration]', N'{objectQualifier}EasyGalleryIntegration', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyGalleryIntegration', N'PK_{objectQualifier}EasyGalleryIntegration', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyGalleryIntegration_EasyGallery', N'FK_{objectQualifier}EasyGalleryIntegration_{objectQualifier}EasyGallery', 'OBJECT'
+  END
+ END
+ END TRY
+BEGIN CATCH
+END CATCH
+/**** 010000 ****/
+
+END
+GO
+/**** obj qualif checks ****/
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGallerySettings]') AND type in (N'U'))
+BEGIN
+	SET ANSI_NULLS ON
+	SET QUOTED_IDENTIFIER ON
+	CREATE TABLE {databaseOwner}[{objectQualifier}EasyGallerySettings](
+		[ModuleId] [int] NOT NULL,
+		[ViewerControl] [varchar](500) NULL,
+		CONSTRAINT [PK_{objectQualifier}EasyGallerySettings] PRIMARY KEY CLUSTERED ([ModuleId] ASC) WITH (STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF)
+	)
+END

@@ -1,0 +1,1 @@
+﻿<%@ Page Language="C#" AutoEventWireup="false" CodeBehind="WLWManifest.aspx.cs" Inherits="DotNetNuke.Professional.Blogs.WLWManifest" %>

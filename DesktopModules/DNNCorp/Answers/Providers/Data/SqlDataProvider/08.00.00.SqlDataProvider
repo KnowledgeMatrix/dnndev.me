@@ -1,0 +1,32 @@
+﻿/********************************************************
+ * SPROC: Answers_Vote_GetPostDetail
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Answers_Vote_GetPostDetail]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Answers_Vote_GetPostDetail] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Answers_Vote_GetPostDetail]
+	@PostId int,
+	@PageIndex int = 0,
+	@PageSize int = 10
+AS
+BEGIN
+	DECLARE @TotalVoters int
+
+	SELECT  @TotalVoters = COUNT(PostId)
+	FROM	{databaseOwner}{objectQualifier}Answers_Vote WITH (NOLOCK)
+	WHERE	PostId = @PostId
+
+	;WITH OrderedSet
+	AS (
+		SELECT	U.UserID, U.DisplayName, V.VoteTypeId,
+				ROW_NUMBER() OVER (ORDER BY V.CreatedOnDate DESC, V.VoteId DESC) AS [RowNumber]
+		FROM	{databaseOwner}{objectQualifier}Answers_Vote V WITH (NOLOCK)
+					INNER JOIN {databaseOwner}{objectQualifier}Users U WITH (NOLOCK) ON V.CreatedByUserId = U.UserID
+		WHERE	V.PostId = @PostId
+	)
+	SELECT TOP (@PageSize) UserID, DisplayName, Votes = VoteTypeId, TotalVoters = @TotalVoters, TotalVotes = @TotalVoters
+	FROM	OrderedSet
+	WHERE	[RowNumber] > (@PageIndex * @PageSize)
+END
+GO

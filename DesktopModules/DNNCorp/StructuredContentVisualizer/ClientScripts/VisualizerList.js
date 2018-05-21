@@ -1,0 +1,7 @@
+﻿
+if(typeof dnn==="undefined"||dnn===null){dnn={};};if(typeof dnn.visualizerModule==="undefined"||dnn.visualizerModule===null){dnn.visualizerModule={};};(function($){'use strict';function getModuleIdFromVisualizerInstanceId(visualizerInstanceId){var visualizerContainer=document.querySelector('div[data-vid="'+visualizerInstanceId+'"]');if(!visualizerContainer){return null;}
+return visualizerContainer.getAttribute("data-mid");}
+function getQueryStringParameterByName(name){var url=window.location.href;name=name.replace(/[\[\]]/g,"\\$&");var regex=new RegExp("[?&]"+name+"(=([^&#]*)|&|#|$)"),results=regex.exec(url);if(!results)return null;if(!results[2])return'';return decodeURIComponent(results[2].replace(/\+/g," "));}
+function getPage(visualizerInstanceId,pageNumber,params){var moduleId=getModuleIdFromVisualizerInstanceId(visualizerInstanceId);if(moduleId===null){var defer=$.Deferred();return defer.reject({message:"Cannot find module in the page for visualizer instance "+visualizerInstanceId+"."});}
+var filter=getQueryStringParameterByName("filter");var data=$.extend({filter:filter},params||{},{page:pageNumber});var sf=$.dnnSF(moduleId);var serviceRoot=sf.getServiceRoot("structuredcontentvisualizer");var serviceUrl=serviceRoot+"list/get";return $.ajax({type:"GET",url:serviceUrl,data:data,beforeSend:sf.setModuleHeaders});}
+dnn.visualizerModule.getPage=getPage;})(jQuery);

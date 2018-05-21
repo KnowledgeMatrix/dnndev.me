@@ -1,0 +1,50 @@
+﻿@inherits DotNetNuke.Web.Mvc.Framework.DnnWebViewPage<Christoc.Modules.StdRegModule.Models.StudentReg>
+@{
+    ViewBag.Title = "EditStudent";
+}
+@using DotNetNuke.Web.Mvc.Helpers
+<h2>EditStudent</h2>
+<div id="EditStudent-@Dnn.ModuleContext.ModuleId">
+    @if (Model==null)
+    {
+        <h3>Here model is null</h3>
+    }
+    else
+    {
+        //foreach (var student in Model)
+        //{
+        <fieldset>
+
+            @*@Html.Hidden("StdRegID", student.StdRegID)
+        @Html.TextBox("StdName", student.StdName)
+        @Html.TextBox("StdClass", student.StdClass)
+        @Html.TextBox("StdClgName", student.StdClgName)
+        @Html.Hidden("ModuleID", student.ModuleID)*@
+            <div class="dnnFormItem">
+                <div><label for="StdRegID">@Dnn.LocalizeString("lblStdRegID")</label></div>
+                @Html.TextBoxFor(m => m.StdRegID, new { disabled = false })
+            </div>
+
+            <div class="dnnFormItem">
+                <div><label for="StdName">@Dnn.LocalizeString("lblStdName")</label></div>
+                @Html.TextBoxFor(m => m.StdName)
+            </div>
+            <div class="dnnFormItem">
+                <div><label for="StdClass">@Dnn.LocalizeString("lblStdClass")</label></div>
+                @Html.TextBoxFor(m => m.StdClass)
+            </div>
+            <div class="dnnFormItem">
+                <div><label for="StdClgName">@Dnn.LocalizeString("lblStdClgName")</label></div>
+                @Html.TextBoxFor(m => m.StdClgName)
+            </div>
+            @Html.HiddenFor(m => m.ModuleID)
+        </fieldset>
+        @*}*@
+    }
+
+
+    <button type="submit" class="dnnPrimaryAction">@Dnn.LocalizeString("Submit")</button>
+    <a href="@Url.Action("Index", "Student", new {})">@Dnn.LocalizeString("Cancel")</a>
+</div>
+
+    

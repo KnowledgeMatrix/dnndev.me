@@ -1,0 +1,5 @@
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryGravityGallerySettings' AND column_name = 'ImportedModule')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryGravityGallerySettings] ADD ImportedModule BIT CONSTRAINT DF_{objectQualifier}EasyGalleryGravityGallerySettings_ImportedModule DEFAULT (0) NOT NULL
+END
+GO

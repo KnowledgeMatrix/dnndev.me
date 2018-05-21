@@ -1,0 +1,86 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+/***** Create FormBuilder_Visualizer_FormsUsage Table *****/
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FormBuilder_Visualizer_FormUsage]') AND type in (N'U'))
+BEGIN   
+	CREATE TABLE {databaseOwner}[{objectQualifier}FormBuilder_Visualizer_FormUsage]
+	(
+		[ModuleId] int NOT NULL,
+		[FormTemplateId] varchar(50) NOT NULL,
+		[PortalId] int NOT NULL,
+		[CreationUtcDateTime] datetime NOT NULL,
+		[LastUpdateUtcDateTime] datetime NULL,
+		[Deleted] bit default(0),
+		CONSTRAINT [PK_{objectQualifier}FormBuilder_Visualizer_FormUsage] PRIMARY KEY CLUSTERED ([ModuleId] ASC)
+	) ON [PRIMARY]
+END
+GO
+
+/***** Get Form template id by module id *****/
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}FormBuilder_Visualizer_FormUsage_AddFormTemplateUsage]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}FormBuilder_Visualizer_FormUsage_AddFormTemplateUsage]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}FormBuilder_Visualizer_FormUsage_AddFormTemplateUsage]
+	@ModuleId int,
+	@PortalId int,
+	@FormTemplateId varchar(50)
+AS 
+	INSERT INTO {databaseOwner}[{objectQualifier}FormBuilder_Visualizer_FormUsage] (ModuleId, PortalId, FormTemplateId, CreationUtcDateTime)
+	VALUES(@ModuleId, @PortalId, @FormTemplateId, GetUtcDate())
+GO
+
+
+/***** Get Form template usage by module id *****/
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}FormBuilder_Visualizer_FormUsage_GetFormTemplateUsageByModuleId]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}FormBuilder_Visualizer_FormUsage_GetFormTemplateUsageByModuleId]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}FormBuilder_Visualizer_FormUsage_GetFormTemplateUsageByModuleId]
+	@ModuleId int
+AS 
+	SELECT TOP 1 [FormTemplateId],[PortalId], [ModuleId]
+	FROM    {databaseOwner}[{objectQualifier}FormBuilder_Visualizer_FormUsage]
+	WHERE   ModuleId=@ModuleId AND Deleted=0
+GO
+
+
+/***** Get module ids list by form template id *****/
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}FormBuilder_Visualizer_FormUsage_GetModulesCountByFormTemplateId]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}FormBuilder_Visualizer_FormUsage_GetModulesCountByFormTemplateId]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}FormBuilder_Visualizer_FormUsage_GetModulesCountByFormTemplateId]
+	@FormTemplateId varchar(50)
+AS 
+	SELECT  COUNT([ModuleId])
+	FROM    {databaseOwner}[{objectQualifier}FormBuilder_Visualizer_FormUsage]
+	WHERE   FormTemplateId=@FormTemplateId AND Deleted=0
+GO
+
+
+/***** Delete form usage by form template id *****/
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}FormBuilder_Visualizer_FormUsage_DeleteUsage]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}FormBuilder_Visualizer_FormUsage_DeleteUsage]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}FormBuilder_Visualizer_FormUsage_DeleteUsage]
+	@ModuleId int,
+	@FormTemplateId varchar(50)
+AS 
+	UPDATE {databaseOwner}[{objectQualifier}FormBuilder_Visualizer_FormUsage]
+	SET [Deleted] = 1, LastUpdateUtcDateTime=GetUtcDate()
+	WHERE   ModuleId=@ModuleId AND FormTemplateId=@FormTemplateId AND Deleted=0
+GO
+
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/

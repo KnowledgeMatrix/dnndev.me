@@ -1,0 +1,1094 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****               Create Tables                      *****/
+/************************************************************/
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ProductShowTabRole') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_ProductShowTabRole
+	(
+		[ID] [INT] IDENTITY(1,1) NOT NULL,
+		[ProductID] [INT] NULL,
+		[TabNumber] [VARCHAR](3) NULL,
+		[RoleName] [NVARCHAR](50) NULL,
+		[RoleID] [INT] NULL,
+		[RoleType] [TINYINT] NULL,
+		[StartDate] [DATETIME] NULL,
+		[EndDate] [DATETIME] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_ProductShowTabRole] PRIMARY KEY CLUSTERED
+		(
+			[ID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_CouponProduct') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_CouponProduct
+	(
+		[Id] [INT] IDENTITY(1,1) NOT NULL,
+		[CouponID] [INT] NULL,
+		[ProductID] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_CouponProduct] PRIMARY KEY CLUSTERED
+		(
+			[Id] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_CouponVariant') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_CouponVariant
+	(
+		[Id] [INT] IDENTITY(1,1) NOT NULL,
+		[CouponID] [INT] NULL,
+		[ProductID] [INT] NULL,
+		[VariantID] [INT] NULL,
+		[VariantName] [VARCHAR](50) NULL,
+		[LifecycleStatus] [VARCHAR](50) NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_CouponVariant] PRIMARY KEY CLUSTERED
+		(
+			[Id] ASC
+		)
+	)
+END
+GO
+
+
+
+/************************************************************/
+/*****                  Alter Tables                    *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****              Drop Functions                      *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****              Create Functions                    *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****                Drop Sprocs                       *****/
+/************************************************************/
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_CreateProduct') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateProduct
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_UpdateProduct') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateProduct
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListPortalProducts') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListPortalProducts
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListPortalStoreProducts') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListPortalStoreProducts
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_CreateProductShowTabRole') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateProductShowTabRole
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListProductShowTabRoles') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListProductShowTabRoles
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_DeleteProductShowTabRoles') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_DeleteProductShowTabRoles
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_CreateCouponProduct') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateCouponProduct
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListCouponProducts') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListCouponProducts
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ClearCouponProducts') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ClearCouponProducts
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_CreateCouponProductVariant') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateCouponProductVariant
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListCouponProductVariants') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListCouponProductVariants
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_DeleteCouponProductVariant') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_DeleteCouponProductVariant
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_GetCouponByID') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_GetCouponByID
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_GetCouponByCode') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_GetCouponByCode
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListStoreCoupons') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListStoreCoupons
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListCouponsByFilter') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListCouponsByFilter
+GO
+
+
+
+/************************************************************/
+/*****               Create Sprocs                      *****/
+/************************************************************/
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateProduct
+	@Manufacturer NVARCHAR(50) = NULL,
+	@ModelNumber NVARCHAR(50) = NULL,
+	@ModelName NVARCHAR(200) = NULL,
+	@UnitCost MONEY = NULL,
+	@QuantityOnHand INT = NULL,
+	@Summary NVARCHAR(1000) = NULL,
+	@Description NTEXT = NULL,
+	@DownloadUrl NVARCHAR(1000) = NULL,
+	@Featured BIT = NULL,
+	@Archived BIT = NULL,
+	@Weight DECIMAL(12,2) = NULL,
+	@SortOrder INT = NULL,
+	@ExcludeCoupon BIT = NULL,
+	@Items INT = NULL,
+	@Share BIT = NULL,
+	@TabModuleId INT = NULL,
+	@CreatedByUser NVARCHAR(100) = NULL,
+	@CreatedDate DATETIME = NULL,
+	@LogicallyDeleted BIT = NULL,
+	@Recurring BIT = NULL,
+	@SubscriptionInterval VARCHAR(50) = NULL,
+	@RecurringOccurances INT = NULL,
+	@UrlGUID VARCHAR(1000) = NULL,
+	@EncryptUrl BIT = NULL,
+	@AddDNNRole VARCHAR(50) = NULL,
+	@RequireLogin BIT = NULL,
+	@MasterBundleID INT = NULL,
+	@BundleID INT = NULL,
+	@RoleExpireDays NVARCHAR(500) = NULL,
+	@MemberPrice MONEY = NULL,
+	@TaxExempt BIT = NULL,
+	@PortalID INT = NULL,
+	@ShipCodes VARCHAR(100) = NULL,
+	@ShipText NVARCHAR(500) = NULL,
+	@AffiliateURL NVARCHAR(1000) = NULL,
+	@TitleTag VARCHAR(85) = NULL,
+	@DescriptionTag NVARCHAR(200) = NULL,
+	@KeywordTag NVARCHAR(300) = NULL,
+	@ShipCost MONEY = NULL,
+	@RequireCoupon BIT = NULL,
+	@Description2 NTEXT = NULL,
+	@Description3 NTEXT = NULL,
+	@Description4 NTEXT = NULL,
+	@Description5 NTEXT = NULL,
+	@TabName1 VARCHAR(50) = NULL,
+	@TabName2 VARCHAR(50) = NULL,
+	@TabName3 VARCHAR(50) = NULL,
+	@TabName4 VARCHAR(50) = NULL,
+	@TabName5 VARCHAR(50) = NULL,
+	@AutoGUID BIT = NULL,
+	@SEOURL VARCHAR(80) = NULL,
+	@HideThumbnail BIT = NULL,
+	@HidePrice BIT = NULL,
+	@AltTag1 VARCHAR(150) = NULL,
+	@AltTag2 VARCHAR(150) = NULL,
+	@AltTag3 VARCHAR(150) = NULL,
+	@AltTag4 VARCHAR(150) = NULL,
+	@AltTag5 VARCHAR(150) = NULL,
+	@AltTag6 VARCHAR(150) = NULL,
+	@PriceClass VARCHAR(20) = NULL,
+	@MinOrderQty INT = NULL,
+	@ChargeHandling BIT = NULL,
+	@LeadTime VARCHAR(50) = NULL,
+	@HideQuantity BIT = NULL,
+	@PriceUnits NVARCHAR(50) = NULL,
+	@MaxOrderQty INT = NULL,
+	@Width INT = NULL,
+	@Height INT = NULL,
+	@Length INT = NULL,
+	@RecurringStartDate VARCHAR(15) = NULL,
+	@ExcludeVariantRecur BIT = NULL,
+	@WholesalePrice MONEY = NULL,
+	@SalePrice MONEY = NULL,
+	@HideProduct BIT = NULL,
+	@RemoveDNNRole VARCHAR(70) = NULL,
+	@ShowProductRole BIT = NULL,
+	@TaxRate FLOAT = NULL,
+	@Upsell BIT = NULL,
+	@EnableTrial BIT = NULL,
+	@TrialInterval VARCHAR(50) = NULL,
+	@TrialOccurences VARCHAR(50) = NULL,
+	@TrialAmount MONEY = NULL,
+	@UseCompanyLogo BIT = NULL,
+	@UserEnteredAmount BIT = NULL,
+	@Booking BIT = NULL,
+	@BookingUnits NVARCHAR(100) = NULL,
+	@RecurStartDateSetup VARCHAR(50) = NULL,
+	@UpdatedDate DATETIME = NULL,
+	@ProductDetailUrl NVARCHAR(1000) = NULL,
+	@GiftCard BIT = NULL,
+	@TaxableAmount MONEY = NULL,
+	@SaleStartDate DATETIME = NULL,
+	@SaleEndDate DATETIME = NULL,
+	@CompareGroup NVARCHAR(150) = NULL,
+	@ProductTypeID INT = NULL,
+	@StoreID INT = NULL
+AS
+BEGIN
+	INSERT INTO
+		{databaseOwner}{objectQualifier}Smith_Products
+		([Manufacturer]
+		,[ModelNumber]
+		,[ModelName]
+		,[UnitCost]
+		,[QuantityOnHand]
+		,[Summary]
+		,[Description]
+		,[DownloadUrl]
+		,[Featured]
+		,[Archived]
+		,[Weight]
+		,[SortOrder]
+		,[ExcludeCoupon]
+		,[Items]
+		,[Share]
+		,[TabModuleId]
+		,[CreatedByUser]
+		,[CreatedDate]
+		,[LogicallyDeleted]
+		,[Recurring]
+		,[SubscriptionInterval]
+		,[RecurringOccurances]
+		,[UrlGUID]
+		,[EncryptUrl]
+		,[AddDNNRole]
+		,[RequireLogin]
+		,[MasterBundleID]
+		,[BundleID]
+		,[RoleExpireDays]
+		,[MemberPrice]
+		,[TaxExempt]
+		,[PortalID]
+		,[ShipCodes]
+		,[ShipText]
+		,[AffiliateURL]
+		,[TitleTag]
+		,[DescriptionTag]
+		,[KeywordTag]
+		,[ShipCost]
+		,[RequireCoupon]
+		,[Description2]
+		,[Description3]
+		,[Description4]
+		,[Description5]
+		,[TabName1]
+		,[TabName2]
+		,[TabName3]
+		,[TabName4]
+		,[TabName5]
+		,[AutoGUID]
+		,[SEOURL]
+		,[HideThumbnail]
+		,[HidePrice]
+		,[AltTag1]
+		,[AltTag2]
+		,[AltTag3]
+		,[AltTag4]
+		,[AltTag5]
+		,[AltTag6]
+		,[PriceClass]
+		,[MinOrderQty]
+		,[ChargeHandling]
+		,[LeadTime]
+		,[HideQuantity]
+		,[PriceUnits]
+		,[MaxOrderQty]
+		,[Width]
+		,[Height]
+		,[Length]
+		,[RecurringStartDate]
+		,[ExcludeVariantRecur]
+		,[WholesalePrice]
+		,[SalePrice]
+		,[HideProduct]
+		,[RemoveDNNRole]
+		,[ShowProductRole]
+		,[TaxRate]
+		,[Upsell]
+		,[EnableTrial]
+		,[TrialInterval]
+		,[TrialOccurences]
+		,[TrialAmount]
+		,[UseCompanyLogo]
+		,[UserEnteredAmount]
+		,[Booking]
+		,[BookingUnits]
+		,[RecurStartDateSetup]
+		,[UpdatedDate]
+		,[ProductDetailUrl]
+		,[GiftCard]
+		,[TaxableAmount]
+		,[SaleStartDate]
+		,[SaleEndDate]
+		,[CompareGroup]
+		,[ProductTypeID]
+		,[StoreID])
+	VALUES
+		(@Manufacturer
+		,@ModelNumber
+		,@ModelName
+		,@UnitCost
+		,@QuantityOnHand
+		,@Summary
+		,@Description
+		,@DownloadUrl
+		,@Featured
+		,@Archived
+		,@Weight
+		,@SortOrder
+		,@ExcludeCoupon
+		,@Items
+		,@Share
+		,@TabModuleId
+		,@CreatedByUser
+		,@CreatedDate
+		,@LogicallyDeleted
+		,@Recurring
+		,@SubscriptionInterval
+		,@RecurringOccurances
+		,@UrlGUID
+		,@EncryptUrl
+		,@AddDNNRole
+		,@RequireLogin
+		,@MasterBundleID
+		,@BundleID
+		,@RoleExpireDays
+		,@MemberPrice
+		,@TaxExempt
+		,@PortalID
+		,@ShipCodes
+		,@ShipText
+		,@AffiliateURL
+		,@TitleTag
+		,@DescriptionTag
+		,@KeywordTag
+		,@ShipCost
+		,@RequireCoupon
+		,@Description2
+		,@Description3
+		,@Description4
+		,@Description5
+		,@TabName1
+		,@TabName2
+		,@TabName3
+		,@TabName4
+		,@TabName5
+		,@AutoGUID
+		,@SEOURL
+		,@HideThumbnail
+		,@HidePrice
+		,@AltTag1
+		,@AltTag2
+		,@AltTag3
+		,@AltTag4
+		,@AltTag5
+		,@AltTag6
+		,@PriceClass
+		,@MinOrderQty
+		,@ChargeHandling
+		,@LeadTime
+		,@HideQuantity
+		,@PriceUnits
+		,@MaxOrderQty
+		,@Width
+		,@Height
+		,@Length
+		,@RecurringStartDate
+		,@ExcludeVariantRecur
+		,@WholesalePrice
+		,@SalePrice
+		,@HideProduct
+		,@RemoveDNNRole
+		,@ShowProductRole
+		,@TaxRate
+		,@Upsell
+		,@EnableTrial
+		,@TrialInterval
+		,@TrialOccurences
+		,@TrialAmount
+		,@UseCompanyLogo
+		,@UserEnteredAmount
+		,@Booking
+		,@BookingUnits
+		,@RecurStartDateSetup
+		,@UpdatedDate
+		,@ProductDetailUrl
+		,@GiftCard
+		,@TaxableAmount
+		,@SaleStartDate
+		,@SaleEndDate
+		,@CompareGroup
+		,@ProductTypeID
+		,@StoreID)
+	SELECT SCOPE_IDENTITY()
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateProduct
+	@ProductID INT = NULL,
+	@Manufacturer NVARCHAR(50) = NULL,
+	@ModelNumber NVARCHAR(50) = NULL,
+	@ModelName NVARCHAR(200) = NULL,
+	@UnitCost MONEY = NULL,
+	@QuantityOnHand INT = NULL,
+	@Summary NVARCHAR(1000) = NULL,
+	@Description NTEXT = NULL,
+	@DownloadUrl NVARCHAR(1000) = NULL,
+	@Featured BIT = NULL,
+	@Archived BIT = NULL,
+	@Weight DECIMAL(12,2) = NULL,
+	@SortOrder INT = NULL,
+	@ExcludeCoupon BIT = NULL,
+	@Items INT = NULL,
+	@Share BIT = NULL,
+	@TabModuleId INT = NULL,
+	@CreatedByUser NVARCHAR(100) = NULL,
+	@CreatedDate DATETIME = NULL,
+	@LogicallyDeleted BIT = NULL,
+	@Recurring BIT = NULL,
+	@SubscriptionInterval VARCHAR(50) = NULL,
+	@RecurringOccurances INT = NULL,
+	@UrlGUID VARCHAR(1000) = NULL,
+	@EncryptUrl BIT = NULL,
+	@AddDNNRole VARCHAR(50) = NULL,
+	@RequireLogin BIT = NULL,
+	@MasterBundleID INT = NULL,
+	@BundleID INT = NULL,
+	@RoleExpireDays NVARCHAR(500) = NULL,
+	@MemberPrice MONEY = NULL,
+	@TaxExempt BIT = NULL,
+	@PortalID INT = NULL,
+	@ShipCodes VARCHAR(100) = NULL,
+	@ShipText NVARCHAR(500) = NULL,
+	@AffiliateURL NVARCHAR(1000) = NULL,
+	@TitleTag VARCHAR(85) = NULL,
+	@DescriptionTag NVARCHAR(200) = NULL,
+	@KeywordTag NVARCHAR(300) = NULL,
+	@ShipCost MONEY = NULL,
+	@RequireCoupon BIT = NULL,
+	@Description2 NTEXT = NULL,
+	@Description3 NTEXT = NULL,
+	@Description4 NTEXT = NULL,
+	@Description5 NTEXT = NULL,
+	@TabName1 VARCHAR(50) = NULL,
+	@TabName2 VARCHAR(50) = NULL,
+	@TabName3 VARCHAR(50) = NULL,
+	@TabName4 VARCHAR(50) = NULL,
+	@TabName5 VARCHAR(50) = NULL,
+	@AutoGUID BIT = NULL,
+	@SEOURL VARCHAR(80) = NULL,
+	@HideThumbnail BIT = NULL,
+	@HidePrice BIT = NULL,
+	@AltTag1 VARCHAR(150) = NULL,
+	@AltTag2 VARCHAR(150) = NULL,
+	@AltTag3 VARCHAR(150) = NULL,
+	@AltTag4 VARCHAR(150) = NULL,
+	@AltTag5 VARCHAR(150) = NULL,
+	@AltTag6 VARCHAR(150) = NULL,
+	@PriceClass VARCHAR(20) = NULL,
+	@MinOrderQty INT = NULL,
+	@ChargeHandling BIT = NULL,
+	@LeadTime VARCHAR(50) = NULL,
+	@HideQuantity BIT = NULL,
+	@PriceUnits NVARCHAR(50) = NULL,
+	@MaxOrderQty INT = NULL,
+	@Width INT = NULL,
+	@Height INT = NULL,
+	@Length INT = NULL,
+	@RecurringStartDate VARCHAR(15) = NULL,
+	@ExcludeVariantRecur BIT = NULL,
+	@WholesalePrice MONEY = NULL,
+	@SalePrice MONEY = NULL,
+	@HideProduct BIT = NULL,
+	@RemoveDNNRole VARCHAR(70) = NULL,
+	@ShowProductRole BIT = NULL,
+	@TaxRate FLOAT = NULL,
+	@Upsell BIT = NULL,
+	@EnableTrial BIT = NULL,
+	@TrialInterval VARCHAR(50) = NULL,
+	@TrialOccurences VARCHAR(50) = NULL,
+	@TrialAmount MONEY = NULL,
+	@UseCompanyLogo BIT = NULL,
+	@UserEnteredAmount BIT = NULL,
+	@Booking BIT = NULL,
+	@BookingUnits NVARCHAR(100) = NULL,
+	@RecurStartDateSetup VARCHAR(50) = NULL,
+	@UpdatedDate DATETIME = NULL,
+	@ProductDetailUrl NVARCHAR(1000) = NULL,
+	@GiftCard BIT = NULL,
+	@TaxableAmount MONEY = NULL,
+	@SaleStartDate DATETIME = NULL,
+	@SaleEndDate DATETIME = NULL,
+	@CompareGroup NVARCHAR(150) = NULL,
+	@ProductTypeID INT = NULL,
+	@StoreID INT = NULL
+AS
+BEGIN
+	UPDATE
+		{databaseOwner}{objectQualifier}Smith_Products
+	SET
+		[Manufacturer] = @Manufacturer,
+		[ModelNumber] = @ModelNumber,
+		[ModelName] = @ModelName,
+		[UnitCost] = @UnitCost,
+		[QuantityOnHand] = @QuantityOnHand,
+		[Summary] = @Summary,
+		[Description] = @Description,
+		[DownloadUrl] = @DownloadUrl,
+		[Featured] = @Featured,
+		[Archived] = @Archived,
+		[Weight] = @Weight,
+		[SortOrder] = @SortOrder,
+		[ExcludeCoupon] = @ExcludeCoupon,
+		[Items] = @Items,
+		[Share] = @Share,
+		[TabModuleId] = @TabModuleId,
+		[CreatedByUser] = @CreatedByUser,
+		[CreatedDate] = @CreatedDate,
+		[LogicallyDeleted] = @LogicallyDeleted,
+		[Recurring] = @Recurring,
+		[SubscriptionInterval] = @SubscriptionInterval,
+		[RecurringOccurances] = @RecurringOccurances,
+		[UrlGUID] = @UrlGUID,
+		[EncryptUrl] = @EncryptUrl,
+		[AddDNNRole] = @AddDNNRole,
+		[RequireLogin] = @RequireLogin,
+		[MasterBundleID] = @MasterBundleID,
+		[BundleID] = @BundleID,
+		[RoleExpireDays] = @RoleExpireDays,
+		[MemberPrice] = @MemberPrice,
+		[TaxExempt] = @TaxExempt,
+		[PortalID] = @PortalID,
+		[ShipCodes] = @ShipCodes,
+		[ShipText] = @ShipText,
+		[AffiliateURL] = @AffiliateURL,
+		[TitleTag] = @TitleTag,
+		[DescriptionTag] = @DescriptionTag,
+		[KeywordTag] = @KeywordTag,
+		[ShipCost] = @ShipCost,
+		[RequireCoupon] = @RequireCoupon,
+		[Description2] = @Description2,
+		[Description3] = @Description3,
+		[Description4] = @Description4,
+		[Description5] = @Description5,
+		[TabName1] = @TabName1,
+		[TabName2] = @TabName2,
+		[TabName3] = @TabName3,
+		[TabName4] = @TabName4,
+		[TabName5] = @TabName5,
+		[AutoGUID] = @AutoGUID,
+		[SEOURL] = @SEOURL,
+		[HideThumbnail] = @HideThumbnail,
+		[HidePrice] = @HidePrice,
+		[AltTag1] = @AltTag1,
+		[AltTag2] = @AltTag2,
+		[AltTag3] = @AltTag3,
+		[AltTag4] = @AltTag4,
+		[AltTag5] = @AltTag5,
+		[AltTag6] = @AltTag6,
+		[PriceClass] = @PriceClass,
+		[MinOrderQty] = @MinOrderQty,
+		[ChargeHandling] = @ChargeHandling,
+		[LeadTime] = @LeadTime,
+		[HideQuantity] = @HideQuantity,
+		[PriceUnits] = @PriceUnits,
+		[MaxOrderQty] = @MaxOrderQty,
+		[Width] = @Width,
+		[Height] = @Height,
+		[Length] = @Length,
+		[RecurringStartDate] = @RecurringStartDate,
+		[ExcludeVariantRecur] = @ExcludeVariantRecur,
+		[WholesalePrice] = @WholesalePrice,
+		[SalePrice] = @SalePrice,
+		[HideProduct] = @HideProduct,
+		[RemoveDNNRole] = @RemoveDNNRole,
+		[ShowProductRole] = @ShowProductRole,
+		[TaxRate] = @TaxRate,
+		[Upsell] = @Upsell,
+		[EnableTrial] = @EnableTrial,
+		[TrialInterval] = @TrialInterval,
+		[TrialOccurences] = @TrialOccurences,
+		[TrialAmount] = @TrialAmount,
+		[UseCompanyLogo] = @UseCompanyLogo,
+		[UserEnteredAmount] = @UserEnteredAmount,
+		[Booking] = @Booking,
+		[BookingUnits] = @BookingUnits,
+		[RecurStartDateSetup] = @RecurStartDateSetup,
+		[UpdatedDate] = @UpdatedDate,
+		[ProductDetailUrl] = @ProductDetailUrl,
+		[GiftCard] = @GiftCard,
+		[TaxableAmount] = @TaxableAmount,
+		[SaleStartDate] = @SaleStartDate,
+		[SaleEndDate] = @SaleEndDate,
+		[CompareGroup] = @CompareGroup,
+		[ProductTypeID] = @ProductTypeID,
+		[StoreID] = @StoreID
+	WHERE
+		[ProductID] = @ProductID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListPortalProducts
+	@PortalID INT = NULL
+AS
+BEGIN
+	SELECT
+		P.*, I.[ThumbImage], I.[LargeImage], I.[ZoomImage], V.[HasVariants]
+	FROM
+		{databaseOwner}{objectQualifier}Smith_Products P
+	OUTER APPLY
+	(
+		SELECT TOP 1
+			IMG.*
+		FROM
+			{databaseOwner}{objectQualifier}Smith_ProductImages IMG
+		WHERE
+			IMG.[ProductID] = P.[ProductID]
+		ORDER BY
+			IMG.[SortOrder] ASC
+	) I
+	CROSS APPLY
+	(
+		SELECT CASE WHEN EXISTS
+		(
+			SELECT PV.[VariantID]
+			FROM {databaseOwner}{objectQualifier}Smith_ProductVariant PV
+			WHERE PV.[ProductID] = P.[ProductID]
+		)
+		THEN CAST(1 AS BIT)
+		ELSE CAST(0 AS BIT)
+		END AS [HasVariants]
+	) V
+	WHERE
+		(P.[LogicallyDeleted] <> 1 AND P.[Archived] <> 1 AND P.[HideProduct] <> 1)
+		AND P.[PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListPortalStoreProducts
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SELECT
+		P.*, I.[ThumbImage], I.[LargeImage], I.[ZoomImage], V.[HasVariants]
+	FROM
+		{databaseOwner}{objectQualifier}Smith_Products P
+	OUTER APPLY
+	(
+		SELECT TOP 1
+			IMG.*
+		FROM
+			{databaseOwner}{objectQualifier}Smith_ProductImages IMG
+		WHERE
+			IMG.[ProductID] = P.[ProductID]
+		ORDER BY
+			IMG.[SortOrder] ASC
+	) I
+	CROSS APPLY
+	(
+		SELECT CASE WHEN EXISTS
+		(
+			SELECT PV.[VariantID]
+			FROM {databaseOwner}{objectQualifier}Smith_ProductVariant PV
+			WHERE PV.[ProductID] = P.[ProductID]
+		)
+		THEN CAST(1 AS BIT)
+		ELSE CAST(0 AS BIT)
+		END AS [HasVariants]
+	) V
+	WHERE
+		(P.[LogicallyDeleted] <> 1 AND P.[Archived] <> 1 AND P.[HideProduct] <> 1)
+		AND P.[StoreID] = @StoreID
+		AND P.[PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateProductShowTabRole
+	@ProductID INT = NULL,
+	@TabNumber VARCHAR(3) = NULL,
+	@RoleID INT = NULL,
+	@RoleName NVARCHAR(50) = NULL,
+	@RoleType TINYINT = NULL,
+	@StartDate DATETIME = NULL,
+	@EndDate DATETIME = NULL
+AS
+BEGIN
+	INSERT INTO
+		{databaseOwner}{objectQualifier}Smith_ProductShowTabRole
+		([ProductID]
+		,[TabNumber]
+		,[RoleID]
+		,[RoleName]
+		,[RoleType]
+		,[StartDate]
+		,[EndDate]) 
+	VALUES
+		(@ProductID
+		,@TabNumber
+		,@RoleID
+		,@RoleName
+		,@RoleType
+		,@StartDate
+		,@EndDate)
+	SELECT SCOPE_IDENTITY()
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListProductShowTabRoles
+	@ProductID INT = NULL,
+	@RoleType TINYINT = NULL
+AS
+BEGIN
+	SELECT
+		PR.*
+	FROM
+		{databaseOwner}{objectQualifier}Smith_ProductShowTabRole PR
+	WHERE
+		PR.[ProductID] = @ProductID
+		AND (PR.[RoleType] = @RoleType OR @RoleType = 0)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_DeleteProductShowTabRoles
+	@ProductID INT = NULL,
+	@RoleType TINYINT = NULL
+AS
+BEGIN
+	DELETE FROM
+		{databaseOwner}{objectQualifier}Smith_ProductShowTabRole
+	WHERE
+		[ProductID] = @ProductID
+		AND ([RoleType] = @RoleType OR @RoleType = 0)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateCouponProduct
+	@CouponID INT = NULL,
+	@ProductID INT = NULL
+AS
+BEGIN
+	INSERT INTO
+		{databaseOwner}{objectQualifier}Smith_CouponProduct
+		([CouponID]
+		,[ProductID])
+	VALUES
+		(@CouponID
+		,@ProductID)
+	SELECT SCOPE_IDENTITY()
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListCouponProducts
+	@CouponID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SELECT
+		CP.*
+	FROM
+		{databaseOwner}{objectQualifier}Smith_CouponProduct CP
+	INNER JOIN
+		{databaseOwner}{objectQualifier}Smith_Coupons C
+	ON
+		C.[CouponID] = CP.[CouponID]
+	WHERE
+		CP.[CouponID] = @CouponID
+		AND C.[PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ClearCouponProducts
+	@CouponID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	DELETE CP FROM
+		{databaseOwner}{objectQualifier}Smith_CouponProduct CP
+	INNER JOIN
+		{databaseOwner}{objectQualifier}Smith_Coupons C
+	ON
+		C.[CouponID] = CP.[CouponID]
+	WHERE
+		CP.[CouponID] = @CouponID
+		AND C.[PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateCouponProductVariant
+	@CouponID INT = NULL,
+	@ProductID INT = NULL,
+	@VariantID INT = NULL,
+	@VariantName VARCHAR(50) = NULL,
+	@LifecycleStatus VARCHAR(50) = NULL
+AS
+BEGIN
+	INSERT INTO
+		{databaseOwner}{objectQualifier}Smith_CouponVariant
+		([CouponID]
+		,[ProductID]
+		,[VariantID]
+		,[VariantName]
+		,[LifecycleStatus])
+	VALUES
+		(@CouponID
+		,@ProductID
+		,@VariantID
+		,@VariantName
+		,@LifecycleStatus)
+	SELECT SCOPE_IDENTITY()
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListCouponProductVariants
+	@CouponID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SELECT
+		CV.*
+	FROM
+		{databaseOwner}{objectQualifier}Smith_CouponVariant CV
+	INNER JOIN
+		{databaseOwner}{objectQualifier}Smith_Coupons C
+	ON
+		C.[CouponID] = CV.[CouponID]
+	WHERE
+		CV.[CouponID] = @CouponID
+		AND C.[PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_DeleteCouponProductVariant
+	@Id INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	DELETE CV FROM
+		{databaseOwner}{objectQualifier}Smith_CouponVariant CV
+	INNER JOIN
+		{databaseOwner}{objectQualifier}Smith_Coupons C
+	ON
+		C.[CouponID] = CV.[CouponID]
+	WHERE
+		CV.[Id] = @Id
+		AND C.[PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_GetCouponByID
+	@CouponID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SELECT
+		C.*, P.[HasProducts], V.[HasVariants]
+	FROM
+		{databaseOwner}{objectQualifier}Smith_Coupons C
+	CROSS APPLY
+	(
+		SELECT CASE WHEN EXISTS
+		(
+			SELECT CP.[Id]
+			FROM {databaseOwner}{objectQualifier}Smith_CouponProduct CP
+			WHERE CP.[CouponID] = C.[CouponID]
+		)
+		THEN CAST(1 AS BIT)
+		ELSE CAST(0 AS BIT)
+		END AS [HasProducts]
+	) P
+	CROSS APPLY
+	(
+		SELECT CASE WHEN EXISTS
+		(
+			SELECT CV.[Id]
+			FROM {databaseOwner}{objectQualifier}Smith_CouponVariant CV
+			WHERE CV.[CouponID] = C.[CouponID]
+		)
+		THEN CAST(1 AS BIT)
+		ELSE CAST(0 AS BIT)
+		END AS [HasVariants]
+	) V
+	WHERE
+		C.[CouponID] = @CouponID
+		AND C.[PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_GetCouponByCode
+	@CouponCode VARCHAR(50) = NULL,
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SELECT
+		C.*, P.[HasProducts], V.[HasVariants]
+	FROM
+		{databaseOwner}{objectQualifier}Smith_Coupons C
+	CROSS APPLY
+	(
+		SELECT CASE WHEN EXISTS
+		(
+			SELECT CP.[Id]
+			FROM {databaseOwner}{objectQualifier}Smith_CouponProduct CP
+			WHERE CP.[CouponID] = C.[CouponID]
+		)
+		THEN CAST(1 AS BIT)
+		ELSE CAST(0 AS BIT)
+		END AS [HasProducts]
+	) P
+	CROSS APPLY
+	(
+		SELECT CASE WHEN EXISTS
+		(
+			SELECT CV.[Id]
+			FROM {databaseOwner}{objectQualifier}Smith_CouponVariant CV
+			WHERE CV.[CouponID] = C.[CouponID]
+		)
+		THEN CAST(1 AS BIT)
+		ELSE CAST(0 AS BIT)
+		END AS [HasVariants]
+	) V
+	WHERE
+		(C.[StoreID] = @StoreID OR C.[StoreID] = -1)
+		AND C.[PortalID] = @PortalID
+		AND C.[CouponCode] = @CouponCode
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListStoreCoupons
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SELECT
+		C.*, P.[HasProducts], V.[HasVariants]
+	FROM
+		{databaseOwner}{objectQualifier}Smith_Coupons C
+	CROSS APPLY
+	(
+		SELECT CASE WHEN EXISTS
+		(
+			SELECT CP.[Id]
+			FROM {databaseOwner}{objectQualifier}Smith_CouponProduct CP
+			WHERE CP.[CouponID] = C.[CouponID]
+		)
+		THEN CAST(1 AS BIT)
+		ELSE CAST(0 AS BIT)
+		END AS [HasProducts]
+	) P
+	CROSS APPLY
+	(
+		SELECT CASE WHEN EXISTS
+		(
+			SELECT CV.[Id]
+			FROM {databaseOwner}{objectQualifier}Smith_CouponVariant CV
+			WHERE CV.[CouponID] = C.[CouponID]
+		)
+		THEN CAST(1 AS BIT)
+		ELSE CAST(0 AS BIT)
+		END AS [HasVariants]
+	) V
+	WHERE
+		(C.[StoreID] = @StoreID OR C.[StoreID] = -1)
+		AND C.[PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListCouponsByFilter
+	@PageNumber INT = NULL,
+	@PageSize INT = NULL,
+	@SearchValue NVARCHAR(256) = NULL,
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SET NOCOUNT ON;
+	DECLARE @PageRecordStart INT
+	DECLARE @PageRecordEnd INT
+
+	SET @PageRecordStart = ((@PageNumber - 1) * @PageSize) + 1
+	SET @PageRecordEnd = @PageNumber * @PageSize
+
+	;WITH [CouponsPage] AS
+	(
+		SELECT
+			ROW_NUMBER() OVER (ORDER BY C.[CouponID] ASC) AS [RowNo], C.*
+		FROM
+			{databaseOwner}{objectQualifier}Smith_Coupons C
+		WHERE
+			(C.[StoreID] = @StoreID)
+			AND C.[PortalID] = @PortalID
+			AND (NULLIF(@SearchValue, '') IS NULL OR (
+					C.[CouponCode] LIKE '%' + @SearchValue + '%'
+					OR C.[CouponName] LIKE '%' + @SearchValue + '%'
+				)
+			)
+	)
+	SELECT
+		C.*, P.[HasProducts], V.[HasVariants],
+		TotalRecords = (
+			SELECT COUNT(*) FROM [CouponsPage]
+		),
+		MoreRecords = (
+			SELECT COUNT(*) FROM [CouponsPage]
+			WHERE [RowNo] > @PageRecordEnd
+		)
+	FROM
+		[CouponsPage] C
+	CROSS APPLY
+	(
+		SELECT CASE WHEN EXISTS
+		(
+			SELECT CP.[Id]
+			FROM {databaseOwner}{objectQualifier}Smith_CouponProduct CP
+			WHERE CP.[CouponID] = C.[CouponID]
+		)
+		THEN CAST(1 AS BIT)
+		ELSE CAST(0 AS BIT)
+		END AS [HasProducts]
+	) P
+	CROSS APPLY
+	(
+		SELECT CASE WHEN EXISTS
+		(
+			SELECT CV.[Id]
+			FROM {databaseOwner}{objectQualifier}Smith_CouponVariant CV
+			WHERE CV.[CouponID] = C.[CouponID]
+		)
+		THEN CAST(1 AS BIT)
+		ELSE CAST(0 AS BIT)
+		END AS [HasVariants]
+	) V
+	WHERE
+		C.[RowNo] BETWEEN @PageRecordStart AND @PageRecordEnd
+	ORDER BY
+		C.[RowNo]
+END
+GO
+
+
+
+/************************************************************/
+/*****               End of Script                      *****/
+/************************************************************/

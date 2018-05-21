@@ -1,0 +1,4 @@
+﻿/***** CONTENT-7859: set HtmlAgilityPack version to 1..4.6 when its version set as evoq version previously. *****/
+UPDATE {databaseOwner}{objectQualifier}Assemblies SET Version = '1.4.6'
+    WHERE AssemblyName = 'HtmlAgilityPack.dll' AND Version > '1.4.9'
+GO

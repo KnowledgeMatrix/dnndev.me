@@ -1,0 +1,67 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+SET XACT_ABORT ON
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+
+	-- Support AllowableOrderQuantity
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant ADD AllowableOrderQuantity varchar(100) NULL
+
+	-- Product search phrase operator
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD ProductSearchPhraseOperator varchar(10) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductSearchPhraseOperator DEFAULT 'OR'
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductSearchPhraseOperator
+
+	-- Support GeoIP lookup
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD GeneralGeoIPActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_GeneralGeoIPActive DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_GeneralGeoIPActive
+
+	-- Support CouriersPlease shipping
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingProvider ADD CouriersPleaseTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ShippingProvider_CouriersPleaseTestMode DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingProvider DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_ShippingProvider_CouriersPleaseTestMode
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingProvider ADD CouriersPleaseAccountNumber varchar(256) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingProvider ADD CouriersPleaseAPIKey varchar(255) NULL
+
+	-- Renamed Mollie PartnerID to ApiKey and drop TestMode
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysMollieAPIKey varchar(255) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP COLUMN PaymentGatewaysMolliePartnerID, PaymentGatewaysMollieTestMode
+
+
+COMMIT TRANSACTION
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+
+		-- Upgrade default Cart template to "StandardMultipleStep" or "StandardSingleStep"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CartDisplayTemplate = 'StandardMultipleStep' WHERE CartDisplayTemplate LIKE 'Standard%' AND CheckoutPageViewMode = 2
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CartDisplayTemplate = 'StandardSingleStep' WHERE CartDisplayTemplate LIKE 'Standard%' AND CheckoutPageViewMode = 1
+
+		-- Upgrade default Confirmation template to "StandardMultipleStep" or "StandardSingleStep"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ConfirmationDisplayTemplate = 'StandardMultipleStep' WHERE ConfirmationDisplayTemplate LIKE 'Standard%' AND CheckoutPageViewMode = 2
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ConfirmationDisplayTemplate = 'StandardSingleStep' WHERE ConfirmationDisplayTemplate LIKE 'Standard%' AND CheckoutPageViewMode = 1
+		
+		-- Change USPS service name
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ShippingMethod SET UniversalServiceName = 'USPS:FIRST-CLASS PACKAGE SERVICE - RETAIL&LT;SUP&GT;&#8482;&LT;/SUP&GT;' WHERE UniversalServiceName = 'USPS:FIRST-CLASS MAIL&LT;SUP&GT;&#174;&LT;/SUP&GT; PARCEL'
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder SET ShippingUniversalServiceName = 'USPS:FIRST-CLASS PACKAGE SERVICE - RETAIL&LT;SUP&GT;&#8482;&LT;/SUP&GT;' WHERE ShippingUniversalServiceName = 'USPS:FIRST-CLASS MAIL&LT;SUP&GT;&#174;&LT;/SUP&GT; PARCEL'
+
+
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

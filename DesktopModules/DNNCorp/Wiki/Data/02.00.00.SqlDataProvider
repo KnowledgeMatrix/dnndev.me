@@ -1,0 +1,103 @@
+﻿
+/* Update mechanics action types (for upgrades) */
+DECLARE @DesktopModuleId INT
+SET @DesktopModuleId = ( SELECT DesktopModuleID FROM {databaseOwner}[{objectQualifier}DesktopModules] WHERE  ModuleName = 'Wiki' AND FolderName = 'DNNCorp/Wiki')
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 7
+	WHERE ActionName = 'BookmarkedArticle' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 9
+	WHERE ActionName = 'ApprovedArticle' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 9
+	WHERE ActionName = 'ApprovedArticleEdit' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 7
+	WHERE ActionName = 'SubscribedToArticle' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 7
+	WHERE ActionName = 'SubscribedToAllArticles' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 8
+	WHERE ActionName = 'UnsubscribedFromArticle' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 8
+	WHERE ActionName = 'UnsubscribedFromAllArticles' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 9
+	WHERE ActionName = 'DeletedArticle' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 9
+	WHERE ActionName = 'LockedArticle' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 7
+	WHERE ActionName = 'LikedArticle' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 8
+	WHERE ActionName = 'UnLikedArticle' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 12
+	WHERE ActionName = 'ProvidedLikedArticle' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 13
+	WHERE ActionName = 'ProvidedUnLikedArticle' AND DesktopModuleId = @DesktopModuleId
+
+GO
+
+
+/********************************************************
+ * SPROC: Wiki_Article_GetByUserId
+ ********************************************************/
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_Article_GetByUserId') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_GetByUserId
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Wiki_Article_GetByUserId]
+	@PortalId INT,
+	@UserId INT
+AS 
+	SELECT  ArticleId,
+			ArticleTypeId,
+			A.ContentItemId,
+			SummaryContentItemId,
+			GroupId,
+			PortalId,
+			ViewCount,
+			Approved,
+			Protected,
+			Elements,
+			S.[Content] AS [Summary],
+			CI.Content,
+			CI.ContentTypeID,
+			CI.TabID,
+			CI.ModuleID,
+			CI.ContentKey,
+			CI.Indexed,
+			CI.CreatedByUserId,
+			CI.CreatedOnDate,
+			CI.LastModifiedByUserID,
+			CI.LastModifiedOnDate,
+			CIMD.MetaDataValue AS [ContentTitle],
+			1 AS TotalRecords
+	FROM    {databaseOwner}{objectQualifier}Wiki_Article A
+			INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI ON A.ContentItemId = CI.ContentItemID
+			LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems S WITH (NOLOCK) ON A.SummaryContentItemId = S.ContentItemID
+			LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD ON CIMD.ContentItemID = A.ContentItemID
+								AND CIMD.MetaDataID = (SELECT MetaDataID FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Title')
+	WHERE   PortalId = @PortalId
+			AND CI.CreatedByUserId = @UserId
+
+GO

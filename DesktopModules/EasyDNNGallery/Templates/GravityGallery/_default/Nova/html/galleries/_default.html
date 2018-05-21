@@ -1,0 +1,63 @@
+<!--GalleryTemplate-->
+<!--HeaderTemplateBegin-->
+[Has:EDG:CommunityMode][EDG:CommunityModeEditMedia][/Has:EDG:CommunityMode]
+[Has:EDG:BreadCrumbLink]<div class="edsgg_breadcrumbs">[EDG:BreadCrumbLink]</div>[/Has:EDG:BreadCrumbLink]
+[Has:EDG:GalleryParentCategoryTitle]<h1 class="edsgg_mainTitle">[EDG:GalleryParentCategoryTitle]</h1>[/Has:EDG:GalleryParentCategoryTitle]
+[Has:EDG:GalleryParentCategoryDescription]<div class="edsgg_ItemParentGalleryDescription">[EDG:GalleryParentCategoryDescription]</div>[/Has:EDG:GalleryParentCategoryDescription]
+<!--HeaderTemplateEnd-->
+
+<!--GalleryItemTemplateBegin-->
+<div class="edsgg_thumbnailWrapper" style="width: [EDG:GalleryThumbWidth]px;">
+	[Has:EDG:EditPermission][EDG:EditGalleryData][/Has:EDG:EditPermission]
+	<div class="edsgg_mediaContainer">
+		<a class="edsgg__itemDetailsAndLightboxTrigger" href="[EDG:GalleryLink]">
+			<span class="edsgg_imageThumbnail">
+				<img src="[EDG:GalleryThumbnail]" alt="[EDG:GalleryTitle]">
+				[Has:EDG:NumberOfGalleryItems]
+				<span class="edsgg_numberOfItems">[EDG:NumberOfGalleryItems]</span>
+				[/Has:EDG:NumberOfGalleryItems]
+			</span>
+			[Has:EDG:GalleryTitle]<span class="edsgg_title">[EDG:GalleryTitle]</span>[/Has:EDG:GalleryTitle]
+		</a>
+		[Has:EDG:GalleryDescription]<div class="edsgg_description">[EDG:GalleryDescription]</div>[/Has:EDG:GalleryDescription]
+		<ul class="edsgg_numberOfGalleryItems">
+			[Has:EDG:NumberOfGalleryImages]
+			<li class="edsgg_NumberOfGalleryImages">[EDG:NumberOfGalleryImages]</li>
+			[/Has:EDG:NumberOfGalleryImages]
+			[Has:EDG:NumberOfGalleryAudios]
+			<li class="edsgg_NumberOfGalleryAudios">[EDG:NumberOfGalleryAudios]</li>
+			[/Has:EDG:NumberOfGalleryAudios]
+			[Has:EDG:NumberOfGalleryVideos]
+			<li class="edsgg_NumberOfGalleryVideos">[EDG:NumberOfGalleryVideos]</li>
+			[/Has:EDG:NumberOfGalleryVideos]
+		</ul>
+		<ul class="edsgg_mediaDetails">
+			[Has:EDG:GalleryNumberOfViews]
+			<li class="edsgg_numberOfViews"><span>[EDG:GalleryNumberOfViews]</span></li>
+			[/Has:EDG:GalleryNumberOfViews]
+			[Has:EDG:GalleryDisplayAutorInfo]
+			<li class="edsgg_GalleryOwner">
+				<div>
+					<span>[EDG:GalleryOwner]</span>
+					<div>
+						<a class="edsgg_GalleryOwnerAvatar" href="[EDG:GalleryOwnerProfileLink]">[EDG:GalleryOwnerAvatar]</a>
+						<a class="edsgg_GalleryOwner" href="[EDG:GalleryOwnerProfileLink]">[EDG:GalleryOwner]</a>
+					</div>
+				</div>
+			</li>
+			[/Has:EDG:GalleryDisplayAutorInfo]
+			[Has:EDG:GallerySharingButtons]
+			<li class="edsgg_socialSharing">[EDG:GalleryShareButtons]</li>
+			[/Has:EDG:GallerySharingButtons]
+			[Has:EDG:GalleryShowRss]
+			<li class="edsgg_rssLink"><a href="[EDG:GalleryItemsRSS]" title="[EDG:LocalizedText:RSS]" target="_blank"><span>[EDG:LocalizedText:RSS]</span></a></li>
+			[/Has:EDG:GalleryShowRss]
+		</ul>
+	</div>
+</div>
+<!--GalleryItemTemplateEnd-->
+
+<!--FooterTemplateBegin-->
+[EDG:GalleryPaging]
+[Has:EDG:GalleryShowRss]<div class="edsgg_listRssWrapper"><a href="[EDG:GalleryListRSSURL]" title="[EDG:LocalizedText:RSS]"><span>[EDG:LocalizedText:RSS]</span></a></div>[/Has:EDG:GalleryShowRss]
+<!--FooterTemplateEnd-->

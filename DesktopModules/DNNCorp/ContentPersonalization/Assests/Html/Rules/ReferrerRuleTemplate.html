@@ -1,0 +1,10 @@
+﻿<div id='{0}' style="padding-bottom: 10px" class="contentPersonalizationReferrerRule">
+    <span data-bind='text: resx.RulesReferrerUrl' class='caption'></span>
+    <select data-bind="value: exactMatch" aria-label="Match">
+        <option value="exactMatch" data-bind="text: resx.RulesReferrerExactMatch"></option>
+        <option value="contains" data-bind="text: resx.RulesReferrerContains"></option>
+    </select>    
+    <input type="text" class=".dnnFormItem" data-bind="value: matchingText, hasFocus: true, attr: { placeholder: matchingTextPlaceholder }" aria-label="Text" />
+    <span class="rulesValidationMessage" data-bind="validationMessage: matchingText"></span>
+    <div data-bind='text: resx.RulesRemoveRule, click: remove' class='deleteRule'></div>
+</div>

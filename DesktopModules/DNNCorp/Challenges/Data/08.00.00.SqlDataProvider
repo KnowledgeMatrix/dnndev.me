@@ -1,0 +1,62 @@
+﻿IF OBJECT_ID(N'{databaseOwner}{objectQualifier}Challenges_GetAnalyticsAcceptedCompleted', 'P') IS NOT NULL
+ DROP PROCEDURE {databaseOwner}{objectQualifier}Challenges_GetAnalyticsAcceptedCompleted
+GO
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Challenges_GetAnalyticsAcceptedCompleted]
+	@ChallengeId INT,
+	@StartDateUtc DATETIME,
+	@EndDateUtc DATETIME
+AS
+BEGIN
+	DECLARE @EndDate DATETIME
+	DECLARE @EndChallengeDate DATETIME
+	DECLARE @ContentItemId INT
+
+	SELECT @ContentItemId = ContentItemId, @EndChallengeDate = [Expires] FROM {databaseOwner}{objectQualifier}Challenges_Challenge 
+	WHERE ChallengeId = @ChallengeId
+	
+	IF @EndChallengeDate < @EndDateUtc
+		SET @EndDate = @EndChallengeDate
+	ELSE
+		SET @EndDate = @EndDateUtc
+
+	DECLARE @Grouping CHAR(1) = {databaseOwner}{objectQualifier}GetTimeSeriesResolution(@StartDateUtc, @EndDate)
+
+	DECLARE @ResultsTable TABLE
+	(
+		StartDate DATETIME,
+		EndDate DATETIME,
+		AcceptedCount INT,
+		CompletedCount INT
+	)	
+
+	INSERT INTO @ResultsTable (StartDate, EndDate, AcceptedCount, CompletedCount) 
+	SELECT StartDate, EndDate,
+		(SELECT COUNT(*) FROM {databaseOwner}[{objectQualifier}Challenges_UserChallenge] 
+		 WHERE [ChallengeId] = @ChallengeId 		 
+		 AND AcceptanceDate IS NOT NULL
+		 AND AcceptanceDate >= StartDate AND AcceptanceDate < EndDate) AcceptedCount,
+		(SELECT COUNT(*) FROM {databaseOwner}[{objectQualifier}Challenges_UserChallenge] 
+		 WHERE [ChallengeId] = @ChallengeId 		 
+		 AND CompletionDate IS NOT NULL
+		 AND CompletionDate >= StartDate AND CompletionDate < EndDate) CompletedCount
+	FROM {databaseOwner}{objectQualifier}Analytics_GetAllDates(@startDateUtc, @EndDate, @Grouping)  	
+	
+	SELECT StartDate,EndDate, AcceptedCount FROM @ResultsTable 
+	ORDER BY StartDate
+
+	SELECT StartDate,EndDate, CompletedCount FROM @ResultsTable 
+	ORDER BY StartDate   
+END
+GO
+--UPDATE IDS OF THE CHALLENGE NETWORKS
+UPDATE {databaseOwner}{objectQualifier}Challenges_Network SET [Name] = 'Facebook' WHERE [NAME] = 'facebook'
+GO
+UPDATE {databaseOwner}{objectQualifier}Challenges_Network SET [Name] = 'Twitter' WHERE [NAME] = 'twitter'
+GO
+UPDATE {databaseOwner}{objectQualifier}Challenges_Network SET [Name] = 'LinkedIn' WHERE [NAME] = 'linkedin'
+GO
+UPDATE {databaseOwner}{objectQualifier}Challenges_Network SET [Name] = 'Google' WHERE [NAME] = 'google'
+GO
+UPDATE {databaseOwner}{objectQualifier}Challenges_Network SET [Name] = 'Pinterest' WHERE [NAME] = 'pinterest'
+GO
+--END UPDATE IDS OF THE CHALLENGE NETWORKS

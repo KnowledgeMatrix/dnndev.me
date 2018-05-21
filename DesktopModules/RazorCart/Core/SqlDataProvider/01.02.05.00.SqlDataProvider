@@ -1,0 +1,376 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****               Create Tables                      *****/
+/************************************************************/
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ProductManageRole') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_ProductManageRole
+	(
+		[ID] [INT] IDENTITY(1,1) NOT NULL,
+		[ProductID] [INT] NOT NULL,
+		[RoleID] [INT] NOT NULL,
+		[Action] [VARCHAR](16) NULL,
+		[Type] [VARCHAR](16) NULL,
+		[ExpireDays] [INT] NULL,
+		[StartDate] [DATETIME] NULL,
+		[EndDate] [DATETIME] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_ProductManageRole] PRIMARY KEY CLUSTERED
+		(
+			[ID] ASC
+		)
+	)
+END
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ProductVariantRole') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_ProductVariantRole
+	(
+		[ID] [INT] IDENTITY(1,1) NOT NULL,
+		[ManageRoleID] [INT] NOT NULL,
+		[VariantID] [INT] NOT NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_ProductVariantRole] PRIMARY KEY CLUSTERED
+		(
+			[ID] ASC
+		)
+	)
+END
+GO
+
+
+
+/************************************************************/
+/*****                  Alter Tables                    *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****                Drop Sprocs                       *****/
+/************************************************************/
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_SaveProductManageRole') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_SaveProductManageRole
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListProductManageRoles') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListProductManageRoles
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_DeleteProductManageRole') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_DeleteProductManageRole
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_CreateProductVariantRole') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateProductVariantRole
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListProductVariantRole') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListProductVariantRole
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ClearProductVariantRoles') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ClearProductVariantRoles
+GO
+
+
+
+
+/************************************************************/
+/*****               Create Sprocs                      *****/
+/************************************************************/
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_SaveProductManageRole
+	@ProductID INT = NULL,
+	@RoleID INT = NULL,
+	@Action VARCHAR(16) = NULL,
+	@Type VARCHAR(16) = NULL,
+	@ExpireDays INT = NULL,
+	@StartDate DATETIME = NULL,
+	@EndDate DATETIME = NULL
+AS
+BEGIN
+	SET NOCOUNT ON;
+	MERGE
+		{databaseOwner}{objectQualifier}Smith_ProductManageRole AS TARGET
+	USING
+	(
+		SELECT
+			@ProductID AS [ProductID], @RoleID AS [RoleID],
+			@Action AS [Action], @Type AS [Type], @ExpireDays AS [ExpireDays],
+			@StartDate AS [StartDate], @EndDate AS [EndDate]
+	) AS SOURCE
+	ON
+	(
+		TARGET.[ProductID] = SOURCE.[ProductID]
+		AND TARGET.[RoleID] = SOURCE.[RoleID]
+		AND TARGET.[Action] = SOURCE.[Action]
+	)
+	WHEN MATCHED THEN
+		UPDATE SET
+			[Action] = SOURCE.[Action],
+			[Type] = SOURCE.[Type],
+			[ExpireDays] = SOURCE.[ExpireDays],
+			[StartDate] = SOURCE.[StartDate],
+			[EndDate] = SOURCE.[EndDate]
+	WHEN NOT MATCHED THEN
+		INSERT
+			([ProductID]
+			,[RoleID]
+			,[Action]
+			,[Type]
+			,[ExpireDays]
+			,[StartDate]
+			,[EndDate])
+		VALUES
+			(SOURCE.[ProductID]
+			,SOURCE.[RoleID]
+			,SOURCE.[Action]
+			,SOURCE.[Type]
+			,SOURCE.[ExpireDays]
+			,SOURCE.[StartDate]
+			,SOURCE.[EndDate])
+	OUTPUT INSERTED.[ID];
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListProductManageRoles
+	@ProductID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SELECT
+		PMR.*
+	FROM
+		{databaseOwner}{objectQualifier}Smith_ProductManageRole PMR
+	INNER JOIN
+		{databaseOwner}{objectQualifier}Smith_Products P
+	ON
+		P.[ProductID] = PMR.[ProductID]
+	WHERE
+		PMR.[ProductID] = @ProductID
+		AND P.[PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_DeleteProductManageRole
+	@ProductID INT = NULL,
+	@RoleID INT = NULL
+AS
+BEGIN
+	DELETE PVR FROM
+		{databaseOwner}{objectQualifier}Smith_ProductVariantRole PVR
+	INNER JOIN
+		{databaseOwner}{objectQualifier}Smith_ProductManageRole PMR
+	ON
+		PMR.[ID] = PVR.[ManageRoleID]
+	WHERE
+		PMR.[ProductID] = @ProductID
+		AND PMR.[RoleID] = @RoleID
+
+	DELETE PMR FROM
+		{databaseOwner}{objectQualifier}Smith_ProductManageRole PMR
+	WHERE
+		PMR.[ProductID] = @ProductID
+		AND PMR.[RoleID] = @RoleID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateProductVariantRole
+	@ManageRoleID INT = NULL,
+	@VariantID INT = NULL
+AS
+BEGIN
+	INSERT INTO
+		{databaseOwner}{objectQualifier}Smith_ProductVariantRole
+		([ManageRoleID]
+		,[VariantID])
+	VALUES
+		(@ManageRoleID
+		,@VariantID)
+	SELECT SCOPE_IDENTITY()
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListProductVariantRole
+	@ManageRoleID INT = NULL,
+	@ProductID INT = NULL
+AS
+BEGIN
+	SELECT
+		PVR.*, PV.VariantGroup, PV.VariantName
+	FROM
+		{databaseOwner}{objectQualifier}Smith_ProductVariantRole PVR
+	INNER JOIN
+		{databaseOwner}{objectQualifier}Smith_ProductManageRole PMR
+	ON
+		PMR.[ID] = PVR.[ManageRoleID]
+	LEFT JOIN
+		{databaseOwner}{objectQualifier}Smith_ProductVariant PV
+	ON
+		PV.[VariantID] = PVR.[VariantID]
+	WHERE
+		PVR.[ManageRoleID] = @ManageRoleID
+		AND PMR.[ProductID] = @ProductID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ClearProductVariantRoles
+	@ManageRoleID INT = NULL,
+	@ProductID INT = NULL
+AS
+BEGIN
+	DELETE PVR FROM
+		{databaseOwner}{objectQualifier}Smith_ProductVariantRole PVR
+	INNER JOIN
+		{databaseOwner}{objectQualifier}Smith_ProductManageRole PMR
+	ON
+		PMR.[ID] = PVR.[ManageRoleID]
+	WHERE
+		PVR.[ManageRoleID] = @ManageRoleID
+		AND PMR.[ProductID] = @ProductID
+END
+GO
+
+
+
+/************************************************************/
+/*****              Migrate Old Data                    *****/
+/************************************************************/
+WHILE (SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}Smith_Products WHERE NULLIF([AddDNNRole], '') IS NOT NULL) > 0
+BEGIN
+	DECLARE
+		@ProductID INT = NULL,
+		@AddDNNRole VARCHAR(100) = NULL,
+		@RoleExpireDays VARCHAR(500) = NULL
+	SELECT TOP 1
+		@ProductID = [ProductID],
+		@AddDNNRole = [AddDNNRole],
+		@RoleExpireDays = [RoleExpireDays]
+	FROM
+		{databaseOwner}{objectQualifier}Smith_Products
+	WHERE
+		NULLIF([AddDNNRole], '') IS NOT NULL
+	----------------------------------------
+	DECLARE
+		@ProductRoles TABLE ([ID] INT IDENTITY, [Add] INT, [Days] INT)
+	INSERT INTO
+		@ProductRoles ([Add], [Days])
+	SELECT
+		T1.[Value], T2.[Value]
+	FROM
+		(SELECT ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) [Index], [Value] FROM {databaseOwner}{objectQualifier}RZC_FxSplit(@AddDNNRole, ',')) T1
+	INNER JOIN
+		(SELECT ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) [Index], [Value] FROM {databaseOwner}{objectQualifier}RZC_FxSplit(@RoleExpireDays, ',')) T2
+	ON
+		T1.[Index] = T2.[Index]
+	----------------------------------------
+	WHILE (SELECT COUNT(*) FROM @ProductRoles WHERE [ID] > 0) > 0
+	BEGIN
+		DECLARE
+			@ID INT = NULL, @Add INT, @Days INT = NULL
+		SELECT TOP 1
+			@ID = [ID],
+			@Add = [Add],
+			@Days = [Days]
+		FROM @ProductRoles
+		WHERE [ID] > 0
+		------------------------------------
+		DECLARE
+			@ShowTabRoleID INT = NULL, @StartDate DATETIME = CAST(-53690 AS DATETIME), @EndDate DATETIME = CAST(-53690 AS DATETIME)
+		SELECT TOP 1
+			@ShowTabRoleID = [ID],
+			@StartDate = [StartDate],
+			@EndDate = [EndDate]
+		FROM {databaseOwner}{objectQualifier}Smith_ProductShowTabRole
+		WHERE [ProductID] = @ProductID AND [RoleID] = @Add
+		------------------------------------
+		DECLARE
+			@ManageRoles TABLE ([ID] INT)
+		DECLARE
+			@ManageRoleID INT = NULL, @variantRoleID INT = NULL, @Type VARCHAR(16) = CASE
+				WHEN @Days = 0 AND @ShowTabRoleID IS NULL THEN 'None'
+				WHEN @Days > 0 AND @ShowTabRoleID IS NULL THEN 'Days'
+				WHEN @Days = 0 AND @ShowTabRoleID IS NOT NULL THEN 'Date'
+			END
+		INSERT INTO @ManageRoles EXEC {databaseOwner}{objectQualifier}RZC_SaveProductManageRole @ProductID, @Add, 'Add', @Type, @Days, @StartDate, @EndDate
+		SET @ManageRoleID = (SELECT TOP 1 [ID] FROM @ManageRoles)
+		EXEC @variantRoleID = {databaseOwner}{objectQualifier}RZC_CreateProductVariantRole @ManageRoleID, -1
+		------------------------------------
+		DELETE FROM
+			@ManageRoles
+		DELETE FROM
+			@ProductRoles
+		WHERE
+			[ID] = @ID
+	END
+	----------------------------------------
+	UPDATE
+		{databaseOwner}{objectQualifier}Smith_Products
+	SET
+		[AddDNNRole] = NULL,
+		[RoleExpireDays] = NULL
+	WHERE
+		[ProductID] = @ProductID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+WHILE (SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}Smith_Products WHERE NULLIF([RemoveDNNRole], '') IS NOT NULL) > 0
+BEGIN
+	DECLARE
+		@ProductID INT = NULL,
+		@RemoveDNNRole VARCHAR(100) = NULL
+	SELECT TOP 1
+		@ProductID = [ProductID],
+		@RemoveDNNRole = [RemoveDNNRole]
+	FROM
+		{databaseOwner}{objectQualifier}Smith_Products
+	WHERE
+		NULLIF([RemoveDNNRole], '') IS NOT NULL
+	------------------------------------------------------------------------------------------------
+	DECLARE
+		@ProductRoles TABLE ([ID] INT IDENTITY, [Remove] INT)
+	INSERT INTO
+		@ProductRoles ([Remove])
+	SELECT
+		T.[Value]
+	FROM
+		(SELECT ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) [Index], [Value] FROM {databaseOwner}{objectQualifier}RZC_FxSplit(@RemoveDNNRole, ',')) T
+	------------------------------------------------------------------------------------------------
+	WHILE (SELECT COUNT(*) FROM @ProductRoles WHERE [ID] > 0) > 0
+	BEGIN
+		DECLARE
+			@ID INT = NULL, @Remove INT = NULL
+		SELECT TOP 1
+			@ID = [ID],
+			@Remove = [Remove]
+		FROM @ProductRoles
+		WHERE [ID] > 0
+		-------------------------------------------------------------------------------------------
+		DECLARE
+			@ManageRoleID INT = NULL, @Type VARCHAR(16) = 'None', @Date DATETIME = CAST(-53690 AS DATETIME)
+		EXEC @ManageRoleID = {databaseOwner}{objectQualifier}RZC_SaveProductManageRole @ProductID, @Remove, 'Remove', @Type, 0, @Date, @Date
+		-------------------------------------------------------------------------------------------
+		DELETE FROM
+			@ProductRoles
+		WHERE
+			[ID] = @ID
+	END
+	------------------------------------------------------------------------------------------------
+	UPDATE
+		{databaseOwner}{objectQualifier}Smith_Products
+	SET
+		[RemoveDNNRole] = NULL
+	WHERE
+		[ProductID] = @ProductID
+END
+GO
+
+
+
+/************************************************************/
+/*****               End of Script                      *****/
+/************************************************************/

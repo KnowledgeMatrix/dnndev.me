@@ -1,0 +1,171 @@
+﻿<!-- settings panel -->
+<div class="socialpanelheader">
+    <h3 data-bind="html: $root.resx.nav_Community"></h3>
+</div>
+<div class="socialpanelbody">
+    <div>
+        <h3 data-bind="html: $root.resx.title_Influence"></h3>
+        <div class="normalPanel" data-bind="with: influence">
+            <div class="searchpanel">
+                <input type="text" class="searchbox" data-bind="value: searchText, valueUpdate: 'afterkeydown', attr: { 'placeholder': $root.resx.placeholder_Search }" aria-label="Search" />
+                <a class="plainbtn right" data-bind="click: create, html: $root.resx.btn_CreateNew"></a>
+            </div>
+            <table class="cmxtbl" id="createinfluencetbl">
+                <tbody>
+                </tbody>
+            </table>
+            <table class="cmxtbl" id="influencetbl">
+                <colgroup>
+                    <col class="influence-col-name" />
+                    <col class="influence-col-weight" />
+                    <col class="influence-col-value" />
+                    <col class="influence-col-actions" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th><a data-column="GoalType" data-bind="click: sort, attr: { 'class': sortColumnClass('GoalType') }, html: $root.resx.col_GoalType"></a></th>
+                        <th><a data-column="Weight" data-bind="click: sort, attr: { 'class': sortColumnClass('Weight') }, html: $root.resx.col_Weight"></a></th>
+                        <th><a data-column="Value" data-bind="click: sort, attr: { 'class': sortColumnClass('Value') }, html: $root.resx.col_Value"></a></th>
+                        <th><a data-bind="html: $root.resx.col_Actions"></a></th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <td colspan="4">
+                            <div>
+                                <div class="left" data-bind="html: pagerItemsDescription"></div>
+                                <ul class="right pager" data-bind="visible: pagerVisible">
+                                    <li><a data-bind="click: prev, attr: { 'class': pagerPrevClass }" aria-label="Prev"></a></li>
+                                    <li><a data-bind="click: next, attr: { 'class': pagerNextClass }" aria-label="Next"></a></li>
+                                </ul>
+                                <div class="right" data-bind="html: pagerDescription"></div>
+                            </div>
+                        </td>
+                    </tr>
+                </tfoot>
+
+                <tbody data-bind="foreach: results">
+                    <tr data-bind="click: edit">
+                        <td><span data-bind="html: title"></span></td>
+                        <td><span data-bind="html: weight"></span></td>
+                        <td><span data-bind="html: value"></span></td>
+                        <td class="edit-cell"><a class='delete' data-bind="click: remove" aria-label="Remove"></a><a></a></td>
+                    </tr>
+                </tbody>
+
+                <tbody class="edit-body" id="influence-editbody">
+                    <tr class="edit-row" id="influence-editrow" data-bind="with: influenceEditing">
+                        <td colspan="4">
+                            <div>
+                                <div style="float: none">
+                                    <label for="influence-goals-select" data-bind="html: $root.resx.col_GoalType" class="formRequired"></label>
+                                    <select style="width: 145%; margin-right: -100%" data-bind="options: goals, optionsText: 'Title', optionsValue: 'Name', value: goal" id="influence-goals-select"></select>
+                                </div>
+
+                                <div>
+                                    <label for="influence-goals-weight" data-bind="html: $root.resx.col_Weight" class="formRequired"></label>
+                                    <input id="influence-goals-weight" type="text" data-bind="value: weight" class="required number nonnegativenumber" />
+                                </div>
+
+                                <div>
+                                    <label for="influence-goals-value" data-bind="html: $root.resx.col_Value" class="formRequired"></label>
+                                    <input id="influence-goals-value" type="text" data-bind="value: value" class="required number nonnegativenumber customValidate betweenminmax" />
+                                </div>
+
+                                <div>
+                                    <label for="influence-goals-minvalue" data-bind="html: $root.resx.col_MinValue" class="formRequired"></label>
+                                    <input id="influence-goals-minvalue" type="text" data-bind="value: minValue" class="required number nonnegativenumber customValidate minlessthanmax" />
+                                </div>
+
+                                <div>
+                                    <label for="influence-goals-maxvalue" data-bind="html: $root.resx.col_MaxValue" class="formRequired"></label>
+                                    <input id="influence-goals-maxvalue" type="text" data-bind="value: maxValue" class="required number nonnegativenumber" />
+                                </div>
+
+                                <div>
+                                    <a class="secondarybtn" data-bind="click: cancel, html: $root.resx.btn_Cancel"></a>
+                                    <div class="clear"></div>
+                                </div>
+
+                                <div>
+                                    <a class="primarybtn" data-bind="click: save, html: $root.resx.btn_Save"></a>
+                                    <div class="clear"></div>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3 data-bind="html: $root.resx.title_ModuleSettings" style="margin-top: 20px"></h3>
+        <div class="normalPanel" data-bind="with: settings">
+            <div class="four-columns">
+                <h4 data-bind="html: $root.resx.label_ContentModeration"></h4>
+                <ul data-bind="foreach: contentModeration">
+                    <li>
+                        <input type="checkbox" name="settings-content-moderation" data-bind="checked: checked, attr: { 'id': id }" />
+                        <label data-bind="html: label, attr: { 'for': id }"></label>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="four-columns">
+                <h4 data-bind="html: $root.resx.label_CommentModeration"></h4>
+                <ul data-bind="foreach: commentModeration">
+                    <li>
+                        <input type="checkbox" name="settings-content-moderation" data-bind="checked: checked, attr: { 'id': id }" />
+                        <label data-bind="html: label, attr: { 'for': id }"></label>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="four-columns">
+                <h4 data-bind="html: $root.resx.label_WYSIWYG"></h4>
+                <ul data-bind="foreach: editorChoice">
+                    <li>
+                        <input type="checkbox" name="settings-content-moderation" data-bind="checked: checked, attr: { 'id': id }" />
+                        <label data-bind="html: label, attr: { 'for': id }"></label>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="four-columns">
+                <h4 data-bind="html: $root.resx.label_PageSize"></h4>
+                <select data-bind="value: pageSize" aria-label="Page Size">
+                    <option value="5" data-bind="html: labelPageSize(5)"></option>
+                    <option value="10" data-bind="html: labelPageSize(10)"></option>
+                    <option value="15" data-bind="html: labelPageSize(15)"></option>
+                    <option value="25" data-bind="html: labelPageSize(25)"></option>
+                    <option value="50" data-bind="html: labelPageSize(50)"></option>
+                    <option value="100" data-bind="html: labelPageSize(100)"></option>
+                </select>
+
+                <h4 data-bind="html: $root.resx.label_CommentsPageSize"></h4>
+                <select data-bind="value: commentsPageSize" aria-label="Page Size">
+                    <option value="5" data-bind="html: labelPageSize(5)"></option>
+                    <option value="10" data-bind="html: labelPageSize(10)"></option>
+                    <option value="15" data-bind="html: labelPageSize(15)"></option>
+                    <option value="25" data-bind="html: labelPageSize(25)"></option>
+                    <option value="50" data-bind="html: labelPageSize(50)"></option>
+                    <option value="100" data-bind="html: labelPageSize(100)"></option>
+                </select>
+
+                <h4 data-bind="html: $root.resx.label_Profanity"></h4>
+                <select data-bind="value: profanityFilter" aria-label="Filter">
+                    <option value="0" data-bind="html: $root.resx.opt_FilterContent"></option>
+                    <option value="1" data-bind="html: $root.resx.opt_ProhibitContent"></option>
+                    <option value="2" data-bind="html: $root.resx.opt_NoFiltering"></option>
+                </select>
+
+                <h4 data-bind="html: $root.resx.label_GroupHomePage"></h4>
+                <select data-bind="options: groupPages, optionsText: 'key', optionsValue: 'value', value: groupHomePage" aria-label="Group Pages"></select>
+
+            </div>
+
+            <div class="clear"></div>
+            <a class="primarybtn" data-bind="html: $root.resx.btn_Save, click: save" style="margin: 0 15px 15px 15px;"></a>
+        </div>
+    </div>
+</div>

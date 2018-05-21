@@ -1,0 +1,39 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}PersonaBar_GetHomePageUpdatedTime]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+    DROP PROCEDURE {databaseOwner}[{objectQualifier}PersonaBar_GetHomePageUpdatedTime]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}PersonaBar_GetHomePageUpdatedTime]
+	@PortalId INT,
+	@CultureCode NVARCHAR(10)
+AS
+DECLARE @HomeTabId INT
+    SELECT @HomeTabId = HomeTabId FROM {databaseOwner}[{objectQualifier}PortalLocalization] WHERE PortalID = @PortalId
+	    AND (ISNULL(@CultureCode, '') = '' OR CultureCode = @CultureCode)
+
+    IF @HomeTabId IS NULL
+	BEGIN
+		SELECT TOP 1 @HomeTabId = TabId FROM {databaseOwner}[{objectQualifier}Tabs]
+            WHERE PortalID = @PortalId AND (ISNULL(@CultureCode, '') = '' OR CultureCode = @CultureCode OR CultureCode IS NULL) AND IsDeleted = 0 AND IsSystem = 0
+			ORDER BY TabID
+	END
+
+    SELECT TOP 1 LastModifiedDate FROM (
+        SELECT LastModifiedOnDate AS LastModifiedDate FROM {databaseOwner}[{objectQualifier}Tabs] WHERE TabID = @HomeTabId
+            UNION (SELECT LastModifiedOnDate FROM {databaseOwner}[{objectQualifier}TabModules] WHERE TabID = @HomeTabId )
+            UNION(SELECT 
+		        (CASE WHEN m.LastContentModifiedOnDate > m.LastModifiedOnDate THEN m.LastContentModifiedOnDate ELSE m.LastModifiedOnDate END)
+		        FROM {databaseOwner}[{objectQualifier}Modules] m 
+                INNER JOIN {databaseOwner}[{objectQualifier}TabModules] tm ON tm.ModuleID = m.ModuleID AND tm.TabID = @HomeTabId)
+            UNION SELECT LastModifiedOnDate FROM {databaseOwner}[{objectQualifier}PortalSettings] WHERE PortalID = @PortalId AND SettingName = 'DefaultPortalSkin'
+    ) T ORDER BY T.LastModifiedDate DESC
+GO

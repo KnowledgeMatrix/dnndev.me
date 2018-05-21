@@ -1,0 +1,1401 @@
+﻿
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Calculate_Aggregate_Answers') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Calculate_Aggregate_Answers
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Calculate_Aggregate_Answers]
+	@PortalId int,
+	@LowerBound smalldatetime,
+	@UpperBound smalldatetime
+AS
+BEGIN
+	DECLARE @QuestionsAsked bigint
+	DECLARE @AnswersProvided bigint
+	DECLARE @AnswersAccepted bigint
+	DECLARE @AnswersTotal bigint
+	DECLARE @RepliesPerQuestion decimal
+	DECLARE @ViewsPerQuestion decimal
+	DECLARE @QuestionsTotalViews bigint
+	DECLARE @QuestionsTotal bigint
+	DECLARE @UnansweredQuestionsTotal bigint
+	DECLARE @AnsweredQuestionsTotal bigint
+	DECLARE @QuestionsAnswered bigint
+
+	SELECT	@QuestionsAsked = COUNT(*)
+	FROM	{databaseOwner}[{objectQualifier}Answers_Post] WITH (NOLOCK)
+	WHERE	[PortalId] = @PortalId AND [CreatedDate] >= @LowerBound AND [CreatedDate] <= @UpperBound AND [ParentId] = 0
+
+	SELECT	@AnswersProvided = COUNT(*)
+	FROM	{databaseOwner}[{objectQualifier}Answers_Post] WITH (NOLOCK)
+	WHERE	[PortalId] = @PortalId AND [CreatedDate] >= @LowerBound AND [CreatedDate] <= @UpperBound AND [ParentId] != 0
+
+	SELECT			@AnswersAccepted = COUNT(*)
+	FROM			{databaseOwner}[{objectQualifier}Answers_Post] posts WITH (NOLOCK)
+	LEFT OUTER JOIN {databaseOwner}[{objectQualifier}Answers_Post] replies WITH (NOLOCK) ON posts.[AnswerId] = replies.[PostId]
+	WHERE			replies.[PortalId] = @PortalId AND replies.[CreatedDate] >= @LowerBound AND replies.[CreatedDate] <= @UpperBound AND posts.[ParentId] = 0
+
+	;WITH replyCount AS(
+		SELECT
+			p.PostId,
+			(SELECT		COUNT(*)
+			 FROM		{databaseOwner}[{objectQualifier}Answers_Post] WITH (NOLOCK)
+			 WHERE		[ParentId] = p.[PostId] AND [CreatedDate] >= @LowerBound AND [CreatedDate] <= @UpperBound) AS [c]
+		FROM {databaseOwner}[{objectQualifier}Answers_Post] p
+		WHERE p.[ParentId] = 0)
+	SELECT @RepliesPerQuestion = AVG(COALESCE(c, 0)) FROM replyCount
+
+	SELECT	@ViewsPerQuestion = AVG(COALESCE(ViewCount, 0))
+	FROM	{databaseOwner}[{objectQualifier}Answers_Post] WITH (NOLOCK)
+	WHERE	[PortalId] = @PortalId AND [CreatedDate] >= @LowerBound AND [CreatedDate] <= @UpperBound AND [ParentId] = 0
+
+	SELECT	@QuestionsTotalViews = SUM(COALESCE(ViewCount, 0))
+	FROM	{databaseOwner}[{objectQualifier}Answers_Post] WITH (NOLOCK)
+	WHERE	[PortalId] = @PortalId AND [CreatedDate] >= @LowerBound AND [CreatedDate] <= @UpperBound AND [ParentId] = 0
+
+	SELECT	@QuestionsTotal = COUNT(*)
+	FROM	{databaseOwner}[{objectQualifier}Answers_Post] WITH (NOLOCK)
+	WHERE	[PortalId] = @PortalId AND [ParentId] = 0 AND [CreatedDate] >= @LowerBound AND [CreatedDate] <= @UpperBound
+
+	SELECT	@AnswersTotal = COUNT(*)
+	FROM	{databaseOwner}[{objectQualifier}Answers_Post] WITH (NOLOCK)
+	WHERE	[PortalId] = @PortalId AND [ParentId] != 0 AND [CreatedDate] >= @LowerBound AND [CreatedDate] <= @UpperBound
+
+	SELECT	@AnsweredQuestionsTotal = COUNT(*)
+	FROM	{databaseOwner}[{objectQualifier}Answers_Post] WITH (NOLOCK)
+	WHERE	[PortalId] = @PortalId AND COALESCE([AnswerId], 0) != 0 AND [CreatedDate] >= @LowerBound AND [CreatedDate] <= @UpperBound
+
+	SELECT @QuestionsAnswered = COUNT(*)
+	FROM	{databaseOwner}[{objectQualifier}Answers_Post] answers WITH (NOLOCK)
+			LEFT OUTER JOIN {databaseOwner}[{objectQualifier}Answers_Post] questions WITH (NOLOCK) ON answers.[ParentId] = questions.[PostId]
+	WHERE	answers.[PortalId] = @PortalId AND answers.[CreatedDate] >= @LowerBound AND answers.[CreatedDate] <= @UpperBound AND answers.[ParentId] != 0
+			AND questions.[CreatedDate] >= @LowerBound AND questions.[CreatedDate] <= @UpperBound 
+			GROUP BY answers.[ParentId]
+
+	SELECT	@UnansweredQuestionsTotal = @QuestionsAsked - ISNULL(@QuestionsAnswered, 0)
+	SELECT	@AnsweredQuestionsTotal = @QuestionsAsked - ISNULL(@UnansweredQuestionsTotal,0)
+
+	SELECT
+		@PortalId AS [PortalId],
+		@LowerBound AS [LowerBound],
+		@UpperBound AS [UpperBound],
+		@QuestionsAsked AS [QuestionsAsked],
+		@AnswersProvided AS [AnswersProvided],
+		@AnswersAccepted AS [AnswersAccepted],
+		@AnswersTotal AS [AnswersTotal],
+		@RepliesPerQuestion AS [RepliesPerQuestion],
+		@ViewsPerQuestion AS [ViewsPerQuestion],
+		@QuestionsTotalViews AS [QuestionsTotalViews],
+		@QuestionsTotal AS [QuestionsTotal],
+		@UnansweredQuestionsTotal AS [UnansweredQuestionsTotal],
+		@AnsweredQuestionsTotal AS [AnsweredQuestionsTotal]
+
+	-- Insert the results into the aggregate data table for this time period (or update existing)
+	IF EXISTS(
+			SELECT	*
+			FROM	{databaseOwner}[{objectQualifier}Analytics_Answers] WITH (NOLOCK)
+			WHERE	[LowerBound] = @LowerBound AND [UpperBound] = @UpperBound)
+		UPDATE {databaseOwner}[{objectQualifier}Analytics_Answers]
+			SET
+				[QuestionsAsked] = @QuestionsAsked,
+				[AnswersProvided] = @AnswersProvided,
+				[AnswersAccepted] = @AnswersAccepted,
+				[AnswersTotal] = @AnswersTotal,
+				[RepliesPerQuestion] = COALESCE(@RepliesPerQuestion, 0),
+				[ViewsPerQuestion] = COALESCE(@ViewsPerQuestion, 0),
+				[QuestionsTotalViews] = COALESCE(@QuestionsTotalViews, 0),
+				[QuestionsTotal] = COALESCE(@QuestionsTotal, 0),
+				[UnansweredQuestionsTotal] = @UnansweredQuestionsTotal,
+				[AnsweredQuestionsTotal] = @AnsweredQuestionsTotal
+			WHERE [PortalId] = @PortalId AND [LowerBound] = @LowerBound AND [UpperBound] = @UpperBound
+	ELSE
+		INSERT INTO {databaseOwner}[{objectQualifier}Analytics_Answers]
+			([PortalId],
+			 [LowerBound],
+			 [UpperBound],
+			 [QuestionsAsked],
+			 [AnswersProvided],
+			 [AnswersAccepted],
+			 [AnswersTotal],
+			 [RepliesPerQuestion],
+			 [ViewsPerQuestion],
+			 [QuestionsTotalViews],
+			 [QuestionsTotal],
+			 [UnansweredQuestionsTotal],
+			 [AnsweredQuestionsTotal])
+		VALUES
+			(@PortalId,
+			 @LowerBound,
+			 @UpperBound,
+			 @QuestionsAsked,
+			 @AnswersProvided,
+			 @AnswersAccepted,
+			 @AnswersTotal,
+			 COALESCE(@RepliesPerQuestion, 0),
+			 COALESCE(@ViewsPerQuestion, 0),
+			 COALESCE(@QuestionsTotalViews, 0),
+			 COALESCE(@QuestionsTotal, 0),
+			 @UnansweredQuestionsTotal,
+			 @AnsweredQuestionsTotal)
+END
+GO
+
+-- ************************************************************************************************************************************************
+-- SOCIAL-1690 - Analytics: Data Schema changes not in upgrades
+-- ************************************************************************************************************************************************
+-- =========================================================
+-- Analytics Activities
+-- =========================================================
+-- RENAME TABLE
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Activities') and OBJECTPROPERTY(id, N'IsTable') = 1)
+BEGIN	
+	EXEC sp_rename '{objectQualifier}Analytics_Activities', '{objectQualifier}Analytics_Activities_OLD'
+END
+GO
+-- CREATE NEW TABLE
+IF NOT EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Activities') and OBJECTPROPERTY(id, N'IsTable') = 1)
+BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}Analytics_Activities](
+		[SampleId] int NOT NULL IDENTITY (1, 1),
+		[PortalId] int NOT NULL,
+		[LowerBound] smalldatetime NOT NULL,
+		[UpperBound] smalldatetime NOT NULL,
+		[ContentTypeId] int NOT NULL,
+		[Create] bigint NOT NULL,
+		[Search] bigint NOT NULL,
+		[Edit] bigint NOT NULL,
+		[Delete] bigint NOT NULL,
+		[View] bigint NOT NULL)
+
+	CREATE CLUSTERED INDEX IX_{objectQualifier}Analytics_Activities ON {databaseOwner}[{objectQualifier}Analytics_Activities]
+	(
+		[PortalId] ASC,
+		[LowerBound] DESC,
+		[UpperBound] DESC,
+		[ContentTypeId] ASC
+	)WITH (STATISTICS_NORECOMPUTE = OFF, DROP_EXISTING = OFF, ONLINE = OFF)
+END
+GO
+-- COPY DATA TO NEW TABLE
+SET IDENTITY_INSERT {databaseOwner}[{objectQualifier}Analytics_Activities] ON
+INSERT INTO [{objectQualifier}Analytics_Activities] ([SampleId], [PortalId], [LowerBound], [UpperBound], [ContentTypeId], [Create], [Search], [Edit], [Delete], [View])
+SELECT [SampleId], [PortalId], [LowerBound], [UpperBound], [ContentTypeId], [Create], [Search], [Edit], [Delete], [View] FROM [{objectQualifier}Analytics_Activities_OLD]
+SET IDENTITY_INSERT {databaseOwner}[{objectQualifier}Analytics_Activities] OFF
+GO
+-- DELETE OLD TABLE
+DROP TABLE [{objectQualifier}Analytics_Activities_OLD]
+
+
+-- =========================================================
+-- Analytics Answers
+-- =========================================================
+-- RENAME TABLE, DROP EXISTING PK
+IF EXISTS (SELECT * FROM sys.indexes WHERE name='PK_{objectQualifier}Analytics_Answers' AND object_id = OBJECT_ID('[{objectQualifier}Analytics_Answers]'))
+BEGIN	
+	EXEC sp_rename 'PK_{objectQualifier}Analytics_Answers', 'PK_{objectQualifier}Analytics_Answers_OLD'
+END
+GO
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Answers') and OBJECTPROPERTY(id, N'IsTable') = 1)
+BEGIN	
+	EXEC sp_rename '{objectQualifier}Analytics_Answers', '{objectQualifier}Analytics_Answers_OLD'
+END
+GO
+-- CREATE NEW TABLE
+IF NOT EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Answers') and OBJECTPROPERTY(id, N'IsTable') = 1)
+BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}Analytics_Answers](
+		[SampleId] [int] IDENTITY(1,1) NOT NULL,
+		[PortalId] [int] NOT NULL,
+		[LowerBound] [smalldatetime] NULL,
+		[UpperBound] [smalldatetime] NULL,
+		[QuestionsAsked] [bigint] NOT NULL,
+		[AnswersProvided] [bigint] NOT NULL,
+		[AnswersAccepted] [bigint] NOT NULL,
+		[RepliesPerQuestion] [decimal](18, 0) NOT NULL,
+		[ViewsPerQuestion] [decimal](18, 0) NOT NULL,
+		[QuestionsTotalViews] [bigint] NOT NULL,
+		[QuestionsTotal] [bigint] NOT NULL,
+		[AnswersTotal] [bigint] NOT NULL,
+		[UnansweredQuestionsTotal] [bigint] NOT NULL,
+		[AnsweredQuestionsTotal] [bigint] NOT NULL,
+		CONSTRAINT [PK_{objectQualifier}Analytics_Answers] PRIMARY KEY NONCLUSTERED 
+		(
+			[SampleId] ASC
+		)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF)
+	)
+
+	CREATE CLUSTERED INDEX IX_{objectQualifier}Analytics_Answers ON {databaseOwner}[{objectQualifier}Analytics_Answers]
+	(
+		[PortalId] ASC,
+		[LowerBound] DESC,
+		[UpperBound] DESC
+	)WITH (STATISTICS_NORECOMPUTE = OFF, DROP_EXISTING = OFF, ONLINE = OFF)	
+END
+GO
+-- COPY DATA TO NEW TABLE
+SET IDENTITY_INSERT {databaseOwner}[{objectQualifier}Analytics_Answers] ON
+INSERT INTO [{objectQualifier}Analytics_Answers] ([SampleId],[PortalId],[LowerBound],[UpperBound],[QuestionsAsked],[AnswersProvided],[AnswersAccepted],[RepliesPerQuestion],[ViewsPerQuestion],[QuestionsTotalViews],[QuestionsTotal],[AnswersTotal],[UnansweredQuestionsTotal],[AnsweredQuestionsTotal])
+SELECT 	[SampleId],[PortalId],[LowerBound],[UpperBound],[QuestionsAsked],[AnswersProvided],[AnswersAccepted],[RepliesPerQuestion],[ViewsPerQuestion],[QuestionsTotalViews],[QuestionsTotal],[AnswersTotal],[UnansweredQuestionsTotal],[AnsweredQuestionsTotal]
+FROM [{objectQualifier}Analytics_Answers_OLD]
+SET IDENTITY_INSERT {databaseOwner}[{objectQualifier}Analytics_Answers] OFF
+GO
+-- DELETE OLD TABLE
+DROP TABLE [{objectQualifier}Analytics_Answers_OLD]
+
+-- =========================================================
+-- Analytics Blogs
+-- =========================================================
+-- RENAME TABLE, DROP EXISTING PK
+IF EXISTS (SELECT * FROM sys.indexes WHERE name='PK_{objectQualifier}Analytics_Blogs' AND object_id = OBJECT_ID('[{objectQualifier}Analytics_Blogs]'))
+BEGIN	
+	EXEC sp_rename 'PK_{objectQualifier}Analytics_Blogs', 'PK_{objectQualifier}Analytics_Blogs_OLD'
+END
+GO
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Blogs') and OBJECTPROPERTY(id, N'IsTable') = 1)
+BEGIN	
+	EXEC sp_rename '{objectQualifier}Analytics_Blogs', '{objectQualifier}Analytics_Blogs_OLD'
+END
+GO
+-- CREATE NEW TABLE
+IF NOT EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Blogs') and OBJECTPROPERTY(id, N'IsTable') = 1)
+BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}Analytics_Blogs](
+		[SampleId] [int] IDENTITY(1,1) NOT NULL,
+		[PortalId] [int] NOT NULL,
+		[LowerBound] [smalldatetime] NULL,
+		[UpperBound] [smalldatetime] NULL,
+		[TotalCreated] [bigint] NOT NULL,
+		[TotalViews] [bigint] NOT NULL,
+		CONSTRAINT [PK_{objectQualifier}Analytics_Blogs] PRIMARY KEY NONCLUSTERED 
+		(
+			[SampleId] ASC
+		)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF)
+		)
+
+		
+		CREATE CLUSTERED INDEX IX_{objectQualifier}Analytics_Blogs ON {databaseOwner}[{objectQualifier}Analytics_Blogs]
+		(
+			[PortalId] ASC,
+			[LowerBound] DESC,
+			[UpperBound] DESC
+		)WITH (STATISTICS_NORECOMPUTE = OFF, DROP_EXISTING = OFF, ONLINE = OFF)
+END
+GO
+-- COPY DATA TO NEW TABLE
+SET IDENTITY_INSERT {databaseOwner}[{objectQualifier}Analytics_Blogs] ON
+INSERT INTO [{objectQualifier}Analytics_Blogs] ([SampleId],[PortalId],[LowerBound],[UpperBound],[TotalCreated],[TotalViews])
+SELECT 	[SampleId],[PortalId],[LowerBound],[UpperBound],[TotalCreated],[TotalViews]
+FROM [{objectQualifier}Analytics_Blogs_OLD]
+SET IDENTITY_INSERT {databaseOwner}[{objectQualifier}Analytics_Blogs] OFF
+GO
+-- DELETE OLD TABLE
+DROP TABLE [{objectQualifier}Analytics_Blogs_OLD]
+
+-- =========================================================
+-- Analytics Creation
+-- =========================================================
+-- RENAME TABLE, DROP EXISTING PK
+IF EXISTS (SELECT * FROM sys.indexes WHERE name='PK_{objectQualifier}Analytics_Creation' AND object_id = OBJECT_ID('[{objectQualifier}Analytics_Creation]'))
+BEGIN	
+	EXEC sp_rename 'PK_{objectQualifier}Analytics_Creation', 'PK_{objectQualifier}Analytics_Creation_OLD'
+END
+GO
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Creation') and OBJECTPROPERTY(id, N'IsTable') = 1)
+BEGIN	
+	EXEC sp_rename '{objectQualifier}Analytics_Creation', '{objectQualifier}Analytics_Creation_OLD'
+END
+GO
+-- CREATE NEW TABLE
+IF NOT EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Creation') and OBJECTPROPERTY(id, N'IsTable') = 1)
+BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}Analytics_Creation](
+		[SampleId] [int] IDENTITY(1,1) NOT NULL,
+		[PortalId] [int] NOT NULL,
+		[LowerBound] [smalldatetime] NULL,
+		[UpperBound] [smalldatetime] NULL,
+		[ContentTypeId] [int] NOT NULL,
+		[ItemsCreated] [bigint] NOT NULL,
+		[ItemsTotal] [bigint] NOT NULL,
+		CONSTRAINT [PK_{objectQualifier}Analytics_Creation] PRIMARY KEY NONCLUSTERED 
+		(
+			[SampleId] ASC
+		)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF)
+		)
+
+
+		CREATE CLUSTERED INDEX IX_{objectQualifier}Analytics_Creation ON {databaseOwner}[{objectQualifier}Analytics_Creation]
+		(
+			[PortalId] ASC,
+			[LowerBound] DESC,
+			[UpperBound] DESC,
+			[ContentTypeId] ASC
+		)WITH (STATISTICS_NORECOMPUTE = OFF, DROP_EXISTING = OFF, ONLINE = OFF)
+END
+GO
+-- COPY DATA TO NEW TABLE
+SET IDENTITY_INSERT {databaseOwner}[{objectQualifier}Analytics_Creation] ON
+INSERT INTO [{objectQualifier}Analytics_Creation] ([SampleId],[PortalId],[LowerBound],[UpperBound],[ContentTypeId],[ItemsCreated],[ItemsTotal])
+SELECT 	[SampleId],[PortalId],[LowerBound],[UpperBound],[ContentTypeId],[ItemsCreated],[ItemsTotal]
+FROM [{objectQualifier}Analytics_Creation_OLD]
+SET IDENTITY_INSERT {databaseOwner}[{objectQualifier}Analytics_Creation] OFF
+GO
+-- DELETE OLD TABLE
+DROP TABLE [{objectQualifier}Analytics_Creation_OLD]
+
+-- =========================================================
+-- Analytics Discussions
+-- =========================================================
+-- RENAME TABLE, DROP EXISTING PK
+IF EXISTS (SELECT * FROM sys.indexes WHERE name='PK_{objectQualifier}Analytics_Discussions' AND object_id = OBJECT_ID('[{objectQualifier}Analytics_Discussions]'))
+BEGIN	
+	EXEC sp_rename 'PK_{objectQualifier}Analytics_Discussions', 'PK_{objectQualifier}Analytics_Discussions_OLD'
+END
+GO
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Discussions') and OBJECTPROPERTY(id, N'IsTable') = 1)
+BEGIN	
+	EXEC sp_rename '{objectQualifier}Analytics_Discussions', '{objectQualifier}Analytics_Discussions_OLD'
+END
+GO
+-- CREATE NEW TABLE
+IF NOT EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Discussions') and OBJECTPROPERTY(id, N'IsTable') = 1)
+BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}Analytics_Discussions](
+	[SampleId] [int] IDENTITY(1,1) NOT NULL,
+	[PortalId] [int] NOT NULL,
+	[LowerBound] [smalldatetime] NULL,
+	[UpperBound] [smalldatetime] NULL,
+	[TopicsCreated] [bigint] NOT NULL,
+	[RepliesTotal] [bigint] NOT NULL,
+	[AverageRepliesPerTopic] [decimal](18, 0) NOT NULL,
+	CONSTRAINT [PK_{objectQualifier}Analytics_Discussions] PRIMARY KEY NONCLUSTERED 
+	(
+		[SampleId] ASC
+	)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF)
+	)
+
+	CREATE CLUSTERED INDEX IX_{objectQualifier}Analytics_Discussions ON {databaseOwner}[{objectQualifier}Analytics_Discussions]
+	(
+		[PortalId] ASC,
+		[LowerBound] DESC,
+		[UpperBound] DESC
+	)WITH (STATISTICS_NORECOMPUTE = OFF, DROP_EXISTING = OFF, ONLINE = OFF)
+END
+GO
+-- COPY DATA TO NEW TABLE
+SET IDENTITY_INSERT {databaseOwner}[{objectQualifier}Analytics_Discussions] ON
+INSERT INTO [{objectQualifier}Analytics_Discussions] ([SampleId],[PortalId],[LowerBound],[UpperBound],[TopicsCreated],[RepliesTotal],[AverageRepliesPerTopic])
+SELECT 	[SampleId],[PortalId],[LowerBound],[UpperBound],[TopicsCreated],[RepliesTotal],[AverageRepliesPerTopic]
+FROM [{objectQualifier}Analytics_Discussions_OLD]
+SET IDENTITY_INSERT {databaseOwner}[{objectQualifier}Analytics_Discussions] OFF
+GO
+-- DELETE OLD TABLE
+DROP TABLE [{objectQualifier}Analytics_Discussions_OLD]
+
+-- =========================================================
+-- Analytics Ideas
+-- =========================================================
+-- RENAME TABLE, DROP EXISTING PK
+IF EXISTS (SELECT * FROM sys.indexes WHERE name='PK_{objectQualifier}Analytics_Ideas' AND object_id = OBJECT_ID('[{objectQualifier}Analytics_Ideas]'))
+BEGIN	
+	EXEC sp_rename 'PK_{objectQualifier}Analytics_Ideas', 'PK_{objectQualifier}Analytics_Ideas_OLD'
+END
+GO
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Ideas') and OBJECTPROPERTY(id, N'IsTable') = 1)
+BEGIN	
+	EXEC sp_rename '{objectQualifier}Analytics_Ideas', '{objectQualifier}Analytics_Ideas_OLD'
+END
+GO
+-- CREATE NEW TABLE
+IF NOT EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Ideas') and OBJECTPROPERTY(id, N'IsTable') = 1)
+BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}Analytics_Ideas](
+		[SampleId] [int] IDENTITY(1,1) NOT NULL,
+		[PortalId] [int] NOT NULL,
+		[LowerBound] [smalldatetime] NULL,
+		[UpperBound] [smalldatetime] NULL,
+		[Submitted] [bigint] NOT NULL,
+		[Accepted] [bigint] NOT NULL,
+		[Scheduled] [bigint] NOT NULL,
+		[UnderReview] [bigint] NOT NULL,
+		[Delivered] [bigint] NOT NULL,
+		[Total] [bigint] NOT NULL,
+		CONSTRAINT [PK_{objectQualifier}Analytics_Ideas] PRIMARY KEY NONCLUSTERED 
+		(
+			[SampleId] ASC
+		)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF)
+		)
+
+
+		CREATE CLUSTERED INDEX IX_{objectQualifier}Analytics_Ideas ON {databaseOwner}[{objectQualifier}Analytics_Ideas]
+		(
+			[PortalId] ASC,
+			[LowerBound] DESC,
+			[UpperBound] DESC
+		)WITH (STATISTICS_NORECOMPUTE = OFF, DROP_EXISTING = OFF, ONLINE = OFF)
+END
+GO
+-- COPY DATA TO NEW TABLE
+SET IDENTITY_INSERT {databaseOwner}[{objectQualifier}Analytics_Ideas] ON
+INSERT INTO [{objectQualifier}Analytics_Ideas] ([SampleId],[PortalId],[LowerBound],[UpperBound],[Submitted],[Accepted],[Scheduled],[UnderReview],[Delivered],[Total])
+SELECT 	[SampleId],[PortalId],[LowerBound],[UpperBound],[Submitted],[Accepted],[Scheduled],[UnderReview],[Delivered],[Total]
+FROM [{objectQualifier}Analytics_Ideas_OLD]
+SET IDENTITY_INSERT {databaseOwner}[{objectQualifier}Analytics_Ideas] OFF
+GO
+-- DELETE OLD TABLE
+DROP TABLE [{objectQualifier}Analytics_Ideas_OLD]
+
+-- =========================================================
+-- Analytics PageTime
+-- =========================================================
+-- RENAME TABLE, DROP EXISTING PK
+IF EXISTS (SELECT * FROM sys.indexes WHERE name='PK_{objectQualifier}Analytics_PageTime' AND object_id = OBJECT_ID('[{objectQualifier}Analytics_PageTime]'))
+BEGIN	
+	EXEC sp_rename 'PK_{objectQualifier}Analytics_PageTime', 'PK_{objectQualifier}Analytics_PageTime_OLD'
+END
+GO
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_PageTime') and OBJECTPROPERTY(id, N'IsTable') = 1)
+BEGIN	
+	EXEC sp_rename '{objectQualifier}Analytics_PageTime', '{objectQualifier}Analytics_PageTime_OLD'
+END
+GO
+-- CREATE NEW TABLE
+IF NOT EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_PageTime') and OBJECTPROPERTY(id, N'IsTable') = 1)
+BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}Analytics_PageTime](
+		[PageTimeId] [int] IDENTITY(1,1) NOT NULL,
+		[CreatedOnDate] [smalldatetime] NULL,
+		[PortalId] [int] NOT NULL,
+		[UserId] [int] NULL,
+		[TabId] [int] NULL,
+		[ContentItemId] [int] NULL,
+		[TotalSeconds] [int] NOT NULL,
+		CONSTRAINT [PK_{objectQualifier}Analytics_PageTime] PRIMARY KEY NONCLUSTERED 
+		(
+			[PageTimeId] ASC
+		)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF)
+		)
+
+
+		CREATE CLUSTERED INDEX IX_{objectQualifier}Analytics_PageTime ON {databaseOwner}[{objectQualifier}Analytics_PageTime]
+		(
+			[PortalId] ASC,
+			[CreatedOnDate] DESC
+		)WITH (STATISTICS_NORECOMPUTE = OFF, DROP_EXISTING = OFF, ONLINE = OFF)
+END
+GO
+-- COPY DATA TO NEW TABLE
+SET IDENTITY_INSERT {databaseOwner}[{objectQualifier}Analytics_PageTime] ON
+INSERT INTO [{objectQualifier}Analytics_PageTime] ([PageTimeId],[CreatedOnDate],[PortalId],[UserId],[TabId],[ContentItemId],[TotalSeconds])
+SELECT 	[PageTimeId],[CreatedOnDate],[PortalId],[UserId],[TabId],[ContentItemId],[TotalSeconds]
+FROM [{objectQualifier}Analytics_PageTime_OLD]
+SET IDENTITY_INSERT {databaseOwner}[{objectQualifier}Analytics_PageTime] OFF
+GO
+-- DELETE OLD TABLE
+DROP TABLE [{objectQualifier}Analytics_PageTime_OLD]
+
+-- =========================================================
+-- Analytics PageTime Aggregate
+-- =========================================================
+-- RENAME TABLE, DROP EXISTING PK
+IF EXISTS (SELECT * FROM sys.indexes WHERE name='PK_{objectQualifier}Analytics_PageTime_Aggregate' AND object_id = OBJECT_ID('[{objectQualifier}Analytics_PageTime_Aggregate]'))
+BEGIN	
+	EXEC sp_rename 'PK_{objectQualifier}Analytics_PageTime_Aggregate', 'PK_{objectQualifier}Analytics_PageTime_Aggregate_OLD'
+END
+GO
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_PageTime_Aggregate') and OBJECTPROPERTY(id, N'IsTable') = 1)
+BEGIN	
+	EXEC sp_rename '{objectQualifier}Analytics_PageTime_Aggregate', '{objectQualifier}Analytics_PageTime_Aggregate_OLD'
+END
+GO
+-- CREATE NEW TABLE
+IF NOT EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_PageTime_Aggregate') and OBJECTPROPERTY(id, N'IsTable') = 1)
+BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}Analytics_PageTime_Aggregate](
+		[SampleId] [int] IDENTITY(1,1) NOT NULL,
+		[PortalId] [int] NOT NULL,
+		[LowerBound] [smalldatetime] NULL,
+		[UpperBound] [smalldatetime] NULL,
+		[TabId] [int] NULL,
+		[AnonymousViews] [bigint] NOT NULL,
+		[AnonymousTotalSeconds] [bigint] NOT NULL,
+		[RegisteredViews] [bigint] NOT NULL,
+		[RegisteredTotalSeconds] [bigint] NOT NULL,
+		[TotalViews] [bigint] NOT NULL,
+		[TotalSeconds] [bigint] NOT NULL,
+		CONSTRAINT [PK_{objectQualifier}Analytics_PageTime_Aggregate] PRIMARY KEY NONCLUSTERED 
+		(
+			[SampleId] ASC
+		)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF)
+		)
+
+
+		CREATE CLUSTERED INDEX IX_{objectQualifier}Analytics_PageTime_Aggregate ON {databaseOwner}[{objectQualifier}Analytics_PageTime_Aggregate]
+		(
+			[PortalId] ASC,
+			[LowerBound] DESC,
+			[UpperBound] DESC
+		)WITH (STATISTICS_NORECOMPUTE = OFF, DROP_EXISTING = OFF, ONLINE = OFF)
+END
+GO
+-- COPY DATA TO NEW TABLE
+SET IDENTITY_INSERT {databaseOwner}[{objectQualifier}Analytics_PageTime_Aggregate] ON
+INSERT INTO [{objectQualifier}Analytics_PageTime_Aggregate] ([SampleId],[PortalId],[LowerBound],[UpperBound],[TabId],[AnonymousViews],[AnonymousTotalSeconds],[RegisteredViews],[RegisteredTotalSeconds],[TotalViews],[TotalSeconds])
+SELECT 	[SampleId],[PortalId],[LowerBound],[UpperBound],[TabId],[AnonymousViews],[AnonymousTotalSeconds],[RegisteredViews],[RegisteredTotalSeconds],[TotalViews],[TotalSeconds]
+FROM [{objectQualifier}Analytics_PageTime_Aggregate_OLD]
+SET IDENTITY_INSERT {databaseOwner}[{objectQualifier}Analytics_PageTime_Aggregate] OFF
+GO
+-- DELETE OLD TABLE
+DROP TABLE [{objectQualifier}Analytics_PageTime_Aggregate_OLD]
+
+-- =========================================================
+-- Analytics Participation
+-- =========================================================
+-- RENAME TABLE, DROP EXISTING PK
+IF EXISTS (SELECT * FROM sys.indexes WHERE name='PK_{objectQualifier}Analytics_Participation' AND object_id = OBJECT_ID('[{objectQualifier}Analytics_Participation]'))
+BEGIN	
+	EXEC sp_rename 'PK_{objectQualifier}Analytics_Participation', 'PK_{objectQualifier}Analytics_Participation_OLD'
+END
+GO
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Participation') and OBJECTPROPERTY(id, N'IsTable') = 1)
+BEGIN	
+	EXEC sp_rename '{objectQualifier}Analytics_Participation', '{objectQualifier}Analytics_Participation_OLD'
+END
+GO
+-- CREATE NEW TABLE
+IF NOT EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Participation') and OBJECTPROPERTY(id, N'IsTable') = 1)
+BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}Analytics_Participation](
+		[SampleId] [int] IDENTITY(1,1) NOT NULL,
+		[PortalId] [int] NOT NULL,
+		[LowerBound] [smalldatetime] NULL,
+		[UpperBound] [smalldatetime] NULL,
+		[Registrations] [bigint] NOT NULL,
+		[ActiveUsers] [bigint] NOT NULL,
+		[TotalViews] [bigint] NOT NULL,
+		[ContributingUsers] [bigint] NOT NULL,
+		[LoginFrequency] [decimal](18, 0) NOT NULL,
+		CONSTRAINT [PK_{objectQualifier}Analytics_Participation] PRIMARY KEY NONCLUSTERED 
+		(
+			[SampleId] ASC
+		)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF)
+		)
+
+
+		CREATE CLUSTERED INDEX IX_{objectQualifier}Analytics_Participation ON {databaseOwner}[{objectQualifier}Analytics_Participation]
+		(
+			[PortalId] ASC,
+			[LowerBound] DESC,
+			[UpperBound] DESC
+		)WITH (STATISTICS_NORECOMPUTE = OFF, DROP_EXISTING = OFF, ONLINE = OFF)
+END
+GO
+-- COPY DATA TO NEW TABLE
+SET IDENTITY_INSERT {databaseOwner}[{objectQualifier}Analytics_Participation] ON
+INSERT INTO [{objectQualifier}Analytics_Participation] ([SampleId],[PortalId],[LowerBound],[UpperBound],[Registrations],[ActiveUsers],[TotalViews],[ContributingUsers],[LoginFrequency])
+SELECT 	[SampleId],[PortalId],[LowerBound],[UpperBound],[Registrations],[ActiveUsers],[TotalViews],[ContributingUsers],[LoginFrequency]
+FROM [{objectQualifier}Analytics_Participation_OLD]
+SET IDENTITY_INSERT {databaseOwner}[{objectQualifier}Analytics_Participation] OFF
+GO
+-- DELETE OLD TABLE
+DROP TABLE [{objectQualifier}Analytics_Participation_OLD]
+
+-- =========================================================
+-- Analytics Referrals & Analytics Shared
+-- =========================================================
+-- RENAME TABLE, DROP EXISTING PK
+ALTER TABLE {databaseOwner}{objectQualifier}Analytics_Referrals DROP CONSTRAINT FK_{objectQualifier}Analytics_Referrals_{objectQualifier}Analytics_Shared
+GO
+ALTER TABLE {databaseOwner}{objectQualifier}Analytics_Referrals DROP CONSTRAINT DF_{objectQualifier}Analytics_Referrals_CreatedOnDate
+GO
+IF EXISTS (SELECT * FROM sys.indexes WHERE name='PK_{objectQualifier}Analytics_Referrals' AND object_id = OBJECT_ID('[{objectQualifier}Analytics_Referrals]'))
+BEGIN	
+	EXEC sp_rename 'PK_{objectQualifier}Analytics_Referrals', 'PK_{objectQualifier}Analytics_Referrals_OLD'
+END
+GO
+
+-- ===================
+-- Analytics Referrals
+-- ===================
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Referrals') and OBJECTPROPERTY(id, N'IsTable') = 1)
+BEGIN	
+	EXEC sp_rename '{objectQualifier}Analytics_Referrals', '{objectQualifier}Analytics_Referrals_OLD'
+END
+GO
+-- CREATE NEW TABLE
+IF NOT EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Referrals') and OBJECTPROPERTY(id, N'IsTable') = 1)
+BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}Analytics_Referrals](
+		[ReferralId] [int] IDENTITY(1,1) NOT NULL,
+		[PortalId] [int] NOT NULL,
+		[ShareId] [int] NOT NULL,
+		[UserId] [int] NOT NULL,
+		[CreatedOnDate] [smalldatetime] NULL,
+		CONSTRAINT [PK_{objectQualifier}Analytics_Referrals] PRIMARY KEY CLUSTERED 
+		(
+			[ReferralId] ASC
+		)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF)
+		)
+
+
+		CREATE NONCLUSTERED INDEX IX_{objectQualifier}Analytics_Referrals_CreatedOnDate ON {databaseOwner}[{objectQualifier}Analytics_Referrals]
+		(
+			[CreatedOnDate] ASC
+		)WITH (STATISTICS_NORECOMPUTE = OFF, DROP_EXISTING = OFF, ONLINE = OFF)
+END
+GO
+-- COPY DATA TO NEW TABLE
+SET IDENTITY_INSERT {databaseOwner}[{objectQualifier}Analytics_Referrals] ON
+INSERT INTO [{objectQualifier}Analytics_Referrals] ([ReferralId],[PortalId],[ShareId],[UserId],[CreatedOnDate])
+SELECT [ReferralId],[PortalId],[ShareId],[UserId],[CreatedOnDate]
+FROM [{objectQualifier}Analytics_Referrals_OLD]
+SET IDENTITY_INSERT {databaseOwner}[{objectQualifier}Analytics_Referrals] OFF
+GO
+-- DELETE OLD TABLE
+DROP TABLE [{objectQualifier}Analytics_Referrals_OLD]
+
+-- ================
+-- Analytics Shared
+-- ================
+IF EXISTS (SELECT * FROM sys.indexes WHERE name='PK_{objectQualifier}Analytics_Shared' AND object_id = OBJECT_ID('[{objectQualifier}Analytics_Shared]'))
+BEGIN	
+	EXEC sp_rename 'PK_{objectQualifier}Analytics_Shared', 'PK_{objectQualifier}Analytics_Shared_OLD'
+END
+GO
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Shared') and OBJECTPROPERTY(id, N'IsTable') = 1)
+BEGIN	
+	EXEC sp_rename '{objectQualifier}Analytics_Shared', '{objectQualifier}Analytics_Shared_OLD'
+END
+GO
+-- CREATE NEW TABLE
+IF NOT EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Shared') and OBJECTPROPERTY(id, N'IsTable') = 1)
+BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}Analytics_Shared](
+		[ShareId] [int] IDENTITY(1,1) NOT NULL,
+		[PortalId] [int] NOT NULL,
+		[UserId] [int] NOT NULL,
+		[ContentItemId] [int] NULL,
+		[TransformedUrl] [nvarchar](256) NOT NULL,
+		[CreatedOnDate] [smalldatetime] NULL,
+		CONSTRAINT [PK_{objectQualifier}Analytics_Shared] PRIMARY KEY CLUSTERED 
+		(
+			[ShareId] ASC
+		)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF)
+		)
+
+
+		CREATE NONCLUSTERED INDEX IX_{objectQualifier}Analytics_Shared_CreatedOnDate ON {databaseOwner}[{objectQualifier}Analytics_Shared]
+		(
+			[CreatedOnDate] ASC
+		)WITH (STATISTICS_NORECOMPUTE = OFF, DROP_EXISTING = OFF, ONLINE = OFF)
+
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Analytics_Shared] ON {databaseOwner}[{objectQualifier}Analytics_Shared]
+		(
+			[PortalId] ASC,
+			[UserId] ASC
+		)WITH (STATISTICS_NORECOMPUTE = OFF, DROP_EXISTING = OFF, ONLINE = OFF)
+
+		CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Analytics_Shared_TransformedUrl] ON {databaseOwner}[{objectQualifier}Analytics_Shared]
+		(
+			[TransformedUrl] ASC
+		)WITH (STATISTICS_NORECOMPUTE = OFF, DROP_EXISTING = OFF, ONLINE = OFF)
+END
+GO
+
+-- COPY DATA TO NEW TABLE
+SET IDENTITY_INSERT {databaseOwner}[{objectQualifier}Analytics_Shared] ON
+INSERT INTO [{objectQualifier}Analytics_Shared] ([ShareId],[PortalId],[UserId],[ContentItemId],[TransformedUrl],[CreatedOnDate])
+SELECT [ShareId],[PortalId],[UserId],[ContentItemId],[TransformedUrl],[CreatedOnDate]
+FROM [{objectQualifier}Analytics_Shared_OLD]
+SET IDENTITY_INSERT {databaseOwner}[{objectQualifier}Analytics_Shared] OFF
+GO
+-- DELETE OLD TABLE
+DROP TABLE [{objectQualifier}Analytics_Shared_OLD]
+
+ALTER TABLE {databaseOwner}[{objectQualifier}Analytics_Referrals] ADD CONSTRAINT [DF_{objectQualifier}Analytics_Referrals_CreatedOnDate]  DEFAULT (getutcdate()) FOR [CreatedOnDate]
+GO
+ALTER TABLE {databaseOwner}[{objectQualifier}Analytics_Referrals]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Analytics_Referrals_{objectQualifier}Analytics_Shared] FOREIGN KEY([ShareId])
+REFERENCES {databaseOwner}[{objectQualifier}Analytics_Shared] ([ShareId])
+GO
+ALTER TABLE {databaseOwner}[{objectQualifier}Analytics_Referrals] CHECK CONSTRAINT [FK_{objectQualifier}Analytics_Referrals_{objectQualifier}Analytics_Shared]
+GO
+-- ===========================================
+-- END: Analytics Referrals & Analytics Shared
+-- ===========================================
+
+-- =========================================================
+-- Analytics ScoringGoals
+-- =========================================================
+-- RENAME TABLE, DROP EXISTING PK
+ALTER TABLE {databaseOwner}{objectQualifier}Analytics_ScoringGoals DROP CONSTRAINT DF_{objectQualifier}Analytics_ScoringGoals_CreatedOnDate
+GO
+IF EXISTS (SELECT * FROM sys.indexes WHERE name='PK_{objectQualifier}Analytics_ScoringGoals' AND object_id = OBJECT_ID('[{objectQualifier}Analytics_ScoringGoals]'))
+BEGIN	
+	EXEC sp_rename 'PK_{objectQualifier}Analytics_ScoringGoals', 'PK_{objectQualifier}Analytics_ScoringGoals_OLD'
+END
+GO
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_ScoringGoals') and OBJECTPROPERTY(id, N'IsTable') = 1)
+BEGIN	
+	EXEC sp_rename '{objectQualifier}Analytics_ScoringGoals', '{objectQualifier}Analytics_ScoringGoals_OLD'
+END
+GO
+-- CREATE NEW TABLE
+IF NOT EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_ScoringGoals') and OBJECTPROPERTY(id, N'IsTable') = 1)
+BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}Analytics_ScoringGoals](
+	[ScoringGoalId] [int] IDENTITY(1,1) NOT NULL,
+	[PortalId] [int] NOT NULL,
+	[GoalList] [varchar](64) NOT NULL,
+	[GoalType] [varchar](64) NOT NULL,
+	[Weight] [float] NOT NULL,
+	[Value] [float] NOT NULL,
+	[CreatedByUserId] [int] NULL,
+	[CreatedOnDate] [smalldatetime] NULL,
+	CONSTRAINT [PK_{objectQualifier}Analytics_ScoringGoals] PRIMARY KEY CLUSTERED 
+	(
+		[ScoringGoalId] ASC
+	)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF)
+	)
+END	
+GO
+
+ALTER TABLE {databaseOwner}[{objectQualifier}Analytics_ScoringGoals] ADD  CONSTRAINT [DF_{objectQualifier}Analytics_ScoringGoals_CreatedOnDate]  DEFAULT (getutcdate()) FOR [CreatedOnDate]
+GO
+-- COPY DATA TO NEW TABLE
+SET IDENTITY_INSERT {databaseOwner}[{objectQualifier}Analytics_ScoringGoals] ON
+INSERT INTO [{objectQualifier}Analytics_ScoringGoals] ([ScoringGoalId],[PortalId],[GoalList],[GoalType],[Weight],[Value],[CreatedByUserId],[CreatedOnDate])
+SELECT [ScoringGoalId],[PortalId],[GoalList],[GoalType],[Weight],[Value],[CreatedByUserId],[CreatedOnDate]
+FROM [{objectQualifier}Analytics_ScoringGoals_OLD]
+SET IDENTITY_INSERT {databaseOwner}[{objectQualifier}Analytics_ScoringGoals] OFF
+GO
+-- DELETE OLD TABLE
+DROP TABLE [{objectQualifier}Analytics_ScoringGoals_OLD]
+
+-- =========================================================
+-- Analytics Users
+-- =========================================================
+-- RENAME TABLE, DROP EXISTING PK
+IF EXISTS (SELECT * FROM sys.indexes WHERE name='PK_{objectQualifier}Analytics_Users' AND object_id = OBJECT_ID('[{objectQualifier}Analytics_Users]'))
+BEGIN	
+	EXEC sp_rename 'PK_{objectQualifier}Analytics_Users', 'PK_{objectQualifier}Analytics_Users_OLD'
+END
+GO
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Users') and OBJECTPROPERTY(id, N'IsTable') = 1)
+BEGIN	
+	EXEC sp_rename '{objectQualifier}Analytics_Users', '{objectQualifier}Analytics_Users_OLD'
+END
+GO
+-- CREATE NEW TABLE
+IF NOT EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Users') and OBJECTPROPERTY(id, N'IsTable') = 1)
+BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}Analytics_Users](
+	[UserSampleId] [int] IDENTITY(1,1) NOT NULL,
+	[PortalId] [int] NOT NULL,
+	[UserId] [int] NOT NULL,
+	[ProcessDate] [smalldatetime] NULL,
+	[TotalSeconds] [bigint] NOT NULL,
+	[Engagement] [xml] NULL,
+	[Influence] [xml] NULL,
+	[Contribution] [xml] NULL,
+	[Activity] [xml] NULL,
+	[Login] [xml] NULL,
+	[LastModified] [smalldatetime] NOT NULL,
+	CONSTRAINT [PK_{objectQualifier}Analytics_Users] PRIMARY KEY CLUSTERED 
+	(
+		[UserSampleId] ASC
+	)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF)
+	)
+
+	CREATE NONCLUSTERED INDEX IX_{objectQualifier}Analytics_Users_ProcessDate ON {databaseOwner}[{objectQualifier}Analytics_Users]
+	(
+		[ProcessDate] DESC
+	)WITH (STATISTICS_NORECOMPUTE = OFF, DROP_EXISTING = OFF, ONLINE = OFF)
+
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Analytics_Users] ON {databaseOwner}[{objectQualifier}Analytics_Users]
+	(
+		[PortalId] ASC,
+		[UserId] ASC
+	)WITH (STATISTICS_NORECOMPUTE = OFF, DROP_EXISTING = OFF, ONLINE = OFF)
+
+END
+GO
+
+ALTER TABLE [dbo].[{objectQualifier}Analytics_Users] ADD  DEFAULT (getutcdate()) FOR [LastModified]
+GO
+
+-- COPY DATA TO NEW TABLE
+SET IDENTITY_INSERT {databaseOwner}[{objectQualifier}Analytics_Users] ON
+INSERT INTO [{objectQualifier}Analytics_Users] ([UserSampleId],[PortalId],[UserId],[ProcessDate],[TotalSeconds],[Engagement],[Influence],[Contribution],[Activity],[Login],[LastModified])
+SELECT [UserSampleId],[PortalId],[UserId],[ProcessDate],[TotalSeconds],[Engagement],[Influence],[Contribution],[Activity],[Login],[LastModified]
+FROM [{objectQualifier}Analytics_Users_OLD]
+SET IDENTITY_INSERT {databaseOwner}[{objectQualifier}Analytics_Users] OFF
+GO
+-- DELETE OLD TABLE
+DROP TABLE [{objectQualifier}Analytics_Users_OLD]
+-- ************************************************************************************************************************************************
+-- END: SOCIAL-1690
+-- ************************************************************************************************************************************************
+
+
+-- ************************************************************************************************************************************************
+-- SOCIAL-1633 - Analytics: Error when analytics Scheduled task runs
+-- ************************************************************************************************************************************************
+-- *********************************
+-- Analytics_Calculate_User
+-- *********************************
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Calculate_User') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Calculate_User
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Calculate_User]
+	@PortalId int,
+	@UserId int
+AS
+BEGIN
+	DECLARE @TotalSeconds bigint
+	DECLARE @Engagement xml
+	DECLARE @Influence xml
+	DECLARE @Contribution xml
+	DECLARE @Activity xml
+	DECLARE @Login xml
+	
+	DECLARE @ExistingEngagement xml
+	DECLARE @ExistingInfluence xml
+	DECLARE @ExistingContribution xml
+	DECLARE @ExistingActivity xml
+	DECLARE @ExistingLogin xml
+
+	SELECT	@TotalSeconds = COALESCE(SUM(CONVERT(bigint,TotalSeconds)), 0)
+	FROM	{databaseOwner}[{objectQualifier}Analytics_PageTime]
+	WHERE	[PortalId] = @PortalId AND [UserId] = @UserId
+
+	-- Generate user time series XML documents
+	SELECT	@Engagement = {databaseOwner}{objectQualifier}Analytics_Generate_Engagement_TimeSeries(@PortalId, @UserId)
+	SELECT	@Influence = {databaseOwner}{objectQualifier}Analytics_Generate_Influence_TimeSeries(@PortalId, @UserId)
+	SELECT	@Contribution = {databaseOwner}{objectQualifier}Analytics_Generate_Contribution_TimeSeries(@PortalId, @UserId)
+	SELECT	@Activity = {databaseOwner}{objectQualifier}Analytics_Generate_Activity_TimeSeries(@PortalId, @UserId)
+	SELECT	@Login = {databaseOwner}{objectQualifier}Analytics_Generate_Login_TimeSeries(@PortalId, @UserId)
+
+	IF EXISTS(
+			SELECT	*
+			FROM	{databaseOwner}[{objectQualifier}Analytics_Users]
+			WHERE	[PortalId] = @PortalId AND [UserId] = @UserId)
+	BEGIN
+		SELECT	@ExistingEngagement	= COALESCE([Engagement], '<TimeSeries />'),
+				@ExistingInfluence = COALESCE([Influence], '<TimeSeries />'),
+				@ExistingContribution = COALESCE([Contribution], '<TimeSeries />'),
+				@ExistingActivity = COALESCE([Activity], '<TimeSeries />'),
+				@ExistingLogin = COALESCE([Login], '<TimeSeries />')
+		FROM	{databaseOwner}[{objectQualifier}Analytics_Users]
+		WHERE	[PortalId] = @PortalId AND [UserId] = @UserId
+
+		DECLARE TimeCursor CURSOR FOR SELECT * FROM {databaseOwner}{objectQualifier}Analytics_GetActiveTimeBoundaries()
+		
+		DECLARE @CursorLower smalldatetime
+		DECLARE @CursorUpper smalldatetime
+
+		OPEN TimeCursor
+		FETCH NEXT FROM TimeCursor INTO @CursorLower, @CursorUpper
+
+		WHILE @@FETCH_STATUS = 0
+		BEGIN
+			SET @ExistingEngagement.modify('delete (/TimeSeries/Sample[@LowerBound=(sql:variable("@CursorLower"))][@UpperBound=(sql:variable("@CursorUpper"))])')
+			SET @ExistingInfluence.modify('delete (/TimeSeries/Sample[@LowerBound=(sql:variable("@CursorLower"))][@UpperBound=(sql:variable("@CursorUpper"))])')
+			SET @ExistingContribution.modify('delete (/TimeSeries/Sample[@LowerBound=(sql:variable("@CursorLower"))][@UpperBound=(sql:variable("@CursorUpper"))])')
+			SET @ExistingActivity.modify('delete (/TimeSeries/Sample[@LowerBound=(sql:variable("@CursorLower"))][@UpperBound=(sql:variable("@CursorUpper"))])')
+			SET @ExistingLogin.modify('delete (/TimeSeries/Sample[@LowerBound=(sql:variable("@CursorLower"))][@UpperBound=(sql:variable("@CursorUpper"))])')
+
+			FETCH NEXT FROM TimeCursor INTO @CursorLower, @CursorUpper
+		END
+
+		DEALLOCATE TimeCursor
+
+		SET @ExistingEngagement.modify('insert sql:variable("@Engagement") into (/TimeSeries)[1]')
+		SET @ExistingInfluence.modify( 'insert sql:variable("@Influence") into (/TimeSeries)[1]')
+		SET @ExistingContribution.modify('insert sql:variable("@Contribution") into (/TimeSeries)[1]')
+		SET @ExistingActivity.modify('insert sql:variable("@Activity") into (/TimeSeries)[1]')
+		SET @ExistingLogin.modify('insert sql:variable("@Login") into (/TimeSeries)[1]')
+
+		UPDATE {databaseOwner}[{objectQualifier}Analytics_Users]
+			SET
+				[ProcessDate] = NULL,
+				[TotalSeconds] = @TotalSeconds,
+				[Engagement] = @ExistingEngagement,
+				[Influence] = @ExistingInfluence,
+				[Contribution] = @ExistingContribution,
+				[Activity] = @ExistingActivity,
+				[Login] = @ExistingLogin
+		WHERE	[PortalId] = @PortalId AND [UserId] = @UserId
+	END
+	ELSE
+	BEGIN
+		SELECT	@ExistingEngagement = N'<TimeSeries />';
+		SELECT	@ExistingInfluence = N'<TimeSeries />';
+		SELECT	@ExistingContribution = N'<TimeSeries />';
+		SELECT	@ExistingActivity = N'<TimeSeries />';
+		SELECT	@ExistingLogin = N'<TimeSeries />';
+
+		SET		@ExistingEngagement.modify('insert sql:variable("@Engagement") into (/TimeSeries)[1]')
+		SET		@ExistingInfluence.modify('insert sql:variable("@Influence") into (/TimeSeries)[1]')
+		SET		@ExistingContribution.modify('insert sql:variable("@Contribution") into (/TimeSeries)[1]')
+		SET		@ExistingActivity.modify('insert sql:variable("@Activity") into (/TimeSeries)[1]')
+		SET		@ExistingLogin.modify('insert sql:variable("@Login") into (/TimeSeries)[1]')
+
+		INSERT INTO {databaseOwner}[{objectQualifier}Analytics_Users]
+			([PortalId],
+			 [UserId],
+			 [ProcessDate],
+			 [TotalSeconds],
+			 [Engagement],
+			 [Influence],
+			 [Contribution],
+			 [Activity],
+			 [Login])
+		VALUES
+			(@PortalId,
+			 @UserId,
+			 NULL,
+			 @TotalSeconds,
+			 @ExistingEngagement,
+			 @ExistingInfluence,
+			 @ExistingContribution,
+			 @ExistingActivity,
+			 @ExistingLogin)
+	END
+
+	-- Result set
+	SELECT
+		@PortalId AS [PortalId],
+		@UserId AS [UserId],
+		(SELECT	[ProcessDate]
+		 FROM	{databaseOwner}[{objectQualifier}Analytics_Users] WITH (NOLOCK)
+		 WHERE	[PortalId] = @PortalId AND [UserId] = @UserId) AS [ProcessDate],
+		@TotalSeconds AS [TotalSeconds],
+		@ExistingEngagement AS [EngagementDocument],
+		@ExistingInfluence AS [InfluenceDocument],
+		@ExistingContribution AS [ContributionDocument],
+		@ExistingActivity AS [ActivityDocument],
+		@ExistingLogin AS [LoginDocument]
+END
+GO
+
+-- *********************************
+-- Analytics_Get_User_Score
+-- *********************************
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Get_User_Score'))
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_Get_User_Score
+GO
+--~ SELECT INTO statement is not supported in this version of SQL Azure.
+
+CREATE FUNCTION {databaseOwner}[{objectQualifier}Analytics_Get_User_Score](
+	@PortalId int,
+	@UserId int,
+	@GoalList varchar(64),
+	@LowerBound datetime,
+	@UpperBound datetime)
+		RETURNS decimal
+AS
+BEGIN
+	DECLARE @FriendCount int
+	DECLARE @Posts int
+	DECLARE @Likes int
+	DECLARE @ViewCount int
+	DECLARE @Responses int
+	DECLARE @AcceptedAnswers int
+	DECLARE @DeliveredIdeas int
+	DECLARE @ActiveEvents int
+	DECLARE @FlaggedContent int
+	DECLARE @AvgTime bigint
+	DECLARE @SiteTime bigint
+	DECLARE @Logins int
+	DECLARE @Votes int
+	DECLARE	@IdeasVotes int
+	DECLARE @AnswersVotes int
+
+	;WITH innerList AS(
+		SELECT DISTINCT
+				CASE WHEN ur.[UserID] = @UserId THEN ur.[RelatedUserID] ELSE ur.[UserID] END AS [UserId]
+		FROM {databaseOwner}[{objectQualifier}UserRelationships] ur WITH (NOLOCK)
+		INNER JOIN {databaseOwner}[{objectQualifier}Relationships] r WITH (NOLOCK) ON r.RelationshipID = ur.RelationshipID
+		LEFT OUTER JOIN {databaseOwner}[{objectQualifier}Mechanics_UserScoring] us WITH (NOLOCK) ON CASE WHEN ur.RelatedUserID = @UserId THEN ur.UserID ELSE ur.RelatedUserID END = us.UserId
+		LEFT OUTER JOIN {databaseOwner}[{objectQualifier}Users] u WITH (NOLOCK) ON u.UserID = CASE WHEN ur.[UserID] = @UserId THEN ur.[RelatedUserID] ELSE ur.[UserID] END
+		WHERE (ur.UserID = @UserId OR ur.RelatedUserID = @UserId) AND r.Name = 'Friends' AND ur.Status = 2 --Accepted
+		AND ur.CreatedOnDate >= @LowerBound AND ur.CreatedOnDate <= @UpperBound
+	)
+	SELECT @FriendCount = COALESCE(COUNT(*), 0) FROM innerList
+
+	DECLARE @ContentTypes TABLE(ContentTypeId INT)
+
+	INSERT INTO @ContentTypes (ContentTypeId)
+	SELECT	ContentTypeID
+	FROM	{databaseOwner}{objectQualifier}ContentTypes
+	WHERE	ContentType IN
+				('DNNCorp_Answers_Question',
+				 'DNNCorp_Blogs_Entry',
+				 'DNNCorp_Discussions_Topic',
+				 'DNNCorp_Ideas_Idea',
+				 'DNNCorp_JournalGroup',
+				 'DNNCorp_JournalProfile',
+				 'DNNCorp_SocialEvents_Event')
+
+	SELECT	@Posts = COALESCE(COUNT(*), 0)
+	FROM	{databaseOwner}{objectQualifier}ContentItems WITH (NOLOCK)
+	WHERE	CreatedByUserID = @UserId AND ContentTypeID IN (SELECT ContentTypeId FROM @ContentTypes)
+	AND		CreatedOnDate >= @LowerBound AND CreatedOnDate <= @UpperBound
+
+	-- Find out how many likes posts by this user have received.
+	SELECT @Likes = COALESCE(JournalXML.value('count(//likes/u)', 'int'), 0)
+	FROM {databaseOwner}{objectQualifier}Journal_Data jd WITH (NOLOCK)
+	INNER JOIN {databaseOwner}{objectQualifier}Journal j WITH (NOLOCK) ON j.JournalId = jd.JournalId
+	INNER JOIN {databaseOwner}{objectQualifier}ContentItems ci WITH (NOLOCK) ON ci.ContentItemID = j.ContentItemId
+	WHERE ci.CreatedByUserID = @UserId AND j.DateCreated >= @LowerBound AND j.DateCreated <= @UpperBound
+
+	-- Find out how many views posts by this user have received.
+	;WITH userViews AS (
+		SELECT SUM([ViewCount]) AS [Views] FROM {databaseOwner}[{objectQualifier}Answers_Post] WITH (NOLOCK)
+		INNER JOIN {databaseOwner}[{objectQualifier}ContentItems] ci WITH (NOLOCK) ON [ci].CreatedByUserID = @UserId AND ci.CreatedOnDate >= @LowerBound AND ci.CreatedOnDate <= @UpperBound
+		UNION
+		SELECT SUM([Views]) FROM {databaseOwner}[{objectQualifier}Ideas_Idea] WITH (NOLOCK)
+		INNER JOIN {databaseOwner}[{objectQualifier}ContentItems] ci WITH (NOLOCK) ON [ci].CreatedByUserID = @UserId AND ci.CreatedOnDate >= @LowerBound AND ci.CreatedOnDate <= @UpperBound
+		UNION
+		SELECT SUM([ViewCount]) FROM {databaseOwner}[{objectQualifier}Discussions_Topic] WITH (NOLOCK)
+		INNER JOIN {databaseOwner}[{objectQualifier}ContentItems] ci WITH (NOLOCK) ON [ci].CreatedByUserID = @UserId AND ci.CreatedOnDate >= @LowerBound AND ci.CreatedOnDate <= @UpperBound
+		UNION
+		SELECT SUM([ViewCount]) FROM {databaseOwner}[{objectQualifier}SocialEvents_Event] WITH (NOLOCK)
+		INNER JOIN {databaseOwner}[{objectQualifier}ContentItems] ci WITH (NOLOCK) ON [ci].CreatedByUserID = @UserId AND ci.CreatedOnDate >= @LowerBound AND ci.CreatedOnDate <= @UpperBound
+		UNION
+		SELECT SUM([Views]) FROM {databaseOwner}[{objectQualifier}Blogs_Entry] WITH (NOLOCK)
+		INNER JOIN {databaseOwner}[{objectQualifier}ContentItems] ci WITH (NOLOCK) ON [ci].CreatedByUserID = @UserId AND ci.CreatedOnDate >= @LowerBound AND ci.CreatedOnDate <= @UpperBound)
+	SELECT @ViewCount = COALESCE(SUM([Views]), 0) From userViews
+
+	-- Find out how many responses that posts by this user have received.
+	SELECT	@Responses = COALESCE(COUNT(*), 0)
+	FROM	{databaseOwner}[{objectQualifier}Journal_Comments] jc WITH (NOLOCK)
+	INNER JOIN {databaseOwner}[{objectQualifier}Journal] j WITH (NOLOCK) ON j.JournalId = jc.JournalId
+	INNER JOIN {databaseOwner}[{objectQualifier}ContentItems] ci WITH (NOLOCK) ON ci.ContentItemID = j.ContentItemId
+	WHERE	ci.CreatedByUserID = @UserId AND jc.DateCreated >= @LowerBound AND jc.DateCreated <= @UpperBound
+
+	-- Find out how many answers they've posted that have been accepted.
+	SELECT	@AcceptedAnswers = COALESCE(COUNT(*), 0)
+	FROM	{databaseOwner}[{objectQualifier}Answers_Post] WITH (NOLOCK)
+	WHERE	CreatedUserId = @UserId AND ParentId > 0 AND CreatedDate >= @LowerBound AND CreatedDate <= @UpperBound
+
+	-- Find out how many ideas have been placed into Delivered state.
+	SELECT	@DeliveredIdeas = COALESCE(COUNT(*), 0)
+	FROM	{databaseOwner}{objectQualifier}Ideas_Idea i WITH (NOLOCK)
+	INNER JOIN {databaseOwner}{objectQualifier}ContentItems ci WITH (NOLOCK) ON ci.ContentItemID = i.ContentItemId
+	WHERE	ci.CreatedByUserID = @UserId AND ci.CreatedOnDate >= @LowerBound AND ci.CreatedOnDate <= @UpperBound
+	AND		i.Status = 6
+
+	-- Find out how many events are active.
+	SELECT	@ActiveEvents = COALESCE(COUNT(*), 0)
+	FROM	{databaseOwner}{objectQualifier}SocialEvents_Event se WITH (NOLOCK)
+	INNER JOIN {databaseOwner}{objectQualifier}ContentItems ci WITH (NOLOCK) ON ci.ContentItemID = se.ContentItemId
+	WHERE	ci.CreatedByUserID = @UserId AND ci.CreatedOnDate >= @LowerBound AND ci.CreatedOnDate <= @UpperBound
+	AND		se.StartTime >= @LowerBound AND se.StartTime <= @UpperBound AND [Approved] = 1
+
+	-- Find out how much content has been flagged.
+	;WITH pagerCount AS (
+		SELECT			DISTINCT musl.[ContentItemId]
+		FROM			{databaseOwner}[{objectQualifier}Mechanics_UserScoringLog] musl WITH (NOLOCK)
+		LEFT OUTER JOIN {databaseOwner}[{objectQualifier}ContentItems] ci WITH (NOLOCK) ON ci.[ContentItemID] = musl.[ContentItemId]
+		WHERE			musl.[UserId] = @UserId AND musl.[CreatedOnDate] >= @LowerBound AND musl.[CreatedOnDate] <= @UpperBound
+		AND				ci.[ContentTypeID] > 3
+		AND				{databaseOwner}{objectQualifier}Mechanics_ScoringActionIsOfActionType(musl.[ScoringActionDefId], 5) = 1)
+	SELECT @FlaggedContent = COALESCE(COUNT(*), 0) FROM pagerCount
+
+	-- How much time they've spent on each page on average.
+	SELECT	@AvgTime = COALESCE(AVG(CONVERT(bigint,TotalSeconds)), 0)
+	FROM	{databaseOwner}{objectQualifier}Analytics_PageTime
+	WHERE	UserId = @UserId AND PortalId = @PortalId AND CreatedOnDate >= @LowerBound AND CreatedOnDate <= @UpperBound
+
+	SELECT	@SiteTime = COALESCE(SUM(CONVERT(bigint,TotalSeconds)), 0)
+	FROM	{databaseOwner}{objectQualifier}Analytics_PageTime
+	WHERE	UserId = @UserId AND Portalid = @PortalId AND CreatedOnDate >= @LowerBound AND CreatedOnDate <= @UpperBound
+
+	;WITH loginCount AS(
+		SELECT	DISTINCT usl.UserId,
+				(SELECT		COUNT(*)
+				 FROM		{databaseOwner}[{objectQualifier}Mechanics_UserScoringLog] WITH (NOLOCK)
+				 WHERE		UserId = usl.UserId AND PortalId = @PortalId AND CreatedOnDate >= @LowerBound AND CreatedOnDate <= @UpperBound) AS Logins
+		FROM {databaseOwner}[{objectQualifier}Mechanics_UserScoringLog] usl WITH (NOLOCK)
+		RIGHT JOIN {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition] sad WITH (NOLOCK) ON sad.ScoringActionDefId = usl.ScoringActionDefId
+		WHERE sad.ActionName = 'Login' AND usl.UserId = @UserId
+		GROUP BY usl.UserId)
+	SELECT @Logins = COALESCE(SUM(CAST([Logins] AS DECIMAL)), 0) FROM loginCount
+
+	SELECT		@AnswersVotes = COALESCE(SUM(VoteTypeId), 0)
+	FROM		{databaseOwner}{objectQualifier}Answers_Vote v
+	INNER JOIN	{databaseOwner}{objectQualifier}Answers_Post p ON p.PostId = v.PostId
+	WHERE		p.PortalId = @PortalId AND p.CreatedUserId = @UserId 
+
+	SELECT		@IdeasVotes = SUM(COALESCE(Votes, 0))
+	FROM		{databaseOwner}{objectQualifier}Ideas_Idea i
+	INNER JOIN	{databaseOwner}{objectQualifier}ContentItems ci ON ci.ContentItemID = i.ContentItemId
+	WHERE		ci.CreatedByUserID = @UserId
+
+	SELECT	@Votes = COALESCE(@AnswersVotes, 0) + COALESCE(@IdeasVotes, 0)
+
+	-- Total it all up.
+	DECLARE @Total decimal
+	SELECT @Total = {databaseOwner}{objectQualifier}Analytics_Get_Score(
+		@PortalId,
+		@GoalList,
+		COALESCE(@FriendCount, 0),
+		COALESCE(@Posts, 0),
+		COALESCE(@Likes, 0),
+		COALESCE(@ViewCount, 0),
+		COALESCE(@Responses, 0),
+		COALESCE(@AcceptedAnswers, 0),
+		COALESCE(@DeliveredIdeas, 0),
+		COALESCE(@ActiveEvents, 0),
+		COALESCE(@FlaggedContent, 0),
+		COALESCE(@AvgTime, 0),
+		COALESCE(@SiteTime, 0),
+		COALESCE(@Logins, 0),
+		COALESCE(@Votes, 0))
+
+	RETURN COALESCE(@Total, 0)
+END
+GO
+
+-- *********************************
+-- Analytics_Get_Score
+-- *********************************
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Get_Score'))
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_Get_Score
+GO
+
+CREATE FUNCTION {databaseOwner}{objectQualifier}Analytics_Get_Score(
+	@PortalId int,
+	@GoalList varchar(64),
+	@FriendCount int,
+	@Posts int,
+	@Likes int,
+	@ViewCount int,
+	@Responses int,
+	@AcceptedAnswers int,
+	@DeliveredIdeas int,
+	@ActiveEvents int,
+	@FlaggedContent int,
+	@AvgTime bigint,
+	@SiteTime bigint,
+	@Logins int,
+	@Votes int)
+		RETURNS decimal
+AS
+BEGIN
+	DECLARE @Popularity float
+	DECLARE @LikesPerPost float
+	DECLARE @ViewsPerPost float
+	DECLARE @ResponsesPerPost float
+
+	SELECT @Popularity = @FriendCount / (SELECT COUNT(*) FROM {objectQualifier}Users) * 100
+
+	IF @Posts > 0
+	BEGIN
+		SELECT @LikesPerPost = @Likes / @Posts
+		SELECT @ViewsPerPost = @ViewCount / @Posts
+		SELECT @ResponsesPerPost = @Responses / @Posts
+	END
+	ELSE
+	BEGIN
+		SELECT @LikesPerPost = 0
+		SELECT @ViewsPerPost = 0
+		SELECT @ResponsesPerPost = 0
+	END
+
+	DECLARE @Total decimal(18, 0)
+
+	DECLARE @Weight float
+	DECLARE @Value float
+	DECLARE @UserValue float
+	DECLARE @GoalType varchar(64)
+
+	SELECT	@Total = 0
+
+	-- Run through each configured item in the ScoringGoals table.
+	DECLARE WeightsCursor CURSOR FORWARD_ONLY FOR
+		SELECT	[Weight], [Value], [GoalType]
+		FROM	{databaseOwner}[{objectQualifier}Analytics_ScoringGoals]
+		WHERE	PortalId = @PortalId AND GoalList = @GoalList
+
+	OPEN WeightsCursor
+
+	FETCH NEXT FROM WeightsCursor INTO @Weight, @Value, @GoalType
+
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		SELECT @UserValue =
+			{databaseOwner}{objectQualifier}Analytics_Get_GoalValue(
+				@GoalType,
+				@FriendCount,
+				@Popularity,
+				@Posts,
+				@ViewsPerPost,
+				@ResponsesPerPost,
+				@LikesPerPost,
+				@Likes,
+				@ViewCount,
+				@Responses,
+				@AcceptedAnswers,
+				@DeliveredIdeas,
+				@ActiveEvents,
+				@FlaggedContent,
+				@AvgTime,
+				@SiteTime,
+				@Logins,
+				@Votes)
+		
+		IF @UserValue < @Value
+			SELECT @Total = @Total + (@Weight * @UserValue)
+		ELSE
+			SELECT @Total = @Total + (@Weight * @Value)
+
+		FETCH NEXT FROM WeightsCursor INTO @Weight, @Value, @GoalType
+	END
+
+	CLOSE WeightsCursor
+	DEALLOCATE WeightsCursor
+
+	RETURN @Total
+END
+GO
+
+-- *********************************
+-- Analytics_Get_GoalValue
+-- *********************************
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Get_GoalValue'))
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_Get_GoalValue
+GO
+
+CREATE FUNCTION {databaseOwner}[{objectQualifier}Analytics_Get_GoalValue](
+	@GoalType varchar(64),
+	@FriendCount int,
+	@Popularity float,
+	@Posts int,
+	@ViewsPerPost float,
+	@ResponsesPerPost float,
+	@LikesPerPost float,
+	@Likes int,
+	@ViewCount int,
+	@Responses int,
+	@AcceptedAnswers int,
+	@DeliveredIdeas int,
+	@ActiveEvents int,
+	@FlaggedContent int,
+	@AvgTime bigint,
+	@SiteTime bigint,
+	@Logins int,
+	@Votes int)
+		RETURNS DECIMAL(18, 0)
+AS
+BEGIN
+	DECLARE @Value decimal(18, 0)
+
+	SELECT @Value =
+		CASE @GoalType
+			WHEN 'FriendCount' THEN @FriendCount
+			WHEN 'Popularity' THEN @Popularity
+			WHEN 'Posts' THEN @Posts
+			WHEN 'ViewsPerPost' THEN @ViewsPerPost
+			WHEN 'ResponsesPerPost' THEN @ResponsesPerPost
+			WHEN 'LikesPerPost' THEN @LikesPerPost
+			WHEN 'Likes' THEN @Likes
+			WHEN 'Views' THEN @ViewCount
+			WHEN 'Responses' THEN @Responses
+			WHEN 'AcceptedAnswers' THEN @AcceptedAnswers
+			WHEN 'DeliveredIdeas' THEN @DeliveredIdeas
+			WHEN 'ActiveEvents' THEN @ActiveEvents
+			WHEN 'FlaggedContent' THEN @FlaggedContent
+			WHEN 'AvgTime' THEN @AvgTime
+			WHEN 'SiteTime' THEN @SiteTime
+			WHEN 'Logins' THEN @Logins
+			WHEN 'Votes' THEN @Votes
+		END
+
+	RETURN @Value
+END
+GO
+
+-- *********************************
+-- Analytics_Calculate_PageTime
+-- *********************************
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Calculate_PageTime') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Calculate_PageTime
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Calculate_PageTime]
+	@PortalId int,
+	@LowerBound smalldatetime,
+	@UpperBound smalldatetime,
+	@TabId int = null
+AS
+BEGIN
+	DECLARE @AnonymousViews bigint
+	DECLARE @AnonymousTotalSeconds bigint
+	DECLARE @RegisteredViews bigint
+	DECLARE @RegisteredTotalSeconds bigint
+	DECLARE @TotalViews bigint
+	DECLARE @TotalSeconds bigint
+
+	SELECT	@TabId = COALESCE(@TabId, -1)
+
+	SELECT	@AnonymousViews = COUNT(*),
+			@AnonymousTotalSeconds = COALESCE(SUM(CONVERT(bigint,TotalSeconds)), 0)
+	FROM	{databaseOwner}[{objectQualifier}Analytics_PageTime] WITH (NOLOCK)
+	WHERE	[PortalId] = @PortalId AND [CreatedOnDate] >= @LowerBound AND [CreatedOnDate] <= @UpperBound
+	AND		[UserId] < 0
+	AND		(@TabId IS NULL OR @TabId < 0 OR [TabId] = @TabId)
+
+	SELECT	@RegisteredViews = COUNT(*),
+			@RegisteredTotalSeconds = COALESCE(SUM(CONVERT(bigint,TotalSeconds)), 0)
+	FROM	{databaseOwner}[{objectQualifier}Analytics_PageTime] WITH (NOLOCK)
+	WHERE	[PortalId] = @PortalId AND [CreatedOnDate] >= @LowerBound AND [CreatedOnDate] <= @UpperBound
+	AND		(@TabId IS NULL OR @TabId < 0 OR [TabId] = @TabId)
+	AND		[UserId] >= 0
+
+	SELECT	@TotalViews = COALESCE(@AnonymousViews, 0) + COALESCE(@RegisteredViews, 0)
+
+	SELECT	@TotalSeconds = COALESCE(SUM(CONVERT(bigint,TotalSeconds)), 0)
+	FROM	{databaseOwner}[{objectQualifier}Analytics_PageTime] WITH (NOLOCK)
+	WHERE	[PortalId] = @PortalId AND [CreatedOnDate] >= @LowerBound AND [CreatedOnDate] <= @UpperBound
+	AND		(@TabId IS NULL OR @TabId < 0 OR [TabId] = @TabId)
+
+	IF EXISTS(
+			SELECT	*
+			FROM	{databaseOwner}[{objectQualifier}Analytics_PageTime_Aggregate] WITH (NOLOCK)
+			WHERE	[PortalId] = @PortalId AND [LowerBound] = @LowerBound AND [UpperBound] = @UpperBound AND [TabId] = @TabId)
+		UPDATE {databaseOwner}[{objectQualifier}Analytics_PageTime_Aggregate]
+			SET
+				[AnonymousViews] = @AnonymousViews,
+				[AnonymousTotalSeconds] = @AnonymousTotalSeconds,
+				[RegisteredViews] = @RegisteredViews,
+				[RegisteredTotalSeconds] = @RegisteredTotalSeconds,
+				[TotalViews] = @TotalViews,
+				[TotalSeconds] = @TotalSeconds
+			WHERE
+				[PortalId] = @PortalId AND [LowerBound] = @LowerBound AND [UpperBound] = @UpperBound AND [TabId] = @TabId
+	ELSE
+		INSERT INTO {databaseOwner}[{objectQualifier}Analytics_PageTime_Aggregate]
+			([PortalId],
+			 [LowerBound],
+			 [UpperBound],
+			 [TabId],
+			 [AnonymousViews],
+			 [AnonymousTotalSeconds],
+			 [RegisteredViews],
+			 [RegisteredTotalSeconds],
+			 [TotalViews],
+			 [TotalSeconds])
+		VALUES
+			(@PortalId,
+			 @LowerBound,
+			 @UpperBound,
+			 @TabId,
+			 COALESCE(@AnonymousViews, 0),
+			 COALESCE(@AnonymousTotalSeconds, 0),
+			 COALESCE(@RegisteredViews, 0),
+			 COALESCE(@RegisteredTotalSeconds, 0),
+			 COALESCE(@TotalViews, 0),
+			 COALESCE(@TotalSeconds, 0))
+END
+GO

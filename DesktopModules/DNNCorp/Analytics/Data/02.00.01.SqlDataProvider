@@ -1,0 +1,2264 @@
+﻿-- =========================================================
+-- FUNCTION: Analytics_CsvSplit
+-- =========================================================
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_CsvSplit]') IS NOT NULL
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_CsvSplit
+GO
+
+CREATE FUNCTION {databaseOwner}[{objectQualifier}Analytics_CsvSplit]
+	(
+		@param NVARCHAR(MAX),
+		@delimiter NCHAR(1)
+	)
+	RETURNS TABLE
+WITH SCHEMABINDING AS
+	RETURN
+	  WITH E1(N)        AS ( SELECT 1 UNION ALL SELECT 1 UNION ALL SELECT 1 UNION ALL SELECT 1
+							 UNION ALL SELECT 1 UNION ALL SELECT 1 UNION ALL SELECT 1
+							 UNION ALL SELECT 1 UNION ALL SELECT 1 UNION ALL SELECT 1),
+		   E2(N)        AS (SELECT 1 FROM E1 a, E1 b),
+		   E4(N)        AS (SELECT 1 FROM E2 a, E2 b),
+		   E42(N)       AS (SELECT 1 FROM E4 a, E2 b),
+		   cteTally(N)  AS (SELECT 0 UNION ALL SELECT TOP (DATALENGTH(ISNULL(@param,1)))
+							 ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) FROM E42),
+		   cteStart(N1) AS (SELECT t.N+1 FROM cteTally t
+							 WHERE (SUBSTRING(@param,t.N,1) = @delimiter OR t.N = 0))
+	  SELECT val = SUBSTRING(@param, s.N1, ISNULL(NULLIF(CHARINDEX(@delimiter,@param,s.N1),0)-s.N1,8000))
+		FROM cteStart s;
+GO
+
+-- =========================================================
+-- INDEX: Analytics_Fact_UserScoringLog_ContentId
+-- =========================================================
+IF NOT EXISTS (SELECT 1 FROM sys.indexes
+				WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Fact_UserScoringLog]')
+				AND name = N'IX_{objectQualifier}Analytics_Fact_UserScoringLog_ContentId')
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Analytics_Fact_UserScoringLog_ContentId]
+		ON {databaseOwner}[{objectQualifier}Analytics_Fact_UserScoringLog] ([ContentId])
+		INCLUDE ([ActionDefinitionId],[DateId])
+GO
+
+-- =========================================================
+-- INDEX: Analytics_Fact_UserScoringLogRollup_Interval_Date
+-- =========================================================
+IF NOT EXISTS (SELECT 1 FROM sys.indexes
+				WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Fact_UserScoringLogRollup]')
+				AND name = N'IX_{objectQualifier}Analytics_Fact_UserScoringLogRollup_Interval_Date')
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Analytics_Fact_UserScoringLogRollup_Interval_Date]
+		ON {databaseOwner}[{objectQualifier}Analytics_Fact_UserScoringLogRollup] ([Interval],[Date])
+		INCLUDE ([RollupId])
+GO
+
+-- =========================================================
+-- INDEX: Analytics_Fact_UserScoringLogRollup_UID_PID_DMID_Interval
+-- =========================================================
+IF NOT EXISTS (SELECT 1 FROM sys.indexes
+				WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Fact_UserScoringLogRollup]')
+				AND name = N'IX_{objectQualifier}Analytics_Fact_UserScoringLogRollup_UID_PID_DMID_Interval')
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Analytics_Fact_UserScoringLogRollup_UID_PID_DMID_Interval]
+		ON {databaseOwner}[{objectQualifier}Analytics_Fact_UserScoringLogRollup] ([UserId],[PortalId],[DesktopModuleId],[Interval])
+GO
+
+-- =========================================================
+-- INDEX: Analytics_Fact_UserScoringLog_PortalId
+-- =========================================================
+IF NOT EXISTS (SELECT 1 FROM sys.indexes
+				WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Fact_UserScoringLog]')
+				AND name = N'IX_{objectQualifier}Analytics_Fact_UserScoringLog_PortalId')
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Analytics_Fact_UserScoringLog_PortalId]
+		ON {databaseOwner}[{objectQualifier}Analytics_Fact_UserScoringLog] ([PortalId])
+		INCLUDE ([UserScoringLogId],[DateId],[ContentId],[DesktopModuleId],[TagGroupId],[ActionTypeId])
+GO
+
+-- =========================================================
+-- INDEX: Analytics_Fact_UserScoringLog_DMID_PID
+-- =========================================================
+IF NOT EXISTS (SELECT 1 FROM sys.indexes
+				WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Fact_UserScoringLog]')
+				AND name = N'IX_{objectQualifier}Analytics_Fact_UserScoringLog_DMID_PID')
+    CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Analytics_Fact_UserScoringLog_DMID_PID]
+		ON {databaseOwner}[{objectQualifier}Analytics_Fact_UserScoringLog] ([DesktopModuleId],[PortalId])
+		INCLUDE ([ActionDefinitionId],[UserId],[DateId],[ActionTypeId],[ContentId])
+GO
+
+-- =========================================================
+-- INDEX: Analytics_Fact_UserScoringLog_DTID_PID
+-- =========================================================
+IF NOT EXISTS (SELECT 1 FROM sys.indexes
+				WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Fact_UserScoringLog]')
+				AND name = N'IX_{objectQualifier}Analytics_Fact_UserScoringLog_DTID_PID')
+    CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Analytics_Fact_UserScoringLog_DTID_PID]
+		ON {databaseOwner}[{objectQualifier}Analytics_Fact_UserScoringLog] ([DateId],[PortalId])
+		INCLUDE ([UserScoringLogId],[ContentId],[DesktopModuleId],[TagGroupId],[ActionTypeId])
+GO
+
+/********************************************************
+ * SPROC: Analytics_Warehouse_QueryTrendingTags
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Warehouse_QueryTrendingTags]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Warehouse_QueryTrendingTags] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_QueryTrendingTags
+	@FilteredActionTypes NVARCHAR(MAX),
+	@DesktopModuleId INT,
+	@Skip INT,
+	@Take INT,
+	@StartDay INT,
+	@EndDay INT,
+	@PortalId INT
+AS
+BEGIN		
+	DECLARE @ActionTypes TABLE
+	(
+		ActionType NVARCHAR(MAX)
+	)
+
+	DECLARE @SubResults TABLE
+	(
+		UserScoringLogId INT,
+		ContentId INT,
+		TagGroupId INT,
+		ActionType NVARCHAR(MAX)
+	)
+	DECLARE @EditedItems TABLE
+	(
+		UserScoringLogId INT,
+		ContentId INT,
+		NewTagGroupId INT,
+		ActionType NVARCHAR(MAX)
+	)
+	DECLARE @Results TABLE
+	(
+		TermRank INT,
+		Term NVARCHAR(MAX),
+		TermCount INT
+	)
+	DECLARE @TotalTermCount INT
+
+	INSERT INTO @ActionTypes (ActionType) (SELECT val FROM {databaseOwner}{objectQualifier}Analytics_CsvSplit(@FilteredActionTypes, ','));
+
+	INSERT INTO @SubResults
+	SELECT f.UserScoringLogId, f.ContentId, f.TagGroupId, at.ActionType FROM  {databaseOwner}{objectQualifier}Analytics_Fact_UserScoringLog f
+		INNER JOIN {databaseOwner}{objectQualifier}Analytics_Dim_TagGroup tg ON f.TagGroupId = tg.TagGroupId 
+		INNER JOIN {databaseOwner}{objectQualifier}Analytics_Dim_Date d ON f.DateId = d.DateId
+		INNER JOIN {databaseOwner}{objectQualifier}Analytics_Dim_ActionType at ON f.ActionTypeId = at.ActionTypeId
+	WHERE 
+		f.PortalId = @PortalId AND
+		(@DesktopModuleId = 0 OR f.DesktopModuleId = @DesktopModuleId) AND
+		d.TotalDays >= @StartDay AND d.TotalDays <= @EndDay AND 
+		at.ActionType <> 'Moderated' AND
+		f.UserScoringLogId >= (SELECT MIN(f2.UserScoringLogId) FROM  {databaseOwner}{objectQualifier}Analytics_Fact_UserScoringLog f2
+					INNER JOIN {databaseOwner}{objectQualifier}Analytics_Dim_ActionType at2 ON f2.ActionTypeId = at2.ActionTypeId
+					WHERE at2.ActionType = 'Created' AND f2.ContentId = f.ContentId)
+
+	INSERT INTO @EditedItems
+	SELECT UserScoringLogId, ContentId, TagGroupId, ActionType 
+	FROM 
+		(SELECT UserScoringLogId, ContentId, TagGroupId, ActionType, RowNum = ROW_NUMBER() OVER (PARTITION BY ContentId ORDER BY UserScoringLogId DESC)
+		 FROM @SubResults
+		 WHERE ActionType = 'Edited' OR ActionType IN (SELECT * FROM @ActionTypes) ) Singles
+	WHERE RowNum = 1
+
+	DELETE R FROM @SubResults R INNER JOIN @EditedItems E ON R.ContentId = E.ContentId
+	WHERE E.ActionType IN (SELECT * FROM @ActionTypes)
+
+	UPDATE R SET TagGroupId = e.NewTagGroupId 
+	FROM @SubResults R 
+		INNER JOIN @EditedItems E ON R.ContentId = E.ContentId
+	WHERE E.ActionType = 'Edited'
+
+	INSERT INTO @Results 
+	SELECT ROW_NUMBER() OVER(ORDER BY COUNT(t.Term) DESC) AS RowNumber, t.Term, COUNT(t.Term) AS TermCount
+	FROM @SubResults R 
+		INNER JOIN {databaseOwner}{objectQualifier}Analytics_Dim_Bridge_TagGroup_Tag tgb ON R.TagGroupId = tgb.TagGroupId
+		INNER JOIN {databaseOwner}{objectQualifier}Analytics_Dim_Tag t ON tgb.TagId = t.TagId 
+	WHERE t.Term <> ''
+	GROUP BY t.Term
+
+	SELECT @TotalTermCount = COUNT(DISTINCT Term) FROM @Results
+	SELECT Term, TermCount, @TotalTermCount AS TotalTermCount FROM @Results WHERE TermRank BETWEEN @Skip + 1 AND @Skip + @Take ORDER BY TermRank
+END
+GO
+
+/********************************************************
+ * SPROC: Analytics_Calculate_PageTime
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Calculate_PageTime]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Calculate_PageTime] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Calculate_PageTime]
+	@PortalId int,
+	@LowerBound smalldatetime,
+	@UpperBound smalldatetime,
+	@PageNumber int,      -- first page starts at 0
+	@BatchSize int = 20   -- number of tab ID's to process in one loop
+AS
+BEGIN
+	DECLARE @AnonymousViews bigint
+	DECLARE @AnonymousTotalSeconds bigint
+	DECLARE @RegisteredViews bigint
+	DECLARE @RegisteredTotalSeconds bigint
+	DECLARE @TotalViews bigint
+	DECLARE @TotalSeconds bigint
+	DECLARE @TabId int
+	DECLARE @TABS TABLE(TabId int)
+	DECLARE @OnePage TABLE(TabId int)
+	DECLARE @Processed int = 0;
+
+	INSERT INTO @TABS (TabId) VALUES(-1)
+	INSERT INTO @TABS (TabId)
+		(	SELECT  DISTINCT TabId
+			FROM    {databaseOwner}{objectQualifier}Analytics_PageTime WITH (NOLOCK)
+			WHERE   [TabId] > 0
+			  AND   [PortalId] = @PortalId
+			  AND   ([CreatedOnDate] BETWEEN @LowerBound AND @UpperBound)
+		);
+
+	WITH OrderedTabs
+	AS	(
+			SELECT TabId, ROW_NUMBER() OVER (ORDER BY TabId ASC) AS RowNumber FROM @TABS
+		)
+	INSERT INTO @OnePage(TabId) (
+			SELECT TOP(@BatchSize) TabId FROM OrderedTabs
+			WHERE RowNumber > (@PageNumber * @BatchSize)
+		);
+
+	DECLARE TabCursor CURSOR FOR
+		SELECT TabId FROM @OnePage ORDER BY TabId
+
+	OPEN  TabCursor
+	FETCH NEXT FROM TabCursor INTO @TabId
+
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+
+		SELECT	@AnonymousViews = COALESCE(SUM(CASE WHEN UserId < 0 THEN 1 ELSE 0 END), 0),
+				@AnonymousTotalSeconds = COALESCE(SUM(CASE WHEN UserId < 0 THEN CONVERT(bigint,TotalSeconds) ELSE 0 END), 0),
+				@RegisteredViews = COALESCE(SUM(CASE WHEN UserId >= 0 THEN 1 ELSE 0 END), 0),
+				@RegisteredTotalSeconds = COALESCE(SUM(CASE WHEN UserId >= 0 THEN CONVERT(bigint,TotalSeconds) ELSE 0 END), 0),
+				@TotalSeconds = COALESCE(SUM(CONVERT(bigint,TotalSeconds)), 0)
+		FROM	{databaseOwner}[{objectQualifier}Analytics_PageTime] WITH (NOLOCK)
+		WHERE	[PortalId] = @PortalId AND ([CreatedOnDate] BETWEEN @LowerBound AND @UpperBound)
+		  AND	(@TabId < 0 OR [TabId] = @TabId)
+
+		SELECT	@TotalViews = @AnonymousViews + @RegisteredViews
+
+		IF (@TotalViews > 0 OR @TotalSeconds > 0)
+		BEGIN
+			IF EXISTS(
+					SELECT	1
+					FROM	{databaseOwner}[{objectQualifier}Analytics_PageTime_Aggregate] WITH (NOLOCK)
+					WHERE	[PortalId] = @PortalId AND [LowerBound] = @LowerBound AND [UpperBound] = @UpperBound AND [TabId] = @TabId)
+			BEGIN
+				UPDATE {databaseOwner}[{objectQualifier}Analytics_PageTime_Aggregate]
+					SET
+						[AnonymousViews] = @AnonymousViews,
+						[AnonymousTotalSeconds] = @AnonymousTotalSeconds,
+						[RegisteredViews] = @RegisteredViews,
+						[RegisteredTotalSeconds] = @RegisteredTotalSeconds,
+						[TotalViews] = @TotalViews,
+						[TotalSeconds] = @TotalSeconds
+					WHERE
+						[PortalId] = @PortalId AND [LowerBound] = @LowerBound AND [UpperBound] = @UpperBound AND [TabId] = @TabId
+			END
+			ELSE
+			BEGIN
+				INSERT INTO {databaseOwner}[{objectQualifier}Analytics_PageTime_Aggregate]
+					([PortalId],
+					 [LowerBound],
+					 [UpperBound],
+					 [TabId],
+					 [AnonymousViews],
+					 [AnonymousTotalSeconds],
+					 [RegisteredViews],
+					 [RegisteredTotalSeconds],
+					 [TotalViews],
+					 [TotalSeconds])
+				VALUES
+					(@PortalId,
+					 @LowerBound,
+					 @UpperBound,
+					 @TabId,
+					 @AnonymousViews,
+					 @AnonymousTotalSeconds,
+					 @RegisteredViews,
+					 @RegisteredTotalSeconds,
+					 @TotalViews,
+					 @TotalSeconds)
+			END
+		END
+
+		SET @Processed  = @Processed + 1
+
+		FETCH NEXT FROM TabCursor INTO @TabId
+	END
+
+	CLOSE TabCursor
+	DEALLOCATE TabCursor
+
+	SELECT @Processed;
+END
+GO
+
+/********************************************************
+ * COMMUNITY HEALTH - PROBLEM AREA 
+ ********************************************************/
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Fact_Answers') and OBJECTPROPERTY(id, N'IsTable') = 1)
+	DROP TABLE {databaseOwner}{objectQualifier}Analytics_Fact_Answers
+GO  
+
+CREATE TABLE {databaseOwner}{objectQualifier}Analytics_Fact_Answers (
+	ContentId INT NOT NULL,	
+	CreateDate SMALLDATETIME NOT NULL,
+	UserId INT NOT NULL,
+	PortalId INT NOT NULL,
+	FirstAnswerDate SMALLDATETIME NULL,
+	FirstViewDate SMALLDATETIME NULL,
+	FirstInteractionAfterViewDate SMALLDATETIME NULL,
+	CommentCounter INT NULL,
+	First5thCommentDate SMALLDATETIME NULL,
+	FirstVoteDate SMALLDATETIME NULL,
+	FirstUpVoteAnswerDate SMALLDATETIME NULL,
+	FirstAcceptedAnswerDate SMALLDATETIME NULL,
+	DownVoteCounter INT NULL,
+	First2ndDownVoteDate SMALLDATETIME NULL,
+	DeleteDate SMALLDATETIME NULL,
+	CONSTRAINT PK_{objectQualifier}Analytics_Fact_Answers PRIMARY KEY NONCLUSTERED (ContentId)
+)
+GO
+
+CREATE CLUSTERED INDEX IX_{objectQualifier}Analytics_Fact_Answers ON {databaseOwner}{objectQualifier}Analytics_Fact_Answers (PortalId, CreateDate)
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_AddAnswersEntry') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_AddAnswersEntry
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_AddAnswersEntry (
+	@ContentId INT,
+	@CreateDate SMALLDATETIME,
+	@UserId INT,
+	@PortalId INT
+)
+AS
+BEGIN
+	IF EXISTS(SELECT ContentId 
+			  FROM {databaseOwner}{objectQualifier}Analytics_Fact_Answers 
+			  WHERE ContentId = @ContentId)
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Answers
+		SET CreateDate = @CreateDate,
+			UserId = @UserId, 
+			PortalId = @PortalId
+		WHERE ContentId = @ContentId 
+		  AND CreateDate > @CreateDate
+	END
+	ELSE
+	BEGIN
+		INSERT {databaseOwner}{objectQualifier}Analytics_Fact_Answers (ContentId, CreateDate, UserId, PortalId)
+		VALUES (@ContentId, @CreateDate, @UserId, @PortalId)
+	END
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_UpdateAnswersEntry') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_UpdateAnswersEntry
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_UpdateAnswersEntry (
+	@ContentId INT,
+	@ActionName VARCHAR(MAX),
+	@ActionDate SMALLDATETIME,
+	@UserId INT,
+	@PortalId INT
+)
+AS
+BEGIN
+	IF @ActionName = 'ProvidedAnswer'
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Answers
+		SET FirstAnswerDate = @ActionDate
+		WHERE ContentId = @ContentId
+			AND FirstAnswerDate IS NULL
+	END
+	ELSE IF @ActionName = 'ViewedQuestion'
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Answers
+		SET FirstViewDate = @ActionDate
+		WHERE ContentId = @ContentId
+			AND FirstViewDate IS NULL
+			AND UserId <> @UserId
+
+		RETURN
+	END
+	ELSE IF @ActionName = 'AskedDeletedQuestion'
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Answers
+		SET DeleteDate = @ActionDate
+		WHERE ContentId = @ContentId
+			AND DeleteDate IS NULL
+
+		RETURN
+	END
+	ELSE IF @ActionName = 'CommentedOnQuestion'
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Answers
+		SET CommentCounter = ISNULL(CommentCounter, 0) + 1
+		WHERE ContentId = @ContentId
+		   AND (CommentCounter IS NULL OR CommentCounter < 5)
+
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Answers
+		SET First5thCommentDate = @ActionDate
+		WHERE ContentId = @ContentId
+			AND CommentCounter = 5 
+			AND First5thCommentDate IS NULL
+	END
+
+	IF @ActionName IN ('UpVotedQuestion', 'DownVotedAnswer', 'DownVotedQuestion', 'UpVotedAnswer')
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Answers
+		SET FirstVoteDate = @ActionDate
+		WHERE ContentId = @ContentId
+			AND FirstVoteDate IS NULL		
+	END
+
+	IF @ActionName = 'UpVotedAnswer'
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Answers
+		SET FirstUpVoteAnswerDate = @ActionDate
+		WHERE ContentId = @ContentId
+			AND FirstUpVoteAnswerDate IS NULL	
+	END
+	ELSE IF @ActionName = 'ProvidedAcceptedAnswer'
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Answers
+		SET FirstAcceptedAnswerDate = @ActionDate
+		WHERE ContentId = @ContentId
+			AND FirstAcceptedAnswerDate IS NULL	
+	END
+
+	IF @ActionName IN ('DownVotedQuestion', 'DownVotedAnswer')
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Answers
+		SET DownVoteCounter = ISNULL(DownVoteCounter, 0) + 1
+		WHERE ContentId = @ContentId
+		   AND (DownVoteCounter IS NULL OR DownVoteCounter < 2)
+
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Answers
+		SET First2ndDownVoteDate = @ActionDate
+		WHERE ContentId = @ContentId
+			AND DownVoteCounter = 2 
+			AND First2ndDownVoteDate IS NULL
+	END
+
+	IF @ActionName IN (SELECT ActionName
+						FROM {databaseOwner}{objectQualifier}Mechanics_ScoringActionDefinition sad
+							JOIN {databaseOwner}{objectQualifier}DesktopModules dm ON sad.DesktopModuleId = dm.DesktopModuleID
+							JOIN {databaseOwner}{objectQualifier}Analytics_Dim_ActionType at ON sad.ActionType = at.ActionTypeId
+						WHERE dm.FriendlyName = 'Answers'
+							AND at.ActionType IN ('Interacted', 'Created', 'FormedRelationship', 'Shared'))
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Answers
+		SET FirstInteractionAfterViewDate = @ActionDate
+		WHERE ContentId = @ContentId
+			AND FirstInteractionAfterViewDate IS NULL	
+			AND FirstViewDate IS NOT NULL 
+	END
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Answers_UnansweredQuestions') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Answers_UnansweredQuestions
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Answers_UnansweredQuestions (
+	@PortalId INT,
+	@StartDate DATETIME,
+	@EndDate DATETIME
+)
+AS
+BEGIN
+	DECLARE @ProblemOffsetInHours INT = -24
+
+	SELECT 	
+		COUNT(*) TotalItems,
+		COALESCE(SUM(CASE WHEN (FirstAnswerDate IS NULL OR FirstAnswerDate > @EndDate) THEN 1 ELSE 0 END), 0) TotalProblematicItems    
+	FROM {databaseOwner}{objectQualifier}Analytics_Fact_Answers WITH (NOLOCK)
+	WHERE PortalId = @PortalId 
+		AND CreateDate BETWEEN DATEADD(hour, @ProblemOffsetInHours, @StartDate) AND DATEADD(hour, @ProblemOffsetInHours, @EndDate)
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Answers_QuestionsWithoutViews') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Answers_QuestionsWithoutViews
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Answers_QuestionsWithoutViews (
+	@PortalId INT,
+	@StartDate DATETIME,
+	@EndDate DATETIME
+)
+AS
+BEGIN
+	DECLARE @ProblemOffsetInHours INT = -6
+
+	SELECT 	
+		COUNT(*) TotalItems,
+		COALESCE(SUM(CASE WHEN (FirstViewDate IS NULL OR FirstViewDate > @EndDate) THEN 1 ELSE 0 END), 0) TotalProblematicItems    
+	FROM {databaseOwner}{objectQualifier}Analytics_Fact_Answers WITH (NOLOCK)
+	WHERE PortalId = @PortalId 
+		AND CreateDate BETWEEN DATEADD(hour, @ProblemOffsetInHours, @StartDate) AND DATEADD(hour, @ProblemOffsetInHours, @EndDate)
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Answers_QuestionsWithViewsButNoInteraction') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Answers_QuestionsWithViewsButNoInteraction
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Answers_QuestionsWithViewsButNoInteraction (
+	@PortalId INT,
+	@StartDate DATETIME,
+	@EndDate DATETIME
+)
+AS
+BEGIN
+	DECLARE @ProblemOffsetInHours INT = -12
+
+	SELECT 	
+		COUNT(*) TotalItems,
+		COALESCE(
+			SUM(CASE WHEN (FirstViewDate IS NOT NULL
+				AND (FirstInteractionAfterViewDate IS NULL OR FirstInteractionAfterViewDate > @EndDate)) 
+				THEN 1 ELSE 0 END), 
+			0) TotalProblematicItems    
+	FROM {databaseOwner}{objectQualifier}Analytics_Fact_Answers WITH (NOLOCK)
+	WHERE PortalId = @PortalId 
+		AND CreateDate BETWEEN DATEADD(hour, @ProblemOffsetInHours, @StartDate) AND DATEADD(hour, @ProblemOffsetInHours, @EndDate)
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Answers_QuestionsWithLotsOfComments') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Answers_QuestionsWithLotsOfComments
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Answers_QuestionsWithLotsOfComments (
+	@PortalId INT,
+	@StartDate DATETIME,
+	@EndDate DATETIME
+)
+AS
+BEGIN
+	SELECT 	
+		COUNT(*) TotalItems,
+		COALESCE(SUM(CASE WHEN (First5thCommentDate <= @EndDate) THEN 1 ELSE 0 END), 0) TotalProblematicItems    
+	FROM {databaseOwner}{objectQualifier}Analytics_Fact_Answers WITH (NOLOCK)
+	WHERE PortalId = @PortalId 
+		AND CreateDate BETWEEN @StartDate AND @EndDate
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Answers_QuestionsWithoutVotes') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Answers_QuestionsWithoutVotes
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Answers_QuestionsWithoutVotes (
+	@PortalId INT,
+	@StartDate DATETIME,
+	@EndDate DATETIME
+)
+AS
+BEGIN
+	DECLARE @ProblemOffsetInHours INT = -24
+	SELECT 	
+		COUNT(*) TotalItems,
+		COALESCE(SUM(CASE WHEN (FirstVoteDate IS NULL OR FirstVoteDate > @EndDate) THEN 1 ELSE 0 END), 0) TotalProblematicItems    
+	FROM {databaseOwner}{objectQualifier}Analytics_Fact_Answers WITH (NOLOCK)
+	WHERE PortalId = @PortalId 
+		AND CreateDate BETWEEN DATEADD(hour, @ProblemOffsetInHours, @StartDate) AND DATEADD(hour, @ProblemOffsetInHours, @EndDate)
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Answers_QuestionsWithUpVotedButNoAcceptedAnswers') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Answers_QuestionsWithUpVotedButNoAcceptedAnswers
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Answers_QuestionsWithUpVotedButNoAcceptedAnswers (
+	@PortalId INT,
+	@StartDate DATETIME,
+	@EndDate DATETIME
+)
+AS
+BEGIN
+	DECLARE @ProblemOffsetInHours INT = -24
+
+	SELECT 	
+		COUNT(*) TotalItems,
+		COALESCE(
+			SUM(CASE WHEN (FirstUpVoteAnswerDate <= @EndDate
+			AND (FirstAcceptedAnswerDate IS NULL OR FirstAcceptedAnswerDate > @EndDate))
+				THEN 1 ELSE 0 END), 
+			0) TotalProblematicItems
+	FROM {databaseOwner}{objectQualifier}Analytics_Fact_Answers WITH (NOLOCK)
+	WHERE PortalId = @PortalId 
+		AND CreateDate BETWEEN DATEADD(hour, @ProblemOffsetInHours, @StartDate) AND DATEADD(hour, @ProblemOffsetInHours, @EndDate)
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Answers_QuestionsAndAnswersWithDownVotes') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Answers_QuestionsAndAnswersWithDownVotes
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Answers_QuestionsAndAnswersWithDownVotes (
+	@PortalId INT,
+	@StartDate DATETIME,
+	@EndDate DATETIME
+)
+AS
+BEGIN
+	SELECT 	
+		COUNT(*) TotalItems,
+		COALESCE(SUM(CASE WHEN (First2ndDownVoteDate <= @EndDate) THEN 1 ELSE 0 END), 0) TotalProblematicItems     
+	FROM {databaseOwner}{objectQualifier}Analytics_Fact_Answers WITH (NOLOCK)
+	WHERE PortalId = @PortalId 
+		AND CreateDate BETWEEN @StartDate AND @EndDate
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Fact_Blogs') and OBJECTPROPERTY(id, N'IsTable') = 1)
+	DROP TABLE {databaseOwner}{objectQualifier}Analytics_Fact_Blogs
+GO  
+
+CREATE TABLE {databaseOwner}{objectQualifier}Analytics_Fact_Blogs (
+	ContentId INT NOT NULL,	
+	CreateDate SMALLDATETIME NOT NULL,
+	UserId INT NOT NULL,
+	PortalId INT NOT NULL,
+	FirstViewDate SMALLDATETIME NULL,
+	FirstCommentDate SMALLDATETIME NULL,
+	DeletedCommentCounter INT,
+	First3rdDeletedCommentDate SMALLDATETIME NULL,
+	EditCounter INT,
+	First2ndEditDate SMALLDATETIME NULL,
+	FirstInteractionAfterViewDate SMALLDATETIME NULL,
+	DeleteDate SMALLDATETIME NULL,
+	CONSTRAINT PK_{objectQualifier}Analytics_Fact_Blogs PRIMARY KEY NONCLUSTERED (ContentId)
+)
+GO
+
+CREATE CLUSTERED INDEX IX_{objectQualifier}Analytics_Fact_Blogs ON {databaseOwner}{objectQualifier}Analytics_Fact_Blogs (PortalId, CreateDate)
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_AddBlogsEntry') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_AddBlogsEntry
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_AddBlogsEntry (
+	@ContentId INT,
+	@CreateDate SMALLDATETIME,
+	@UserId INT,
+	@PortalId INT
+)
+AS
+BEGIN
+	IF EXISTS(SELECT ContentId 
+			  FROM {databaseOwner}{objectQualifier}Analytics_Fact_Blogs 
+			  WHERE ContentId = @ContentId)
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Blogs
+		SET CreateDate = @CreateDate, 
+			UserId = @UserId, 
+			PortalId = @PortalId
+		WHERE ContentId = @ContentId 
+		  AND CreateDate > @CreateDate
+	END
+	ELSE
+	BEGIN
+		INSERT {databaseOwner}{objectQualifier}Analytics_Fact_Blogs (ContentId, CreateDate, UserId, PortalId)
+		VALUES (@ContentId, @CreateDate, @UserId, @PortalId)
+	END
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_UpdateBlogsEntry') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_UpdateBlogsEntry
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_UpdateBlogsEntry (
+	@ContentId INT,
+	@ActionName VARCHAR(MAX),
+	@ActionDate SMALLDATETIME,
+	@UserId INT,
+	@PortalId INT
+)
+AS
+BEGIN            
+	IF @ActionName = 'ViewedBlogEntry'
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Blogs
+		SET FirstViewDate = @ActionDate
+		WHERE ContentId = @ContentId
+			AND FirstViewDate IS NULL
+			AND UserId <> @UserId
+
+		RETURN
+	END	            
+
+	IF @ActionName = 'ProvidedDeletedBlogEntry'
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Blogs
+		SET DeleteDate = @ActionDate
+		WHERE ContentId = @ContentId
+			AND DeleteDate IS NULL
+
+		RETURN
+	END	  
+
+	IF @ActionName = 'PostedComment'
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Blogs
+		SET FirstCommentDate = @ActionDate
+		WHERE ContentId = @ContentId
+			AND FirstCommentDate IS NULL	
+			AND UserId <> @UserId			
+	END
+	ELSE IF @ActionName = 'ProvidedDeletedComment'
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Blogs
+		SET DeletedCommentCounter = ISNULL(DeletedCommentCounter, 0) + 1
+		WHERE ContentId = @ContentId
+		   AND (DeletedCommentCounter IS NULL OR DeletedCommentCounter < 3)
+		   AND DATEDIFF(hour, CreateDate, @ActionDate) < 24
+
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Blogs
+		SET First3rdDeletedCommentDate = @ActionDate
+		WHERE ContentId = @ContentId
+			AND DeletedCommentCounter = 3 
+			AND First3rdDeletedCommentDate IS NULL
+	END
+	ELSE IF @ActionName = 'EditedBlogEntry'
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Blogs
+		SET EditCounter = ISNULL(EditCounter, 0) + 1
+		WHERE ContentId = @ContentId
+		   AND (EditCounter IS NULL OR EditCounter < 2)
+
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Blogs
+		SET First2ndEditDate = @ActionDate
+		WHERE ContentId = @ContentId
+			AND EditCounter = 2	
+			AND First2ndEditDate IS NULL
+	END
+
+	IF @ActionName IN (SELECT ActionName
+						FROM {databaseOwner}{objectQualifier}Mechanics_ScoringActionDefinition sad
+							JOIN {databaseOwner}{objectQualifier}DesktopModules dm ON sad.DesktopModuleId = dm.DesktopModuleID
+							JOIN {databaseOwner}{objectQualifier}Analytics_Dim_ActionType at ON sad.ActionType = at.ActionTypeId
+						WHERE dm.FriendlyName = 'Blogs'
+							AND at.ActionType IN ('Interacted', 'Created', 'FormedRelationship', 'Shared'))
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Blogs
+		SET FirstInteractionAfterViewDate = @ActionDate
+		WHERE ContentId = @ContentId
+			AND FirstInteractionAfterViewDate IS NULL	
+			AND FirstViewDate IS NOT NULL 
+	END
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Blogs_BlogsWithoutViews') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Blogs_BlogsWithoutViews
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Blogs_BlogsWithoutViews (
+	@PortalId INT,
+	@StartDate DATETIME,
+	@EndDate DATETIME
+)
+AS
+BEGIN
+	DECLARE @ProblemOffSetInHours INT = -6
+
+	SELECT 	
+		COUNT(*) TotalItems,
+		COALESCE(SUM(CASE WHEN (FirstViewDate IS NULL OR FirstViewDate > @EndDate) THEN 1 ELSE 0 END), 0) TotalProblematicItems    
+	FROM {databaseOwner}{objectQualifier}Analytics_Fact_Blogs WITH (NOLOCK)
+	WHERE PortalId = @PortalId 
+		AND CreateDate BETWEEN DATEADD(hour, @ProblemOffSetInHours, @StartDate) AND DATEADD(hour, @ProblemOffSetInHours, @EndDate)
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Blogs_BlogsWithoutComments') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Blogs_BlogsWithoutComments
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Blogs_BlogsWithoutComments (
+	@PortalId INT,
+	@StartDate DATETIME,
+	@EndDate DATETIME
+)
+AS
+BEGIN
+	DECLARE @ProblemOffSetInHours INT = -6
+
+	SELECT 	
+		COUNT(*) TotalItems,
+		COALESCE(SUM(CASE WHEN (FirstCommentDate IS NULL OR FirstCommentDate > @EndDate) THEN 1 ELSE 0 END), 0) TotalProblematicItems    
+	FROM {databaseOwner}{objectQualifier}Analytics_Fact_Blogs WITH (NOLOCK)
+	WHERE PortalId = @PortalId 
+		AND CreateDate BETWEEN DATEADD(hour, @ProblemOffSetInHours, @StartDate) AND DATEADD(hour, @ProblemOffSetInHours, @EndDate)
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Blogs_BlogsWithDeletedComments') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Blogs_BlogsWithDeletedComments
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Blogs_BlogsWithDeletedComments (
+	@PortalId INT,
+	@StartDate DATETIME,
+	@EndDate DATETIME
+)
+AS
+BEGIN
+	SELECT 	
+		COUNT(*) TotalItems,
+		COALESCE(SUM(CASE WHEN First3rdDeletedCommentDate < @EndDate THEN 1 ELSE 0 END), 0) TotalProblematicItems    
+	FROM {databaseOwner}{objectQualifier}Analytics_Fact_Blogs WITH (NOLOCK)
+	WHERE PortalId = @PortalId 
+		AND CreateDate BETWEEN @StartDate AND @EndDate
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Blogs_BlogsWithEditsPostPublish') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Blogs_BlogsWithEditsPostPublish
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Blogs_BlogsWithEditsPostPublish (
+	@PortalId INT,
+	@StartDate DATETIME,
+	@EndDate DATETIME
+)
+AS
+BEGIN
+	SELECT 	
+		COUNT(*) TotalItems,
+		COALESCE(SUM(CASE WHEN First2ndEditDate < @EndDate THEN 1 ELSE 0 END), 0) TotalProblematicItems    
+	FROM {databaseOwner}{objectQualifier}Analytics_Fact_Blogs WITH (NOLOCK)
+	WHERE PortalId = @PortalId 
+		AND CreateDate BETWEEN @StartDate AND @EndDate
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Blogs_BlogsWithViewsButNoInteraction') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Blogs_BlogsWithViewsButNoInteraction
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Blogs_BlogsWithViewsButNoInteraction (
+	@PortalId INT,
+	@StartDate DATETIME,
+	@EndDate DATETIME
+)
+AS
+BEGIN
+	DECLARE @ProblemOffSetInHours INT = -12
+
+	SELECT 	
+		COUNT(*) TotalItems,
+		COALESCE(SUM(CASE WHEN (FirstViewDate IS NOT NULL
+			 AND (FirstInteractionAfterViewDate IS NULL OR FirstInteractionAfterViewDate > @EndDate)) 
+				THEN 1 ELSE 0 END), 0) TotalProblematicItems    
+	FROM {databaseOwner}{objectQualifier}Analytics_Fact_Blogs WITH (NOLOCK)
+	WHERE PortalId = @PortalId 
+		AND CreateDate BETWEEN DATEADD(hour, @ProblemOffSetInHours, @StartDate) AND DATEADD(hour, @ProblemOffSetInHours, @EndDate)
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Fact_Discussions') and OBJECTPROPERTY(id, N'IsTable') = 1)
+	DROP TABLE {databaseOwner}{objectQualifier}Analytics_Fact_Discussions
+GO  
+
+CREATE TABLE {databaseOwner}{objectQualifier}Analytics_Fact_Discussions (
+	ContentId INT NOT NULL,	
+	CreateDate SMALLDATETIME NOT NULL,
+	UserId INT NOT NULL,
+	PortalId INT NOT NULL,
+	FirstReplyDate SMALLDATETIME NULL,
+	FirstViewDate SMALLDATETIME NULL,
+	FirstInteractionAfterViewDate SMALLDATETIME NULL,
+	DeleteDate SMALLDATETIME NULL,
+	CONSTRAINT PK_{objectQualifier}Analytics_Fact_Discussions PRIMARY KEY NONCLUSTERED (ContentId)
+)
+GO
+
+CREATE CLUSTERED INDEX IX_{objectQualifier}Analytics_Fact_Discussions ON {databaseOwner}{objectQualifier}Analytics_Fact_Discussions (PortalId, CreateDate)
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_AddDiscussionsEntry') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_AddDiscussionsEntry
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_AddDiscussionsEntry (
+	@ContentId INT,
+	@CreateDate SMALLDATETIME,
+	@UserId INT,
+	@PortalId INT
+)
+AS
+BEGIN
+	IF EXISTS(SELECT ContentId 
+			  FROM {databaseOwner}{objectQualifier}Analytics_Fact_Discussions 
+			  WHERE ContentId = @ContentId)
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Discussions
+		SET CreateDate = @CreateDate, 
+			UserId = @UserId, 
+			PortalId = @PortalId
+		WHERE ContentId = @ContentId 
+		  AND CreateDate > @CreateDate
+	END
+	ELSE
+	BEGIN
+		INSERT {databaseOwner}{objectQualifier}Analytics_Fact_Discussions (ContentId, CreateDate, UserId, PortalId)
+		VALUES (@ContentId, @CreateDate, @UserId, @PortalId)	
+	END
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_UpdateDiscussionsEntry') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_UpdateDiscussionsEntry
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_UpdateDiscussionsEntry (
+	@ContentId INT,
+	@ActionName VARCHAR(MAX),
+	@ActionDate SMALLDATETIME,
+	@UserId INT,
+	@PortalId INT
+)
+AS
+BEGIN
+	IF @ActionName = 'RepliedToTopic'
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Discussions
+		SET FirstReplyDate = @ActionDate
+		WHERE ContentId = @ContentId
+			AND FirstReplyDate IS NULL
+	END
+	ELSE IF @ActionName = 'ViewedTopic'
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Discussions
+		SET FirstViewDate = @ActionDate
+		WHERE ContentId = @ContentId
+			AND FirstViewDate IS NULL
+			AND UserId <> @UserId
+		
+		RETURN
+	END
+	ELSE IF @ActionName = 'StartedDeletedTopic'
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Discussions
+		SET DeleteDate = @ActionDate
+		WHERE ContentId = @ContentId
+			AND DeleteDate IS NULL	
+		
+		RETURN
+	END
+
+	IF @ActionName IN (SELECT ActionName
+						FROM {databaseOwner}{objectQualifier}Mechanics_ScoringActionDefinition sad
+							JOIN {databaseOwner}{objectQualifier}DesktopModules dm ON sad.DesktopModuleId = dm.DesktopModuleID
+							JOIN {databaseOwner}{objectQualifier}Analytics_Dim_ActionType at ON sad.ActionType = at.ActionTypeId
+						WHERE dm.FriendlyName = 'Discussions'
+							AND at.ActionType IN ('Interacted', 'Created', 'FormedRelationship', 'Shared'))
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Discussions
+		SET FirstInteractionAfterViewDate = @ActionDate
+		WHERE ContentId = @ContentId
+			AND FirstInteractionAfterViewDate IS NULL	
+			AND FirstViewDate IS NOT NULL 
+	END
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Discussions_DiscussionsWithoutReplies') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Discussions_DiscussionsWithoutReplies
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Discussions_DiscussionsWithoutReplies (
+	@PortalId INT,
+	@StartDate DATETIME,
+	@EndDate DATETIME
+)
+AS
+BEGIN
+	DECLARE @ProblemOffSetInHours INT = -24
+
+	SELECT 	
+		COUNT(*) TotalItems,
+		COALESCE(SUM(CASE WHEN (FirstReplyDate IS NULL OR FirstReplyDate > @EndDate) THEN 1 ELSE 0 END), 0) TotalProblematicItems    
+	FROM {databaseOwner}{objectQualifier}Analytics_Fact_Discussions WITH (NOLOCK)
+	WHERE PortalId = @PortalId 
+		AND CreateDate BETWEEN DATEADD(hour, @ProblemOffSetInHours, @StartDate) AND DATEADD(hour, @ProblemOffSetInHours, @EndDate)
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Discussions_DiscussionsWithoutViews') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Discussions_DiscussionsWithoutViews
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Discussions_DiscussionsWithoutViews (
+	@PortalId INT,
+	@StartDate DATETIME,
+	@EndDate DATETIME
+)
+AS
+BEGIN
+	DECLARE @ProblemOffSetInHours INT = -6
+
+	SELECT 	
+		COUNT(*) TotalItems,
+		COALESCE(SUM(CASE WHEN (FirstViewDate IS NULL OR FirstViewDate > @EndDate) THEN 1 ELSE 0 END), 0) TotalProblematicItems    
+	FROM {databaseOwner}{objectQualifier}Analytics_Fact_Discussions WITH (NOLOCK)
+	WHERE PortalId = @PortalId 
+		AND CreateDate BETWEEN DATEADD(hour, @ProblemOffSetInHours, @StartDate) AND DATEADD(hour, @ProblemOffSetInHours, @EndDate)
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Discussions_DiscussionsWithViewsButNoInteraction') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Discussions_DiscussionsWithViewsButNoInteraction
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Discussions_DiscussionsWithViewsButNoInteraction (
+	@PortalId INT,
+	@StartDate DATETIME,
+	@EndDate DATETIME
+)
+AS
+BEGIN
+	DECLARE @ProblemOffSetInHours INT = -12
+
+	SELECT 	
+		COUNT(*) TotalItems,
+		COALESCE(
+			SUM(CASE WHEN (FirstViewDate IS NOT NULL
+			AND (FirstInteractionAfterViewDate IS NULL OR FirstInteractionAfterViewDate > @EndDate)) 
+				THEN 1 ELSE 0 END),
+			0) TotalProblematicItems    
+	FROM {databaseOwner}{objectQualifier}Analytics_Fact_Discussions WITH (NOLOCK)
+	WHERE PortalId = @PortalId 
+		AND CreateDate BETWEEN DATEADD(hour, @ProblemOffSetInHours, @StartDate) AND DATEADD(hour, @ProblemOffSetInHours, @EndDate)
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Discussions_DiscussionsDeletedWithReplies') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Discussions_DiscussionsDeletedWithReplies
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Discussions_DiscussionsDeletedWithReplies (
+	@PortalId INT,
+	@StartDate DATETIME,
+	@EndDate DATETIME
+)
+AS
+BEGIN
+	SELECT 	
+		COUNT(*) TotalItems,
+		COALESCE(
+			SUM(CASE WHEN (DeleteDate <= @EndDate AND FirstReplyDate <= @EndDate)
+				THEN 1 ELSE 0 END),
+			0) TotalProblematicItems
+	FROM {databaseOwner}{objectQualifier}Analytics_Fact_Discussions WITH (NOLOCK)
+	WHERE PortalId = @PortalId 
+		AND CreateDate BETWEEN @StartDate AND @EndDate
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Fact_Events') and OBJECTPROPERTY(id, N'IsTable') = 1)
+	DROP TABLE {databaseOwner}{objectQualifier}Analytics_Fact_Events
+GO  
+
+CREATE TABLE {databaseOwner}{objectQualifier}Analytics_Fact_Events (
+	ContentId INT NOT NULL,	
+	CreateDate SMALLDATETIME NOT NULL,
+	UserId INT NOT NULL,
+	PortalId INT NOT NULL,
+	FirstViewDate SMALLDATETIME NULL,
+	FirstInteractionAfterViewDate SMALLDATETIME NULL,	
+	DeleteDate SMALLDATETIME NULL,
+	CONSTRAINT PK_{objectQualifier}Analytics_Fact_Events PRIMARY KEY NONCLUSTERED (ContentId)
+)
+GO
+
+CREATE CLUSTERED INDEX IX_{objectQualifier}Analytics_Fact_Events ON {databaseOwner}{objectQualifier}Analytics_Fact_Events (PortalId, CreateDate)
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_AddEventsEntry') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_AddEventsEntry
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_AddEventsEntry (
+	@ContentId INT,
+	@CreateDate SMALLDATETIME,
+	@UserId INT,
+	@PortalId INT
+)
+AS
+BEGIN
+	IF EXISTS(SELECT ContentId 
+			  FROM {databaseOwner}{objectQualifier}Analytics_Fact_Events 
+			  WHERE ContentId = @ContentId)
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Events
+		SET CreateDate = @CreateDate, 
+			UserId = @UserId, 
+			PortalId = @PortalId
+		WHERE ContentId = @ContentId 
+		  AND CreateDate > @CreateDate
+	END
+	ELSE
+	BEGIN
+		INSERT {databaseOwner}{objectQualifier}Analytics_Fact_Events (ContentId, CreateDate, UserId, PortalId)
+		VALUES (@ContentId, @CreateDate, @UserId, @PortalId)
+	END
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_UpdateEventsEntry') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_UpdateEventsEntry
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_UpdateEventsEntry (
+	@ContentId INT,
+	@ActionName VARCHAR(MAX),
+	@ActionDate SMALLDATETIME,
+	@UserId INT,
+	@PortalId INT
+)
+AS
+BEGIN
+	IF @ActionName = 'ViewedEvent'
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Events
+		SET FirstViewDate = @ActionDate
+		WHERE ContentId = @ContentId
+			AND FirstViewDate IS NULL
+			AND UserId <> @UserId
+		
+		RETURN
+	END 	
+
+	IF @ActionName = 'CreatedDeletedEvent'
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Events
+		SET DeleteDate = @ActionDate
+		WHERE ContentId = @ContentId
+			AND DeleteDate IS NULL
+		
+		RETURN
+	END 
+	
+	IF @ActionName IN (SELECT ActionName
+						FROM {databaseOwner}{objectQualifier}Mechanics_ScoringActionDefinition sad
+							JOIN {databaseOwner}{objectQualifier}DesktopModules dm ON sad.DesktopModuleId = dm.DesktopModuleID
+							JOIN {databaseOwner}{objectQualifier}Analytics_Dim_ActionType at ON sad.ActionType = at.ActionTypeId
+						WHERE dm.FriendlyName = 'Social Events'
+							AND at.ActionType IN ('Interacted', 'Created', 'FormedRelationship', 'Shared'))
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Events
+		SET FirstInteractionAfterViewDate = @ActionDate
+		WHERE ContentId = @ContentId
+			AND FirstInteractionAfterViewDate IS NULL	
+			AND FirstViewDate IS NOT NULL 
+	END
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Events_EventsWithoutViews') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Events_EventsWithoutViews
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Events_EventsWithoutViews (
+	@PortalId INT,
+	@StartDate DATETIME,
+	@EndDate DATETIME
+)
+AS
+BEGIN
+	DECLARE @ProblemOffSetInHours INT = -6
+
+	SELECT 	
+		COUNT(*) TotalItems,
+		COALESCE(SUM(CASE WHEN (FirstViewDate IS NULL OR FirstViewDate > @EndDate) THEN 1 ELSE 0 END), 0) TotalProblematicItems    
+		FROM {databaseOwner}{objectQualifier}Analytics_Fact_Events WITH (NOLOCK)
+		WHERE PortalId = @PortalId 
+			AND CreateDate BETWEEN DATEADD(hour, @ProblemOffSetInHours, @StartDate) AND DATEADD(hour, @ProblemOffSetInHours, @EndDate)
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Events_EventsWithViewsButNoInteraction') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Events_EventsWithViewsButNoInteraction
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Events_EventsWithViewsButNoInteraction (
+	@PortalId INT,
+	@StartDate DATETIME,
+	@EndDate DATETIME
+)
+AS
+BEGIN
+	DECLARE @ProblemOffSetInHours INT = -12
+
+	SELECT 	
+		COUNT(*) TotalItems,
+		COALESCE(
+			SUM(CASE WHEN (FirstViewDate IS NOT NULL
+			AND (FirstInteractionAfterViewDate IS NULL OR FirstInteractionAfterViewDate > @EndDate)) 
+				THEN 1 ELSE 0 END),
+			0) TotalProblematicItems    
+		FROM {databaseOwner}{objectQualifier}Analytics_Fact_Events WITH (NOLOCK)
+		WHERE PortalId = @PortalId 
+			AND CreateDate BETWEEN DATEADD(hour, @ProblemOffSetInHours, @StartDate) AND DATEADD(hour,  @ProblemOffSetInHours, @EndDate)
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Fact_Ideas') and OBJECTPROPERTY(id, N'IsTable') = 1)
+	DROP TABLE {databaseOwner}{objectQualifier}Analytics_Fact_Ideas
+GO  
+
+CREATE TABLE {databaseOwner}{objectQualifier}Analytics_Fact_Ideas (
+	ContentId INT NOT NULL,	
+	CreateDate SMALLDATETIME NOT NULL,
+	UserId INT NOT NULL,
+	PortalId INT NOT NULL,
+	FirstViewDate SMALLDATETIME NULL,
+	FirstChangeInStatusDate SMALLDATETIME NULL,
+	FirstChangeInCompanyResponseDate SMALLDATETIME NULL,
+	RemovedVoteCounter INT NULL,
+	First3rdRemovedVoteDate SMALLDATETIME NULL,
+	DeleteDate SMALLDATETIME NULL,
+	CONSTRAINT PK_{objectQualifier}Analytics_Fact_Ideas PRIMARY KEY NONCLUSTERED (ContentId)
+)
+GO
+
+CREATE CLUSTERED INDEX IX_{objectQualifier}Analytics_Fact_Ideas ON {databaseOwner}{objectQualifier}Analytics_Fact_Ideas (PortalId, CreateDate)
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_AddIdeasEntry') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_AddIdeasEntry
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_AddIdeasEntry (
+	@ContentId INT,
+	@CreateDate SMALLDATETIME,
+	@UserId INT,
+	@PortalId INT
+)
+AS
+BEGIN
+	IF EXISTS(SELECT ContentId 
+			  FROM {databaseOwner}{objectQualifier}Analytics_Fact_Ideas 
+			  WHERE ContentId = @ContentId)
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Ideas
+		SET CreateDate = @CreateDate, 
+			UserId = @UserId, 
+			PortalId = @PortalId
+		WHERE ContentId = @ContentId 
+		  AND CreateDate > @CreateDate
+	END
+	ELSE
+	BEGIN
+		INSERT {databaseOwner}{objectQualifier}Analytics_Fact_Ideas (ContentId, CreateDate, UserId, PortalId)
+		VALUES (@ContentId, @CreateDate, @UserId, @PortalId)
+	END
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_UpdateIdeasEntry') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_UpdateIdeasEntry
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_UpdateIdeasEntry (
+	@ContentId INT,
+	@ActionName VARCHAR(MAX),
+	@ActionDate SMALLDATETIME,
+	@UserId INT,
+	@PortalId INT
+)
+AS
+BEGIN
+	IF @ActionName = 'ViewedIdea'
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Ideas
+		SET FirstViewDate = @ActionDate
+		WHERE ContentId = @ContentId
+			AND FirstViewDate IS NULL
+			AND UserId <> @UserId
+		
+		RETURN
+	END
+
+	IF @ActionName = 'ProvidedDeletedIdea'
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Ideas
+		SET DeleteDate = @ActionDate
+		WHERE ContentId = @ContentId
+			AND DeleteDate IS NULL
+		
+		RETURN
+	END
+	
+	IF @ActionName = 'ProvidedIdeaResponse'
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Ideas
+		SET FirstChangeInCompanyResponseDate = @ActionDate
+		WHERE ContentId = @ContentId
+			AND FirstChangeInCompanyResponseDate IS NULL	
+	END 
+	ELSE IF @ActionName = 'RemovedVotes'
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Ideas
+		SET RemovedVoteCounter = ISNULL(RemovedVoteCounter, 0) + 1
+		WHERE ContentId = @ContentId
+		   AND (RemovedVoteCounter IS NULL OR RemovedVoteCounter < 3)
+
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Ideas
+		SET First3rdRemovedVoteDate = @ActionDate
+		WHERE ContentId = @ContentId
+			AND RemovedVoteCounter = 3
+			AND First3rdRemovedVoteDate IS NULL
+	END
+	
+	IF @ActionName IN ('ProvidedIdeaResponse', 'ProvidedAcceptedIdea', 'EditedIdea')
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Ideas
+		SET FirstChangeInStatusDate = @ActionDate
+		WHERE ContentId = @ContentId
+			AND FirstChangeInStatusDate IS NULL	
+	END
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Ideas_IdeasWithoutViews') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Ideas_IdeasWithoutViews
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Ideas_IdeasWithoutViews (
+	@PortalId INT,
+	@StartDate DATETIME,
+	@EndDate DATETIME
+)
+AS
+BEGIN
+	DECLARE @ProblemInHoursOffSet INT = -6
+
+	SELECT 	
+		COUNT(*) TotalItems,
+		COALESCE(SUM(CASE WHEN (FirstViewDate IS NULL OR FirstViewDate > @EndDate) THEN 1 ELSE 0 END), 0) TotalProblematicItems    
+	FROM {databaseOwner}{objectQualifier}Analytics_Fact_Ideas WITH (NOLOCK)
+	WHERE PortalId = @PortalId 
+		AND CreateDate BETWEEN DATEADD(hour, @ProblemInHoursOffSet, @StartDate) AND DATEADD(hour, @ProblemInHoursOffSet, @EndDate)
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Ideas_IdeasWithoutChangeInStatus') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Ideas_IdeasWithoutChangeInStatus
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Ideas_IdeasWithoutChangeInStatus (
+	@PortalId INT,
+	@StartDate DATETIME,
+	@EndDate DATETIME
+)
+AS
+BEGIN
+	DECLARE @HourOffset INT = 14 * 24
+
+	SELECT 	
+		COUNT(*) TotalItems,
+		COALESCE(SUM(CASE WHEN (FirstChangeInStatusDate IS NULL OR FirstChangeInStatusDate > @EndDate) THEN 1 ELSE 0 END), 0) TotalProblematicItems    
+	FROM {databaseOwner}{objectQualifier}Analytics_Fact_Ideas WITH (NOLOCK)
+	WHERE PortalId = @PortalId 
+		AND CreateDate BETWEEN DATEADD(hour, -@HourOffset, @StartDate) AND DATEADD(hour, -@HourOffset, @EndDate)
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Ideas_IdeasWithoutChangeInCompanyResponse') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Ideas_IdeasWithoutChangeInCompanyResponse
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Ideas_IdeasWithoutChangeInCompanyResponse (
+	@PortalId INT,
+	@StartDate DATETIME,
+	@EndDate DATETIME
+)
+AS
+BEGIN
+	DECLARE @HourOffset INT = 30 * 24
+
+	SELECT 	
+		COUNT(*) TotalItems,
+		COALESCE(SUM(CASE WHEN (FirstChangeInCompanyResponseDate IS NULL OR FirstChangeInCompanyResponseDate > @EndDate) THEN 1 ELSE 0 END), 0) TotalProblematicItems    
+	FROM {databaseOwner}{objectQualifier}Analytics_Fact_Ideas WITH (NOLOCK)
+	WHERE PortalId = @PortalId 
+		AND CreateDate BETWEEN DATEADD(hour, -@HourOffset, @StartDate) AND DATEADD(hour, -@HourOffset, @EndDate)
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Ideas_IdeasWithRemovedVotes') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Ideas_IdeasWithRemovedVotes
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Ideas_IdeasWithRemovedVotes (
+	@PortalId INT,
+	@StartDate DATETIME,
+	@EndDate DATETIME
+)
+AS
+BEGIN
+	SELECT 	
+		COUNT(*) TotalItems,
+		COALESCE(SUM(CASE WHEN (First3rdRemovedVoteDate < @EndDate) THEN 1 ELSE 0 END), 0) TotalProblematicItems    
+	FROM {databaseOwner}{objectQualifier}Analytics_Fact_Ideas WITH (NOLOCK)
+	WHERE PortalId = @PortalId 
+		AND CreateDate BETWEEN @StartDate AND @EndDate
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Fact_Wiki') and OBJECTPROPERTY(id, N'IsTable') = 1)
+	DROP TABLE {databaseOwner}{objectQualifier}Analytics_Fact_Wiki
+GO  
+
+CREATE TABLE {databaseOwner}{objectQualifier}Analytics_Fact_Wiki (
+	ContentId INT NOT NULL,	
+	CreateDate SMALLDATETIME NOT NULL,
+	UserId INT NOT NULL,
+	PortalId INT NOT NULL,
+	FirstViewDate SMALLDATETIME NULL,
+	FirstInteractionAfterViewDate SMALLDATETIME NULL,
+	DeleteDate SMALLDATETIME NULL,
+	CONSTRAINT PK_{objectQualifier}Analytics_Fact_Wiki PRIMARY KEY NONCLUSTERED (ContentId)
+)
+GO
+
+CREATE CLUSTERED INDEX IX_{objectQualifier}Analytics_Fact_Wiki ON {databaseOwner}{objectQualifier}Analytics_Fact_Wiki (PortalId, CreateDate)
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_AddWikiEntry') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_AddWikiEntry
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_AddWikiEntry (
+	@ContentId INT,
+	@CreateDate SMALLDATETIME,
+	@UserId INT,
+	@PortalId INT
+)
+AS
+BEGIN
+	IF EXISTS(SELECT ContentId 
+			  FROM {databaseOwner}{objectQualifier}Analytics_Fact_Wiki 
+			  WHERE ContentId = @ContentId)
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Wiki
+		SET CreateDate = @CreateDate, 
+			UserId = @UserId, 
+			PortalId = @PortalId
+		WHERE ContentId = @ContentId 
+		  AND CreateDate > @CreateDate
+	END
+	ELSE
+	BEGIN
+		INSERT {databaseOwner}{objectQualifier}Analytics_Fact_Wiki (ContentId, CreateDate, UserId, PortalId)
+		VALUES (@ContentId, @CreateDate, @UserId, @PortalId)
+	END
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_UpdateWikiEntry') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_UpdateWikiEntry
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_UpdateWikiEntry (
+	@ContentId INT,
+	@ActionName VARCHAR(MAX),
+	@ActionDate SMALLDATETIME,
+	@UserId INT,
+	@PortalId INT
+)
+AS
+BEGIN
+	IF @ActionName = 'ViewedArticle'
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Wiki
+		SET FirstViewDate = @ActionDate
+		WHERE ContentId = @ContentId
+			AND FirstViewDate IS NULL
+			AND UserId <> @UserId
+		
+		RETURN
+	END	            
+	
+	IF @ActionName = 'CreatedDeletedArticle'
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Wiki
+		SET DeleteDate = @ActionDate
+		WHERE ContentId = @ContentId
+			AND DeleteDate IS NULL	
+
+		RETURN
+	END
+
+	IF @ActionName IN (SELECT ActionName
+						FROM {databaseOwner}{objectQualifier}Mechanics_ScoringActionDefinition sad
+							JOIN {databaseOwner}{objectQualifier}DesktopModules dm ON sad.DesktopModuleId = dm.DesktopModuleID
+							JOIN {databaseOwner}{objectQualifier}Analytics_Dim_ActionType at ON sad.ActionType = at.ActionTypeId
+						WHERE dm.FriendlyName = 'Wiki'
+							AND at.ActionType IN ('Interacted', 'Created', 'FormedRelationship', 'Shared'))
+	BEGIN
+		UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_Wiki
+		SET FirstInteractionAfterViewDate = @ActionDate
+		WHERE ContentId = @ContentId
+			AND FirstInteractionAfterViewDate IS NULL	
+			AND FirstViewDate IS NOT NULL 
+	END
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Wiki_WikiWithoutViews') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Wiki_WikiWithoutViews
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Wiki_WikiWithoutViews (
+	@PortalId INT,
+	@StartDate DATETIME,
+	@EndDate DATETIME
+)
+AS
+BEGIN
+	DECLARE @ProblemOffSetInHours INT = -6
+
+	SELECT 	
+		COUNT(*) TotalItems,
+		COALESCE(SUM(CASE WHEN (FirstViewDate IS NULL OR FirstViewDate > @EndDate) THEN 1 ELSE 0 END), 0) TotalProblematicItems    
+	FROM {databaseOwner}{objectQualifier}Analytics_Fact_Wiki WITH (NOLOCK)
+	WHERE PortalId = @PortalId 
+		AND CreateDate BETWEEN DATEADD(hour, @ProblemOffSetInHours, @StartDate) AND DATEADD(hour, @ProblemOffSetInHours, @EndDate)
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Wiki_WikiWithViewsButNoInteraction') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Wiki_WikiWithViewsButNoInteraction
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Wiki_WikiWithViewsButNoInteraction (
+	@PortalId INT,
+	@StartDate DATETIME,
+	@EndDate DATETIME
+)
+AS
+BEGIN
+	DECLARE @ProblemOffSetInHours INT = -12
+
+	SELECT 	
+		COUNT(*) TotalItems,
+		COALESCE(SUM(CASE WHEN (FirstViewDate IS NOT NULL
+			 AND (FirstInteractionAfterViewDate IS NULL OR FirstInteractionAfterViewDate > @EndDate)) 
+				THEN 1 ELSE 0 END), 0) TotalProblematicItems    
+	FROM {databaseOwner}{objectQualifier}Analytics_Fact_Wiki WITH (NOLOCK)
+	WHERE PortalId = @PortalId 
+		AND CreateDate BETWEEN DATEADD(hour, @ProblemOffSetInHours, @StartDate) AND DATEADD(hour, @ProblemOffSetInHours, @EndDate)
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Wiki_DeletedArticles') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Wiki_DeletedArticles
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Wiki_DeletedArticles (
+	@PortalId INT,
+	@StartDate DATETIME,
+	@EndDate DATETIME
+)
+AS
+BEGIN
+	DECLARE @ProblemOffSetInHours INT = -24
+
+	SELECT 	
+		COUNT(*) TotalItems,
+		COALESCE(SUM(CASE WHEN (DeleteDate <= @EndDate) THEN 1 ELSE 0 END), 0) TotalProblematicItems
+	FROM {databaseOwner}{objectQualifier}Analytics_Fact_Wiki WITH (NOLOCK)
+	WHERE PortalId = @PortalId 
+		AND CreateDate BETWEEN DATEADD(hour, @ProblemOffSetInHours, @StartDate) AND DATEADD(hour, @ProblemOffSetInHours, @EndDate)
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_RollUp') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_RollUp
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_RollUp (
+	@StartingLogId INT,
+	@EndLogId INT,    
+	@MaxLogs INT	
+)
+AS
+BEGIN
+	DECLARE @ROWCOUNT INT
+	DECLARE @CurrentScoringActionLogId INT
+  
+	DECLARE @UserId INT
+	DECLARE @PortalId INT
+	DECLARE @ContentItemId INT
+	DECLARE @CreatedOnDate DATETIME
+	DECLARE @ActionName NVARCHAR(100)
+	DECLARE @FriendlyName NVARCHAR(100)  
+		
+	SELECT @EndLogId = CASE 
+				WHEN @EndLogId < @StartingLogId + @MaxLogs 
+				THEN @EndLogId 
+				ELSE @StartingLogId + @MaxLogs END
+	
+	SELECT TOP 1
+		@CurrentScoringActionLogId = UserScoringLogId, 
+		@UserId = [UserId],
+		@PortalId = [PortalId],
+		@ContentItemId = u.[ContentItemId],
+		@CreatedOnDate = u.[CreatedOnDate],
+		@ActionName = ActionName,
+		@FriendlyName = FriendlyName
+	FROM {databaseOwner}{objectQualifier}Mechanics_UserScoringLog u
+	INNER JOIN {databaseOwner}{objectQualifier}Mechanics_ScoringActionDefinition s ON u.ScoringActionDefId = s.ScoringActionDefId
+	INNER JOIN {databaseOwner}{objectQualifier}DesktopModules dm ON s.DesktopModuleId = dm.DesktopModuleId
+	WHERE UserScoringLogId >= @StartingLogId and UserScoringLogId <= @EndLogId and u.ContentItemId > 0
+	ORDER BY UserScoringLogId ASC
+
+    SET @ROWCOUNT = @@ROWCOUNT
+	WHILE @ROWCOUNT > 0
+	BEGIN
+		 IF @FriendlyName = 'Answers'
+			 BEGIN
+				IF @ActionName = 'AskedQuestion'
+					EXEC {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_AddAnswersEntry @ContentItemId, @CreatedOnDate, @UserId, @PortalId
+				ELSE 
+					EXEC {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_UpdateAnswersEntry @ContentItemId, @ActionName, @CreatedOnDate, @UserId, @PortalId
+			 END	
+		 ELSE IF @FriendlyName = 'Social Events'
+			BEGIN
+				IF @ActionName = 'CreatedEvent'
+					EXEC {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_AddEventsEntry @ContentItemId, @CreatedOnDate, @UserId, @PortalId
+				ELSE 
+					EXEC {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_UpdateEventsEntry @ContentItemId, @ActionName, @CreatedOnDate, @UserId, @PortalId
+			END		
+		 ELSE IF @FriendlyName = 'Wiki'
+			BEGIN
+				IF @ActionName = 'CreatedArticle'
+					EXEC {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_AddWikiEntry @ContentItemId, @CreatedOnDate, @UserId, @PortalId
+				ELSE 					
+					EXEC {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_UpdateWikiEntry @ContentItemId, @ActionName, @CreatedOnDate, @UserId, @PortalId
+			END
+		ELSE IF @FriendlyName = 'Blogs'
+			BEGIN
+				IF @ActionName = 'AuthoredBlogEntry'
+					EXEC {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_AddBlogsEntry @ContentItemId, @CreatedOnDate, @UserId, @PortalId
+				ELSE 				
+					EXEC {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_UpdateBlogsEntry @ContentItemId, @ActionName, @CreatedOnDate, @UserId, @PortalId
+			END		
+		ELSE IF @FriendlyName = 'Discussions'
+			BEGIN
+				IF @ActionName = 'StartedTopic'
+					EXEC {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_AddDiscussionsEntry @ContentItemId, @CreatedOnDate, @UserId, @PortalId
+				ELSE
+					EXEC {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_UpdateDiscussionsEntry @ContentItemId, @ActionName, @CreatedOnDate, @UserId, @PortalId
+			END	
+		ELSE IF @FriendlyName = 'Ideas'
+			BEGIN
+				IF @ActionName = 'ProvidedIdea'
+					EXEC {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_AddIdeasEntry @ContentItemId, @CreatedOnDate, @UserId, @PortalId
+				ELSE 				
+					EXEC {databaseOwner}{objectQualifier}Analytics_Warehouse_Fact_UpdateIdeasEntry @ContentItemId, @ActionName, @CreatedOnDate, @UserId, @PortalId
+			END
+					 
+		 SELECT TOP 1
+				@CurrentScoringActionLogId = UserScoringLogId, 
+				@UserId = [UserId],
+				@PortalId = [PortalId],
+				@ContentItemId = u.[ContentItemId],
+				@CreatedOnDate = u.[CreatedOnDate],
+				@ActionName = ActionName,
+				@FriendlyName = FriendlyName
+		  FROM {databaseOwner}{objectQualifier}Mechanics_UserScoringLog u
+		  INNER JOIN {databaseOwner}{objectQualifier}Mechanics_ScoringActionDefinition s ON u.ScoringActionDefId = s.ScoringActionDefId
+		  INNER JOIN {databaseOwner}{objectQualifier}DesktopModules dm ON s.DesktopModuleId = dm.DesktopModuleId
+		  WHERE UserScoringLogId > @CurrentScoringActionLogId and UserScoringLogId <= @EndLogId and u.ContentItemId > 0
+		  ORDER BY UserScoringLogId ASC
+		  
+		  SET @ROWCOUNT = @@ROWCOUNT
+	END
+	
+	IF @CurrentScoringActionLogId IS NULL
+		SELECT @EndLogId
+	ELSE	
+		SELECT @CurrentScoringActionLogId		
+END
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_GetMaxMechanicsUserScoringLogId') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_GetMaxMechanicsUserScoringLogId
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_GetMaxMechanicsUserScoringLogId 
+AS
+BEGIN
+	SELECT ISNULL(MAX(UserScoringLogId), 0) FROM {databaseOwner}{objectQualifier}Mechanics_UserScoringLog
+END
+GO
+
+-- =========================================================
+-- Problem Area - Events - EventsWithNoAttendees
+-- =========================================================
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Events_EventsWithNoAttendees') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Events_EventsWithNoAttendees
+GO  
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_ProblemArea_Events_EventsWithNoAttendees
+	@PortalId INT,
+	@Start DATETIME,
+	@End DATETIME
+AS
+BEGIN			
+	DECLARE @TotalItems INT
+	DECLARE @TotalProblematicItems INT
+	DECLARE @ProblemOffSetInHours INT = -24
+			
+	-- GET TOTAL EVENTS CREATED ON THE SELECTED PERIOD WITH 0 ATTENDEES BESIDES CREATOR USER ID AND AT LEAST ONE MAYBE OR DECLINE
+	;WITH CTE AS(
+		SELECT f.ContentId, f.UserId, ad.ActionName, ROW_NUMBER() OVER(PARTITION BY f.ContentId, f.UserId ORDER BY [TimeStamp] DESC) as RowId
+		FROM {databaseOwner}{objectQualifier}Analytics_Fact_UserScoringLog f WITH (NOLOCK)
+		INNER JOIN {databaseOwner}{objectQualifier}Analytics_Fact_Events e WITH (NOLOCK) ON e.ContentId = f.ContentId
+		INNER JOIN {databaseOwner}{objectQualifier}Analytics_Dim_ActionDefinition ad WITH (NOLOCK) ON f.ActionDefinitionId = ad.ActionDefinitionId 
+		WHERE e.UserId != f.UserId AND e.PortalId = @PortalId 
+		AND e.CreateDate BETWEEN DATEADD(hour, @ProblemOffSetInHours, @Start) AND DATEADD(hour, @ProblemOffSetInHours, @End) AND
+		f.PortalId = @PortalId AND ad.ActionName IN ('DeclineEventInvite', 'MayAttendEventInvite', 'AttendEventInvite')
+		AND (f.[TimeStamp] BETWEEN @Start AND @End) 
+	)
+
+	SELECT @TotalProblematicItems = COUNT(*) FROM
+	(SELECT ContentId, UserId, ActionName
+	FROM CTE WHERE RowId = 1) as a
+	PIVOT
+	(
+		COUNT(UserId)
+		FOR ActionName IN (DeclineEventInvite,MayAttendEventInvite,AttendEventInvite)
+	)AS p
+	WHERE AttendEventInvite = 0 and DeclineEventInvite + MayAttendEventInvite > 0
+		
+	-- GET TOTAL EVENTS CREATED ON THE SELECTED PERIOD - OFFSET
+	SELECT @TotalItems = COUNT(*)
+	FROM {databaseOwner}{objectQualifier}Analytics_Fact_Events WITH (NOLOCK)
+	WHERE PortalId = @PortalId 
+		AND CreateDate BETWEEN DATEADD(hour, @ProblemOffSetInHours, @Start) AND DATEADD(hour, @ProblemOffSetInHours, @End)
+		
+	SELECT @TotalItems TotalItems, @TotalProblematicItems TotalProblematicItems
+END
+GO
+
+-- =========================================================
+-- Problem Area - Removed old Stored Procedures
+-- =========================================================
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_GetProblemArea_SocialItemsWithNoAction') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_GetProblemArea_SocialItemsWithNoAction
+GO 
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_GetProblemArea_SocialItemsWithAction') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_GetProblemArea_SocialItemsWithAction
+GO 
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_GetProblemArea_SocialItemsWithActionAndNoAction') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_GetProblemArea_SocialItemsWithActionAndNoAction
+GO  
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_GetProblemArea_SocialItemsWithMinimumActions') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_GetProblemArea_SocialItemsWithMinimumActions
+GO 
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Warehouse_GetProblemArea_SocialItemsWithViewsButNoInteraction') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_GetProblemArea_SocialItemsWithViewsButNoInteraction
+GO
+
+/********************************************************
+ * VIEW: Fact_Content
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}vw_Analytics_Warehouse_Fact_Content]', N'V') IS NOT NULL
+	DROP VIEW {databaseOwner}[{objectQualifier}vw_Analytics_Warehouse_Fact_Content]
+GO
+
+CREATE VIEW {databaseOwner}[{objectQualifier}vw_Analytics_Warehouse_Fact_Content]
+AS	
+	SELECT ContentId, UserId, CreateDate, DeleteDate
+	FROM {databaseOwner}{objectQualifier}Analytics_Fact_Answers
+	UNION
+	SELECT ContentId, UserId, CreateDate, DeleteDate
+	FROM {databaseOwner}{objectQualifier}Analytics_Fact_Blogs
+	UNION
+	SELECT ContentId, UserId, CreateDate, DeleteDate
+	FROM {databaseOwner}{objectQualifier}Analytics_Fact_Discussions
+	UNION
+	SELECT ContentId, UserId, CreateDate, DeleteDate
+	FROM {databaseOwner}{objectQualifier}Analytics_Fact_Events
+	UNION
+	SELECT ContentId, UserId, CreateDate, DeleteDate
+	FROM {databaseOwner}{objectQualifier}Analytics_Fact_Ideas
+	UNION
+	SELECT ContentId, UserId, CreateDate, DeleteDate
+	FROM {databaseOwner}{objectQualifier}Analytics_Fact_Wiki
+GO
+
+/********************************************************
+ * SPROC: Analytics_Warehouse_QueryModulePopularContent
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Warehouse_QueryModulePopularContent]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Warehouse_QueryModulePopularContent] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_QueryModulePopularContent
+	@DesktopModuleId INT,
+	@Skip INT,
+	@Take INT,
+	@StartDate DATE,
+	@EndDate DATE,
+	@PortalId INT,
+	@ComparativeTermOffset INT
+AS
+BEGIN
+	SET @EndDate = DATEADD(day, 1, @EndDate)			
+	
+	;WITH PopularContent AS
+	(				
+		SELECT ROW_NUMBER() OVER(ORDER BY COUNT(DISTINCT(CASE WHEN at.ActionType = 'Viewed' THEN -f.UserId ELSE f.UserScoringLogId END)) DESC) AS 'Rank', 
+			f.ContentId as ContentId, 
+			COUNT(DISTINCT(CASE WHEN at.ActionType = 'Viewed' THEN -f.UserId ELSE f.UserScoringLogId END)) as ContentCount, 
+			f.DesktopModuleId as DesktopModuleId 
+		FROM {databaseOwner}{objectQualifier}Analytics_Fact_UserScoringLog f 
+			INNER JOIN {databaseOwner}{objectQualifier}Analytics_Dim_ActionType at ON f.ActionTypeId = at.ActionTypeId
+			INNER JOIN {databaseOwner}{objectQualifier}vw_Analytics_Warehouse_Fact_Content v ON f.ContentId = v.ContentId
+		WHERE at.ActionType NOT IN ('Flagged','Deleted','Moderated')
+			AND (@DesktopModuleId = 0 OR f.DesktopModuleId = @DesktopModuleId)
+			AND f.PortalId = @PortalId
+            AND f.[TimeStamp] >= @StartDate AND f.[TimeStamp] < @EndDate
+			AND v.CreateDate <= CONVERT(SMALLDATETIME, f.[TimeStamp])
+			AND (v.DeleteDate IS NULL OR v.DeleteDate > @EndDate)
+		GROUP BY f.ContentId, f.DesktopModuleId
+	),
+	ComparativeTermPopularContent AS	
+	(				
+		SELECT ROW_NUMBER() OVER(ORDER BY COUNT(DISTINCT(CASE WHEN at.ActionType = 'Viewed' THEN -f.UserId ELSE f.UserScoringLogId END)) DESC) AS 'Rank', 
+			f.ContentId as ContentId, 
+			COUNT(DISTINCT(CASE WHEN at.ActionType = 'Viewed' THEN -f.UserId ELSE f.UserScoringLogId END)) as ContentCount
+		FROM {databaseOwner}{objectQualifier}Analytics_Fact_UserScoringLog f 
+			INNER JOIN {databaseOwner}{objectQualifier}Analytics_Dim_ActionType at ON f.ActionTypeId = at.ActionTypeId
+			INNER JOIN {databaseOwner}{objectQualifier}vw_Analytics_Warehouse_Fact_Content v ON f.ContentId = v.ContentId
+		WHERE at.ActionType NOT IN ('Flagged','Deleted','Moderated')
+            AND f.[TimeStamp] >= DATEADD(DAY, -@ComparativeTermOffset, @StartDate) AND f.[TimeStamp] < DATEADD(DAY, -@ComparativeTermOffset, @EndDate)			
+			AND v.CreateDate <= CONVERT(SMALLDATETIME, f.[TimeStamp])
+		GROUP BY f.ContentId
+	)
+	SELECT p.ContentId, 
+			p.DesktopModuleId, 
+			p.Rank, 
+			p.ContentCount,
+			(SELECT COUNT(*) FROM PopularContent) AS ContentTotal, 
+			c.Rank AS ComparativeRank, 
+			c.ContentCount AS ComparativeContentCount, 
+			(SELECT SUM(ContentCount) FROM ComparativeTermPopularContent) AS ComparativeTotal 
+	FROM PopularContent p
+		LEFT JOIN ComparativeTermPopularContent c ON p.ContentId = c.ContentId
+		WHERE p.Rank > @Skip AND p.Rank <= (@Skip + @Take)
+END
+GO
+
+/********************************************************
+ * SPROC: Analytics_Warehouse_IncludedActionTypeUniquesGroupedMonthlySummedDailyTimeSeries
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Warehouse_IncludedActionTypeUniquesGroupedMonthlySummedDailyTimeSeries]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Warehouse_IncludedActionTypeUniquesGroupedMonthlySummedDailyTimeSeries] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}{objectQualifier}Analytics_Warehouse_IncludedActionTypeUniquesGroupedMonthlySummedDailyTimeSeries
+	@PortalId INT,
+	@DesktopModuleId INT,
+	@TimeStamp DATETIME2,
+	@NumDataPoints INT,
+	@IncludedActionTypes NVARCHAR(MAX)
+AS
+BEGIN
+	
+	DECLARE @ResultsTable TABLE
+	(
+		RangeIndex INT,
+		MetricCount INT,
+		TimeSliceStart DATETIME2,
+		TimeSliceEnd DATETIME2
+	)
+
+	DECLARE @RangeCounter int
+	DECLARE @MonthStart DATETIME2, @MonthEnd DATETIME2
+
+	SELECT @MonthStart = DATEADD(MONTH, DATEDIFF(MONTH, 0, @TimeStamp), 0)
+	SELECT @MonthStart = DATEADD(MONTH, 1 - @NumDataPoints, @MonthStart)
+
+	SET @RangeCounter = 0
+	WHILE @RangeCounter < @NumDataPoints
+	BEGIN
+		SET @MonthEnd = DATEADD(MONTH, 1, @MonthStart)
+
+		INSERT INTO @ResultsTable (RangeIndex, MetricCount, TimeSliceStart, TimeSliceEnd) 
+		VALUES (@RangeCounter, 0, @MonthStart, @MonthEnd)
+
+		SET @RangeCounter = @RangeCounter + 1
+		SELECT @MonthStart = DATEADD(MONTH, 1, @MonthStart)
+	END
+
+	DECLARE @IncludedActionTypeTable TABLE
+	(
+		ActionType NVARCHAR(MAX)
+	)	
+	INSERT INTO @IncludedActionTypeTable (ActionType) (SELECT val FROM {databaseOwner}{objectQualifier}Analytics_CsvSplit(@IncludedActionTypes, ','));
+
+	;WITH Temp AS
+	(
+		SELECT	r.RangeIndex, COUNT(DISTINCT(f.UserId)) AS MetricCount
+		FROM	{databaseOwner}{objectQualifier}Analytics_Fact_UserScoringLog f WITH (NOLOCK)
+					INNER JOIN @ResultsTable r ON f.TimeStamp BETWEEN r.TimeSliceStart AND r.TimeSliceEnd
+					INNER JOIN {databaseOwner}{objectQualifier}Analytics_Dim_ActionType [at] WITH (NOLOCK) ON f.ActionTypeId = [at].ActionTypeId
+					INNER JOIN @IncludedActionTypeTable i ON [at].ActionType = i.ActionType				
+		WHERE	f.PortalId = @PortalId
+		  AND	(@DesktopModuleId <= 0 OR f.DesktopModuleId = @DesktopModuleId)
+		GROUP BY r.RangeIndex
+	)
+	UPDATE r SET r.MetricCount = t.MetricCount
+	FROM @ResultsTable r 
+		LEFT OUTER JOIN Temp t ON r.RangeIndex = t.RangeIndex;
+
+	SELECT	r.RangeIndex,
+			COALESCE(r.MetricCount, 0) AS MetricCount,
+			DATEDIFF(HOUR, '01/01/0001 12:00:00 AM', r.TimeSliceStart) AS TimeSliceStart, 
+			DATEDIFF(HOUR, '01/01/0001 12:00:00 AM', r.TimeSliceEnd) AS TimeSliceEnd 
+	FROM	@ResultsTable r
+	ORDER BY r.RangeIndex
+END
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Calculate_Aggregate_Activities]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Calculate_Aggregate_Activities
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Get_Aggregate_Activities]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_Aggregate_Activities
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Activities]', N'U') IS NOT NULL
+	DROP TABLE {databaseOwner}[{objectQualifier}Analytics_Activities]
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Calculate_Aggregate_Ideas]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Calculate_Aggregate_Ideas
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Get_Aggregate_Ideas]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_Aggregate_Ideas
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Ideas]', N'U') IS NOT NULL
+	DROP TABLE {databaseOwner}[{objectQualifier}Analytics_Ideas]
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Calculate_Aggregate_Answers]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Calculate_Aggregate_Answers
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Get_Aggregate_Answers]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_Aggregate_Answers
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Answers]', N'U') IS NOT NULL
+	DROP TABLE {databaseOwner}[{objectQualifier}Analytics_Answers]
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Calculate_Aggregate_Discussions]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Calculate_Aggregate_Discussions
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Get_Aggregate_Discussions]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_Aggregate_Discussions
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Discussions]', N'U') IS NOT NULL
+	DROP TABLE {databaseOwner}[{objectQualifier}Analytics_Discussions]
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Calculate_Aggregate_Blogs]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Calculate_Aggregate_Blogs
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Get_Aggregate_Blogs]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_Aggregate_Blogs
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Blogs]', N'U') IS NOT NULL
+	DROP TABLE {databaseOwner}[{objectQualifier}Analytics_Blogs]
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Calculate_Aggregate_Creation]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Calculate_Aggregate_Creation
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Get_Aggregate_Creation]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_Aggregate_Creation
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Creation]', N'U') IS NOT NULL
+	DROP TABLE {databaseOwner}[{objectQualifier}Analytics_Creation]
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Calculate_Aggregate_Participation]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Calculate_Aggregate_Participation
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Get_Aggregate_Participation]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_Aggregate_Participation
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Participation]', N'U') IS NOT NULL
+	DROP TABLE {databaseOwner}[{objectQualifier}Analytics_Participation]
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Calculate_Aggregate_ContentDistribution]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Calculate_Aggregate_ContentDistribution
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Get_Aggregate_ContentDistribution]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_Aggregate_ContentDistribution
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_ContentDistribution]', N'U') IS NOT NULL
+	DROP TABLE {databaseOwner}[{objectQualifier}Analytics_ContentDistribution]
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Get_Aggregate_PageTime]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_Aggregate_PageTime
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Get_PageTime_Pages]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Get_PageTime_Pages
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_HaveDataSet]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_HaveDataSet
+GO
+
+-- *********************************
+-- Analytics_Calculate_User [Update new Influence columns instead of XML]
+-- *********************************
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Calculate_User]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Calculate_User] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Calculate_User]
+	@PortalId int,
+	@UserId int,
+	@InfluenceGoal int
+AS
+BEGIN
+	DECLARE @TotalSeconds bigint
+	DECLARE @Engagement xml
+	DECLARE @Contribution xml
+	DECLARE @Activity xml
+	DECLARE @Login xml
+
+	DECLARE @ExistingEngagement xml
+	DECLARE @ExistingContribution xml
+	DECLARE @ExistingActivity xml
+	DECLARE @ExistingLogin xml
+
+	DECLARE @InfluenceDaily INT
+	DECLARE @InfluenceWeekly INT
+	DECLARE @InfluenceMonthly INT
+	DECLARE @InfluenceYearly INT
+
+	DECLARE @LowerDaily DATETIME
+	DECLARE @UpperDaily DATETIME
+	DECLARE @LowerWeekly DATETIME
+	DECLARE @LowerMonthly DATETIME
+	DECLARE @LowerYearly DATETIME
+
+	DECLARE @ProcessDate DATETIME
+
+	SET @UpperDaily = getutcdate()
+	SET @LowerDaily = dateadd(day, -1, @UpperDaily)
+	SET @LowerWeekly = dateadd(day, -7, @UpperDaily)
+	SET @LowerMonthly = dateadd(day, -28, @UpperDaily)
+	SET @LowerYearly = dateadd(day, -364, @UpperDaily)
+
+	-- Get all the Influence Data.
+	-- HACK: start with the biggest date range for better SQL Server performance (drastic time saving results of about 10 times in tests).
+	SELECT	@InfluenceYearly = {databaseOwner}{objectQualifier}Analytics_Calculate_User_Influence(@PortalId, @UserId, @LowerYearly, @UpperDaily)
+	SELECT	@InfluenceMonthly = {databaseOwner}{objectQualifier}Analytics_Calculate_User_Influence(@PortalId, @UserId, @LowerMonthly, @UpperDaily)
+	SELECT	@InfluenceWeekly = {databaseOwner}{objectQualifier}Analytics_Calculate_User_Influence(@PortalId, @UserId, @LowerWeekly, @UpperDaily)
+	SELECT	@InfluenceDaily = {databaseOwner}{objectQualifier}Analytics_Calculate_User_Influence(@PortalId, @UserId, @LowerDaily, @UpperDaily)
+
+	--Convert to Percentage
+	IF @InfluenceGoal = 0
+		SET @InfluenceGoal = 2000
+
+	SET @InfluenceDaily = (@InfluenceDaily * 100) / @InfluenceGoal
+	SET @InfluenceWeekly = (@InfluenceWeekly * 100) / @InfluenceGoal
+	SET @InfluenceMonthly = (@InfluenceMonthly * 100) / @InfluenceGoal
+	SET @InfluenceYearly = (@InfluenceYearly * 100) / @InfluenceGoal
+
+	SELECT	@TotalSeconds = COALESCE(SUM(CONVERT(bigint,COALESCE(TotalSeconds, 0))), 0)
+	FROM	{databaseOwner}[{objectQualifier}Analytics_PageTime]
+	WHERE	[PortalId] = @PortalId AND [UserId] = @UserId
+
+	-- Generate user time series XML documents
+	SELECT	@Engagement = {databaseOwner}{objectQualifier}Analytics_Generate_Engagement_TimeSeries(@PortalId, @UserId)
+	SELECT	@Contribution = {databaseOwner}{objectQualifier}Analytics_Generate_Contribution_TimeSeries(@PortalId, @UserId)
+	SELECT	@Activity = {databaseOwner}{objectQualifier}Analytics_Generate_Activity_TimeSeries(@PortalId, @UserId)
+	SELECT	@Login = {databaseOwner}{objectQualifier}Analytics_Generate_Login_TimeSeries(@PortalId, @UserId)
+
+	SELECT	@ExistingEngagement = N'<TimeSeries />';
+	SELECT	@ExistingContribution = N'<TimeSeries />';
+	SELECT	@ExistingActivity = N'<TimeSeries />';
+	SELECT	@ExistingLogin = N'<TimeSeries />';
+
+	SET		@ExistingEngagement.modify('insert sql:variable("@Engagement") into (/TimeSeries)[1]')
+	SET		@ExistingContribution.modify('insert sql:variable("@Contribution") into (/TimeSeries)[1]')
+	SET		@ExistingActivity.modify('insert sql:variable("@Activity") into (/TimeSeries)[1]')
+	SET		@ExistingLogin.modify('insert sql:variable("@Login") into (/TimeSeries)[1]')
+
+	IF EXISTS(
+			SELECT	*
+			FROM	{databaseOwner}[{objectQualifier}Analytics_Users]
+			WHERE	[PortalId] = @PortalId AND [UserId] = @UserId)
+	BEGIN
+		UPDATE {databaseOwner}[{objectQualifier}Analytics_Users]
+			SET
+				[ProcessDate] = NULL,
+				[TotalSeconds] = @TotalSeconds,
+				[Engagement] = @ExistingEngagement,
+				[Contribution] = @ExistingContribution,
+				[Activity] = @ExistingActivity,
+				[Login] = @ExistingLogin
+		WHERE	[PortalId] = @PortalId AND [UserId] = @UserId
+	END
+	ELSE
+	BEGIN
+		INSERT INTO {databaseOwner}[{objectQualifier}Analytics_Users]
+			([PortalId],
+			 [UserId],
+			 [ProcessDate],
+			 [TotalSeconds],
+			 [Engagement],
+			 [Contribution],
+			 [Activity],
+			 [Login])
+		VALUES
+			(@PortalId,
+			 @UserId,
+			 NULL,
+			 @TotalSeconds,
+			 @ExistingEngagement,
+			 @ExistingContribution,
+			 @ExistingActivity,
+			 @ExistingLogin)
+	END
+
+	--Set initial record. This will delete older records and create all the interval records
+	EXEC  {databaseOwner}{objectQualifier}Analytics_Warehouse_ApplyUserScoringLogRollup
+				@UserId,
+				@PortalId,
+				-1,
+				@InfluenceDaily,
+				0,
+				0
+	--Set them now individually as the pref SP adds them. We actually need to replace the values
+	UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_UserScoringLogRollup SET Influence = @InfluenceDaily
+	WHERE UserId = @UserId AND PortalId = @PortalId AND DesktopModuleId = -1 AND Interval = 1
+
+	UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_UserScoringLogRollup SET Influence = @InfluenceWeekly
+	WHERE UserId = @UserId AND PortalId = @PortalId AND DesktopModuleId = -1 AND Interval = 7
+
+	UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_UserScoringLogRollup SET Influence = @InfluenceMonthly
+	WHERE UserId = @UserId AND PortalId = @PortalId AND DesktopModuleId = -1 AND Interval = 28
+
+	UPDATE {databaseOwner}{objectQualifier}Analytics_Fact_UserScoringLogRollup SET Influence = @InfluenceYearly
+	WHERE UserId = @UserId AND PortalId = @PortalId AND DesktopModuleId = -1 AND Interval = 364
+
+	SELECT	TOP(1) @ProcessDate = [ProcessDate]
+	FROM	{databaseOwner}{objectQualifier}Analytics_Users WITH (NOLOCK)
+	WHERE	[PortalId] = @PortalId AND [UserId] = @UserId
+
+	-- Result set
+	SELECT
+		@PortalId AS [PortalId],
+		@UserId AS [UserId],
+		@ProcessDate AS [ProcessDate],
+		@TotalSeconds AS [TotalSeconds],
+		@ExistingEngagement AS [EngagementDocument],
+		@ExistingContribution AS [ContributionDocument],
+		@ExistingActivity AS [ActivityDocument],
+		@ExistingLogin AS [LoginDocument]
+END
+GO
+
+-- *********************************
+-- SOCIAL-3128 - Move SocialAnalyticsLastLogMigrated From HostSettings to ScheduleItemSettings
+-- This is necessary to prevent a new unnecesary migration if it has been already performed in Social 2.0.0
+-- *********************************
+BEGIN TRANSACTION	
+	DECLARE @SocialAnalyticsLastLogMigrated NVARCHAR(100) = 'SocialAnalyticsLastLogMigrated'
+	DECLARE @SettingValue NVARCHAR(100)
+
+	SELECT @SettingValue = SettingValue
+	FROM {databaseOwner}{objectQualifier}HostSettings
+	WHERE  SettingName = @SocialAnalyticsLastLogMigrated
+
+	IF @SettingValue IS NOT NULL
+	BEGIN
+		DECLARE @ScheduleID INT
+			
+		SELECT @ScheduleID = ScheduleID
+		FROM {databaseOwner}{objectQualifier}Schedule
+		WHERE TypeFullName = 'DotNetNuke.Professional.Analytics.Components.Tasks.AnalyticsTask, DotNetNuke.Professional.Analytics'
+		
+		IF @ScheduleID IS NOT NULL
+		BEGIN			
+			EXEC {databaseOwner}{objectQualifier}AddScheduleItemSetting @ScheduleID, @SocialAnalyticsLastLogMigrated, @SettingValue
+			DELETE FROM {databaseOwner}{objectQualifier}HostSettings where SettingName = @SocialAnalyticsLastLogMigrated
+		END
+	END	
+COMMIT
+GO
+
+-- SOCIAL-3172: Create initial fact data from blogs comments, due to missing Posted Comment in 1.3 or earlier
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Blogs_Entry') and OBJECTPROPERTY(id, N'IsTable') = 1)
+BEGIN
+	WITH Source as (
+		SELECT be.ContentItemId ContentId, j.UserId, j.PortalId, MIN(jc.DateCreated) FirstcommentDate
+		FROM {databaseOwner}{objectQualifier}Blogs_Entry be
+			JOIN {databaseOwner}{objectQualifier}Journal j ON be.ContentItemId = j.ContentItemId
+			JOIN {databaseOwner}{objectQualifier}Journal_Comments jc ON j.JournalId = jc.JournalId
+		GROUP BY be.ContentItemId, j.UserId, j.PortalId
+	) 
+	MERGE {databaseOwner}{objectQualifier}Analytics_Fact_Blogs AS f
+	USING Source AS s
+		ON (f.ContentId = s.ContentId) 
+	WHEN NOT MATCHED BY TARGET 
+		THEN INSERT(ContentId, CreateDate, UserId, PortalId, FirstCommentDate) 
+			VALUES(s.ContentId, s.FirstCommentDate, s.UserId, s.PortalId, s.FirstCommentDate)
+	WHEN MATCHED AND (f.FirstCommentDate IS NULL OR s.FirstCommentDate < f.FirstCommentDate)
+		THEN UPDATE SET f.FirstCommentDate = s.FirstCommentDate;
+END
+GO

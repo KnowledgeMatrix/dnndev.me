@@ -1,0 +1,14 @@
+﻿/***** SOCIAL-4665: correct message's create user id to display correct comment author in email.  *****/
+IF object_id(N'{databaseOwner}{objectQualifier}Social_UpdateNotificationAuthor', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_UpdateNotificationAuthor
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_UpdateNotificationAuthor]
+	@NotificationId INT,
+	@UserId INT
+AS
+BEGIN
+    UPDATE {databaseOwner}[{objectQualifier}CoreMessaging_MessageRecipients] SET [CreatedByUserId]=@UserId 
+        WHERE MessageId = @NotificationId							
+END
+GO

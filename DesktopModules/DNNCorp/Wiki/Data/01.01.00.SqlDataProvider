@@ -1,0 +1,67 @@
+﻿-- ********************************************
+-- Fix Meta-Data Keys
+-- ********************************************
+UPDATE {databaseOwner}{objectQualifier}Wiki_MetaData_Settings SET [Key] = 'SquareFeet' WHERE [Key] = 'sq. ft.'
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'SquareFeet')
+	UPDATE {databaseOwner}{objectQualifier}MetaData SET MetaDataName = 'SquareFeet' WHERE MetaDataName = 'sq. ft.'
+
+UPDATE {databaseOwner}{objectQualifier}Wiki_MetaData_Settings SET [Key] = 'Length_Music_Movie' WHERE [Key] = 'Length ( music /movie )'
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Length_Music_Movie')
+	UPDATE {databaseOwner}{objectQualifier}MetaData SET MetaDataName = 'Length_Music_Movie' WHERE MetaDataName = 'Length ( music /movie )'
+
+UPDATE {databaseOwner}{objectQualifier}Wiki_MetaData_Settings SET [Key] = 'Artist_Director_Movie' WHERE [Key] = 'Artist / Director ( movie )'
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Artist_Director_Movie')
+	UPDATE {databaseOwner}{objectQualifier}MetaData SET MetaDataName = 'Artist_Director_Movie' WHERE MetaDataName = 'Artist / Director ( movie )'
+
+UPDATE {databaseOwner}{objectQualifier}Wiki_MetaData_Settings SET [Key] = 'Producer_Music_Movie' WHERE [Key] = 'Producer ( music / movie )'
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Producer_Music_Movie')
+	UPDATE {databaseOwner}{objectQualifier}MetaData SET MetaDataName = 'Producer_Music_Movie' WHERE MetaDataName = 'Producer ( music / movie )'
+
+UPDATE {databaseOwner}{objectQualifier}Wiki_MetaData_Settings SET [Key] = 'Number_of_Participants' WHERE [Key] = '# of Participants'
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Number_of_Participants')
+	UPDATE {databaseOwner}{objectQualifier}MetaData SET MetaDataName = 'Number_of_Participants' WHERE MetaDataName = '# of Participants'
+
+UPDATE {databaseOwner}{objectQualifier}Wiki_MetaData_Settings SET [Key] = 'Awarded_For' WHERE [Key] = 'Awarded for'
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Awarded_For')
+	UPDATE {databaseOwner}{objectQualifier}MetaData SET MetaDataName = 'Awarded_For' WHERE MetaDataName = 'Awarded for'
+
+UPDATE {databaseOwner}{objectQualifier}Wiki_MetaData_Settings SET [Key] = 'First_Induction' WHERE [Key] = 'First Induction'
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'First_Induction')
+	UPDATE {databaseOwner}{objectQualifier}MetaData SET MetaDataName = 'First_Induction' WHERE MetaDataName = 'First Induction'
+
+UPDATE {databaseOwner}{objectQualifier}Wiki_MetaData_Settings SET [Key] = 'Producers_Music_Movie' WHERE [Key] = 'Producer ( music / movie )'
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Producers_Music_Movie')
+	UPDATE {databaseOwner}{objectQualifier}MetaData SET MetaDataName = 'Producers_Music_Movie' WHERE MetaDataName = 'Producer ( music / movie )'
+
+UPDATE {databaseOwner}{objectQualifier}Wiki_MetaData_Settings SET [Key] = 'Recorded_Filmed_Painted' WHERE [Key] = 'Recorded/Filmed/Painted'
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Recorded_Filmed_Painted')
+	UPDATE {databaseOwner}{objectQualifier}MetaData SET MetaDataName = 'Recorded_Filmed_Painted' WHERE MetaDataName = 'Recorded/Filmed/Painted'
+
+UPDATE {databaseOwner}{objectQualifier}Wiki_MetaData_Settings SET [Key] = 'Short_Description' WHERE [Key] = 'Short Description'
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Short_Description')
+	UPDATE {databaseOwner}{objectQualifier}MetaData SET MetaDataName = 'Short_Description' WHERE MetaDataName = 'Short Description'
+
+UPDATE {databaseOwner}{objectQualifier}Wiki_MetaData_Settings SET [Key] = 'Structural_Engineer' WHERE [Key] = 'Structural Engineer'
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Structural_Engineer')
+	UPDATE {databaseOwner}{objectQualifier}MetaData SET MetaDataName = 'Structural_Engineer' WHERE MetaDataName = 'Structural Engineer'
+
+UPDATE {databaseOwner}{objectQualifier}Wiki_MetaData_Settings SET [Key] = 'Total_Inductees' WHERE [Key] = 'Total Inductees'
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Total_Inductees')
+	UPDATE {databaseOwner}{objectQualifier}MetaData SET MetaDataName = 'Total_Inductees' WHERE MetaDataName = 'Total Inductees'
+
+UPDATE {databaseOwner}{objectQualifier}Wiki_MetaData_Settings SET [Key] = 'Time_Zone' WHERE [Key] = 'Time Zone'
+
+IF NOT EXISTS (SELECT * FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Time_Zone')
+	UPDATE {databaseOwner}{objectQualifier}MetaData SET MetaDataName = 'Time_Zone' WHERE MetaDataName = 'Time Zone'

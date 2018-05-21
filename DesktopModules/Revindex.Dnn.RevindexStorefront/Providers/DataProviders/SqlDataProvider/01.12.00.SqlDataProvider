@@ -1,0 +1,81 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+GO
+
+BEGIN TRY
+	BEGIN TRANSACTION
+
+		IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductReview]') AND type in (N'U'))
+		CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductReview](
+			[ProductReviewID] [int] IDENTITY(1,1) NOT NULL,
+			[ProductID] [int] NOT NULL,
+			[OverallRating] [int] NOT NULL,
+			[Title] [xml] NULL,
+			[Comment] [xml] NULL,
+			[UserID] [int] NULL,
+			[CreateDate] [datetime] NOT NULL,
+			[UpdateDate] [datetime] NOT NULL,
+			[RowVersion] [timestamp] NOT NULL,
+		 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_ProductReview] PRIMARY KEY CLUSTERED 
+		(
+			[ProductReviewID] ASC
+		) 
+		) 
+		
+		IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductReview]') AND name = N'IX_Revindex_Storefront_ProductReview')
+		CREATE UNIQUE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_ProductReview] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductReview] 
+		(
+			[ProductID] ASC,
+			[UserID] ASC
+		) 
+		
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_ProductReview_Revindex_Storefront_Product]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductReview]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductReview]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductReview_Revindex_Storefront_Product] FOREIGN KEY([ProductID])
+		REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_Product] ([ProductID])
+		ON DELETE CASCADE
+
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_ProductReview_Revindex_Storefront_Product]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductReview]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductReview] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductReview_Revindex_Storefront_Product]
+
+		IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_ProductReview_Users]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductReview]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductReview]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductReview_Users] FOREIGN KEY([UserID])
+		REFERENCES {databaseOwner}[{objectQualifier}Users] ([UserID])
+		ON DELETE CASCADE
+
+		IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FK_Revindex_Storefront_ProductReview_Users]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductReview]'))
+		ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductReview] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_ProductReview_Users]
+		
+		
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		ProductReviewsActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductReviewsActive DEFAULT 1
+		
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration
+		DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductReviewsActive
+		
+		
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		CommunicationProductReviewsAlertEmailActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CommunicationProductReviewsAlertEmailActive DEFAULT 1
+		
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration
+		DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CommunicationProductReviewsAlertEmailActive
+		
+		
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Product ADD
+		AllowProductReview bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Product_AllowProductReview DEFAULT 1
+		
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Product
+		DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Product_AllowProductReview
+
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

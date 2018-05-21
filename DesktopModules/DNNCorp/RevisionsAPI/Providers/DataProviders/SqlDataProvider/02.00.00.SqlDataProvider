@@ -1,0 +1,292 @@
+﻿/********************************************************
+ * TABLE: Revisions, ACTION: Add Column
+ ********************************************************/
+IF NOT EXISTS( SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+	       WHERE TABLE_NAME = '{objectQualifier}Revisions'
+	       AND  COLUMN_NAME = 'ContentItemType')
+BEGIN
+    ALTER TABLE {databaseOwner}[{objectQualifier}Revisions] ADD
+		ContentItemType INT NOT NULL DEFAULT ((0)),
+		ChildItemId INT NOT NULL DEFAULT ((-1))
+
+    CREATE INDEX [IX_{objectQualifier}Revisions_ContentItem]
+		ON {databaseOwner}[{objectQualifier}Revisions] ([ContentItemType], [ChildItemId])
+END
+GO
+
+/********************************************************
+ * TABLE: Revisions_Locks, ACTION: Add Column
+ ********************************************************/
+IF NOT EXISTS( SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+	       WHERE TABLE_NAME = '{objectQualifier}Revisions_Locks'
+	       AND  COLUMN_NAME = 'ContentItemType')
+BEGIN
+    ALTER TABLE {databaseOwner}[{objectQualifier}Revisions_Locks] ADD
+		ContentItemType INT NOT NULL DEFAULT ((0)),
+		ChildItemId INT NOT NULL DEFAULT ((-1))
+
+    CREATE INDEX [IX_{objectQualifier}Revisions_Locks_ContentItem]
+		ON {databaseOwner}[{objectQualifier}Revisions_Locks] ([ContentItemType], [ChildItemId])
+END
+GO
+
+/********************************************************
+ * SPROC: Revisions_Lock
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revisions_Lock]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Revisions_Lock] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}{objectQualifier}Revisions_Lock
+	@ContentItemId int,
+	@ContentItemType int,
+	@ChildItemId int,
+	@UserId int
+AS
+BEGIN
+	IF @ChildItemId <= 0 BEGIN SET @ChildItemId = -1 END
+
+	IF NOT EXISTS(SELECT 1 FROM {databaseOwner}{objectQualifier}Revisions_Locks
+		WHERE ContentItemId = @ContentItemId AND ContentItemType = @ContentItemType AND ChildItemId = @ChildItemId)
+	BEGIN
+		INSERT INTO {databaseOwner}{objectQualifier}Revisions_Locks
+			(ContentItemId, ContentItemType, ChildItemId, UserId, LockedDate)
+		VALUES
+			(@ContentItemId, @ContentItemType, @ChildItemId, @UserId, getutcdate())
+
+		SELECT	*
+		FROM	{databaseOwner}{objectQualifier}Revisions_Locks
+		WHERE	LockId = SCOPE_IDENTITY()
+	END
+END
+GO
+
+/********************************************************
+ * SPROC: Revisions_Unlock
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revisions_Unlock]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Revisions_Unlock] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}{objectQualifier}Revisions_Unlock
+	@ContentItemId int,
+	@ContentItemType int,
+	@ChildItemId int
+AS
+BEGIN
+	IF @ChildItemId <= 0 BEGIN SET @ChildItemId = -1 END
+
+	SELECT	TOP 1 *
+	FROM	{databaseOwner}{objectQualifier}Revisions_Locks
+	WHERE	ContentItemId = @ContentItemId
+	  AND	ContentItemType = @ContentItemType
+	  AND	ChildItemId = @ChildItemId
+
+	DELETE	FROM {databaseOwner}{objectQualifier}Revisions_Locks
+	WHERE	ContentItemId = @ContentItemId
+	  AND	ContentItemType = @ContentItemType
+	  AND	ChildItemId = @ChildItemId
+END
+GO
+
+/********************************************************
+ * SPROC: Revisions_GetLock
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revisions_GetLock]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Revisions_GetLock] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}{objectQualifier}Revisions_GetLock
+	@ContentItemId int,
+	@ContentItemType int,
+	@ChildItemId int
+AS
+BEGIN
+	IF @ChildItemId <= 0 BEGIN SET @ChildItemId = -1 END
+
+	SELECT	TOP 1 *
+	FROM	{databaseOwner}{objectQualifier}Revisions_Locks
+	WHERE	ContentItemId = @ContentItemId
+	  AND	ContentItemType = @ContentItemType
+	  AND	ChildItemId = @ChildItemId
+END
+GO
+
+/********************************************************
+ * SPROC: Revisions_Insert
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revisions_Insert]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Revisions_Insert] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}{objectQualifier}Revisions_Insert
+	@ContentItemId int,
+	@ContentItemType int,
+	@PortalId int,
+	@RevisionType int,
+	@Sequence int,
+	@Changeset nvarchar(MAX),
+	@ObjectKey nvarchar(64),
+	@State int,
+	@UserId int,
+	@ChildItemId int
+AS
+BEGIN
+	IF @ChildItemId <= 0 BEGIN SET @ChildItemId = -1 END
+
+--	BEGIN TRY
+		BEGIN TRANSACTION
+
+		-- If this item is being inserted into the middle of the sequence, we need to push out the sequence numbers of the existing
+		-- set of items so that this one can be pushed into the middle of the stack. The use-case for this is rollback entries that
+		-- need to be pushed into the list right after the revision that they are rolling back.
+
+		UPDATE	{databaseOwner}{objectQualifier}Revisions SET Sequence = Sequence + 1
+		WHERE	ContentItemId = @ContentItemId AND Sequence >= @Sequence
+
+		INSERT INTO {databaseOwner}{objectQualifier}Revisions
+			([ContentItemId],
+			 [ContentItemType],
+			 [ChildItemId],
+			 [PortalId],
+			 [Sequence],
+			 [RevisionType],
+			 [Changeset],
+			 [ObjectKey],
+			 [State],
+			 [CreatedUserId],
+			 [CreatedDate],
+			 [LastModifiedUserId],
+			 [LastModifiedDate])
+			VALUES
+			(@ContentItemId,
+			 @ContentItemType,
+			 @ChildItemId,
+			 @PortalId,
+			 @Sequence,
+			 @RevisionType,
+			 @Changeset,
+			 @ObjectKey,
+			 @State,
+			 @UserId,
+			 getutcdate(),
+			 @UserId,
+			 getutcdate())
+
+		DECLARE	@RevisionId int
+		SELECT	@RevisionId = SCOPE_IDENTITY()
+
+		-- Insert a history item into the state transition history table (OldState is null because the revision did not previously exist)
+		INSERT INTO {databaseOwner}{objectQualifier}Revisions_StateHistory
+			(RevisionId, OldState, NewState, UserId, TransitionDate)
+			VALUES
+			(@RevisionId, null, @State, @UserId, getutcdate())
+
+		COMMIT TRANSACTION
+
+		SELECT @RevisionId
+--	END TRY
+--	BEGIN CATCH
+--		ROLLBACK TRANSACTION
+
+--		RAISERROR('Unable to create new Content Revision on Content Item ID %d', 12, 1, @ContentItemId)
+--	END CATCH
+END
+GO
+
+/********************************************************
+ * SPROC: Revisions_GetSequence
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revisions_GetSequence]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Revisions_GetSequence] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}{objectQualifier}Revisions_GetSequence
+	@ContentItemId int,
+	@ContentItemType int,
+	@ChildItemId int
+AS
+BEGIN
+	IF @ChildItemId <= 0 BEGIN SET @ChildItemId = -1 END
+
+	SELECT	(COALESCE(MAX(Sequence), 0) + 1) AS [Sequence]
+	FROM	{databaseOwner}{objectQualifier}Revisions WITH(NOLOCK)
+	WHERE	ContentItemId = @ContentItemId
+	  AND	ContentItemType = @ContentItemType
+	  AND	ChildItemId = @ChildItemId
+END
+GO
+
+/********************************************************
+ * SPROC: Revisions_List_ContentItemId
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revisions_List_ContentItemId]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Revisions_List_ContentItemId] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}{objectQualifier}Revisions_List_ContentItemId
+	@ContentItemId int,
+	@ContentItemType int,
+	@ChildItemId int
+AS
+BEGIN
+	IF @ChildItemId <= 0 BEGIN SET @ChildItemId = -1 END
+
+	SELECT	*
+	FROM	{databaseOwner}{objectQualifier}Revisions WITH(NOLOCK)
+	WHERE	ContentItemId = @ContentItemId
+	  AND	ContentItemType = @ContentItemType
+	  AND	ChildItemId = @ChildItemId
+END
+GO
+
+/********************************************************
+ * SPROC: Revision_DeleteRevisionsByContentItemId
+ ********************************************************/
+ IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revision_DeleteRevisionsByContentItemId]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Revision_DeleteRevisionsByContentItemId] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}{objectQualifier}Revision_DeleteRevisionsByContentItemId
+	@ContentItemId int,
+	@ContentItemType int,
+	@ChildItemId int
+AS
+BEGIN
+	IF @ChildItemId <= 0 BEGIN SET @ChildItemId = -1 END
+
+	DELETE	FROM {databaseOwner}{objectQualifier}Revisions
+	WHERE	ContentItemId = @ContentItemId
+	  AND	ContentItemType = @ContentItemType
+	  AND	ChildItemId = @ChildItemId
+
+	IF @@ROWCOUNT <> 0
+		SELECT CAST(1 AS BIT) AS [DeleteResult]
+	ELSE
+		SELECT CAST(0 AS BIT) AS [DeleteResult]
+END
+GO
+
+
+/********************************************************
+ * SPROC: Revision_DeleteRevisionsByUserId
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revision_DeleteRevisionsByUserId]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Revision_DeleteRevisionsByUserId] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}{objectQualifier}Revision_DeleteRevisionsByUserId
+	@PortalId INT,
+	@UserId INT
+AS
+BEGIN
+	DELETE	FROM {databaseOwner}{objectQualifier}Revisions
+	WHERE	PortalId = @PortalId
+	  AND	CreatedUserId = @UserId
+
+	IF @@ROWCOUNT <> 0
+		SELECT CAST(1 AS BIT) AS [DeleteResult]
+	ELSE
+		SELECT CAST(0 AS BIT) AS [DeleteResult]
+END
+GO

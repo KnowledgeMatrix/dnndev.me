@@ -1,0 +1,147 @@
+﻿IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Wiki_MetaData_Settings_Enable') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_MetaData_Settings_Enable
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_Article_Add') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_Add
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_Article_GetSearchable') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_GetSearchable
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_Article_GetByContentItem') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_GetByContentItem
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_Article_Delete') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_Delete
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_Article_UpdateViewCount') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_UpdateViewCount
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_Article_Search') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_Search
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_Article_Update') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_Update
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_Article_GetTypes') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_GetTypes
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Wiki_Article_GetSitemap') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_GetSitemap
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'FK_{objectQualifier}Wiki_Article_{objectQualifier}Portals') and OBJECTPROPERTY(id, N'IsConstraint') = 1)
+	ALTER TABLE {databaseOwner}{objectQualifier}Wiki_Article DROP CONSTRAINT FK_{objectQualifier}Wiki_Article_{objectQualifier}Portals
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Wiki_Article]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}{objectQualifier}Wiki_Article
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Wiki_ArticleTypes') AND type in (N'U'))
+	DROP TABLE {databaseOwner}{objectQualifier}Wiki_ArticleTypes
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Wiki_MetaData_Settings') AND type in (N'U'))
+	DROP TABLE {databaseOwner}{objectQualifier}Wiki_MetaData_Settings
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Wiki') AND type in (N'U'))
+	DROP TABLE {databaseOwner}{objectQualifier}Wiki
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_Article_Get') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_Get
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_MetaData_GetTypes') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_MetaData_GetTypes
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_MetaData_Get') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_MetaData_Get
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_MetaData_GetByKey') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_MetaData_GetByKey
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Wiki_MetaData_Delete') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_MetaData_Delete
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Wiki_Article_GetBySubject') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_GetBySubject
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Wiki_Article_GetByUserId') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_GetByUserId
+GO
+
+/*
+ * Content Items
+ */
+DECLARE @ContentTypeID INT
+SET @ContentTypeID = ( SELECT   ContentTypeID
+					   FROM     {databaseOwner}{objectQualifier}ContentTypes
+					   WHERE    ContentType = 'DNNCorp_Wiki_Page'
+					 )
+
+DELETE FROM {databaseOwner}{objectQualifier}ContentItems
+	WHERE   ContentTypeID = @ContentTypeID
+
+DELETE FROM  {databaseOwner}{objectQualifier}ContentTypes
+	WHERE ContentTypeID = @ContentTypeID
+GO
+
+/*
+ * Notifications
+ */
+DECLARE @NotificationTypeId INT
+ SET @NotificationTypeId = (SELECT NotificationTypeID from {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] WHERE Name = N'DNNCorp_Wiki_PageFlagged')
+ DELETE FROM  {databaseOwner}[{objectQualifier}CoreMessaging_Messages] 
+	WHERE NotificationTypeId = @NotificationTypeId
+
+ DELETE FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] 
+	WHERE NotificationTypeId = @NotificationTypeId
+
+DELETE FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] 
+	WHERE NotificationTypeId = @NotificationTypeId
+
+SET @NotificationTypeId = (SELECT NotificationTypeID from {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] WHERE Name = N'DNNCorp_Wiki_PagePending')
+DELETE FROM  {databaseOwner}[{objectQualifier}CoreMessaging_Messages] 
+	WHERE NotificationTypeId = @NotificationTypeId
+
+DELETE FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypeActions] 
+WHERE NotificationTypeId = @NotificationTypeId
+
+DELETE FROM {databaseOwner}[{objectQualifier}CoreMessaging_NotificationTypes] 
+	WHERE NotificationTypeId = @NotificationTypeId
+GO
+
+/* Subscriptions */
+DECLARE @SubscriptionTypeId INT
+SET @SubscriptionTypeId = ( SELECT   SubscriptionTypeId
+					   FROM     {databaseOwner}{objectQualifier}CoreMessaging_SubscriptionTypes
+					   WHERE    SubscriptionName = 'DNNCorp_Wiki_Page'
+					 )
+
+DELETE FROM {databaseOwner}{objectQualifier}CoreMessaging_SubscriptionTypes
+	WHERE   SubscriptionTypeId = @SubscriptionTypeId
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Wiki_Article_GetByRange') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_GetByRange
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Wiki_RemoveObsoletePermissions]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_RemoveObsoletePermissions
+GO

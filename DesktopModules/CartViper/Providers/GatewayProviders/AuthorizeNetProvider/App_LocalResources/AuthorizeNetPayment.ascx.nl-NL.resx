@@ -1,0 +1,836 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="lblCardNumber.Help" xml:space="preserve">
+    <value>Voer uw credit / debit card nummer.</value>
+  </data>
+  <data name="lblCardNumber.Text" xml:space="preserve">
+    <value>Kaartnummer</value>
+  </data>
+  <data name="lblCSC.Help" xml:space="preserve">
+    <value>Voer de drie of vier cijfers op de achterzijde van uw kaart.</value>
+  </data>
+  <data name="lblCSC.Text" xml:space="preserve">
+    <value>Kaartverificatiecode</value>
+  </data>
+  <data name="lblExpiryDate.Help" xml:space="preserve">
+    <value>Voer uw credit / debit kaart vervaldatum in MM / YY formaat.</value>
+  </data>
+  <data name="lblExpiryDate.Text" xml:space="preserve">
+    <value>Vervaldatum</value>
+  </data>
+  <data name="lblPaymentTitle.Help" xml:space="preserve">
+    <value>Voer uw credit / debit card gegevens.</value>
+  </data>
+  <data name="lblPaymentTitle.Text" xml:space="preserve">
+    <value>Betaling Details</value>
+  </data>
+  <data name="ErrorBillingAddress.Text" xml:space="preserve">
+    <value>Selecteer een factuuradres.</value>
+  </data>
+  <data name="ErrorCardInformation.Text" xml:space="preserve">
+    <value>Vul uw credit card gegevens.</value>
+  </data>
+  <data name="ErrorCardNotValid.Text" xml:space="preserve">
+    <value>De credit card informatie is niet geldig!</value>
+  </data>
+  <data name="ErrorNotSecured.Text" xml:space="preserve">
+    <value>Pagina is niet beveiligd met SSL, kunt u geen gebruik Authorize.Net zonder SSL.</value>
+  </data>
+  <data name="ErrorPaymentOption.Text" xml:space="preserve">
+    <value>Gateway-instellingen zijn niet ingesteld. Neem contact op met uw systeembeheerder.</value>
+  </data>
+  <data name="lblConfirmMessage.Text" xml:space="preserve">
+    <value>Merk op dat door te klikken op de &amp;quot;bevestig bestelling&amp;quot; knop hieronder, gaat u akkoord met {0} &amp;#39;s gebruiksvoorwaarden.</value>
+  </data>
+  <data name="ErrorConnection.Text" xml:space="preserve">
+    <value>Geen verbinding beschikbaar.</value>
+  </data>
+  <data name="ErrorUnexpected.Text" xml:space="preserve">
+    <value>Een onverwachte fout optreedt.</value>
+  </data>
+  <data name="ResponseCode1.Text" xml:space="preserve">
+    <value>Deze transactie is goedgekeurd.</value>
+  </data>
+  <data name="ReasonCode10.Text" xml:space="preserve">
+    <value>Het rekeningnummer is ongeldig.</value>
+  </data>
+  <data name="ReasonCode11.Text" xml:space="preserve">
+    <value>Een dubbele transactie is
+ingediend.</value>
+  </data>
+  <data name="ReasonCode12.Text" xml:space="preserve">
+    <value>Een vergunning-code is vereist
+maar niet aanwezig.</value>
+  </data>
+  <data name="ReasonCode13.Text" xml:space="preserve">
+    <value>De koopman API login-ID is
+ongeldig of de account is inactief.</value>
+  </data>
+  <data name="ReasonCode14.Text" xml:space="preserve">
+    <value>De Referrer of relais Response
+URL is ongeldig.</value>
+  </data>
+  <data name="ReasonCode15.Text" xml:space="preserve">
+    <value>De transactie-ID is ongeldig.</value>
+  </data>
+  <data name="ReasonCode16.Text" xml:space="preserve">
+    <value>De transactie werd niet gevonden.</value>
+  </data>
+  <data name="ReasonCode17.Text" xml:space="preserve">
+    <value>De handelaar niet te accepteren dit soort creditcard.</value>
+  </data>
+  <data name="ReasonCode18.Text" xml:space="preserve">
+    <value>ACH transacties worden niet geaccepteerd door deze handelaar.</value>
+  </data>
+  <data name="ReasonCode19.Text" xml:space="preserve">
+    <value>Is een fout opgetreden tijdens de verwerking. Probeer het opnieuw in 5 minuten.</value>
+  </data>
+  <data name="ReasonCode20.Text" xml:space="preserve">
+    <value>Is een fout opgetreden tijdens de verwerking. Probeer het opnieuw in 5 minuten.</value>
+  </data>
+  <data name="ReasonCode21.Text" xml:space="preserve">
+    <value>Is een fout opgetreden tijdens de verwerking. Probeer het opnieuw in 5 minuten.</value>
+  </data>
+  <data name="ReasonCode22.Text" xml:space="preserve">
+    <value>Is een fout opgetreden tijdens de verwerking. Probeer het opnieuw in 5 minuten.</value>
+  </data>
+  <data name="ReasonCode23.Text" xml:space="preserve">
+    <value>Is een fout opgetreden tijdens de verwerking. Probeer het opnieuw in 5 minuten.</value>
+  </data>
+  <data name="ReasonCode24.Text" xml:space="preserve">
+    <value>De Nova Bank Nummer of Terminal ID is onjuist. Bel Merchant Service Provider.</value>
+  </data>
+  <data name="ReasonCode25.Text" xml:space="preserve">
+    <value>Is een fout opgetreden tijdens de verwerking. Probeer het opnieuw in 5 minuten.</value>
+  </data>
+  <data name="ReasonCode26.Text" xml:space="preserve">
+    <value>Is een fout opgetreden tijdens de verwerking. Probeer het opnieuw in 5 minuten.</value>
+  </data>
+  <data name="ReasonCode27.Text" xml:space="preserve">
+    <value>De transactie resulteerde in een AVS mismatch. Het opgegeven adres komt niet overeen met het factuuradres van de kaarthouder.</value>
+  </data>
+  <data name="ReasonCode28.Text" xml:space="preserve">
+    <value>De handelaar niet te accepteren dit soort creditcard.</value>
+  </data>
+  <data name="ReasonCode29.Text" xml:space="preserve">
+    <value>De Paymentech identificatienummers zijn onjuist. Bel Merchant Service Provider.</value>
+  </data>
+  <data name="ReasonCode30.Text" xml:space="preserve">
+    <value>De configuratie met de processor is ongeldig. Bel Merchant Service Provider.</value>
+  </data>
+  <data name="ReasonCode31.Text" xml:space="preserve">
+    <value>De FDC Merchant ID of Terminal ID is onjuist. Bel Merchant Service Provider.</value>
+  </data>
+  <data name="ReasonCode32.Text" xml:space="preserve">
+    <value>Deze reden-code is gereserveerd of niet van toepassing op deze API.</value>
+  </data>
+  <data name="ReasonCode34.Text" xml:space="preserve">
+    <value>Het VITAL-identificatienummers zijn onjuist. Bel Merchant Service Provider.</value>
+  </data>
+  <data name="ReasonCode35.Text" xml:space="preserve">
+    <value>Is een fout opgetreden tijdens de verwerking. Bel Merchant Service Provider.</value>
+  </data>
+  <data name="ReasonCode36.Text" xml:space="preserve">
+    <value>De vergunning werd goedgekeurd, maar schikking is mislukt.</value>
+  </data>
+  <data name="ReasonCode37.Text" xml:space="preserve">
+    <value>De vergunning werd goedgekeurd, maar schikking is mislukt.</value>
+  </data>
+  <data name="ReasonCode38.Text" xml:space="preserve">
+    <value>De vergunning werd goedgekeurd, maar schikking is mislukt.</value>
+  </data>
+  <data name="ReasonCode39.Text" xml:space="preserve">
+    <value>De Paymentech identificatienummers zijn onjuist. Bel Merchant Service Provider.</value>
+  </data>
+  <data name="ReasonCode40.Text" xml:space="preserve">
+    <value>Deze transactie moet worden gecodeerd.</value>
+  </data>
+  <data name="ReasonCode41.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd.</value>
+  </data>
+  <data name="ReasonCode43.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd.</value>
+  </data>
+  <data name="ReasonCode44.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd.</value>
+  </data>
+  <data name="ReasonCode45.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd.</value>
+  </data>
+  <data name="ReasonCode46.Text" xml:space="preserve">
+    <value>Uw sessie is verlopen of bestaat niet. Je moet inloggen om te blijven werken.</value>
+  </data>
+  <data name="ReasonCode47.Text" xml:space="preserve">
+    <value>Uw sessie is verlopen of bestaat niet. Je moet inloggen om te blijven werken.</value>
+  </data>
+  <data name="ReasonCode48.Text" xml:space="preserve">
+    <value>Deze processor niet aanvaardt gedeeltelijk teruggenomen.</value>
+  </data>
+  <data name="ReasonCode50.Text" xml:space="preserve">
+    <value>Deze processor niet aanvaardt gedeeltelijk teruggenomen.</value>
+  </data>
+  <data name="ReasonCode51.Text" xml:space="preserve">
+    <value>De som van alle kredieten tegen deze transactie is groter dan de oorspronkelijke transactie bedrag.</value>
+  </data>
+  <data name="ReasonCode52.Text" xml:space="preserve">
+    <value>De transactie werd toegestaan, maar de cliënt niet kon worden aangemeld; de transactie niet zal worden afgewikkeld.</value>
+  </data>
+  <data name="ReasonCode53.Text" xml:space="preserve">
+    <value>De transactie type is ongeldig voor ACH transacties.</value>
+  </data>
+  <data name="ReasonCode54.Text" xml:space="preserve">
+    <value>De gerefereerde transactie niet voldoet aan de criteria voor de afgifte van een krediet.</value>
+  </data>
+  <data name="ReasonCode55.Text" xml:space="preserve">
+    <value>De som van kredieten voor de verwezen transactie zou meer dan de originele debet-bedrag.</value>
+  </data>
+  <data name="ReasonCode56.Text" xml:space="preserve">
+    <value>Deze koopman accepteert alleen ACH transacties, geen credit card transacties worden geaccepteerd.</value>
+  </data>
+  <data name="ReasonCode57.Text" xml:space="preserve">
+    <value>Een fout is opgetreden bij de verwerking. Probeer het opnieuw in 5 minuten.</value>
+  </data>
+  <data name="ReasonCode58.Text" xml:space="preserve">
+    <value>Een fout is opgetreden bij de verwerking. Probeer het opnieuw in 5 minuten.</value>
+  </data>
+  <data name="ReasonCode59.Text" xml:space="preserve">
+    <value>Een fout is opgetreden bij de verwerking. Probeer het opnieuw in 5 minuten.</value>
+  </data>
+  <data name="ReasonCode60.Text" xml:space="preserve">
+    <value>Een fout is opgetreden bij de verwerking. Probeer het opnieuw in 5 minuten.</value>
+  </data>
+  <data name="ReasonCode61.Text" xml:space="preserve">
+    <value>Een fout is opgetreden bij de verwerking. Probeer het opnieuw in 5 minuten.</value>
+  </data>
+  <data name="ReasonCode62.Text" xml:space="preserve">
+    <value>Een fout is opgetreden bij de verwerking. Probeer het opnieuw in 5 minuten.</value>
+  </data>
+  <data name="ReasonCode63.Text" xml:space="preserve">
+    <value>Een fout is opgetreden bij de verwerking. Probeer het opnieuw in 5 minuten.</value>
+  </data>
+  <data name="ReasonCode65.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd.</value>
+  </data>
+  <data name="ReasonCode66.Text" xml:space="preserve">
+    <value>Deze transactie kan niet worden aanvaard voor verwerking.</value>
+  </data>
+  <data name="ReasonCode68.Text" xml:space="preserve">
+    <value>De versie parameter is ongeldig.</value>
+  </data>
+  <data name="ReasonCode69.Text" xml:space="preserve">
+    <value>De transactie is ongeldig.</value>
+  </data>
+  <data name="ReasonCode71.Text" xml:space="preserve">
+    <value>De bankrekening is ongeldig.</value>
+  </data>
+  <data name="ReasonCode72.Text" xml:space="preserve">
+    <value>De vergunning is ongeldig.</value>
+  </data>
+  <data name="ReasonCode73.Text" xml:space="preserve">
+    <value>Het rijbewijs geboortedatum is ongeldig.</value>
+  </data>
+  <data name="ReasonCode74.Text" xml:space="preserve">
+    <value>De bedragen aan rechten is ongeldig.</value>
+  </data>
+  <data name="ReasonCode75.Text" xml:space="preserve">
+    <value>De vracht bedrag is ongeldig.</value>
+  </data>
+  <data name="ReasonCode76.Text" xml:space="preserve">
+    <value>De BTW-bedrag is ongeldig.</value>
+  </data>
+  <data name="ReasonCode77.Text" xml:space="preserve">
+    <value>De SSN of BTW-nummer is ongeldig.</value>
+  </data>
+  <data name="ReasonCode78.Text" xml:space="preserve">
+    <value>De Card-code (CVV2/CVC2/CID) is ongeldig.</value>
+  </data>
+  <data name="ReasonCode79.Text" xml:space="preserve">
+    <value>Het rijbewijs is ongeldig /</value>
+  </data>
+  <data name="ReasonCode80.Text" xml:space="preserve">
+    <value>Het rijbewijs is ongeldig.</value>
+  </data>
+  <data name="ReasonCode81.Text" xml:space="preserve">
+    <value>De gevraagde type formulier ongeldig.</value>
+  </data>
+  <data name="ReasonCode82.Text" xml:space="preserve">
+    <value>Scripts worden alleen ondersteund in versie 2.5.</value>
+  </data>
+  <data name="ReasonCode83.Text" xml:space="preserve">
+    <value>De gevraagde script is ongeldig of niet meer ondersteund.</value>
+  </data>
+  <data name="ReasonCode84.Text" xml:space="preserve">
+    <value>Deze reden-code is gereserveerd of niet van toepassing op deze API.</value>
+  </data>
+  <data name="ReasonCode91.Text" xml:space="preserve">
+    <value>Versie 2.5 wordt niet meer ondersteund.</value>
+  </data>
+  <data name="ReasonCode92.Text" xml:space="preserve">
+    <value>De gateway ondersteunt niet langer de gevraagde wijze van integratie.</value>
+  </data>
+  <data name="ReasonCode97.Text" xml:space="preserve">
+    <value>Deze transactie kan niet worden aanvaard.</value>
+  </data>
+  <data name="ReasonCode98.Text" xml:space="preserve">
+    <value>Deze transactie kan niet worden aanvaard.</value>
+  </data>
+  <data name="ReasonCode99.Text" xml:space="preserve">
+    <value>Deze transactie kan niet worden aanvaard.</value>
+  </data>
+  <data name="ReasonCode100.Text" xml:space="preserve">
+    <value>De eCheck.Net type is ongeldig.</value>
+  </data>
+  <data name="ReasonCode101.Text" xml:space="preserve">
+    <value>De opgegeven naam op de rekening en / of het type account niet overeenkomen met de werkelijke rekening.</value>
+  </data>
+  <data name="ReasonCode102.Text" xml:space="preserve">
+    <value>Dit verzoek kan niet worden aanvaard.</value>
+  </data>
+  <data name="ReasonCode103.Text" xml:space="preserve">
+    <value>Deze transactie kan niet worden aanvaard.</value>
+  </data>
+  <data name="ReasonCode104.Text" xml:space="preserve">
+    <value>Deze transactie wordt momenteel herzien.</value>
+  </data>
+  <data name="ReasonCode105.Text" xml:space="preserve">
+    <value>Deze transactie wordt momenteel herzien.</value>
+  </data>
+  <data name="ReasonCode106.Text" xml:space="preserve">
+    <value>Deze transactie wordt momenteel herzien.</value>
+  </data>
+  <data name="ReasonCode107.Text" xml:space="preserve">
+    <value>Deze transactie wordt momenteel herzien.</value>
+  </data>
+  <data name="ReasonCode108.Text" xml:space="preserve">
+    <value>Deze transactie wordt momenteel herzien.</value>
+  </data>
+  <data name="ReasonCode109.Text" xml:space="preserve">
+    <value>Deze transactie wordt momenteel herzien.</value>
+  </data>
+  <data name="ReasonCode110.Text" xml:space="preserve">
+    <value>Deze transactie wordt momenteel herzien.</value>
+  </data>
+  <data name="ReasonCode116.Text" xml:space="preserve">
+    <value>De authenticatie-indicator is ongeldig.</value>
+  </data>
+  <data name="ReasonCode117.Text" xml:space="preserve">
+    <value>De kaarthouder authenticatie waarde is ongeldig.</value>
+  </data>
+  <data name="ReasonCode118.Text" xml:space="preserve">
+    <value>De combinatie van authenticatie-indicator en de kaarthouder authenticatie waarde is ongeldig.</value>
+  </data>
+  <data name="ReasonCode119.Text" xml:space="preserve">
+    <value>Transacties die kaarthouder authenticatie waarden kunnen niet worden gemarkeerd als terugkerend.</value>
+  </data>
+  <data name="ReasonCode120.Text" xml:space="preserve">
+    <value>Is een fout opgetreden tijdens de verwerking. Probeer het opnieuw.</value>
+  </data>
+  <data name="ReasonCode121.Text" xml:space="preserve">
+    <value>Is een fout opgetreden tijdens de verwerking. Probeer het opnieuw.</value>
+  </data>
+  <data name="ReasonCode122.Text" xml:space="preserve">
+    <value>Is een fout opgetreden tijdens de verwerking. Probeer het opnieuw.</value>
+  </data>
+  <data name="ReasonCode123.Text" xml:space="preserve">
+    <value>Dit account is niet gegeven toestemming (s) die nodig zijn voor dit verzoek.</value>
+  </data>
+  <data name="ReasonCode127.Text" xml:space="preserve">
+    <value>De transactie resulteerde in een AVS mismatch. Het opgegeven adres komt niet overeen met het factuuradres van de kaarthouder.</value>
+  </data>
+  <data name="ReasonCode128.Text" xml:space="preserve">
+    <value>Deze transactie kan niet worden verwerkt.</value>
+  </data>
+  <data name="ReasonCode130.Text" xml:space="preserve">
+    <value>Deze betaling gateway account is gesloten.</value>
+  </data>
+  <data name="ReasonCode131.Text" xml:space="preserve">
+    <value>Deze transactie kan niet worden aanvaard op dit moment.</value>
+  </data>
+  <data name="ReasonCode132.Text" xml:space="preserve">
+    <value>Deze transactie kan niet worden aanvaard op dit moment.</value>
+  </data>
+  <data name="ReasonCode141.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd.</value>
+  </data>
+  <data name="ReasonCode145.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd.</value>
+  </data>
+  <data name="ReasonCode152.Text" xml:space="preserve">
+    <value>De transactie werd toegestaan, maar de cliënt niet kon worden aangemeld; de transactie niet zal worden afgewikkeld.</value>
+  </data>
+  <data name="ReasonCode165.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd.</value>
+  </data>
+  <data name="ReasonCode170.Text" xml:space="preserve">
+    <value>Is een fout opgetreden tijdens de verwerking. Neem contact op met de handelaar.</value>
+  </data>
+  <data name="ReasonCode171.Text" xml:space="preserve">
+    <value>Is een fout opgetreden tijdens de verwerking. Neem contact op met de handelaar.</value>
+  </data>
+  <data name="ReasonCode172.Text" xml:space="preserve">
+    <value>Is een fout opgetreden tijdens de verwerking. Neem contact op met de handelaar.</value>
+  </data>
+  <data name="ReasonCode173.Text" xml:space="preserve">
+    <value>Is een fout opgetreden tijdens de verwerking. Neem contact op met de handelaar.</value>
+  </data>
+  <data name="ReasonCode174.Text" xml:space="preserve">
+    <value>De transactie is ongeldig. Neem contact op met de handelaar.</value>
+  </data>
+  <data name="ReasonCode175.Text" xml:space="preserve">
+    <value>De processor staat niet toe dat legen van de credits.</value>
+  </data>
+  <data name="ReasonCode180.Text" xml:space="preserve">
+    <value>Is een fout opgetreden tijdens de verwerking. Probeer het opnieuw.</value>
+  </data>
+  <data name="ReasonCode181.Text" xml:space="preserve">
+    <value>Is een fout opgetreden tijdens de verwerking. Probeer het opnieuw.</value>
+  </data>
+  <data name="ReasonCode193.Text" xml:space="preserve">
+    <value>De transactie wordt momenteel herzien.</value>
+  </data>
+  <data name="ReasonCode200.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd.</value>
+  </data>
+  <data name="ReasonCode201.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd.</value>
+  </data>
+  <data name="ReasonCode202.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd.</value>
+  </data>
+  <data name="ReasonCode203.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd.</value>
+  </data>
+  <data name="ReasonCode204.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd.</value>
+  </data>
+  <data name="ReasonCode205.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd.</value>
+  </data>
+  <data name="ReasonCode206.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd.</value>
+  </data>
+  <data name="ReasonCode207.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd.</value>
+  </data>
+  <data name="ReasonCode208.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd.</value>
+  </data>
+  <data name="ReasonCode209.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd.</value>
+  </data>
+  <data name="ReasonCode210.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd.</value>
+  </data>
+  <data name="ReasonCode211.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd.</value>
+  </data>
+  <data name="ReasonCode212.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd.</value>
+  </data>
+  <data name="ReasonCode213.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd.</value>
+  </data>
+  <data name="ReasonCode214.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd.</value>
+  </data>
+  <data name="ReasonCode215.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd.</value>
+  </data>
+  <data name="ReasonCode216.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd.</value>
+  </data>
+  <data name="ReasonCode217.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd.</value>
+  </data>
+  <data name="ReasonCode218.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd.</value>
+  </data>
+  <data name="ReasonCode219.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd.</value>
+  </data>
+  <data name="ReasonCode220.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd.</value>
+  </data>
+  <data name="ReasonCode221.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd.</value>
+  </data>
+  <data name="ReasonCode222.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd.</value>
+  </data>
+  <data name="ReasonCode223.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd.</value>
+  </data>
+  <data name="ReasonCode224.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd.</value>
+  </data>
+  <data name="ReasonCode243.Text" xml:space="preserve">
+    <value>Facturering is niet toegestaan ​​voor deze eCheck.Net type.</value>
+  </data>
+  <data name="ReasonCode244.Text" xml:space="preserve">
+    <value>Dit eCheck.Net type is niet toegestaan ​​voor deze Bank Account Type.</value>
+  </data>
+  <data name="ReasonCode245.Text" xml:space="preserve">
+    <value>DDeze eCheck.Net type niet is toegestaan ​​wanneer het gebruik van de payment gateway betalingsformulier gehost.</value>
+  </data>
+  <data name="ReasonCode246.Text" xml:space="preserve">
+    <value>DDeze eCheck.Net type is niet toegestaan.</value>
+  </data>
+  <data name="ReasonCode247.Text" xml:space="preserve">
+    <value>Dit eCheck.Net type is niet toegestaan.</value>
+  </data>
+  <data name="ReasonCode248.Text" xml:space="preserve">
+    <value>De cheque is ongeldig.</value>
+  </data>
+  <data name="ReasonCode250.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd.</value>
+  </data>
+  <data name="ReasonCode251.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd.</value>
+  </data>
+  <data name="ReasonCode252.Text" xml:space="preserve">
+    <value>Uw bestelling is ontvangen. Dank u voor uw bedrijf!</value>
+  </data>
+  <data name="ReasonCode253.Text" xml:space="preserve">
+    <value>Uw bestelling is ontvangen. Dank u voor uw bedrijf!</value>
+  </data>
+  <data name="ReasonCode254.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd.</value>
+  </data>
+  <data name="ReasonCode261.Text" xml:space="preserve">
+    <value>Is een fout opgetreden tijdens de verwerking. Probeer het opnieuw.</value>
+  </data>
+  <data name="ReasonCode271.Text" xml:space="preserve">
+    <value>Het aantal ingediende posten is niet toegestaan. Een maximum van 30 posten kunnen worden ingediend.</value>
+  </data>
+  <data name="ReasonCode288.Text" xml:space="preserve">
+    <value>Merchant is niet geregistreerd als een Kaarthouder Authentication deelnemer. Deze transactie kan niet worden aanvaard.</value>
+  </data>
+  <data name="ReasonCode289.Text" xml:space="preserve">
+    <value>Deze processor accepteert geen zero dollar vergunning voor dit type kaart.</value>
+  </data>
+  <data name="ReasonCode290.Text" xml:space="preserve">
+    <value>Een of meer verplichte AVS waarden voor nul dollar vergunning niet wordt ingediend.</value>
+  </data>
+  <data name="ReasonCode295.Text" xml:space="preserve">
+    <value>Het bedrag van dit verzoek slechts gedeeltelijk werd goedgekeurd op de gegeven prepaid-kaart. Aanvullende betalingen nodig zijn om het saldo van deze transactie te voltooien.</value>
+  </data>
+  <data name="ReasonCode296.Text" xml:space="preserve">
+    <value>De opgegeven SplitTenderId is niet geldig</value>
+  </data>
+  <data name="ReasonCode297.Text" xml:space="preserve">
+    <value>Een transactie-ID en een split tender ID kan niet beide worden gebruikt in een enkele transactie te vragen.</value>
+  </data>
+  <data name="ReasonCode300.Text" xml:space="preserve">
+    <value>De apparaat-ID is ongeldig.</value>
+  </data>
+  <data name="ReasonCode301.Text" xml:space="preserve">
+    <value>Het apparaat batch-ID is ongeldig.</value>
+  </data>
+  <data name="ReasonCode302.Text" xml:space="preserve">
+    <value>De omkering vlag is ongeldig.</value>
+  </data>
+  <data name="ReasonCode303.Text" xml:space="preserve">
+    <value>Het apparaat batch is vol. Sluit u de partij.</value>
+  </data>
+  <data name="ReasonCode304.Text" xml:space="preserve">
+    <value>De oorspronkelijke transactie is in een gesloten partij.</value>
+  </data>
+  <data name="ReasonCode305.Text" xml:space="preserve">
+    <value>De koopman is geconfigureerd voor het automatisch sluiten</value>
+  </data>
+  <data name="ReasonCode306.Text" xml:space="preserve">
+    <value>De partij is al gesloten.</value>
+  </data>
+  <data name="ReasonCode307.Text" xml:space="preserve">
+    <value>De omkering is succesvol verwerkt.</value>
+  </data>
+  <data name="ReasonCode308.Text" xml:space="preserve">
+    <value>Oorspronkelijke transactie voor omkering niet gevonden ..</value>
+  </data>
+  <data name="ReasonCode309.Text" xml:space="preserve">
+    <value>Het apparaat is uitgeschakeld.</value>
+  </data>
+  <data name="ReasonCode310.Text" xml:space="preserve">
+    <value>Deze transactie is reeds ongeldig.</value>
+  </data>
+  <data name="ReasonCode311.Text" xml:space="preserve">
+    <value>Deze transactie is reeds vastgelegd</value>
+  </data>
+  <data name="ReasonCode315.Text" xml:space="preserve">
+    <value>De credit card nummer is ongeldig.</value>
+  </data>
+  <data name="ReasonCode316.Text" xml:space="preserve">
+    <value>De credit card vervaldatum is ongeldig.</value>
+  </data>
+  <data name="ReasonCode317.Text" xml:space="preserve">
+    <value>De creditcard is verlopen.</value>
+  </data>
+  <data name="ReasonCode318.Text" xml:space="preserve">
+    <value>Een dubbele transactie is ingediend.</value>
+  </data>
+  <data name="ReasonCode319.Text" xml:space="preserve">
+    <value>De transactie kan niet worden gevonden.</value>
+  </data>
+  <data name="ResponseCode2.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd.</value>
+  </data>
+  <data name="ResponseCode3.Text" xml:space="preserve">
+    <value>Er is een fout bij afhandelen van deze transactie.</value>
+  </data>
+  <data name="ResponseCode4.Text" xml:space="preserve">
+    <value>Deze transactie wordt aangehouden voor onderzoek.</value>
+  </data>
+  <data name="ReasonCode1.Text" xml:space="preserve">
+    <value>Deze transactie is goedgekeurd.</value>
+  </data>
+  <data name="ReasonCode2.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd.</value>
+  </data>
+  <data name="ReasonCode3.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd ..</value>
+  </data>
+  <data name="ReasonCode4.Text" xml:space="preserve">
+    <value>Deze transactie is geweigerd.</value>
+  </data>
+  <data name="ReasonCode5.Text" xml:space="preserve">
+    <value>Een geldig bedrag is vereist.</value>
+  </data>
+  <data name="ReasonCode6.Text" xml:space="preserve">
+    <value>De credit card nummer is ongeldig.</value>
+  </data>
+  <data name="ReasonCode7.Text" xml:space="preserve">
+    <value>De credit card vervaldatum is
+ongeldig.</value>
+  </data>
+  <data name="ReasonCode8.Text" xml:space="preserve">
+    <value>De creditcard is verlopen.</value>
+  </data>
+  <data name="ReasonCode9.Text" xml:space="preserve">
+    <value>De ABA-code is ongeldig.</value>
+  </data>
+  <data name="OrderBillingAddress.Text" xml:space="preserve">
+    <value>Factuuradres:</value>
+  </data>
+  <data name="OrderCannotBeProcessed.Text" xml:space="preserve">
+    <value>Als, om welke reden dan ook, uw bestelling kan niet worden verwerkt, dan zal een van onze klantenservice vertegenwoordigers binnenkort contact met je.</value>
+  </data>
+  <data name="OrderContents.Text" xml:space="preserve">
+    <value>Om Inhoud</value>
+  </data>
+  <data name="OrderDate.Text" xml:space="preserve">
+    <value>Om Datum:</value>
+  </data>
+  <data name="OrderDateFormat.Text" xml:space="preserve">
+    <value>MM / dd / jjjj uu: mm</value>
+  </data>
+  <data name="OrderEmailHeader.Text" xml:space="preserve">
+    <value>Dank u voor het plaatsen van een order met {0}.
+
+Hieronder vindt u een volgnummer en een samenvatting van uw bestelling. U kunt de status van uw bestelling op elk gewenst moment door in te loggen in onze website en klikken op de &amp;quot;{1}&amp;quot; link. Als u vragen heeft over uw bestelling, neem dan gerust contact met ons op {2}, of gewoon antwoord op dit bericht.</value>
+  </data>
+  <data name="OrderItems.Text" xml:space="preserve">
+    <value>{0} x {1} @ {2}</value>
+  </data>
+  <data name="OrderNumber.Text" xml:space="preserve">
+    <value>Bestelnummer:</value>
+  </data>
+  <data name="OrderShipping.Text" xml:space="preserve">
+    <value>Verzendkosten: {0}</value>
+  </data>
+  <data name="OrderShippingAddress.Text" xml:space="preserve">
+    <value>Verzenden naar:</value>
+  </data>
+  <data name="OrderSubject.Text" xml:space="preserve">
+    <value>{0} Orderbevestiging</value>
+  </data>
+  <data name="OrderSubjectToAdmin.Text" xml:space="preserve">
+    <value>New Order: {0}</value>
+  </data>
+  <data name="OrderSubTotal.Text" xml:space="preserve">
+    <value>Sub-Totaal: {0}</value>
+  </data>
+  <data name="OrderTax.Text" xml:space="preserve">
+    <value>Belasting: {0}</value>
+  </data>
+  <data name="OrderTermsOfUse.Text" xml:space="preserve">
+    <value>Deze factuur is onderworpen aan onze gebruiksvoorwaarden.</value>
+  </data>
+  <data name="OrderThanks.Text" xml:space="preserve">
+    <value>Nogmaals, ik dank u voor uw bestelling.</value>
+  </data>
+  <data name="OrderTotal.Text" xml:space="preserve">
+    <value>Totaal: {0}</value>
+  </data>
+  <data name="AboutChange.Text" xml:space="preserve">
+    <value>Als u vragen hebt over deze verandering, neem dan gerust contact met ons op {0}, of gewoon op dit bericht antwoord.</value>
+  </data>
+  <data name="ChangedStatus.Text" xml:space="preserve">
+    <value>Deze order ({0}) is veranderd de status naar &amp;quot;{1}&amp;quot;.</value>
+  </data>
+  <data name="CheckStatus.Text" xml:space="preserve">
+    <value>U kunt de status van uw bestelling op elk gewenst moment door in te loggen op onze site en op de {0} link.</value>
+  </data>
+  <data name="PlacedOrder.Text" xml:space="preserve">
+    <value>U heeft onlangs een bestelling geplaatst met {0}</value>
+  </data>
+  <data name="StatusChanged.Text" xml:space="preserve">
+    <value>{0} Status bestelling Changed</value>
+  </data>
+  <data name="ReasonMessage.Text" xml:space="preserve">
+    <value>{0} - Code: {1} {2}</value>
+  </data>
+  <data name="RequiresPayment.Text" xml:space="preserve">
+    <value>BELANGRIJK: Uw bestelling vereist nu betaling. Als u wenst te betalen via een specifieke methode, of wilt u uw bestelling te annuleren, neem dan contact met ons op {0}, of gewoon antwoord op dit bericht.</value>
+  </data>
+  <data name="rfvNumber.ErrorMessage" xml:space="preserve">
+    <value>* Verplicht</value>
+  </data>
+  <data name="rfvVer.ErrorMessage" xml:space="preserve">
+    <value>* Verplicht</value>
+  </data>
+  <data name="OrderVat.Text" xml:space="preserve">
+    <value>BTW: {0}</value>
+  </data>
+  <data name="PaymentMethod.Text" xml:space="preserve">
+    <value>Credit Card</value>
+  </data>
+  <data name="creditCardLogoAlt.Text" xml:space="preserve">
+    <value>Credit Cards Accepted</value>
+  </data>
+  <data name="creditCardLogoFileName.Text" xml:space="preserve">
+    <value>cc_logos.png</value>
+  </data>
+  <data name="cvvHelp.Text" xml:space="preserve">
+    <value>&lt;p&gt; &lt;b&gt;Visa, MasterCard en Discover:&lt;/b&gt; Op de achterkant van de kaart in de rechterbovenhoek van de handtekening vak. Voer het getal van drie cijfers na de credit card nummer. &lt;br/&gt;
+&lt;img src="{0}" alt="cvv" style="margin:10px;"/&gt;&lt;/p&gt;
+
+&lt;p&gt; &lt;b&gt;American Express:&lt;/b&gt; Op de voorzijde van de kaart. Voer de vier-cijferig nummer aan de rechterkant, direct boven de credit card nummer. &lt;br/&gt;
+&lt;img src="{1}" alt="cvv" style="margin:10px;"/&gt;&lt;/p&gt;</value>
+  </data>
+  <data name="cvvHelpFrontImage.Text" xml:space="preserve">
+    <value>frontcvv.png</value>
+  </data>
+  <data name="cvvHelpRearImage.Text" xml:space="preserve">
+    <value>rearcvv.png</value>
+  </data>
+  <data name="lblCvvHelpLink.Text" xml:space="preserve">
+    <value>Wat is dit?</value>
+  </data>
+</root>

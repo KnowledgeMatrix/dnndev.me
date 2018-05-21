@@ -1,0 +1,16 @@
+﻿IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Answers_Post_Delete') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Answers_Post_Delete
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Answers_Post_Delete]
+	@PostId INT,
+	@PortalId INT
+AS 
+BEGIN
+	DELETE  {databaseOwner}[{objectQualifier}Answers_Post]
+	WHERE   (PortalId = @PortalId) 
+			AND ( ( PostId = @PostId ) OR ( ParentId = @PostId ) )
+
+	SELECT @@ROWCOUNT
+END
+GO

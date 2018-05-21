@@ -1,0 +1,70 @@
+﻿IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Publisher_SearchPosts]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Publisher_SearchPosts]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Publisher_SearchPosts]
+ 	@ModuleId INT,
+	@GroupId INT,
+	@StartIndex INT,
+	@EndIndex INT,
+	@ExcludePostIds VARCHAR(MAX)
+AS
+BEGIN
+	DECLARE @TitleMetID AS INT 
+	DECLARE @ImagesMetID AS INT
+	
+	SELECT @ImagesMetID = case when MetaDataName = 'Images' 
+				then MetaDataID
+				else @ImagesMetID
+				end
+			,@TitleMetID = case when MetaDataName = 'Title' 
+				then MetaDataID
+				else @TitleMetID
+				end		
+		FROM {databaseOwner}[{objectQualifier}MetaData]
+		WHERE MetaDataName = 'Images'
+			or MetaDataName = 'Title'
+	
+	;WITH	PostSet
+	AS		(SELECT
+					P.PostId,
+					P.PortalId,
+					P.GroupId,
+					P.ContentItemId,
+					P.Published,
+					P.AuthorUserId,
+					P.AllowedComments,
+					P.Featured,
+					P.MetadataTitle,
+					P.MetadataDescription,
+					P.PublishedOnDate,
+					P.CreatedOnDate,
+					P.LastModifiedOnDate,
+					CI.Content AS [Body],
+					CI.TabId,
+					CI.ModuleId,
+					CI.LastModifiedByUserId AS [ModifiedByUserId],
+					CI.CreatedByUserID AS [CreatedByUserId],
+					CIMDT.MetaDataValue AS [Title],
+					REPLACE(REPLACE(CIMDI.MetaDataValue, '[', ''), ']', '') AS MainImageFileId,
+					ROW_NUMBER() OVER (ORDER BY P.PublishedOnDate DESC) AS RowNumber
+			
+			FROM	{databaseOwner}[{objectQualifier}Publisher_Posts] AS P
+					INNER JOIN {databaseOwner}[{objectQualifier}ContentItems] AS CI 
+						ON P.ContentItemId = CI.ContentItemID
+					LEFT OUTER JOIN {databaseOwner}[{objectQualifier}ContentItems_MetaData] AS CIMDT 
+						ON CIMDT.ContentItemID = CI.ContentItemID AND CIMDT.MetaDataID = @TitleMetID
+					LEFT OUTER JOIN {databaseOwner}[{objectQualifier}ContentItems_MetaData] AS CIMDI
+						ON CIMDI.ContentItemID = CI.ContentItemID AND CIMDI.MetaDataID = @ImagesMetID
+			
+			WHERE	CI.ModuleId = @ModuleId
+					AND	(@GroupId is null OR P.GroupId = @GroupId)
+					AND	P.Published = 1
+					AND P.PostId NOT IN (SELECT * FROM {databaseOwner}{objectQualifier}SplitStrings_CTE(@ExcludePostIds, ','))
+			)
+
+	SELECT	*
+	FROM	PostSet
+	WHERE	RowNumber BETWEEN @StartIndex AND @EndIndex;
+END
+GO

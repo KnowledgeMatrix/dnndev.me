@@ -1,0 +1,34 @@
+@using System.Dynamic; 
+@using CartViper.Modules.Store.Catalog; 
+@using CartViper.Modules.Store.StoreFrontUI;
+@using DotNetNuke.Common;
+@using System.Web.UI.HtmlControls;
+@using CartViper.Modules.Store.Extensions;
+@using CartViper.Modules.Store.Admin;
+
+@inherits DotNetNuke.Web.Razor.DotNetNukeWebPage<dynamic>
+
+@{
+  
+    var storeInfo = new StoreController().GetStoreInfo(Dnn.Portal.PortalId);
+
+    if (storeInfo.HidePriceCheckoutForAnonymous && !Request.IsAuthenticated)
+    {
+        @:Please login to see prices
+    }
+    else
+    {
+        <a onclick="javascript: return AddBundleToCart(this);" class="CvStandardButton cvAddToCartLink"><i class="fa fa-shopping-cart fa-lg"></i> Add bundle to cart</a>
+    }
+}	
+
+<script type="text/javascript">
+
+    function AddBundleToCart(b) {
+        var boundary = jQuery(b).parents(".cvBundleBoundary");
+        boundary.find(".btnHiddenAddToCart").click();
+
+        return false;
+    }
+    
+</script>

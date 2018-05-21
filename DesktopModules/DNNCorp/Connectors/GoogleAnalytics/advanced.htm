@@ -1,0 +1,97 @@
+﻿<div class="conn-ga-advancedSetting">
+    <div class="generalPanel">
+        <div class="fifty">
+            <label for="gaDomainName" data-bind="html: resx.DomainName"></label>
+            <input id="gaDomainName" data-bind="value: domainName" type="text" />
+        </div>
+        <div class="fifty rightBar">
+            <label data-bind="html: resx.TrackForAdmin"></label>           
+            <div class="dnn-switch-container">
+                <span class="switch-label" data-bind="html: (trackForAdmins() === 'true'? resx.On: resx.Off)"></span>
+                <span data-bind="attr: {class: 'dnn-switch' + (trackForAdmins() === 'true'? ' dnn-switch-active': '') }, click: trackForAdminChanged">
+                    <span class="mark" />
+                </span>
+            </div>
+        </div>
+    </div>
+        
+    <div class="addRule" data-bind="visible: rules().length < 5">
+        <a href="#" data-bind="html: resx.AddRule, click: addRule"></a>
+    </div>
+    <div data-bind="html: resx.SegmentationRules" class="title">
+    </div>
+    <div class="rule-grid">
+        <ul class="item header">
+            <li class="col-label" data-bind="html: resx.Label"></li>
+            <li class="col-value" data-bind="html: resx.Value"></li>
+            <li class="col-page" data-bind="html: resx.Page"></li>
+            <li class="col-role" data-bind="html: resx.Role"></li>
+            <li class="col-edit"></li>
+            <li class="col-delete"></li>
+            <li class="col-sort"></li>
+        </ul>
+        <div class="firstPanel" data-bind="visible: addingRule">
+            <div class="fifty">
+                <label for="gaAddLabel" data-bind="html: resx.Label"></label>
+                <input id="gaAddLabel" type="text" data-bind="value: editModel.label, valueUpdate: 'afterkeydown'" maxlength="50"/>
+            </div>
+            <div class="fifty rightBar">
+                <label data-bind="html: resx.Page"></label>
+                <div class="pagesDropDown -1"></div>
+            </div>
+            <div class="fifty">
+                <label for="gaAddValue" data-bind="html: resx.Value"></label>
+                <input id="gaAddValue" type="text" data-bind="value: editModel.value, valueUpdate: 'afterkeydown'" maxlength="50" />
+            </div>
+            <div class="fifty rightBar">
+                <label for="gaAddRolesDropDown" data-bind="html: resx.Role"></label>
+                <select id="gaAddRolesDropDown" name="RolesDropDown"
+                        data-bind="attr: {class: 'rolesDropDown -1'}, value: editModel.role, options: roleData, optionsText: 'RoleName', optionsValue: 'RoleId'"></select>
+            </div>
+            <div class="actions">                      
+                <span class="btn btn-cancel" data-bind="text: resx.Cancel, click: cancelAddRule"></span>
+                <span class="btn btn-accept" data-bind="text: resx.AddRuleBtn, click: saveRule"></span>
+            </div>
+        </div>
+
+        <div class="items" data-bind="foreach: rules">
+            <div class="firstPanel" data-bind="visible: $parent.isEditingRule(id)" style="display: block">
+                <div class="fifty">
+                    <label for="gaEditLabel" data-bind="html: $parent.resx.Label"></label>
+                    <input id="gaEditLabel" type="text" data-bind="value: $parent.editModel.label, valueUpdate: 'afterkeydown'" maxlength="50" />
+                </div>
+                <div class="fifty rightBar">
+                    <label data-bind="html: $parent.resx.Page"></label>
+                    <div data-bind="attr: {class: 'pagesDropDown ' + id }"></div>
+                </div>
+                <div class="fifty">
+                    <label for="gaEditValue" data-bind="html: $parent.resx.Value"></label>
+                    <input id="gaEditValue" type="text" data-bind="value: $parent.editModel.value, valueUpdate: 'afterkeydown'" maxlength="50" />
+                </div>
+                <div class="fifty rightBar">
+                    <label for="gaEditRolesDropDown" data-bind="html: $parent.resx.Role"></label>
+                    <select id="gaEditRolesDropDown" name="RolesDropDown"
+                            data-bind="attr: {class: 'rolesDropDown ' + id }, value: $parent.editModel.role, options: $parent.roleData, optionsText: 'RoleName', optionsValue: 'RoleId'"></select>
+                </div>
+                <div class="actions">
+                    <span class="btn btn-cancel" data-bind="text: $parent.resx.Cancel, click: $parent.cancelEditRule"></span>
+                    <span class="btn btn-accept" data-bind="text: $parent.resx.UpdateRuleBtn, click: $parent.saveEditRule"></span>
+                </div>
+            </div>    
+
+            <ul class="item" data-bind="visible: $parent.editModel.id() !== '-1' && !$parent.isEditingRule(id)">
+                <li class="col-label" data-bind="html: label"></li>
+                <li class="col-value" data-bind="html: value"></li>
+                <li class="col-page" data-bind="html: pageName"></li>
+                <li class="col-role" data-bind="html: roleName"></li>
+                <li class="col-edit"><a href="#" data-bind="attr: {title: $parent.resx.Edit}, click: $parent.editRule" aria-label="Edit"></a></li>
+                <li class="col-delete"><a href="#" data-bind="attr: {title: $parent.resx.Delete}, click: $parent.deleteRule" aria-label="Delete"></a></li>
+                <li class="col-sort">
+                    <a class="up" href="#" data-bind="attr: {title: $parent.resx.MoveUp}, click: $parent.moveUp, css: { visible: $index() > 0}" aria-label="Up"></a>
+                    <a class="down" href="#" data-bind="attr: {title: $parent.resx.MoveDown}, click: $parent.moveDown, css: { visible: $index() < $parent.rules().length - 1}" aria-label="Down"></a>
+                </li>
+            </ul>
+        </div>
+        <div class="emptyinfo" data-bind="visible: rules().length == 0 && !addingRule(), html: resx.NoRule"></div>
+    </div>
+</div>

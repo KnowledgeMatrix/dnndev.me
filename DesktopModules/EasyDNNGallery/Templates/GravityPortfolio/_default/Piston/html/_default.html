@@ -1,0 +1,91 @@
+<!--HeaderTemplateBegin-->
+
+[Has:EDG:GalleriesFilter]
+<div class="edg__gravityPortfolio_header">
+	[EDG:PortfolioGalleriesList]
+	<div class="edg__gravityPortfolio_hiddenItemWrapper">
+		<div class="edGP_hiddenItemListTrigger">[EDG:LocalizedText:More]</div>
+		<ol class="edg__gravityPortfolio_itemList edg__gravityPortfolio_hiddenItemList"></ol>
+	</div>
+</div>
+[/Has:EDG:GalleriesFilter]
+<!--HeaderTemplateEnd-->
+
+<!--ItemTemplateBegin-->
+[Has:EDG:EditPermission][EDG:EditMediaData][/Has:EDG:EditPermission]
+[EDG:DontEmbedInPage]
+<div class="edGP_thumbnail edsgg_mediaType_[EDG:MediaType] edGP__mousePosition" style="width:[EDG:ListItemThumbWidth]px;">
+	<div class="edGP_thumbnailContainer">
+		<div class="edGP_mediaWrapper">
+			<img src="[EDG:ItemThumbnail]" alt="[EDG:ItemTitle]">
+		</div>
+		<a class="edsgg__itemDetailsAndLightboxTrigger" target="[EDG:MediaUrlTarget]" href="[EDG:ItemMediaLink]">[EDG:ItemTitle]</a>
+		[Has:EDG:MediaType]<span class="edsgg_mediaType[HasNot:EDG:MediaURL] edGP_noMediaUrl[/HasNot:EDG:MediaURL]"><a class="edsgg__itemDetailsAndLightboxTrigger" target="[EDG:MediaUrlTarget]" href="[EDG:ItemMediaLink]">[EDG:ItemTitle]</a></span>[/Has:EDG:MediaType]
+		[Has:EDG:MediaURL]<a class="edGP_mediaUrl" target="[EDG:MediaUrlTarget]" href="[EDG:MediaURL]">[EDG:MediaURL]</a>[/Has:EDG:MediaURL]
+		<div class="edGP_titleDescription">
+			<div>
+				[Has:EDG:ItemTitle]<h3 class="edGP_title"><span>[EDG:ItemTitle]</span></h3>[/Has:EDG:ItemTitle]
+				[Has:EDG:ItemDescription]<div class="edGP_description"><div>[EDG:ItemDescription]</div></div>[/Has:EDG:ItemDescription]
+				<ul class="edGP_shareIcons">
+					<li><i class="fa fa-facebook"></i></li>
+					<li><i class="fa fa-twitter"></i></li>
+					<li><i class="fa fa-pinterest-p"></i></li>
+					<li><i class="fa fa-google-plus"></i></li>
+				</ul>
+				[Has:EDG:MediaURL]<a class="edGP_mediaUrlButton" target="[EDG:MediaUrlTarget]" href="[EDG:MediaURL]">[EDG:LocalizedText:ReadMore]</a>[/Has:EDG:MediaURL]
+				<a class="edsgg__itemDetailsAndLightboxTrigger" target="[EDG:MediaUrlTarget]" href="[EDG:ItemMediaLink]">[EDG:ItemTitle]</a>
+			</div>
+			<a class="edsgg__itemDetailsAndLightboxTrigger" target="[EDG:MediaUrlTarget]" href="[EDG:ItemMediaLink]">[EDG:ItemTitle]</a>
+		</div>
+	</div>
+</div>
+[/EDG:DontEmbedInPage]
+[EDG:EmbedInPage]
+<div class="edGP_thumbnail edGP_embedInPage edsgg_mediaType_[EDG:MediaType]" style="width:[EDG:ListItemThumbWidth]px;">
+	<div class="edGP_thumbnailContainer">
+		<div class="edGP_mediaWrapper">
+			[EDG:EmbedMediaData]
+		</div>
+		[Has:EDG:MediaURL]<a class="edGP_mediaUrl" target="[EDG:MediaUrlTarget]" href="[EDG:MediaURL]">[EDG:MediaURL]</a>[/Has:EDG:MediaURL]
+		<div class="edGP_titleDescription">
+			<div>
+				[Has:EDG:ItemTitle]<h3 class="edGP_title"><span>[EDG:ItemTitle]</span></h3>[/Has:EDG:ItemTitle]
+				[Has:EDG:ItemDescription]<div class="edGP_description"><div>[EDG:ItemDescription]</div></div>[/Has:EDG:ItemDescription]
+				<ul class="edGP_shareIcons">
+					<li><i class="fa fa-facebook"></i></li>
+					<li><i class="fa fa-twitter"></i></li>
+					<li><i class="fa fa-pinterest-p"></i></li>
+					<li><i class="fa fa-google-plus"></i></li>
+				</ul>
+				[Has:EDG:MediaURL]<a class="edGP_mediaUrlButton" target="[EDG:MediaUrlTarget]" href="[EDG:MediaURL]">[EDG:LocalizedText:ReadMore]</a>[/Has:EDG:MediaURL]
+			</div>
+		</div>
+	</div>
+</div>
+[/EDG:EmbedInPage]
+<!--ItemTemplateEnd-->
+
+<!--FooterTemplateBegin-->
+<p class="edGP_noContent">[EDG:LocalizedText:NoContentMessage]</p>
+<p class="edGP_contentError">[EDG:LocalizedText:ContentErrorMessage]</p>
+[Has:EDG:Paging]
+<div class="edGP_pagination">
+	<span class="edg__gravityPortfolio_previousPage"><span>[EDG:LocalizedText:PreviousPageText]</span></span>
+	<span class="edg__gravityPortfolio_nextPage"><span>[EDG:LocalizedText:NextPageText]</span></span>
+</div>
+[/Has:EDG:Paging]
+<!--FooterTemplateEnd-->
+
+<!--EnabledOverlaysBegin-->
+{
+	"edGP_overlay1": "Media corner",
+	"edGP_overlay2": "Light maze",
+	"edGP_overlay2 edGP_overlay3": "Dark maze",
+	"edGP_overlay4": "Media shutter",
+	"edGP_overlay5": "Jewel case",
+	"edGP_overlay6": "Vault effect",
+	"edGP_overlay7": "Side toss",
+	"edGP_overlay8": "Cat door",
+	"edGP_overlay9": "Side switch"
+}
+<!--EnabledOverlaysEnd-->

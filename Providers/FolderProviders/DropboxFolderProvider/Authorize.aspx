@@ -1,0 +1,1 @@
+<%@ Page Language="C#" AutoEventWireup="false" Inherits="DotNetNuke.Enterprise.FolderProviders.DropboxFolderProvider.Authorize, DotNetNuke.Enterprise.FolderProviders" CodeBehind="Authorize.aspx.cs" %>

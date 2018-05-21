@@ -1,0 +1,69 @@
+﻿-- FIX Search INDEX in Group Mode
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Discussions_Topic_GetSearchable') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Discussions_Topic_GetSearchable
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Discussions_Topic_GetSearchable]
+	@ModuleID INT,
+	@StartDate DATETIME,
+	@EndDate DATETIME,
+	@StartDateUtc DATETIME,
+	@EndDateUtc DATETIME
+AS	
+	SELECT  T.TopicId ,
+			T.ContentItemId ,
+			T.GroupId ,
+			T.PortalId ,
+			T.ViewCount ,
+			T.Approved ,
+			T.ApprovedDate ,
+			T.Deleted ,
+			T.Closed ,
+			T.ClosedDate ,
+			T.Protected ,
+			T.ProtectedDate ,
+			T.Pinned ,
+			T.PinnedDate ,
+			CI.Content ,
+			CI.ContentTypeID ,
+			CI.TabID ,
+			CI.ModuleID ,
+			CI.ContentKey ,
+			CI.Indexed ,
+			CI.CreatedByUserId ,
+			CI.CreatedOnDate ,
+			CI.LastModifiedByUserID ,
+			CI.LastModifiedOnDate ,
+			CIMD.MetaDataValue AS ContentTitle ,
+			1 AS TotalRecords
+	FROM    {databaseOwner}{objectQualifier}Discussions_Topic T
+			INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI ON T.ContentItemId = CI.ContentItemID
+			INNER JOIN {databaseOwner}{objectQualifier}Journal J ON J.ContentItemId = CI.ContentItemID
+			LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD ON CIMD.ContentItemID = T.ContentItemId
+																					  AND CIMD.MetaDataID = ( SELECT
+																					  MetaDataID
+																					  FROM
+																					  {databaseOwner}[{objectQualifier}MetaData]
+																					  WHERE
+																					  MetaDataName = 'Title'
+																					  )
+	WHERE   Deleted = 0
+			AND T.Approved = 1
+			AND ModuleID = @ModuleID
+			AND
+			(
+			  (CI.LastModifiedOnDate >= @StartDate AND CI.LastModifiedOnDate <= @EndDate)
+			  OR
+			  (										
+				(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}Journal_Comments JC 
+				 WHERE JC.[JournalId] IN (SELECT JournalId FROM {databaseOwner}{objectQualifier}Journal J WHERE J.[ContentItemId] = T.[ContentItemId]) 
+				  AND 
+				  ((JC.[DateCreated] >= @StartDateUTC AND JC.[DateCreated] <= @EndDateUTC)
+					OR
+				  (JC.[DateUpdated] >= @StartDateUTC AND JC.[DateUpdated] <= @EndDateUTC)
+				  )
+				) > 0 
+			  )
+			)
+GO

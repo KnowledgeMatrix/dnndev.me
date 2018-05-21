@@ -1,0 +1,624 @@
+{
+  "name": "Ozone",
+  "version": 2,
+  "customFontFamilies": [
+    {
+      "name": "Roboto Condensed",
+      "importUrl": "//fonts.googleapis.com/css?family=Roboto+Condensed:400,300,700&subset=latin,latin-ext"
+    },
+    {
+      "name": "PT Sans",
+      "importUrl": "//fonts.googleapis.com/css?family=PT+Sans:400,700&subset=latin,latin-ext"
+    }
+  ],
+  "activeStyles": {},
+  "activeThemeObjectSettings": {},
+  "assetsClientPath": "",
+  "styleDefinitions": {
+    "properties": {
+      "defaultTitle": {
+        "type": "text",
+        "name": "Title",
+        "show": [
+          "default"
+        ],
+        "states": [
+          {
+            "id": "default",
+            "selectors": [
+              " > h2 .eds_containerTitle"
+            ],
+            "name": "Normal"
+          }
+        ]
+      },
+      "defaultTitleBorder": {
+        "type": "border",
+        "name": "Title Border",
+        "show": [
+          "default"
+        ],
+        "states": [
+          {
+            "id": "default",
+            "selectors": [
+              " > h2.eds_bottomBorder"
+            ],
+            "name": "Normal",
+            "forbidden": [
+              "topSide",
+              "rightSide",
+              "leftSide"
+            ]
+          }
+        ]
+      },
+      "boxTitle": {
+        "type": "text",
+        "name": "Title",
+        "show": [
+          "box"
+        ],
+        "states": [
+          {
+            "id": "default",
+            "selectors": [
+              " > h2 .eds_containerTitle"
+            ],
+            "name": "Normal"
+          }
+        ]
+      },
+      "boxBorder": {
+        "type": "border",
+        "name": "Border",
+        "show": [
+          "box"
+        ],
+        "states": [
+          {
+            "id": "default",
+            "selectors": [
+              ""
+            ],
+            "name": "Normal"
+          }
+        ]
+      },
+      "boxWithTitleWithBackgroundTitle": {
+        "type": "text",
+        "name": "Title",
+        "show": [
+          "boxWithTitleWithBackground"
+        ],
+        "states": [
+          {
+            "id": "default",
+            "selectors": [
+              " > h2 .eds_containerTitle"
+            ],
+            "name": "Normal"
+          }
+        ]
+      },
+      "boxWithTitleWithBackgroundTitleBackground": {
+        "type": "background",
+        "name": "Title Background",
+        "show": [
+          "boxWithTitleWithBackground"
+        ],
+        "sharedImageDirectories": [
+          "../images/sharedBackgrounds/"
+        ],
+        "states": [
+          {
+            "id": "default",
+            "selectors": [
+              " > h2"
+            ],
+            "name": "Normal",
+            "forbidden": [
+              "attachment",
+              "animation"
+            ]
+          }
+        ]
+      },
+      "boxWithTitleWithBackgroundTitleShadow": {
+        "type": "boxShadow",
+        "name": "Title Shadow",
+        "show": [
+          "boxWithTitleWithBackground"
+        ],
+        "states": [
+          {
+            "id": "default",
+            "selectors": [
+              " > h2"
+            ],
+            "name": "Normal"
+          }
+        ]
+      },
+      "boxWithTitleWithBackgroundTitleBottomBorder": {
+        "type": "border",
+        "name": "Title Bottom Border",
+        "show": [
+          "boxWithTitleWithBackground"
+        ],
+        "states": [
+          {
+            "id": "default",
+            "selectors": [
+              " > h2"
+            ],
+            "name": "Normal",
+            "forbidden": [
+              "topSide",
+              "rightSide",
+              "leftSide"
+            ]
+          }
+        ]
+      },
+      "boxWithTitleWithBackgroundTitleBorder": {
+        "type": "border",
+        "name": "Border",
+        "show": [
+          "boxWithTitleWithBackground"
+        ],
+        "states": [
+          {
+            "id": "default",
+            "selectors": [
+              ""
+            ],
+            "name": "Normal"
+          }
+        ]
+      },
+      "boxWithTitleWithBorderTitle": {
+        "type": "text",
+        "name": "Title",
+        "show": [
+          "boxWithTitleWithBorder"
+        ],
+        "states": [
+          {
+            "id": "default",
+            "selectors": [
+              " > h2 .eds_containerTitle"
+            ],
+            "name": "Normal"
+          }
+        ]
+      },
+      "boxWithTitleWithBorderTitleBorder": {
+        "type": "border",
+        "name": "Title Border",
+        "show": [
+          "boxWithTitleWithBorder"
+        ],
+        "states": [
+          {
+            "id": "default",
+            "selectors": [
+              " > h2.eds_bottomBorder"
+            ],
+            "name": "Normal",
+            "forbidden": [
+              "topSide",
+              "rightSide",
+              "leftSide"
+            ]
+          }
+        ]
+      },
+      "boxWithTitleWithBorderBorder": {
+        "type": "border",
+        "name": "Border",
+        "show": [
+          "boxWithTitleWithBorder"
+        ],
+        "states": [
+          {
+            "id": "default",
+            "selectors": [
+              ""
+            ],
+            "name": "Normal"
+          }
+        ]
+      },
+      "colorBoxTitle": {
+        "type": "text",
+        "name": "Title",
+        "show": [
+          "colorBox"
+        ],
+        "states": [
+          {
+            "id": "default",
+            "selectors": [
+              " > h2 .eds_containerTitle"
+            ],
+            "name": "Normal"
+          }
+        ]
+      },
+      "colorBoxTitleBorder": {
+        "type": "border",
+        "name": "Title Border",
+        "show": [
+          "colorBox"
+        ],
+        "states": [
+          {
+            "id": "default",
+            "selectors": [
+              " > h2.eds_bottomBorder"
+            ],
+            "name": "Normal",
+            "forbidden": [
+              "topSide",
+              "rightSide",
+              "leftSide"
+            ]
+          }
+        ]
+      },
+      "colorBoxTitleShadow": {
+        "type": "boxShadow",
+        "name": "Title Shadow",
+        "show": [
+          "colorBox"
+        ],
+        "states": [
+          {
+            "id": "default",
+            "selectors": [
+              " > h2"
+            ],
+            "name": "Normal"
+          }
+        ]
+      },
+      "colorBoxBackground": {
+        "type": "background",
+        "name": "Background",
+        "show": [
+          "colorBox"
+        ],
+        "sharedImageDirectories": [
+          "../images/sharedBackgrounds/"
+        ],
+        "states": [
+          {
+            "id": "default",
+            "selectors": [
+              ""
+            ],
+            "name": "Normal",
+            "forbidden": [
+              "attachment",
+              "animation"
+            ]
+          }
+        ]
+      },
+      "colorBoxShadow": {
+        "type": "boxShadow",
+        "name": "Shadow",
+        "show": [
+          "colorBox"
+        ],
+        "states": [
+          {
+            "id": "default",
+            "selectors": [
+              ""
+            ],
+            "name": "Normal"
+          }
+        ]
+      },
+      "colorBoxTextColor": {
+        "type": "text",
+        "name": "Text Color",
+        "show": [
+          "colorBox"
+        ],
+        "states": [
+          {
+            "id": "default",
+            "selectors": [
+              " > div .Normal"
+            ],
+            "name": "Normal",
+            "forbidden": [
+              "fontFamily",
+              "size",
+              "style",
+              "weight",
+              "lineHeight",
+              "transform",
+              "decorations"
+            ]
+          }
+        ]
+      },
+      "titleWithBackgroundAndCaretTitle": {
+        "type": "text",
+        "name": "Title",
+        "show": [
+          "titleWithBackgroundAndCaret"
+        ],
+        "states": [
+          {
+            "id": "default",
+            "selectors": [
+              " > h2 .eds_containerTitle"
+            ],
+            "name": "Normal"
+          }
+        ]
+      },
+      "titleWithBackgroundAndCaretTitleBackground": {
+        "type": "background",
+        "name": "Title Background",
+        "show": [
+          "titleWithBackgroundAndCaret"
+        ],
+        "sharedImageDirectories": [
+          "../images/sharedBackgrounds/"
+        ],
+        "states": [
+          {
+            "id": "default",
+            "selectors": [
+              " > h2"
+            ],
+            "name": "Normal",
+            "forbidden": [
+              "attachment",
+              "animation"
+            ]
+          }
+        ]
+      },
+      "titleWithBackgroundAndCaretTitleShadow": {
+        "type": "boxShadow",
+        "name": "Title Shadow",
+        "show": [
+          "titleWithBackgroundAndCaret"
+        ],
+        "states": [
+          {
+            "id": "default",
+            "selectors": [
+              " > h2"
+            ],
+            "name": "Normal"
+          }
+        ]
+      },
+      "titleWithBackgroundAndCaretCaret": {
+        "type": "border",
+        "name": "Caret",
+        "show": [
+          "titleWithBackgroundAndCaret"
+        ],
+        "states": [
+          {
+            "id": "default",
+            "selectors": [
+              " > h2:after"
+            ],
+            "forbidden": [
+              "width",
+              "style",
+              "rightSide",
+              "bottomSide",
+              "leftSide"
+            ]
+          }
+        ]
+      },
+      "titleStyle1Title": {
+        "type": "text",
+        "name": "Title",
+        "show": [
+          "titleStyle1",
+          "titleStyle2",
+          "titleStyle3",
+          "titleStyle4"
+        ],
+        "states": [
+          {
+            "id": "default",
+            "selectors": [
+              ".eds_titleSeparator > h2 .eds_containerTitle"
+            ],
+            "name": "Normal"
+          }
+        ]
+      },
+      "titleStyle1Border1": {
+        "type": "border",
+        "name": "Title Border 1",
+        "show": [
+          "titleStyle1",
+          "titleStyle2",
+          "titleStyle3"
+        ],
+        "states": [
+          {
+            "id": "default",
+            "selectors": [
+              ".eds_titleSeparator > h2"
+            ],
+            "name": "Normal",
+            "forbidden": [
+              "topSide",
+              "rightSide",
+              "leftSide"
+            ]
+          }
+        ]
+      },
+      "titleStyle1Border2": {
+        "type": "border",
+        "name": "Title Border 2",
+        "show": [
+          "titleStyle1"
+        ],
+        "states": [
+          {
+            "id": "default",
+            "selectors": [
+              ".eds_titleSeparator > h2 .eds_containerTitle:after"
+            ],
+            "name": "Normal",
+            "forbidden": [
+              "topSide",
+              "rightSide",
+              "leftSide"
+            ]
+          }
+        ]
+      },
+      "titleStyle2Border2Caret": {
+        "type": "border",
+        "name": "Title Border 2",
+        "show": [
+          "titleStyle2"
+        ],
+        "states": [
+          {
+            "id": "default",
+            "selectors": [
+              ".eds_titleSeparator > h2 .eds_containerTitle:before",
+              ".eds_titleSeparator > h2 .eds_containerTitle:after"
+            ],
+            "name": "Normal",
+            "forbidden": [
+              "width",
+              "style",
+              "topSide",
+              "rightSide",
+              "leftSide"
+            ]
+          }
+        ]
+      },
+      "titleStyle3Border2": {
+        "type": "border",
+        "name": "Title Border 2",
+        "show": [
+          "titleStyle3"
+        ],
+        "states": [
+          {
+            "id": "default",
+            "selectors": [
+              ".eds_titleSeparator > h2 .eds_containerTitle:after"
+            ],
+            "name": "Normal",
+            "forbidden": [
+              "width",
+              "style",
+              "topSide",
+              "rightSide",
+              "leftSide"
+            ]
+          }
+        ]
+      },
+      "titleStyle3Border3": {
+        "type": "border",
+        "name": "Title Border 3",
+        "show": [
+          "titleStyle3"
+        ],
+        "states": [
+          {
+            "id": "default",
+            "selectors": [
+              ".eds_titleSeparator > h2 .eds_containerTitle:before"
+            ],
+            "name": "Normal",
+            "forbidden": [
+              "width",
+              "style",
+              "topSide",
+              "rightSide",
+              "leftSide"
+            ]
+          }
+        ]
+      },
+      "titleStyle4Border4": {
+        "type": "border",
+        "name": "Title Border",
+        "show": [
+          "titleStyle4"
+        ],
+        "states": [
+          {
+            "id": "default",
+            "selectors": [
+              ".eds_titleSeparator > h2"
+            ],
+            "name": "Normal",
+            "forbidden": [
+              "topSide",
+              "rightSide",
+              "leftSide"
+            ]
+          }
+        ]
+      },
+      "footerTitle": {
+        "type": "text",
+        "name": "Title",
+        "show": [
+          "footer"
+        ],
+        "states": [
+          {
+            "id": "default",
+            "selectors": [
+              " > h2 .eds_containerTitle"
+            ],
+            "name": "Normal"
+          }
+        ]
+      },
+      "footerTextColor": {
+        "type": "text",
+        "name": "Text Color",
+        "show": [
+          "footer"
+        ],
+        "states": [
+          {
+            "id": "default",
+            "selectors": [
+              " > div .Normal"
+            ],
+            "name": "Normal",
+            "forbidden": [
+              "fontFamily",
+              "size",
+              "style",
+              "weight",
+              "lineHeight",
+              "transform",
+              "decorations"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

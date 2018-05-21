@@ -1,0 +1,193 @@
+﻿-- GROUP MODE LIST FIX
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_Article_List') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_List
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_List
+	@ModuleId int,
+	@UserId int,
+	@PageIndex int,
+	@PageSize int,
+	@GroupId int,
+	@SortMode int,
+	@ExclusionList varchar(MAX),
+	@Tags nvarchar(MAX)
+AS
+BEGIN
+	IF @ModuleId < 0
+		SET @ModuleId = NULL
+
+	;WITH OrderedSet AS(
+		SELECT
+			ArticleId,
+			ArticleTypeId,
+			A.ContentItemId,
+			SummaryContentItemId,
+			GroupId,
+			PortalId,
+			ViewCount,
+			Approved,
+			Protected,
+			Elements,
+			S.Content AS [Summary],
+			CI.Content,
+			CI.ContentTypeID,
+			CI.TabID,
+			CI.ModuleID,
+			CI.ContentKey,
+			CI.Indexed,
+			CI.CreatedByUserId,
+			CI.CreatedOnDate,
+			CI.LastModifiedByUserID,
+			CI.LastModifiedOnDate,
+			CIMD.MetaDataValue AS [ContentTitle],
+			ROW_NUMBER() OVER (
+				ORDER BY
+					CASE WHEN @SortMode = 0 THEN CI.CreatedOnDate END DESC,
+					CASE WHEN @SortMode = 1 THEN CI.LastModifiedOnDate END DESC,
+					A.ArticleId DESC) AS RowNumber,
+			COUNT(*) OVER () AS TotalRecords
+		FROM			{databaseOwner}{objectQualifier}Wiki_Article A WITH (NOLOCK)
+		INNER JOIN		{databaseOwner}{objectQualifier}ContentItems CI WITH (NOLOCK) ON A.ContentItemId = CI.ContentItemID
+		LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems S WITH (NOLOCK) ON A.SummaryContentItemId = S.ContentItemID
+		LEFT OUTER JOIN	{databaseOwner}{objectQualifier}ContentItems_MetaData CIMD WITH (NOLOCK)
+			ON CIMD.ContentItemID = A.ContentItemID AND CIMD.MetaDataID = (SELECT MetaDataID FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Title')
+
+		-- match tags (if specified)
+		WHERE 	(@Tags IS NULL OR LEN(@Tags) = 0 OR
+			(SELECT		COUNT(*)
+						FROM		{databaseOwner}{objectQualifier}ContentItems_Tags CIT WITH (NOLOCK)
+						INNER JOIN	{databaseOwner}{objectQualifier}Taxonomy_Terms TT WITH (NOLOCK) ON CIT.TermID = TT.TermID
+						INNER JOIN	{databaseOwner}[{objectQualifier}ConvertListToTable](',', @Tags) T ON TT.Name = T.RowValue
+						WHERE		CIT.ContentItemID = A.ContentItemId) = (SELECT LEN(@Tags) - LEN(REPLACE(@Tags, ',', '')) + 1))
+
+		-- match group (if specified)
+		AND 
+			(GroupId = @groupId)
+
+		AND
+			(CI.ModuleID = COALESCE(@ModuleId, CI.ModuleID)) AND
+			(@ExclusionList IS NULL OR NOT (ArticleId IN (SELECT RowValue FROM {databaseOwner}{objectQualifier}ConvertListToTable(' ', @ExclusionList)))))
+
+	SELECT	TOP (@PageSize) *
+	FROM	OrderedSet
+	WHERE	RowNumber >= (@PageIndex * @PageSize) + 1
+	ORDER BY RowNumber ASC
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.Columns WHERE TABLE_NAME='{objectQualifier}Wiki' AND COLUMN_NAME='GroupId')
+BEGIN
+	ALTER TABLE {databaseOwner}{objectQualifier}Wiki
+      ADD [GroupId] int NOT NULL CONSTRAINT DF_{objectQualifier}Wiki_GroupId DEFAULT -1
+END
+GO
+
+IF  EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[PK_{objectQualifier}Wiki]') AND type = 'K')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}Wiki] DROP CONSTRAINT [PK_{objectQualifier}wiki]
+	ALTER TABLE {databaseOwner}[{objectQualifier}Wiki] ADD CONSTRAINT [PK_{objectQualifier}Wiki] PRIMARY KEY CLUSTERED (ModuleId ASC, GroupId ASC)
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_SetPrimaryArticle') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_SetPrimaryArticle
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Wiki_SetPrimaryArticle]
+	@ModuleId int,
+	@GroupId int,
+	@ArticleId int
+AS
+BEGIN
+	IF NOT EXISTS(
+			SELECT	*
+			FROM	{databaseOwner}{objectQualifier}Wiki
+			WHERE	ModuleId = @ModuleId AND GroupId = @GroupId)
+		INSERT INTO {databaseOwner}{objectQualifier}Wiki (ModuleId, ArticleId, GroupId) VALUES (@ModuleId, @ArticleId, @GroupId)
+	ELSE
+		UPDATE {databaseOwner}{objectQualifier}Wiki SET ArticleId = @ArticleId WHERE ModuleId = @ModuleId AND GroupId = @GroupId
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_GetPrimaryArticle') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_GetPrimaryArticle
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Wiki_GetPrimaryArticle]
+	@ModuleId int,
+	@GroupId int
+AS
+BEGIN
+	IF NOT EXISTS(
+			SELECT	*
+			FROM	{databaseOwner}{objectQualifier}Wiki
+			WHERE	ModuleId = @ModuleId AND GroupId = @GroupId)
+		SELECT -1 AS [ArticleId]
+	ELSE
+		SELECT	ArticleId
+		FROM	{databaseOwner}{objectQualifier}Wiki
+		WHERE	ModuleId = @ModuleId AND GroupId = @GroupId
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Wiki_Article_GetSearchable') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Wiki_Article_GetSearchable
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Wiki_Article_GetSearchable]
+	@ModuleId INT,
+	@StartDate DATETIME,
+	@EndDate DATETIME,
+	@StartDateUTC DATETIME,
+	@EndDateUTC DATETIME
+AS	
+	SELECT  ArticleId,
+			ArticleTypeId,
+			A.ContentItemId,
+			SummaryContentItemId,
+			GroupId,
+			PortalId,
+			ViewCount,
+			Approved,
+			Protected,
+			Elements,
+			S.Content AS [Summary],
+			CI.Content,
+			CI.ContentTypeID,
+			CI.TabID,
+			CI.ModuleID,
+			CI.ContentKey,
+			CI.Indexed,
+			CI.CreatedByUserId,
+			CI.CreatedOnDate,
+			CI.LastModifiedByUserID,
+			CI.LastModifiedOnDate,
+			CIMD.MetaDataValue AS [ContentTitle],
+			1 AS TotalRecords
+	FROM    {databaseOwner}{objectQualifier}Wiki_Article A
+			INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI WITH (NOLOCK) ON A.ContentItemId = CI.ContentItemID
+			LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems S WITH (NOLOCK) ON A.SummaryContentItemId = S.ContentItemID
+			LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD WITH (NOLOCK) ON CIMD.ContentItemID = A.ContentItemId
+				AND CIMD.MetaDataID = (SELECT MetaDataID FROM {databaseOwner}{objectQualifier}MetaData WHERE MetaDataName = 'Title')
+	WHERE   Approved = 1
+			AND CI.ModuleID = @ModuleID
+			AND
+			-- Comments have been added or updated within the given time frame
+			(
+			  (CI.LastModifiedOnDate >= @StartDate OR S.LastModifiedOnDate >= @StartDate)
+			  AND (CI.LastModifiedOnDate <= @EndDate OR S.LastModifiedOnDate <= @EndDate)
+			  OR
+			  (										
+			    (SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}Journal_Comments JC 
+				 WHERE JC.[JournalId] IN (SELECT JournalId FROM {databaseOwner}{objectQualifier}Journal J WHERE J.[ContentItemId] = A.[ContentItemId]) 
+				  AND 
+				  ((JC.[DateCreated] >= @StartDateUTC AND JC.[DateCreated] <= @EndDateUTC)
+				    OR
+				  (JC.[DateUpdated] >= @StartDateUTC AND JC.[DateUpdated] <= @EndDateUTC)
+				  )
+				) > 0 
+			  )
+			)
+GO

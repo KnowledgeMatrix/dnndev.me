@@ -1,0 +1,513 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+-- SOCIAL-2368 - Localization: Collation conflict error using Temp Tables
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Answers_Question_Search]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Answers_Question_Search] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Answers_Question_Search]
+	@ModuleId INT,
+	@GroupId INT,
+	@PageSize INT,
+	@PageIndex INT,
+	@Filter INT,
+	@SortColumn NVARCHAR(32),
+	@SortAscending BIT,
+	@Keyword NVARCHAR(128),
+	@UserId INT,
+	@Tags NVARCHAR(256)
+AS
+BEGIN
+	DECLARE @TagLength AS INT;
+	DECLARE @MetID AS INT;
+
+	SET @TagLength = (SELECT LEN(@Tags) - LEN(REPLACE(@Tags, ',', '')) + 1);
+
+	SELECT @MetID = MetaDataID
+	FROM {databaseOwner}{objectQualifier}MetaData
+	WHERE MetaDataName = 'Title';
+
+	CREATE TABLE #Tags (
+		RowNumber SMALLINT,
+		RowValue NVARCHAR (50) COLLATE DATABASE_DEFAULT
+	);
+
+	CREATE TABLE #Taxonomy (
+		TermID INT,
+		Name NVARCHAR (250) COLLATE DATABASE_DEFAULT
+	);
+
+	INSERT INTO #Tags
+		SELECT RowNumber, RowValue
+		FROM {databaseOwner}{objectQualifier}ConvertListToTable (',', @Tags);
+
+	INSERT INTO #Taxonomy
+		SELECT TermID, Name
+		FROM {databaseOwner}{objectQualifier}Taxonomy_Terms AS TT
+			INNER JOIN #Tags AS T ON TT.Name = T.RowValue;
+
+	;WITH	QuestionSet
+	AS		(SELECT COUNT(*) OVER () AS TotalRecords,
+					PostId,
+					ParentId,
+					PortalId,
+					ViewCount,
+					Score,
+					Approved,
+					Deleted,
+					AnswerId,
+					GroupId,
+					VP.ContentItemId,
+					CreatedUserId,
+					CreatedDate,
+					TotalAnswers,
+					Content,
+					ContentTypeId,
+					TabId,
+					ModuleId,
+					ContentKey,
+					LastModifiedByUserId,
+					LastModifiedOnDate,
+					LastModifiedDate,
+					CIMD.[MetaDataValue] AS [ContentTitle]
+			FROM	{databaseOwner}{objectQualifier}vw_Answers_Posts AS VP
+						LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData AS CIMD
+						ON CIMD.ContentItemID = VP.[ContentItemID] AND CIMD.MetaDataID = @MetID
+			WHERE	VP.ModuleId = @ModuleId
+			  AND	ParentId = 0
+			  AND	Deleted = 0
+			  AND	((@GroupId < 1 AND VP.GroupId < 1) OR VP.GroupId = @GroupId)
+			  AND	((@Filter <= 0
+						AND Approved = 1)
+						OR (@Filter = 1
+							AND TotalAnswers > 0
+							AND Approved = 1)
+						OR (@Filter = 2
+							AND TotalAnswers < 1
+							AND Approved = 1)
+						OR (@Filter = 3
+							AND CreatedByUserID = @UserId)
+						OR (@Filter = 4
+							AND EXISTS (SELECT *
+										FROM {databaseOwner}{objectQualifier}Answers_Post
+										WHERE Deleted = 0
+										AND ParentId = VP.PostId
+										AND CreatedUserId = @UserId)))
+			  AND	(@Tags IS NULL
+						OR LEN(@Tags) = 0
+						OR (SELECT COUNT(*)
+							FROM {databaseOwner}{objectQualifier}ContentItems_Tags AS CIT
+								INNER JOIN #Taxonomy AS T ON CIT.TermID = T.TermID
+							WHERE CIT.ContentItemID = VP.ContentItemId ) = @TagLength)
+			), QuestionSort
+	AS		(SELECT ROW_NUMBER() OVER ( ORDER BY
+										CASE WHEN @SortColumn = 'CreatedDate'	AND @SortAscending = 1 THEN Q.CreatedDate END ASC,
+										CASE WHEN @SortColumn = 'CreatedDate'	AND @SortAscending = 0 THEN Q.CreatedDate END DESC,
+										CASE WHEN @SortColumn = 'LastActive'	AND @SortAscending = 1 THEN Q.LastModifiedOnDate END ASC,
+										CASE WHEN @SortColumn = 'LastActive'	AND @SortAscending = 0 THEN Q.LastModifiedOnDate END DESC,
+										CASE WHEN @SortColumn = 'Title'			AND @SortAscending = 1 THEN Q.ContentTitle END ASC,
+										CASE WHEN @SortColumn = 'Title'			AND @SortAscending = 0 THEN Q.ContentTitle END DESC,
+										CASE WHEN @SortColumn = 'Views'			AND @SortAscending = 0 THEN Q.ViewCount END DESC,
+										CASE WHEN @SortColumn = 'Views'			AND @SortAscending = 1 THEN Q.ViewCount END ASC,
+										CASE WHEN @SortColumn = 'Votes'			AND @SortAscending = 1 THEN Q.Score END ASC,
+										CASE WHEN @SortColumn = 'Votes'			AND @SortAscending = 0 THEN Q.Score END DESC,
+										CASE WHEN @SortColumn = 'Answers'		AND @SortAscending = 1 THEN Q.TotalAnswers END ASC,
+										CASE WHEN @SortColumn = 'Answers'		AND @SortAscending = 0 THEN Q.TotalAnswers END DESC,
+										Q.CreatedDate DESC
+									  ) AS RowNumber,
+					Q.*
+			FROM	QuestionSet AS Q)
+	SELECT	*
+	FROM	QuestionSort
+	WHERE	RowNumber BETWEEN (@PageIndex * @PageSize + 1) AND ((@PageIndex + 1) * @PageSize);
+
+	DROP TABLE #Tags;
+	DROP TABLE #Taxonomy;
+END
+GO
+
+/********************************************************
+ * SPROC: Answers_Question_GetByContentItem
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Answers_Question_GetByContentItem]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Answers_Question_GetByContentItem] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Answers_Question_GetByContentItem]
+	@ContentItemID INT ,
+	@ModuleID INT
+AS
+	SELECT  PostId ,
+			Body ,
+			ParentId ,
+			PortalId ,
+			GroupId ,
+			ViewCount ,
+			Score ,
+			Approved ,
+			Closed ,
+			Deleted ,
+			AnswerId ,
+			Closed ,
+			Protected ,
+			CreatedUserId ,
+			CreatedDate ,
+			LastModifiedUserId ,
+			LastModifiedDate ,
+			vp.ContentItemId ,
+			Content ,
+			ContentTypeID ,
+			TabID ,
+			ModuleID ,
+			ContentKey ,
+			Indexed ,
+			CreatedByUserId ,
+			CreatedOnDate ,
+			LastModifiedByUserID ,
+			LastModifiedOnDate ,
+			CIMD.[MetaDataValue] AS [ContentTitle] ,
+			( SELECT    COUNT(PostId)
+			  FROM      {databaseOwner}{objectQualifier}Answers_Post
+			  WHERE     ( ParentId = vp.PostId )
+						AND ( ParentId <> 0 )
+						AND ( Approved = 1 )
+						AND ( Deleted = 0 )
+			) AS TotalAnswers ,
+			( SELECT    COUNT(PostId)
+			  FROM      {databaseOwner}{objectQualifier}Answers_Vote
+			  WHERE     PostID = vp.PostID
+						AND VoteTypeID = 1
+			) AS UpVotes ,
+			( SELECT    COUNT(PostId)
+			  FROM      {databaseOwner}{objectQualifier}Answers_Vote
+			  WHERE     PostID = vp.PostID
+						AND VoteTypeID = -1
+			) AS DownVotes ,
+			1 AS TotalRecords
+	FROM    {databaseOwner}{objectQualifier}vw_Answers_Posts vp
+			LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD ON CIMD.ContentItemID = vp.ContentItemID
+															  AND CIMD.MetaDataID = ( SELECT
+															  MetaDataID
+															  FROM
+															  {databaseOwner}[{objectQualifier}MetaData]
+															  WHERE
+															  MetaDataName = 'Title'
+															  )
+	WHERE   vp.ContentItemID = @ContentItemID
+			AND ParentID = 0
+			AND Deleted = 0
+			AND ModuleID = @ModuleID
+
+/********************************************************
+ * SPROC: Answers_Question_GetSearchable
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Answers_Question_GetSearchable]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Answers_Question_GetSearchable] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Answers_Question_GetSearchable]
+	@ModuleID INT,
+	@StartDate DATETIME,
+	@EndDate DATETIME,
+	@StartDateUTC DATETIME,
+	@EndDateUTC DATETIME
+AS
+BEGIN
+	SELECT  VP.PostId ,
+			VP.Body ,
+			VP.ParentId ,
+			VP.PortalId ,
+			VP.GroupId ,
+			VP.ViewCount ,
+			VP.Score ,
+			VP.Approved ,
+			VP.Deleted ,
+			VP.AnswerId ,
+			VP.Closed ,
+			VP.Protected ,
+			VP.CreatedUserId ,
+			VP.CreatedDate ,
+			VP.LastModifiedUserId ,
+			VP.LastModifiedDate ,
+			VP.ContentItemId ,
+			VP.Content ,
+			VP.ContentTypeID ,
+			VP.TabID ,
+			VP.ModuleID ,
+			VP.ContentKey ,
+			VP.Indexed ,
+			VP.CreatedByUserId ,
+			VP.CreatedOnDate ,
+			VP.LastModifiedByUserID ,
+			VP.LastModifiedOnDate ,
+			CIMD.[MetaDataValue] AS [ContentTitle] ,
+			( SELECT    COUNT(PostId)
+			  FROM      {databaseOwner}{objectQualifier}Answers_Post
+			  WHERE     ( ParentId = VP.PostId )
+						AND ( ParentId <> 0 )
+						AND ( Approved = 1 )
+						AND ( Deleted = 0 )
+			) AS TotalAnswers ,
+			( SELECT    COUNT(PostId)
+			  FROM      {databaseOwner}{objectQualifier}Answers_Vote
+			  WHERE     PostID = VP.PostID
+						AND VoteTypeID = 1
+			) AS UpVotes ,
+			( SELECT    COUNT(PostId)
+			  FROM      {databaseOwner}{objectQualifier}Answers_Vote
+			  WHERE     PostID = VP.PostID
+						AND VoteTypeID = -1
+			) AS DownVotes ,
+			1 AS TotalRecords
+	FROM    {databaseOwner}{objectQualifier}vw_Answers_Posts VP
+			LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD ON CIMD.ContentItemID = vp.ContentItemID
+															  AND CIMD.MetaDataID = ( SELECT
+															  MetaDataID
+															  FROM
+															  {databaseOwner}[{objectQualifier}MetaData]
+															  WHERE
+															  MetaDataName = 'Title'
+															  )
+	WHERE   ParentID = 0
+			AND Deleted = 0
+			AND Approved = 1
+			AND ModuleID = @ModuleID
+			AND
+			-- Comments that have been added or updated within the given time frame
+			(
+			  (VP.LastModifiedOnDate >= @StartDate AND VP.LastModifiedOnDate <= @EndDate)
+			  OR
+			  (
+			    (SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}Journal_Comments JC
+				 WHERE JC.[JournalId] IN (SELECT JournalId FROM {databaseOwner}{objectQualifier}Journal J WHERE J.[ContentItemId] = VP.[ContentItemId])
+				  AND
+				  ((JC.[DateCreated] >= @StartDateUTC AND JC.[DateCreated] <= @EndDateUTC)
+				    OR
+				  (JC.[DateUpdated] >= @StartDateUTC AND JC.[DateUpdated] <= @EndDateUTC)
+				  )
+				) > 0
+			  )
+			)
+END
+GO
+
+
+/********************************************************
+ * SPROC: Answers_Post_Get
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Answers_Post_Get]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Answers_Post_Get] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Answers_Post_Get]
+	@PostId INT ,
+	@ModuleId INT
+AS
+BEGIN
+	SELECT  PostId ,
+			Body ,
+			ParentId ,
+			PortalId ,
+			GroupId ,
+			ViewCount ,
+			Score ,
+			Approved ,
+			Deleted ,
+			AnswerId ,
+			Closed ,
+			Protected ,
+			CreatedUserId ,
+			CreatedDate ,
+			LastModifiedUserId ,
+			LastModifiedDate ,
+			vp.ContentItemId ,
+			Content ,
+			ContentTypeID ,
+			TabID ,
+			ModuleID ,
+			ContentKey ,
+			Indexed ,
+			CreatedByUserId ,
+			CreatedOnDate ,
+			LastModifiedByUserID ,
+			LastModifiedOnDate ,
+			CIMD.[MetaDataValue] AS [ContentTitle] ,
+			( SELECT    COUNT(PostId)
+			  FROM      {databaseOwner}{objectQualifier}Answers_Post
+			  WHERE     ( ParentId = vp.PostId )
+						AND ( ParentId <> 0 )
+						AND ( Approved = 1 )
+						AND ( Deleted = 0 )
+			) AS TotalAnswers ,
+			( SELECT    COUNT(PostId)
+			  FROM      {databaseOwner}{objectQualifier}Answers_Vote
+			  WHERE     PostID = vp.PostID
+						AND VoteTypeID = 1
+			) AS UpVotes ,
+			( SELECT    COUNT(PostId)
+			  FROM      {databaseOwner}{objectQualifier}Answers_Vote
+			  WHERE     PostID = vp.PostID
+						AND VoteTypeID = -1
+			) AS DownVotes ,
+			1 AS TotalRecords
+	FROM    {databaseOwner}{objectQualifier}vw_Answers_Posts VP
+			LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD ON CIMD.ContentItemID = VP.[ContentItemID]
+															  AND CIMD.MetaDataID = ( SELECT
+															  MetaDataID
+															  FROM
+															  {databaseOwner}[{objectQualifier}MetaData]
+															  WHERE
+															  MetaDataName = 'Title'
+															  )
+	WHERE   PostId = @PostId
+			AND ( @ModuleId IS NULL
+				  OR ( ModuleId = @ModuleId )
+				)
+END
+GO
+
+/********************************************************
+ * SPROC: Answers_Question_GetSitemap
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Answers_Question_GetSitemap]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Answers_Question_GetSitemap] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Answers_Question_GetSitemap]
+	@PortalId INT
+AS
+BEGIN
+	SELECT TOP ( 2000 )
+			PostId ,
+			Body ,
+			ParentId ,
+			PortalId ,
+			GroupId
+			ViewCount ,
+			Score ,
+			Approved ,
+			Deleted ,
+			AnswerId ,
+			Closed ,
+			Protected ,
+			CreatedUserId ,
+			CreatedDate ,
+			LastModifiedUserId ,
+			LastModifiedDate ,
+			ContentItemID ,
+			Content ,
+			ContentTypeID ,
+			TabID ,
+			ModuleID ,
+			ContentKey ,
+			Indexed ,
+			CreatedByUserID ,
+			CreatedOnDate ,
+			LastModifiedByUserID ,
+			LastModifiedOnDate ,
+			( SELECT TOP ( 1 )
+						CreatedUserID
+			  FROM      {databaseOwner}{objectQualifier}vw_Answers_Posts
+			  WHERE     ( PostID = vp.PostID
+						  OR ParentID = vp.PostID
+						)
+						AND Deleted = 0
+						AND Approved = 1
+			  ORDER BY  CreatedDate DESC
+			) AS LastApprovedUserID ,
+			( SELECT TOP ( 1 )
+						CreatedDate
+			  FROM      {databaseOwner}{objectQualifier}vw_Answers_Posts
+			  WHERE     ( PostID = vp.PostID
+						  OR ParentID = vp.PostID
+						)
+						AND Deleted = 0
+						AND Approved = 1
+			  ORDER BY  CreatedDate DESC
+			) AS LastApprovedDate ,
+			( SELECT    COUNT(PostID)
+			  FROM      {databaseOwner}{objectQualifier}Answers_Post
+			  WHERE     ( ParentID = vp.PostID )
+						AND ( ParentID <> 0 )
+						AND ( Approved = 1 )
+						AND ( Deleted = 0 )
+			) AS TotalAnswers ,
+			( SELECT    COUNT(PostId)
+			  FROM      {databaseOwner}{objectQualifier}Answers_Vote
+			  WHERE     PostID = vp.PostID
+						AND VoteTypeID = 1
+			) AS UpVotes ,
+			( SELECT    COUNT(PostId)
+			  FROM      {databaseOwner}{objectQualifier}Answers_Vote
+			  WHERE     PostID = vp.PostID
+						AND VoteTypeID = -1
+			) AS DownVotes ,
+			( SELECT    COUNT(PostID)
+			  FROM      {databaseOwner}{objectQualifier}vw_Answers_Posts
+			  WHERE     PortalID = @PortalId
+						AND ParentID = 0
+						AND Deleted = 0
+			) AS TotalRecords
+	FROM    {databaseOwner}{objectQualifier}vw_Answers_Posts vp
+	WHERE   PortalID = @PortalId
+			AND ParentID = 0
+			AND Deleted = 0
+			AND Approved = 1
+	ORDER BY CreatedOnDate DESC
+END
+GO
+
+/********************************************************
+ * SPROC: Answers_Post_AcceptAnswer
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Answers_Post_AcceptAnswer]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Answers_Post_AcceptAnswer] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Answers_Post_AcceptAnswer]
+	@PostId INT
+AS 
+BEGIN
+	DECLARE
+		@QuestionID INT,
+		@AcceptedPreviously BIT = 1
+
+	SELECT  TOP 1 @QuestionID = ParentID
+	FROM    {databaseOwner}{objectQualifier}Answers_Post
+	WHERE   PostID = @PostId
+
+	IF @QuestionID IS NOT NULL
+	BEGIN
+		-- return accepted answer previously
+		IF EXISTS (SELECT 1 FROM {databaseOwner}{objectQualifier}Answers_Post
+			WHERE PostID = @QuestionID AND AnswerId IS NOT NULL)
+		BEGIN
+			SET @AcceptedPreviously = 1
+		END
+
+		UPDATE  {databaseOwner}{objectQualifier}Answers_Post
+		SET		AnswerID = 0
+		WHERE   ParentId = @QuestionID
+		  AND   AnswerID IS NOT NULL;
+
+		UPDATE  {databaseOwner}{objectQualifier}Answers_Post
+		SET     AnswerID = @PostId
+		WHERE   PostID IN (@QuestionID, @PostId);
+	END
+
+	-- return total accepted answers
+	SELECT  @AcceptedPreviously
+END
+GO
+
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/

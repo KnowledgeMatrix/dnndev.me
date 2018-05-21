@@ -1,0 +1,442 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+-- SOCIAL-2368 - Localization: Collation conflict error using Temp Tables 
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Ideas_Idea_Search_MyComments]', N'P') IS NULL
+  EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Idea_Search_MyComments] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Idea_Search_MyComments]
+	@ModuleId INT,
+	@GroupId INT,
+	@UserId INT,
+	@Search NVARCHAR(255),
+	@Filter INT,
+	@Tags NVARCHAR(255),
+	@PageIndex INT,
+	@PageSize INT,
+	@SortColumn VARCHAR(32),
+	@SortAscending BIT
+AS
+BEGIN
+
+	DECLARE @TagLength Int
+	DECLARE @MetID Int
+
+	Set @TagLength = ( SELECT LEN(@Tags) - LEN(REPLACE(@Tags, ',', '')) + 1)
+
+	SELECT	@MetID = MetaDataID
+	FROM	{databaseOwner}{objectQualifier}MetaData
+	WHERE	MetaDataName = 'Title'
+
+	Create Table #Tags(
+		RowNumber smallint,
+		RowValue nvarchar(50) COLLATE DATABASE_DEFAULT )
+
+	Create Table #Taxonomy(
+		TermID Int,
+		Name nVarchar(250) COLLATE DATABASE_DEFAULT )
+
+	Insert Into #Tags
+		Select	RowNumber,RowValue
+		From	{databaseOwner}{objectQualifier}ConvertListToTable(',', @Tags);
+
+	Insert Into #Taxonomy
+		Select	TermID, Name
+		From	{databaseOwner}{objectQualifier}Taxonomy_Terms TT
+				Inner Join #Tags T on TT.Name = T.RowValue;
+
+	;WITH InnerSet
+	AS (
+		SELECT	DISTINCT I.*
+		FROM	{databaseOwner}{objectQualifier}Journal_Comments jc WITH (NOLOCK)
+					INNER JOIN {databaseOwner}{objectQualifier}Journal j WITH (NOLOCK) ON jc.JournalId = j.JournalId
+					INNER JOIN {databaseOwner}{objectQualifier}Ideas_Idea i WITH (NOLOCK) ON j.ContentItemId = i.ContentItemId
+		WHERE jc.UserId = @UserId
+		  AND I.ModuleId = @ModuleId
+	   ),
+	OrderedSet
+	AS (
+		SELECT	COUNT(*) OVER () AS TotalRecords,
+				I.[IdeaId],
+				I.[GroupId],
+				I.[Authorized],
+				(CASE I.[Views] WHEN -1 THEN 0 ELSE COALESCE(I.[Views], 0) END) AS [Views],
+				I.[Votes],
+				I.[Comments],
+				I.[Supporters],
+				I.[Status],
+				I.[Protected],
+				I.[Custom1],
+				I.[Custom2],
+				I.[Custom3],
+				I.[Custom4],
+				I.[ContentItemId],
+				I.[AcceptedOnDate],
+				I.[ScheduledOnDate],
+				I.[DeliveredOnDate],
+				CI.Content,
+				CI.ContentTypeID,
+				CI.TabID,
+				CI.ModuleID,
+				CI.ContentKey,
+				CI.Indexed,
+				CI.CreatedByUserID,
+				CI.[CreatedOnDate],
+				CI.LastModifiedByUserID,
+				CI.[LastModifiedOnDate],
+				TB.[PortalID],
+				CIMD.[MetaDataValue] AS [ContentTitle],
+				U.DisplayName AS DisplayName,
+				ROW_NUMBER() OVER (
+					ORDER BY
+						CASE WHEN @SortColumn = 'CreatedDate' AND @SortAscending = 1 THEN CI.CreatedOnDate END ASC,
+						CASE WHEN @SortColumn = 'CreatedDate' AND @SortAscending = 0 THEN CI.CreatedOnDate END DESC,
+						CASE WHEN @SortColumn = 'LastActive' AND @SortAscending = 1 THEN CI.LastModifiedOnDate END ASC,
+						CASE WHEN @SortColumn = 'LastActive' AND @SortAscending = 0 THEN CI.LastModifiedOnDate END DESC,
+						CASE WHEN @SortColumn = 'Title' AND @SortAscending = 1 THEN MetaDataValue END ASC,
+						CASE WHEN @SortColumn = 'Title' AND @SortAscending = 0 THEN MetaDataValue END DESC,
+						CASE WHEN @SortColumn = 'Author' AND @SortAscending = 1 THEN DisplayName END ASC,
+						CASE WHEN @SortColumn = 'Author' AND @SortAscending = 0 THEN DisplayName END DESC,
+						CASE WHEN @SortColumn = 'Votes' AND @SortAscending = 0 THEN Votes END DESC,
+						CASE WHEN @SortColumn = 'Votes' AND @SortAscending = 1 THEN Votes END ASC,
+						CASE WHEN @SortColumn = 'Views' AND @SortAscending = 0 THEN [Views] END DESC,
+						CASE WHEN @SortColumn = 'Views' AND @SortAscending = 1 THEN [Views] END ASC)
+					AS [RowNumber]
+		FROM	InnerSet I
+					INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI WITH (NOLOCK) ON CI.[ContentItemID] = I.[ContentItemID]
+					INNER JOIN {databaseOwner}{objectQualifier}Tabs TB WITH (NOLOCK) ON TB.[TabID] = CI.[TabID]
+					INNER JOIN {databaseOwner}{objectQualifier}Users U WITH (NOLOCK) ON U.UserID = CI.CreatedByUserID
+					INNER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD WITH (NOLOCK)
+						ON CIMD.ContentItemID = I.[ContentItemID]
+						AND CIMD.MetaDataID = @MetID
+		WHERE	1 = 1
+
+		  -- match module
+		  AND	(I.[ModuleId] = @ModuleId)
+
+		  -- match group
+		  AND	(I.[GroupId] = @GroupId)
+
+		  -- match tags (if specified)
+		  AND	(	@Tags IS NULL OR LEN(@Tags) = 0
+				 OR (SELECT	COUNT(*)
+					 FROM	{databaseOwner}{objectQualifier}ContentItems_Tags CIT WITH (NOLOCK)
+								INNER JOIN #Taxonomy T On CIT.TermID = T.TermID
+					WHERE	CIT.ContentItemID = I.ContentItemId) = @TagLength)
+
+		  -- match title (if specified)
+		  AND	(@Search IS NULL OR LEN(@Search) = 0 OR MetaDataValue LIKE '%' + @Search + '%')
+
+		  -- match current state
+		  AND	(   (@Filter = 0)                     -- any one this user has created
+				 OR (@Filter = 1 AND I.[Status] = 0 ) -- Submitted
+				 OR (@Filter = 2 AND I.[Status] = 5 ) -- UnderReview
+				 OR (@Filter = 3 AND I.[Status] = 33) -- Reviewed
+				 OR (@Filter = 4 AND I.[Status] = 15) -- Accepted
+				 OR (@Filter = 5 AND I.[Status] = 20) -- Scheduled
+				 OR (@Filter = 6 AND I.[Status] = 25) -- Delivered
+				 OR (@Filter = 7 AND I.[Status] = 30) -- Duplicate
+				 OR (@Filter = 8 AND I.[Status] = 35) -- Declined
+				)
+	)
+
+	SELECT	TOP (@PageSize) *
+	FROM	OrderedSet
+	WHERE	RowNumber >= (@PageIndex * @PageSize) + 1
+
+	Drop Table #Tags
+	Drop Table #Taxonomy
+END
+GO
+
+-----------------------------------------------------------------------------------------------------------------------
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Ideas_Idea_Search_Filter]', N'P') IS NULL
+  EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Idea_Search_Filter] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Idea_Search_Filter]
+	@ModuleId INT,
+	@GroupId INT,
+	@UserId INT,
+	@Search NVARCHAR(255),
+	@Filter INT,
+	@Tags NVARCHAR(255),
+	@PageIndex INT,
+	@PageSize INT,
+	@IsAdmin BIT,
+	@SortColumn VARCHAR(32),
+	@SortAscending BIT,
+	@Category VARCHAR(32)
+AS
+BEGIN
+
+	DECLARE @TagLength Int
+	DECLARE @MetID Int
+
+	Set @TagLength = (SELECT LEN(@Tags) - LEN(REPLACE(@Tags, ',', '')) + 1)
+
+	SELECT	@MetID = MetaDataID
+	FROM	{databaseOwner}{objectQualifier}MetaData
+	WHERE	MetaDataName = 'Title'
+
+	Create Table #Tags(
+		RowNumber smallint,
+		RowValue nvarchar(50) COLLATE DATABASE_DEFAULT )
+
+	Create Table #Taxonomy(
+		TermID Int,
+		Name nvarchar(250) COLLATE DATABASE_DEFAULT )
+
+	Insert Into #Tags
+		Select	RowNumber,RowValue
+		From	{databaseOwner}{objectQualifier}ConvertListToTable(',', @Tags);
+
+	Insert Into #Taxonomy
+		Select	TermID, Name
+		From	{databaseOwner}{objectQualifier}Taxonomy_Terms TT
+				Inner Join #Tags T on TT.Name = T.RowValue;
+
+	;WITH OrderedSet
+	AS (
+		SELECT	COUNT(*) OVER () AS TotalRecords,
+				I.[IdeaId],
+				I.[GroupId],
+				I.[Authorized],
+				(CASE I.[Views] WHEN -1 THEN 0 ELSE COALESCE(I.[Views], 0) END) AS [Views],
+				I.[Votes],
+				I.[Comments],
+				I.[Supporters],
+				I.[Status],
+				I.[Protected],
+				I.[Custom1],
+				I.[Custom2],
+				I.[Custom3],
+				I.[Custom4],
+				I.[ContentItemId],
+				I.[AcceptedOnDate],
+				I.[ScheduledOnDate],
+				I.[DeliveredOnDate],
+				CI.Content,
+				CI.ContentTypeID,
+				CI.TabID,
+				CI.ModuleID,
+				CI.ContentKey,
+				CI.Indexed,
+				CI.CreatedByUserID,
+				CI.[CreatedOnDate],
+				CI.LastModifiedByUserID,
+				CI.[LastModifiedOnDate],
+				TB.[PortalID],
+				CIMD.[MetaDataValue] AS [ContentTitle],
+				U.DisplayName AS DisplayName,
+				ROW_NUMBER() OVER (
+					ORDER BY
+						CASE WHEN @SortColumn = 'CreatedDate' AND @SortAscending = 1 THEN CI.CreatedOnDate END ASC,
+						CASE WHEN @SortColumn = 'CreatedDate' AND @SortAscending = 0 THEN CI.CreatedOnDate END DESC,
+						CASE WHEN @SortColumn = 'LastActive' AND @SortAscending = 1 THEN CI.LastModifiedOnDate END ASC,
+						CASE WHEN @SortColumn = 'LastActive' AND @SortAscending = 0 THEN CI.LastModifiedOnDate END DESC,
+						CASE WHEN @SortColumn = 'Title' AND @SortAscending = 1 THEN MetaDataValue END ASC,
+						CASE WHEN @SortColumn = 'Title' AND @SortAscending = 0 THEN MetaDataValue END DESC,
+						CASE WHEN @SortColumn = 'Author' AND @SortAscending = 1 THEN DisplayName END ASC,
+						CASE WHEN @SortColumn = 'Author' AND @SortAscending = 0 THEN DisplayName END DESC,
+						CASE WHEN @SortColumn = 'Votes' AND @SortAscending = 0 THEN Votes END DESC,
+						CASE WHEN @SortColumn = 'Votes' AND @SortAscending = 1 THEN Votes END ASC,
+						CASE WHEN @SortColumn = 'Views' AND @SortAscending = 0 THEN [Views] END DESC,
+						CASE WHEN @SortColumn = 'Views' AND @SortAscending = 1 THEN [Views] END ASC
+					) AS [RowNumber]
+		FROM	{databaseOwner}{objectQualifier}Ideas_Idea I WITH (NOLOCK)
+					INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI WITH (NOLOCK) ON CI.[ContentItemID] = I.[ContentItemID]
+					INNER JOIN {databaseOwner}{objectQualifier}Tabs TB WITH (NOLOCK) ON TB.[TabID] = CI.[TabID]
+					INNER JOIN {databaseOwner}{objectQualifier}Users U WITH (NOLOCK) ON U.UserID = CI.CreatedByUserID
+					INNER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD WITH (NOLOCK)
+						ON CIMD.ContentItemID = I.[ContentItemID]
+						AND CIMD.MetaDataID = @MetID
+
+		WHERE	(@IsAdmin = 1 OR Authorized = 1)
+
+		  -- match module
+		  AND (I.[ModuleId] = @ModuleId)
+
+		  -- match group
+		  AND (I.[GroupId] = @GroupId)
+
+		  -- match all tags specified
+		  AND	(	@Tags IS NULL OR LEN(@Tags) = 0
+				 OR ( SELECT	COUNT(*)
+						FROM	{databaseOwner}{objectQualifier}ContentItems_Tags CIT
+									INNER JOIN #Taxonomy T On CIT.TermID = T.TermID
+						WHERE	CIT.ContentItemID = I.ContentItemId ) = @TagLength
+				)
+
+		  -- match title (if specified)
+		  AND	(	@Search IS NULL OR LEN(@Search) = 0
+				 OR MetaDataValue LIKE '%' + @Search + '%')
+
+		  -- match current state (see enum IdeaStatus in source code)
+		  AND	(
+					(		(@Category IS NULL OR @Category <> 'topideas')	-- allideas
+					 AND	(   (@Filter = 0                    ) -- All
+							 OR (@Filter = 1 AND I.[Status] = 0 ) -- Submitted
+							 OR (@Filter = 2 AND I.[Status] = 5 ) -- UnderReview
+							 OR (@Filter = 3 AND I.[Status] = 33) -- Reviewed
+							 OR (@Filter = 4 AND I.[Status] = 15) -- Accepted
+							 OR (@Filter = 5 AND I.[Status] = 20) -- Scheduled
+							 OR (@Filter = 6 AND I.[Status] = 25) -- Delivered
+							 OR (@Filter = 7 AND I.[Status] = 30) -- Duplicate
+							 OR (@Filter = 8 AND I.[Status] = 35) -- Declined
+							)
+					)
+				 OR
+					(		@Category = 'topideas'
+					 AND	(   (@Filter = 0 AND NOT I.[Status] IN (25, 30, 35)) -- top except Delivered, Duplicate, and Declined
+							 OR (@Filter = 1 AND I.[Status] = 0 ) -- Submitted
+							 OR (@Filter = 2 AND I.[Status] = 5 ) -- UnderReview
+							 OR (@Filter = 3 AND I.[Status] = 33) -- Reviewed
+							 OR (@Filter = 4 AND I.[Status] = 15) -- Accepted
+							 OR (@Filter = 5 AND I.[Status] = 20) -- Scheduled
+							 --OR (@Filter = 6 AND I.[Status] = 25) -- Delivered -- these should not be allowed to show-up at all in this mode
+							 --OR (@Filter = 7 AND I.[Status] = 30) -- Duplicate
+							 --OR (@Filter = 8 AND I.[Status] = 35) -- Declined
+							)
+					)
+				)
+		)
+	SELECT	TOP (@PageSize) *
+	FROM	OrderedSet
+	WHERE	RowNumber >= (@PageIndex * @PageSize) + 1
+
+	Drop Table #Tags
+	Drop Table #Taxonomy
+END
+GO
+
+-- add new columns
+IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = object_id(N'{databaseOwner}{objectQualifier}Ideas_Vote') and name =N'LastModifiedOn')
+	ALTER TABLE {databaseOwner}{objectQualifier}Ideas_Vote ADD LastModifiedOn datetime NOT NULL DEFAULT (GETDATE())
+GO
+
+/********************************************************
+ * SPROC: Ideas_Vote_Update
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Ideas_Vote_Update]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Vote_Update] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Vote_Update]
+	@IdeaId INT,
+	@UserId INT,
+	@Votes INT
+AS
+BEGIN
+	IF @Votes = 0
+		BEGIN
+			DELETE  FROM {databaseOwner}{objectQualifier}Ideas_Vote
+			WHERE   IdeaId = @IdeaId
+					AND UserId = @UserId
+		END
+	ELSE
+		BEGIN
+			IF NOT EXISTS ( SELECT  1
+							FROM    {databaseOwner}{objectQualifier}Ideas_Vote
+							WHERE   IdeaId = @IdeaId
+									AND UserId = @UserId )
+				BEGIN
+					INSERT  INTO {databaseOwner}{objectQualifier}Ideas_Vote
+							( IdeaId,
+							  UserId,
+							  CreatedOnDate,
+							  Votes
+							)
+					VALUES  ( @IdeaId,
+							  @UserId,
+							  GETDATE(),
+							  @Votes
+							)
+				END
+			ELSE
+				BEGIN
+					UPDATE  {databaseOwner}{objectQualifier}Ideas_Vote
+					SET     Votes = @Votes,
+							LastModifiedOn = GETDATE()
+					WHERE   IdeaId = @IdeaId
+							AND UserId = @UserId
+				END
+		END
+
+	UPDATE  {databaseOwner}{objectQualifier}Ideas_Idea
+	SET     Votes = ( SELECT    ISNULL(SUM(Votes), 0)
+					  FROM      {databaseOwner}{objectQualifier}Ideas_Vote
+					  WHERE     IdeaId = @IdeaId
+					),
+			Supporters = ( SELECT   COUNT(DISTINCT UserId)
+						   FROM     {databaseOwner}{objectQualifier}Ideas_Vote
+						   WHERE    IdeaId = @IdeaId
+						 )
+	WHERE   IdeaId = @IdeaId
+END
+GO
+
+/********************************************************
+ * SPROC: Ideas_Vote_GetVotesByIdeaDetail
+ ********************************************************/
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Ideas_Vote_GetVotesByIdeaDetail]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Vote_GetVotesByIdeaDetail] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Vote_GetVotesByIdeaDetail]
+	@IdeaId int,
+	@PageIndex int = 0,
+	@PageSize int = 10
+AS
+BEGIN
+	DECLARE
+		@TotalVoters int, 
+		@TotalVotes int
+
+	SELECT  @TotalVoters = COUNT(IdeaId),
+			@TotalVotes = SUM(Votes)
+	FROM	{databaseOwner}{objectQualifier}Ideas_Vote WITH (NOLOCK)
+	WHERE	IdeaId = @IdeaId
+
+	;WITH OrderedSet
+	AS (
+		SELECT	U.UserID, U.DisplayName, V.Votes,
+				ROW_NUMBER() OVER (ORDER BY V.LastModifiedOn DESC, V.IdeaVoteId DESC) AS [RowNumber]
+		FROM	{databaseOwner}{objectQualifier}Ideas_Vote V WITH (NOLOCK)
+					INNER JOIN {databaseOwner}{objectQualifier}Users U WITH (NOLOCK) ON V.UserID = U.UserID
+		WHERE	V.IdeaId = @IdeaId
+	)
+	SELECT TOP (@PageSize) UserID, DisplayName, Votes, TotalVoters = @TotalVoters, TotalVotes = @TotalVotes
+	FROM	OrderedSet
+	WHERE	[RowNumber] > (@PageIndex * @PageSize)
+END
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Ideas_Idea_GetResponseHistory]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Idea_GetResponseHistory]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Ideas_Idea_GetResponseHistory]
+	@IdeaId INT 
+AS 
+BEGIN
+	SELECT RH.*, U.DisplayName as ResponseBy
+	FROM  {databaseOwner}[{objectQualifier}Ideas_ResponseHistory] AS RH
+	INNER JOIN {databaseOwner}[{objectQualifier}Users] U ON RH.CreatedByUserId = U.UserID
+	WHERE     (IdeaId = @IdeaId)
+	ORDER BY CreatedOnDate DESC
+END
+GO
+
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/

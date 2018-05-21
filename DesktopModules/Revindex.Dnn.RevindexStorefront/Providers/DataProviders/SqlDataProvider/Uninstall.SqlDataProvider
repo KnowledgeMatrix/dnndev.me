@@ -1,0 +1,367 @@
+SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+GO
+
+BEGIN TRY
+
+	BEGIN TRANSACTION
+
+	--
+	-- Remove table Revindex_Storefront_Right
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Right]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Right]
+
+	--
+	-- Remove table Revindex_Storefront_ProductChannel
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductChannel]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductChannel]
+
+	--
+	-- Remove table Revindex_Storefront_CrosssellProduct
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_CrosssellProduct]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_CrosssellProduct]
+
+	--
+	-- Remove table Revindex_Storefront_SalesOrderSequence
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrderSequence]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrderSequence]
+	
+	--
+	-- Remove table Revindex_Storefront_AddressValidationMethod
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_AddressValidationMethod]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_AddressValidationMethod]
+	
+	--
+	-- Remove table Revindex_Storefront_Customer
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Customer]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Customer]
+	
+	--
+	-- Remove table Revindex_Storefront_RewardsPointsHistory
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_RewardsPointHistory]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RewardsPointHistory]
+	
+	--
+	-- Remove table Revindex_Storefront_RewardsPoints
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_RewardsPoint]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RewardsPoint]
+	
+	--
+	-- Remove table Revindex_Storefront_ProductVariantOption
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariantOption]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariantOption]
+	
+	--
+	-- Remove table Revindex_Storefront_ProductVariantGroupOption
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariantGroupOption]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariantGroupOption]
+	
+	--
+	-- Remove table Revindex_Storefront_ProductVariantGroup
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariantGroup]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariantGroup]
+	
+	--
+	-- Remove table Revindex_Storefront_ReportDefinition
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ReportDefinition]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ReportDefinition]
+	
+	--
+	-- Remove table Revindex_Storefront_VoucherHistory
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_VoucherHistory]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_VoucherHistory]
+	
+	--
+	-- Remove table Revindex_Storefront_Voucher
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Voucher]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Voucher]
+	
+	--
+	-- Remove table Revindex_Storefront_UserApi
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_UserApi]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_UserApi]
+	
+	--
+	-- Remove table Revindex_Storefront_WishListDetail
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_WishListDetail]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_WishListDetail]
+	
+	--
+	-- Remove table Revindex_Storefront_ProductAttribute
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttribute]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttribute]
+	
+	--
+	-- Remove table Revindex_Storefront_ProductAttributeDefinitionSelection
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeDefinitionSelection]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeDefinitionSelection]
+	
+	--
+	-- Remove table Revindex_Storefront_ProductAttributeDefinition
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeDefinition]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeDefinition]
+	
+	--
+	-- Remove table Revindex_Storefront_ProductAttributeGroup
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeGroup]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductAttributeGroup]
+	
+	--
+	-- Remove table Revindex_Storefront_Gallery
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Gallery]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Gallery]
+	
+	--
+	-- Remove table Revindex_Storefront_RelatedProduct
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_RelatedProduct]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RelatedProduct]
+	
+	--
+	-- Remove table Revindex_Storefront_RequiredProduct
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_RequiredProduct]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RequiredProduct]
+	
+	--
+	-- Remove table Revindex_Storefront_SalesOrderDetail
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrderDetail]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrderDetail]
+
+	--
+	-- Remove table Revindex_Storefront_RecurringSalesOrder
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_RecurringSalesOrder]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RecurringSalesOrder]
+	
+	--
+	-- Remove table Revindex_Storefront_ProductCategory
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductCategory]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductCategory]
+	
+	--
+	-- Remove table Revindex_Storefront_ProductReview
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductReview]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductReview]
+
+	--
+	-- Remove table Revindex_Storefront_ProductPart
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductPart]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductPart]
+
+	--
+	-- Remove table Revindex_Storefront_ProductComponent
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductComponent]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductComponent]
+	
+	--
+	-- Remove table Revindex_Storefront_ProductVariant
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant]
+	
+	--
+	-- Remove table Revindex_Storefront_RightDefinition
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_RightDefinition]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_RightDefinition]
+
+	--
+	-- Remove table Revindex_Storefront_VoucherDefinition
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_VoucherDefinition]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_VoucherDefinition]
+	
+	--
+	-- Remove table Revindex_Storefront_Product
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Product]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Product]
+	
+	--
+	-- Remove table Revindex_Storefront_SalesPayment
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_SalesPayment]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesPayment]
+	
+	--
+	-- Remove table Revindex_Storefront_UserAddress
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_UserAddress]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_UserAddress]
+	
+	--
+	-- Remove table Revindex_Storefront_Category
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Category]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Category]
+	
+	--
+	-- Remove table Revindex_Storefront_Configuration
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration]
+	
+	--
+	-- Remove table Revindex_Storefront_Distributor
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Distributor]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Distributor]
+	
+	--
+	-- Remove table Revindex_Storefront_Manufacturer
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Manufacturer]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Manufacturer]
+	
+	--
+	-- Remove table Revindex_Storefront_SalesOrder
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder]
+	
+	--
+	-- Remove table Revindex_Storefront_WishList
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_WishList]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_WishList]
+	
+	--
+	-- Remove table Revindex_Storefront_UserPayment
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_UserPayment]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_UserPayment]
+	
+	--
+	-- Remove table Revindex_Storefront_ShippingMethod
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ShippingMethod]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ShippingMethod]
+	
+	--
+	-- Remove table Revindex_Storefront_HandlingMethod
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_HandlingMethod]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_HandlingMethod]
+	
+	--
+	-- Remove table Revindex_Storefront_PackingMethod
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_PackingMethod]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_PackingMethod]
+	
+	--
+	-- Remove table Revindex_Storefront_Package
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Package]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Package]
+	
+	--
+	-- Remove table Revindex_Storefront_TaxClass
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_TaxClass]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_TaxClass]
+	
+	--
+	-- Remove table Revindex_Storefront_SalesPromotion
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_SalesPromotion]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesPromotion]
+	
+	--
+	-- Remove table Revindex_Storefront_Coupon
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Coupon]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Coupon]
+	
+	--
+	-- Remove table Revindex_Storefront_Currency
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Currency]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Currency]
+	
+	--
+	-- Remove table Revindex_Storefront_Warehouse
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Warehouse]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Warehouse]
+
+	--
+	-- Remove table Revindex_Storefront_ShippingProvider
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_ShippingProvider]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_ShippingProvider]
+
+	--
+	-- Remove table Revindex_Storefront_TaxProvider
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_TaxProvider]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_TaxProvider]
+
+	--
+	-- Remove table Revindex_Storefront_FulfillmentProvider
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_FulfillmentProvider]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_FulfillmentProvider]
+
+	--
+	-- Remove table Revindex_Storefront_FulfillmentMethod
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_FulfillmentMethod]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_FulfillmentMethod]
+
+	--
+	-- Remove table Revindex_Storefront_Seller
+	--
+	IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Seller]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_Seller]
+
+
+	--
+	-- Remove PersonaBar link
+	--
+	IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{objectQualifier}PersonaBarMenu')
+		DELETE FROM {databaseOwner}[{objectQualifier}PersonaBarMenu] WHERE Identifier LIKE 'Revindex.Dnn.RevindexStorefront-%'
+
+
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	ROLLBACK TRANSACTION
+
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

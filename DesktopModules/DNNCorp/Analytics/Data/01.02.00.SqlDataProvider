@@ -1,0 +1,563 @@
+IF EXISTS (SELECT 1 FROM sys.indexes
+				WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Mechanics_UserScoringLog]')
+				AND name = N'IX_{objectQualifier}Mechanics_UserScoringLog_CreatedDate')
+	DROP INDEX [IX_{objectQualifier}Mechanics_UserScoringLog_CreatedDate]
+		ON {databaseOwner}[{objectQualifier}Mechanics_UserScoringLog]
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes
+				WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Users]')
+				AND name = N'IX_{objectQualifier}Analytics_Users_PortalId_ProcessDate')
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Analytics_Users_PortalId_ProcessDate]
+		ON {databaseOwner}[{objectQualifier}Analytics_Users] ([PortalId],[ProcessDate])
+		INCLUDE ([UserId])
+GO
+
+IF NOT EXISTS ( SELECT 1 FROM sys.indexes
+				WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Mechanics_UserScoringLog]')
+				AND name = N'IX_{objectQualifier}Mechanics_UserScoringLog_CreatedDate_ScoringActionDefID' )
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Mechanics_UserScoringLog_CreatedDate_ScoringActionDefID]
+		ON {databaseOwner}[{objectQualifier}Mechanics_UserScoringLog]
+		(
+			[CreatedOnDate] DESC
+		) Include ([ScoringActionDefID])
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Calculate_Aggregate_Activities]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Calculate_Aggregate_Activities
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Calculate_Aggregate_Activities]
+	@PortalId int,
+	@LowerBound smalldatetime,
+	@UpperBound smalldatetime,
+	@ContentTypeId int
+AS
+BEGIN
+	DECLARE @CreateCount int
+	DECLARE @SearchCount int
+	DECLARE @EditCount int
+	DECLARE @DeleteCount int
+	DECLARE @ViewCount int
+	DECLARE @LargeLowerBound datetime
+	DECLARE @LargeUpperBound datetime
+
+	SET @LargeLowerBound = @LowerBound
+	SET @LargeUpperBound = @UpperBound
+
+	SELECT			@CreateCount = COUNT(*)
+	FROM			{databaseOwner}[{objectQualifier}Mechanics_UserScoringLog] musl WITH (NOLOCK)
+	LEFT OUTER JOIN {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition] msad WITH (NOLOCK) ON musl.[ScoringActionDefId] = msad.[ScoringActionDefId]
+	WHERE			msad.[ActionType] = 2 -- create type
+	AND				musl.[CreatedOnDate] >= @LargeLowerBound AND musl.[CreatedOnDate] <= @LargeUpperBound
+
+	SELECT			@SearchCount = 0
+ -- FROM			{databaseOwner}[{objectQualifier}Mechanics_UserScoringLog] musl WITH (NOLOCK)
+ --	LEFT OUTER JOIN {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition] msad WITH (NOLOCK) ON musl.[ScoringActionDefId] = msad.[ScoringActionDefId]
+ --	WHERE			msad.[ActionType] = 2 -- search type doesn't exist
+
+	SELECT			@EditCount = COUNT(*)
+	FROM			{databaseOwner}[{objectQualifier}Mechanics_UserScoringLog] musl WITH (NOLOCK)
+	LEFT OUTER JOIN {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition] msad WITH (NOLOCK) ON musl.[ScoringActionDefId] = msad.[ScoringActionDefId]
+	WHERE			msad.[ActionType] = 3 -- create type
+	AND				musl.[CreatedOnDate] >= @LargeLowerBound AND musl.[CreatedOnDate] <= @LargeUpperBound
+
+	SELECT			@DeleteCount = COUNT(*)
+	FROM			{databaseOwner}[{objectQualifier}Mechanics_UserScoringLog] musl WITH (NOLOCK)
+	LEFT OUTER JOIN {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition] msad WITH (NOLOCK) ON musl.[ScoringActionDefId] = msad.[ScoringActionDefId]
+	WHERE			msad.[ActionType] = 4 -- delete type
+	AND				musl.[CreatedOnDate] >= @LargeLowerBound AND musl.[CreatedOnDate] <= @LargeUpperBound
+
+	SELECT			@ViewCount = COUNT(*)
+	FROM			{databaseOwner}[{objectQualifier}Mechanics_UserScoringLog] musl WITH (NOLOCK)
+	LEFT OUTER JOIN {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition] msad WITH (NOLOCK) ON musl.[ScoringActionDefId] = msad.[ScoringActionDefId]
+	WHERE			msad.[ActionType] = 1 -- create type
+	AND				musl.[CreatedOnDate] >= @LowerBound AND musl.[CreatedOnDate] <= @LargeUpperBound
+
+	SELECT
+		@PortalId AS [PortalId],
+		@LowerBound AS [LowerBound],
+		@UpperBound AS [UpperBound],
+		@ContentTypeId AS [ContentTypeId],
+		@CreateCount AS [Create],
+		@SearchCount AS [Search],
+		@EditCount AS [Edit],
+		@DeleteCount AS [Delete],
+		@ViewCount AS [View]
+
+	IF EXISTS(
+			SELECT	*
+			FROM	{databaseOwner}[{objectQualifier}Analytics_Activities] WITH (NOLOCK)
+			WHERE	[PortalId] = @PortalId AND [LowerBound] = @LowerBound AND [UpperBound] = @UpperBound AND [ContentTypeId] = @ContentTypeId)
+		UPDATE {databaseOwner}[{objectQualifier}Analytics_Activities]
+			SET
+				[Create] = @CreateCount,
+				[Search] = @SearchCount,
+				[Edit] = @EditCount,
+				[Delete] = @DeleteCount,
+				[View] = @ViewCount
+			WHERE
+				[PortalId] = @PortalId AND [LowerBound] = @LowerBound AND [UpperBound] = @UpperBound AND [ContentTypeId] = @ContentTypeId
+	ELSE
+		INSERT INTO {databaseOwner}[{objectQualifier}Analytics_Activities]
+			([PortalId],
+			 [LowerBound],
+			 [UpperBound],
+			 [ContentTypeId],
+			 [Create],
+			 [Search],
+			 [Edit],
+			 [Delete],
+			 [View])
+		VALUES
+			(@PortalId,
+			 @LowerBound,
+			 @UpperBound,
+			 @ContentTypeId,
+			 @CreateCount,
+			 @SearchCount,
+			 @EditCount,
+			 @DeleteCount,
+			 @ViewCount)
+END
+GO
+
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Calculate_Aggregate_Answers') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Calculate_Aggregate_Answers
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Calculate_Aggregate_Answers]
+	@PortalId int,
+	@LowerBound smalldatetime,
+	@UpperBound smalldatetime
+AS
+BEGIN
+	DECLARE @QuestionsAsked bigint
+	DECLARE @AnswersProvided bigint
+	DECLARE @AnswersAccepted bigint
+	DECLARE @AnswersTotal bigint
+	DECLARE @RepliesPerQuestion decimal
+	DECLARE @ViewsPerQuestion decimal
+	DECLARE @QuestionsTotalViews bigint
+	DECLARE @QuestionsTotal bigint
+	DECLARE @UnansweredQuestionsTotal bigint
+	DECLARE @AnsweredQuestionsTotal bigint
+	DECLARE @QuestionsAnswered bigint
+	DECLARE @LargeLowerBound datetime
+	DECLARE @LargeUpperBound datetime
+
+	SET @LargeLowerBound = @LowerBound
+	SET @LargeUpperBound = @UpperBound
+
+	SELECT	@QuestionsAsked = COUNT(*),
+			@ViewsPerQuestion = AVG(COALESCE(ViewCount, 0)),
+			@QuestionsTotalViews = SUM(COALESCE(ViewCount, 0)),
+			@QuestionsTotal = COUNT(*)
+	FROM	{databaseOwner}[{objectQualifier}Answers_Post] WITH (NOLOCK)
+	WHERE	[PortalId] = @PortalId
+	  AND	[CreatedDate] >= @LargeLowerBound
+	  AND	[CreatedDate] <= @LargeUpperBound
+	  AND	[ParentId] = 0
+
+	SELECT	@AnswersProvided = COUNT(*),
+			@AnswersTotal = COUNT(*)
+	FROM	{databaseOwner}[{objectQualifier}Answers_Post] WITH (NOLOCK)
+	WHERE	[PortalId] = @PortalId
+	  AND	[CreatedDate] >= @LargeLowerBound
+	  AND	[CreatedDate] <= @LargeUpperBound
+	  AND	[ParentId] != 0
+
+	SELECT	@AnswersAccepted = COUNT(*)
+	FROM	{databaseOwner}[{objectQualifier}Answers_Post] posts WITH (NOLOCK)
+	LEFT OUTER JOIN {databaseOwner}[{objectQualifier}Answers_Post] replies WITH (NOLOCK) ON posts.[AnswerId] = replies.[PostId]
+	WHERE	replies.[PortalId] = @PortalId AND replies.[CreatedDate] >= @LargeLowerBound AND replies.[CreatedDate] <= @LargeUpperBound AND posts.[ParentId] = 0
+
+	SELECT	@AnsweredQuestionsTotal = COUNT(*)
+	FROM	{databaseOwner}[{objectQualifier}Answers_Post] WITH (NOLOCK)
+	WHERE	[PortalId] = @PortalId AND COALESCE([AnswerId], 0) != 0 AND [CreatedDate] >= @LargeLowerBound AND [CreatedDate] <= @LargeUpperBound
+
+	SELECT @QuestionsAnswered = COUNT(*)
+	FROM	{databaseOwner}[{objectQualifier}Answers_Post] answers WITH (NOLOCK)
+			LEFT OUTER JOIN {databaseOwner}[{objectQualifier}Answers_Post] questions WITH (NOLOCK) ON answers.[ParentId] = questions.[PostId]
+	WHERE	answers.[PortalId] = @PortalId AND answers.[CreatedDate] >= @LargeLowerBound AND answers.[CreatedDate] <= @LargeUpperBound AND answers.[ParentId] != 0
+			AND questions.[CreatedDate] >= @LargeLowerBound AND questions.[CreatedDate] <= @LargeUpperBound
+			GROUP BY answers.[ParentId]
+
+	;WITH replyCount AS(
+		SELECT
+			p.PostId,
+			(SELECT		COUNT(*)
+			 FROM		{databaseOwner}[{objectQualifier}Answers_Post] WITH (NOLOCK)
+			 WHERE		[ParentId] = p.[PostId] AND [CreatedDate] >= @LargeLowerBound AND [CreatedDate] <= @LargeUpperBound) AS [c]
+		FROM {databaseOwner}[{objectQualifier}Answers_Post] p
+		WHERE p.[ParentId] = 0)
+	SELECT @RepliesPerQuestion = AVG(COALESCE(c, 0)) FROM replyCount
+
+	SELECT	@UnansweredQuestionsTotal = @QuestionsAsked - ISNULL(@QuestionsAnswered, 0)
+	SELECT	@AnsweredQuestionsTotal = @QuestionsAsked - ISNULL(@UnansweredQuestionsTotal,0)
+
+	SELECT
+		@PortalId AS [PortalId],
+		@LowerBound AS [LowerBound],
+		@UpperBound AS [UpperBound],
+		@QuestionsAsked AS [QuestionsAsked],
+		@AnswersProvided AS [AnswersProvided],
+		@AnswersAccepted AS [AnswersAccepted],
+		@AnswersTotal AS [AnswersTotal],
+		@RepliesPerQuestion AS [RepliesPerQuestion],
+		@ViewsPerQuestion AS [ViewsPerQuestion],
+		@QuestionsTotalViews AS [QuestionsTotalViews],
+		@QuestionsTotal AS [QuestionsTotal],
+		@UnansweredQuestionsTotal AS [UnansweredQuestionsTotal],
+		@AnsweredQuestionsTotal AS [AnsweredQuestionsTotal]
+
+	-- Insert the results into the aggregate data table for this time period (or update existing)
+	IF EXISTS(
+			SELECT	*
+			FROM	{databaseOwner}[{objectQualifier}Analytics_Answers] WITH (NOLOCK)
+			WHERE	[LowerBound] = @LowerBound AND [UpperBound] = @UpperBound)
+		UPDATE {databaseOwner}[{objectQualifier}Analytics_Answers]
+			SET
+				[QuestionsAsked] = @QuestionsAsked,
+				[AnswersProvided] = @AnswersProvided,
+				[AnswersAccepted] = @AnswersAccepted,
+				[AnswersTotal] = @AnswersTotal,
+				[RepliesPerQuestion] = COALESCE(@RepliesPerQuestion, 0),
+				[ViewsPerQuestion] = COALESCE(@ViewsPerQuestion, 0),
+				[QuestionsTotalViews] = COALESCE(@QuestionsTotalViews, 0),
+				[QuestionsTotal] = COALESCE(@QuestionsTotal, 0),
+				[UnansweredQuestionsTotal] = @UnansweredQuestionsTotal,
+				[AnsweredQuestionsTotal] = @AnsweredQuestionsTotal
+			WHERE [PortalId] = @PortalId AND [LowerBound] = @LowerBound AND [UpperBound] = @UpperBound
+	ELSE
+		INSERT INTO {databaseOwner}[{objectQualifier}Analytics_Answers]
+			([PortalId],
+			 [LowerBound],
+			 [UpperBound],
+			 [QuestionsAsked],
+			 [AnswersProvided],
+			 [AnswersAccepted],
+			 [AnswersTotal],
+			 [RepliesPerQuestion],
+			 [ViewsPerQuestion],
+			 [QuestionsTotalViews],
+			 [QuestionsTotal],
+			 [UnansweredQuestionsTotal],
+			 [AnsweredQuestionsTotal])
+		VALUES
+			(@PortalId,
+			 @LowerBound,
+			 @UpperBound,
+			 @QuestionsAsked,
+			 @AnswersProvided,
+			 @AnswersAccepted,
+			 @AnswersTotal,
+			 COALESCE(@RepliesPerQuestion, 0),
+			 COALESCE(@ViewsPerQuestion, 0),
+			 COALESCE(@QuestionsTotalViews, 0),
+			 COALESCE(@QuestionsTotal, 0),
+			 @UnansweredQuestionsTotal,
+			 @AnsweredQuestionsTotal)
+END
+GO
+
+-- *********************************
+-- Analytics_Calculate_User
+-- *********************************
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Calculate_User') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Analytics_Calculate_User
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Analytics_Calculate_User]
+	@PortalId int,
+	@UserId int
+AS
+BEGIN
+	DECLARE @TotalSeconds bigint
+	DECLARE @Engagement xml
+	DECLARE @Influence xml
+	DECLARE @Contribution xml
+	DECLARE @Activity xml
+	DECLARE @Login xml
+
+	DECLARE @ExistingEngagement xml
+	DECLARE @ExistingInfluence xml
+	DECLARE @ExistingContribution xml
+	DECLARE @ExistingActivity xml
+	DECLARE @ExistingLogin xml
+
+	SELECT	@TotalSeconds = COALESCE(SUM(CONVERT(bigint,COALESCE(TotalSeconds, 0))), 0)
+	FROM	{databaseOwner}[{objectQualifier}Analytics_PageTime]
+	WHERE	[PortalId] = @PortalId AND [UserId] = @UserId
+
+	-- Generate user time series XML documents
+	SELECT	@Engagement = {databaseOwner}{objectQualifier}Analytics_Generate_Engagement_TimeSeries(@PortalId, @UserId)
+	SELECT	@Influence = {databaseOwner}{objectQualifier}Analytics_Generate_Influence_TimeSeries(@PortalId, @UserId)
+	SELECT	@Contribution = {databaseOwner}{objectQualifier}Analytics_Generate_Contribution_TimeSeries(@PortalId, @UserId)
+	SELECT	@Activity = {databaseOwner}{objectQualifier}Analytics_Generate_Activity_TimeSeries(@PortalId, @UserId)
+	SELECT	@Login = {databaseOwner}{objectQualifier}Analytics_Generate_Login_TimeSeries(@PortalId, @UserId)
+
+	SELECT	@ExistingEngagement = N'<TimeSeries />';
+	SELECT	@ExistingInfluence = N'<TimeSeries />';
+	SELECT	@ExistingContribution = N'<TimeSeries />';
+	SELECT	@ExistingActivity = N'<TimeSeries />';
+	SELECT	@ExistingLogin = N'<TimeSeries />';
+
+	SET		@ExistingEngagement.modify('insert sql:variable("@Engagement") into (/TimeSeries)[1]')
+	SET		@ExistingInfluence.modify('insert sql:variable("@Influence") into (/TimeSeries)[1]')
+	SET		@ExistingContribution.modify('insert sql:variable("@Contribution") into (/TimeSeries)[1]')
+	SET		@ExistingActivity.modify('insert sql:variable("@Activity") into (/TimeSeries)[1]')
+	SET		@ExistingLogin.modify('insert sql:variable("@Login") into (/TimeSeries)[1]')
+
+	IF EXISTS(
+			SELECT	*
+			FROM	{databaseOwner}[{objectQualifier}Analytics_Users]
+			WHERE	[PortalId] = @PortalId AND [UserId] = @UserId)
+	BEGIN
+		UPDATE {databaseOwner}[{objectQualifier}Analytics_Users]
+			SET
+				[ProcessDate] = NULL,
+				[TotalSeconds] = @TotalSeconds,
+				[Engagement] = @ExistingEngagement,
+				[Influence] = @ExistingInfluence,
+				[Contribution] = @ExistingContribution,
+				[Activity] = @ExistingActivity,
+				[Login] = @ExistingLogin
+		WHERE	[PortalId] = @PortalId AND [UserId] = @UserId
+	END
+	ELSE
+	BEGIN
+		INSERT INTO {databaseOwner}[{objectQualifier}Analytics_Users]
+			([PortalId],
+			 [UserId],
+			 [ProcessDate],
+			 [TotalSeconds],
+			 [Engagement],
+			 [Influence],
+			 [Contribution],
+			 [Activity],
+			 [Login])
+		VALUES
+			(@PortalId,
+			 @UserId,
+			 NULL,
+			 @TotalSeconds,
+			 @ExistingEngagement,
+			 @ExistingInfluence,
+			 @ExistingContribution,
+			 @ExistingActivity,
+			 @ExistingLogin)
+	END
+
+	-- Result set
+	SELECT
+		@PortalId AS [PortalId],
+		@UserId AS [UserId],
+		(SELECT	[ProcessDate]
+		 FROM	{databaseOwner}[{objectQualifier}Analytics_Users] WITH (NOLOCK)
+		 WHERE	[PortalId] = @PortalId AND [UserId] = @UserId) AS [ProcessDate],
+		@TotalSeconds AS [TotalSeconds],
+		@ExistingEngagement AS [EngagementDocument],
+		@ExistingInfluence AS [InfluenceDocument],
+		@ExistingContribution AS [ContributionDocument],
+		@ExistingActivity AS [ActivityDocument],
+		@ExistingLogin AS [LoginDocument]
+END
+GO
+
+-- *********************************
+-- Analytics_Get_User_Score
+-- *********************************
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_Get_User_Score]', N'FN') IS NOT NULL
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_Get_User_Score
+GO
+
+CREATE FUNCTION {databaseOwner}[{objectQualifier}Analytics_Get_User_Score](
+	@PortalId int,
+	@UserId int,
+	@GoalList varchar(64),
+	@LowerBound datetime,
+	@UpperBound datetime)
+		RETURNS decimal
+AS
+BEGIN
+	DECLARE @FriendCount int
+	DECLARE @Posts int
+	DECLARE @Likes int
+	DECLARE @ViewCount int
+	DECLARE @Responses int
+	DECLARE @AcceptedAnswers int
+	DECLARE @DeliveredIdeas int
+	DECLARE @ActiveEvents int
+	DECLARE @FlaggedContent int
+	DECLARE @AvgTime bigint
+	DECLARE @SiteTime bigint
+	DECLARE @Logins int
+	DECLARE @Votes int
+	DECLARE	@IdeasVotes int
+	DECLARE @AnswersVotes int
+
+	;WITH innerList AS(
+		SELECT DISTINCT
+				CASE WHEN ur.[UserID] = @UserId THEN ur.[RelatedUserID] ELSE ur.[UserID] END AS [UserId]
+		FROM {databaseOwner}[{objectQualifier}UserRelationships] ur WITH (NOLOCK)
+		INNER JOIN {databaseOwner}[{objectQualifier}Relationships] r WITH (NOLOCK) ON r.RelationshipID = ur.RelationshipID
+		LEFT OUTER JOIN {databaseOwner}[{objectQualifier}Mechanics_UserScoring] us WITH (NOLOCK) ON CASE WHEN ur.RelatedUserID = @UserId THEN ur.UserID ELSE ur.RelatedUserID END = us.UserId
+		LEFT OUTER JOIN {databaseOwner}[{objectQualifier}Users] u WITH (NOLOCK) ON u.UserID = CASE WHEN ur.[UserID] = @UserId THEN ur.[RelatedUserID] ELSE ur.[UserID] END
+		WHERE (ur.UserID = @UserId OR ur.RelatedUserID = @UserId) AND r.Name = 'Friends' AND ur.Status = 2 --Accepted
+		AND ur.CreatedOnDate >= @LowerBound AND ur.CreatedOnDate <= @UpperBound
+	)
+	SELECT @FriendCount = COALESCE(COUNT(*), 0) FROM innerList
+
+	DECLARE @ContentTypes TABLE(ContentTypeId INT)
+
+	INSERT INTO @ContentTypes (ContentTypeId)
+	SELECT	ContentTypeID
+	FROM	{databaseOwner}{objectQualifier}ContentTypes
+	WHERE	ContentType IN
+				('DNNCorp_Answers_Question',
+				 'DNNCorp_Blogs_Entry',
+				 'DNNCorp_Discussions_Topic',
+				 'DNNCorp_Ideas_Idea',
+				 'DNNCorp_JournalGroup',
+				 'DNNCorp_JournalProfile',
+				 'DNNCorp_SocialEvents_Event')
+
+	SELECT	@Posts = COALESCE(COUNT(*), 0)
+	FROM	{databaseOwner}{objectQualifier}ContentItems WITH (NOLOCK)
+	WHERE	CreatedByUserID = @UserId AND ContentTypeID IN (SELECT ContentTypeId FROM @ContentTypes)
+	AND		CreatedOnDate >= @LowerBound AND CreatedOnDate <= @UpperBound
+
+	-- Find out how many likes posts by this user have received.
+	SELECT @Likes = COALESCE(JournalXML.value('count(//likes/u)', 'int'), 0)
+	FROM {databaseOwner}{objectQualifier}Journal_Data jd WITH (NOLOCK)
+	INNER JOIN {databaseOwner}{objectQualifier}Journal j WITH (NOLOCK) ON j.JournalId = jd.JournalId
+	INNER JOIN {databaseOwner}{objectQualifier}ContentItems ci WITH (NOLOCK) ON ci.ContentItemID = j.ContentItemId
+	WHERE ci.CreatedByUserID = @UserId AND j.DateCreated >= @LowerBound AND j.DateCreated <= @UpperBound
+
+	-- Find out how many views posts by this user have received.
+	;WITH cteContentItems
+		AS (Select ContentItemID
+			From {databaseOwner}[{objectQualifier}ContentItems] WITH (NOLOCK)
+			Where CreatedByUserID = @UserId
+			  And CreatedOnDate >= @LowerBound
+			  And CreatedOnDate <= @UpperBound
+		),
+	cteUserViews(ViewCount)
+		AS (
+				SELECT SUM([ViewCount]) AS [ViewCount]
+				FROM {databaseOwner}[{objectQualifier}Answers_Post] ap WITH (NOLOCK)
+					INNER JOIN cteContentItems ci On ci.ContentItemID = ap.ContentItemID
+			UNION
+				SELECT SUM([Views]) AS [ViewCount]
+				FROM {databaseOwner}[{objectQualifier}Ideas_Idea] ii WITH (NOLOCK)
+					INNER JOIN cteContentItems ci On ci.ContentItemID = ii.ContentItemID
+			UNION
+				SELECT SUM([ViewCount]) AS [ViewCount]
+				FROM {databaseOwner}[{objectQualifier}Discussions_Topic] dt WITH (NOLOCK)
+					INNER JOIN cteContentItems ci On ci.ContentItemID = dt.ContentItemID
+			UNION
+				SELECT SUM([ViewCount]) AS [ViewCount]
+				FROM {databaseOwner}[{objectQualifier}SocialEvents_Event] se WITH (NOLOCK)
+					INNER JOIN cteContentItems ci On ci.ContentItemID = se.ContentItemID
+			UNION
+				SELECT SUM([Views]) AS [ViewCount]
+				FROM {databaseOwner}[{objectQualifier}Blogs_Entry] be WITH (NOLOCK)
+					INNER JOIN cteContentItems ci On ci.ContentItemID = be.ContentItemID
+			UNION
+				SELECT SUM([ViewCount]) AS [ViewCount]
+				FROM {databaseOwner}[{objectQualifier}Wiki_Article] wa WITH (NOLOCK)
+					INNER JOIN cteContentItems ci On ci.ContentItemID = wa.ContentItemID
+		)
+	SELECT @ViewCount = COALESCE(SUM([ViewCount]), 0) From cteUserViews
+
+	-- Find out how many responses that posts by this user have received.
+	SELECT	@Responses = COALESCE(COUNT(*), 0)
+	FROM	{databaseOwner}[{objectQualifier}Journal_Comments] jc WITH (NOLOCK)
+	INNER JOIN {databaseOwner}[{objectQualifier}Journal] j WITH (NOLOCK) ON j.JournalId = jc.JournalId
+	INNER JOIN {databaseOwner}[{objectQualifier}ContentItems] ci WITH (NOLOCK) ON ci.ContentItemID = j.ContentItemId
+	WHERE	ci.CreatedByUserID = @UserId AND jc.DateCreated >= @LowerBound AND jc.DateCreated <= @UpperBound
+
+	-- Find out how many answers they've posted that have been accepted.
+	SELECT	@AcceptedAnswers = COALESCE(COUNT(*), 0)
+	FROM	{databaseOwner}[{objectQualifier}Answers_Post] WITH (NOLOCK)
+	WHERE	CreatedUserId = @UserId AND ParentId > 0 AND CreatedDate >= @LowerBound AND CreatedDate <= @UpperBound
+
+	-- Find out how many ideas have been placed into Delivered state.
+	SELECT	@DeliveredIdeas = COALESCE(COUNT(*), 0)
+	FROM	{databaseOwner}{objectQualifier}Ideas_Idea i WITH (NOLOCK)
+	INNER JOIN {databaseOwner}{objectQualifier}ContentItems ci WITH (NOLOCK) ON ci.ContentItemID = i.ContentItemId
+	WHERE	ci.CreatedByUserID = @UserId
+	AND		i.Status = 6
+
+	-- Find out how many events are active.
+	SELECT	@ActiveEvents = COALESCE(COUNT(*), 0)
+	FROM	{databaseOwner}{objectQualifier}SocialEvents_Event se WITH (NOLOCK)
+	INNER JOIN {databaseOwner}{objectQualifier}ContentItems ci WITH (NOLOCK) ON ci.ContentItemID = se.ContentItemId
+	WHERE	ci.CreatedByUserID = @UserId
+	AND		se.StartTime >= @LowerBound AND se.StartTime <= @UpperBound AND [Approved] = 1
+
+	-- Find out how much content has been flagged.
+	;WITH pagerCount AS (
+		SELECT			DISTINCT musl.[ContentItemId]
+		FROM			{databaseOwner}[{objectQualifier}Mechanics_UserScoringLog] musl WITH (NOLOCK)
+		LEFT OUTER JOIN {databaseOwner}[{objectQualifier}ContentItems] ci WITH (NOLOCK) ON ci.[ContentItemID] = musl.[ContentItemId]
+		WHERE			musl.[UserId] = @UserId AND musl.[CreatedOnDate] >= @LowerBound AND musl.[CreatedOnDate] <= @UpperBound
+		AND				ci.[ContentTypeID] > 3
+		AND				{databaseOwner}{objectQualifier}Mechanics_ScoringActionIsOfActionType(musl.[ScoringActionDefId], 5) = 1)
+	SELECT @FlaggedContent = COALESCE(COUNT(*), 0) FROM pagerCount
+
+	-- How much time they've spent on each page on average.
+	SELECT	@AvgTime = COALESCE(AVG(CONVERT(bigint,COALESCE(TotalSeconds, 0))), 0)
+	FROM	{databaseOwner}{objectQualifier}Analytics_PageTime WITH (NOLOCK)
+	WHERE	UserId = @UserId AND PortalId = @PortalId AND CreatedOnDate >= @LowerBound AND CreatedOnDate <= @UpperBound
+
+	SELECT	@SiteTime = COALESCE(SUM(CONVERT(bigint,COALESCE(TotalSeconds, 0))), 0)
+	FROM	{databaseOwner}{objectQualifier}Analytics_PageTime WITH (NOLOCK)
+	WHERE	UserId = @UserId AND Portalid = @PortalId AND CreatedOnDate >= @LowerBound AND CreatedOnDate <= @UpperBound
+
+	;WITH loginCount AS(
+		SELECT	DISTINCT usl.UserId,
+				(SELECT		COUNT(*)
+				 FROM		{databaseOwner}[{objectQualifier}Mechanics_UserScoringLog] WITH (NOLOCK)
+				 WHERE		UserId = usl.UserId AND PortalId = @PortalId AND CreatedOnDate >= @LowerBound AND CreatedOnDate <= @UpperBound) AS Logins
+		FROM {databaseOwner}[{objectQualifier}Mechanics_UserScoringLog] usl WITH (NOLOCK)
+		RIGHT JOIN {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition] sad WITH (NOLOCK) ON sad.ScoringActionDefId = usl.ScoringActionDefId
+		WHERE sad.ActionName = 'Login' AND usl.UserId = @UserId
+		GROUP BY usl.UserId)
+	SELECT @Logins = COALESCE(SUM(CAST([Logins] AS DECIMAL)), 0) FROM loginCount
+
+	SELECT		@AnswersVotes = COALESCE(SUM(VoteTypeId), 0)
+	FROM		{databaseOwner}{objectQualifier}Answers_Vote v
+	INNER JOIN	{databaseOwner}{objectQualifier}Answers_Post p ON p.PostId = v.PostId
+	WHERE		p.PortalId = @PortalId AND p.CreatedUserId = @UserId
+
+	SELECT		@IdeasVotes = SUM(COALESCE(Votes, 0))
+	FROM		{databaseOwner}{objectQualifier}Ideas_Idea i
+	INNER JOIN	{databaseOwner}{objectQualifier}ContentItems ci ON ci.ContentItemID = i.ContentItemId
+	WHERE		ci.CreatedByUserID = @UserId
+
+	SELECT	@Votes = COALESCE(@AnswersVotes, 0) + COALESCE(@IdeasVotes, 0)
+
+	-- Total it all up.
+	DECLARE @Total decimal
+	SELECT @Total = {databaseOwner}{objectQualifier}Analytics_Get_Score(
+		@PortalId,
+		@GoalList,
+		COALESCE(@FriendCount, 0),
+		COALESCE(@Posts, 0),
+		COALESCE(@Likes, 0),
+		COALESCE(@ViewCount, 0),
+		COALESCE(@Responses, 0),
+		COALESCE(@AcceptedAnswers, 0),
+		COALESCE(@DeliveredIdeas, 0),
+		COALESCE(@ActiveEvents, 0),
+		COALESCE(@FlaggedContent, 0),
+		COALESCE(@AvgTime, 0),
+		COALESCE(@SiteTime, 0),
+		COALESCE(@Logins, 0),
+		COALESCE(@Votes, 0))
+
+	RETURN COALESCE(@Total, 0)
+END
+GO

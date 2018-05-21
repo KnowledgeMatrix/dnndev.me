@@ -1,0 +1,411 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="btnImport.Text" xml:space="preserve">
+    <value>Import Products</value>
+  </data>
+  <data name="hypShowHelp.Text" xml:space="preserve">
+    <value>Show Help</value>
+  </data>
+  <data name="importFail.Text" xml:space="preserve">
+    <value>Some errors occurred during the import process.</value>
+  </data>
+  <data name="importSuccess.Text" xml:space="preserve">
+    <value>The products were imported successfully from the file.</value>
+  </data>
+  <data name="lblCsvFile.Help" xml:space="preserve">
+    <value>Select the CSV file containing the products to import into the store</value>
+  </data>
+  <data name="lblCsvFile.Text" xml:space="preserve">
+    <value>Select CSV File</value>
+  </data>
+  <data name="lblCsvHelp.Text" xml:space="preserve">
+    <value>&lt;p&gt;Products can be imported into Cart Viper from CSV data files. All csv files must have a header on the first line, this defined what each column in the csv repsents. Note if a product is found during the import with the same model number the existing product will be updated rather than added again.&lt;/p&gt;
+
+&lt;p&gt;The import supports the following columns, any other column names are ignored.&lt;/p&gt;
+
+&lt;table class="csvHelpTable" cellspacing="0" cellpadding="3" border="0"&gt;
+	&lt;tr&gt;
+		&lt;td&gt;&lt;strong&gt;Field Name&lt;/strong&gt;&lt;/td&gt;
+		&lt;td&gt;&lt;strong&gt;Required&lt;/strong&gt;&lt;/td&gt;
+		&lt;td&gt;&lt;strong&gt;Type&lt;/strong&gt;&lt;/td&gt;
+		&lt;td&gt;&lt;strong&gt;Notes&lt;/strong&gt;&lt;/td&gt;
+	&lt;/tr&gt;	
+	&lt;tr&gt;
+		&lt;td&gt;Manufacturer&lt;/td&gt;
+		&lt;td&gt;FALSE&lt;/td&gt;
+		&lt;td&gt;string(50)&lt;/td&gt;
+		&lt;td&gt;&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr&gt;
+		&lt;td&gt;ModelNumber&lt;/td&gt;
+		&lt;td&gt;FALSE&lt;/td&gt;
+		&lt;td&gt;string(50)&lt;/td&gt;
+		&lt;td&gt;Although this field is not required, if you wish to update or delete your products via the import, this field must be supplied as this field is how Cart Viper determines which product to update or delete.&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr&gt;
+		&lt;td&gt;Action&lt;/td&gt;
+		&lt;td&gt;STRING&lt;/td&gt;
+		&lt;td&gt;string(6)&lt;/td&gt;
+		&lt;td&gt;By specifying "delete" in this column, if a product is found with a matching model number the product will be deleted rather than updated. If no
+		matching product is found it will be added.&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr&gt;
+		&lt;td&gt;ModelName&lt;/td&gt;
+		&lt;td&gt;TRUE&lt;/td&gt;
+		&lt;td&gt;string(255)&lt;/td&gt;
+		&lt;td&gt;&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr&gt;
+		&lt;td&gt;UnitCost&lt;/td&gt;
+		&lt;td&gt;TRUE&lt;/td&gt;
+		&lt;td&gt;decimal&lt;/td&gt;
+		&lt;td&gt;This should be ex vat/tax&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr&gt;
+		&lt;td&gt;Summary&lt;/td&gt;
+		&lt;td&gt;FALSE&lt;/td&gt;
+		&lt;td&gt;string(1000)&lt;/td&gt;
+		&lt;td&gt;&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr&gt;
+		&lt;td&gt;Description&lt;/td&gt;
+		&lt;td&gt;FALSE&lt;/td&gt;
+		&lt;td&gt;string&lt;/td&gt;
+		&lt;td&gt;&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr&gt;
+		&lt;td&gt;SeoKeywords&lt;/td&gt;
+		&lt;td&gt;FALSE&lt;/td&gt;
+		&lt;td&gt;string&lt;/td&gt;
+		&lt;td&gt;Option SEO Keywords to import for the product&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr&gt;
+		&lt;td&gt;ProductWeight&lt;/td&gt;
+		&lt;td&gt;FALSE&lt;/td&gt;
+		&lt;td&gt;decimal&lt;/td&gt;
+		&lt;td&gt;Defaults to zero if not supplied&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr&gt;
+		&lt;td&gt;ProductHeight&lt;/td&gt;
+		&lt;td&gt;FALSE&lt;/td&gt;
+		&lt;td&gt;decimal&lt;/td&gt;
+		&lt;td&gt;Defaults to zero if not supplied&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr&gt;
+		&lt;td&gt;ProductLength&lt;/td&gt;
+		&lt;td&gt;FALSE&lt;/td&gt;
+		&lt;td&gt;decimal&lt;/td&gt;
+		&lt;td&gt;Defaults to zero if not supplied&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr&gt;
+		&lt;td&gt;ProductWidth&lt;/td&gt;
+		&lt;td&gt;FALSE&lt;/td&gt;
+		&lt;td&gt;decimal&lt;/td&gt;
+		&lt;td&gt;Defaults to zero if not supplied&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr&gt;
+		&lt;td&gt;StockQuantity&lt;/td&gt;
+		&lt;td&gt;FALSE&lt;/td&gt;
+		&lt;td&gt;int&lt;/td&gt;
+		&lt;td&gt;Defaults to zero if not supplied&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr&gt;
+		&lt;td valign="top"&gt;IsTaxFree&lt;/td&gt;
+		&lt;td valign="top"&gt;FALSE&lt;/td&gt;
+		&lt;td valign="top"&gt;yes/no&lt;/td&gt;
+		&lt;td&gt;This only is used when using non VAT countries. i.e. US. If not supplied we assume NOT tax free. If not set the default is
+		"no"&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr&gt;
+		&lt;td valign="top"&gt;VatRate&lt;/td&gt;
+		&lt;td valign="top"&gt;FALSE&lt;/td&gt;
+		&lt;td valign="top"&gt;s/r/z&lt;/td&gt;
+		&lt;td&gt;Only used when country is VAT territory. If not set we default to "s" standardrate. The input should should just the first letter of the vat rate code.&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr&gt;
+		&lt;td valign="top"&gt;Category&lt;/td&gt;
+		&lt;td valign="top"&gt;FALSE&lt;/td&gt;
+		&lt;td valign="top"&gt;string&lt;/td&gt;
+		&lt;td&gt;Name of the category to assign the product to. A category should be listed fully with any parent categories defined. The format should be
+		"parent&gt;subcat&gt;mycategory", each category level should be split by a "&gt;". &lt;br/&gt;
+		Additionally it is also possible to assign a product to mulitple categories by separating each one with a semicolon. ie.
+		"parent&gt;subcat&gt;mycategory;parent&gt;subcat&gt;othercategory"&lt;br /&gt; Note if the category does not already exist in the store then the category will be auto-created and then the product will be assigned to the newly created category.
+		&lt;/td&gt;
+	&lt;/tr&gt;
+		&lt;tr&gt;
+		&lt;td valign="top"&gt;Image&lt;/td&gt;
+		&lt;td valign="top"&gt;FALSE&lt;/td&gt;
+		&lt;td valign="top"&gt;string&lt;/td&gt;
+		&lt;td&gt;File name of the image to be assigned to the product.&lt;br/&gt;
+		Additionally it is also possible to assign a product to mulitple images by separating each one with a semicolon. ie.
+		"product001.jpg;product001_alternative.jpg"&lt;br/&gt;
+		The actual image file should be manually uploaded to the folder Portals/X/CVStoreImages where X is the current portalId
+		&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr&gt;
+		&lt;td valign="top"&gt;IsQuote&lt;/td&gt;
+		&lt;td valign="top"&gt;FALSE&lt;/td&gt;
+		&lt;td valign="top"&gt;yes/no&lt;/td&gt;
+		&lt;td&gt;Marks the item as being available for Request a Quote functionality. The default is "no"&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr&gt;
+		&lt;td valign="top"&gt;IsFreeShipping&lt;/td&gt;
+		&lt;td valign="top"&gt;FALSE&lt;/td&gt;
+		&lt;td valign="top"&gt;yes/no&lt;/td&gt;
+		&lt;td&gt;Marks the item as being free shippinh. The default is "no"&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr&gt;
+		&lt;td valign="top"&gt;IsFreeProduct&lt;/td&gt;
+		&lt;td valign="top"&gt;FALSE&lt;/td&gt;
+		&lt;td valign="top"&gt;yes/no&lt;/td&gt;
+		&lt;td&gt;Marks the item as being free and not incurring a cost. The default is "no"&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr&gt;
+		&lt;td&gt;ProductSku&lt;/td&gt;
+		&lt;td&gt;FALSE&lt;/td&gt;
+		&lt;td&gt;string(50)&lt;/td&gt;
+		&lt;td&gt;An internal value that uniquely identifies the product.&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr&gt;
+		&lt;td&gt;ProductBarcode&lt;/td&gt;
+		&lt;td&gt;FALSE&lt;/td&gt;
+		&lt;td&gt;string(50)&lt;/td&gt;
+		&lt;td&gt;An internal value that is used to store the product barcode.&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr&gt;
+		&lt;td&gt;MSRP&lt;/td&gt;
+		&lt;td&gt;FALSE&lt;/td&gt;
+		&lt;td&gt;decimal&lt;/td&gt;
+		&lt;td&gt;The manufacturer suggested retail price.&lt;/td&gt;
+	&lt;/tr&gt;
+  &lt;tr&gt;
+		&lt;td&gt;VariantN&lt;/td&gt;
+		&lt;td&gt;FALSE&lt;/td&gt;
+		&lt;td&gt;string&lt;/td&gt;
+		&lt;td&gt;Allows import the variant for the product. See the Cart Viper manual for details&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr&gt;
+		&lt;td&gt;OptionsN&lt;/td&gt;
+		&lt;td&gt;FALSE&lt;/td&gt;
+		&lt;td&gt;string&lt;/td&gt;
+		&lt;td&gt;Allows import the variant options for the product. See the Cart Viper manual for details&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr&gt;
+		&lt;td&gt;Tab1Name ... Tab5Name&lt;/td&gt;
+		&lt;td&gt;FALSE&lt;/td&gt;
+		&lt;td&gt;string&lt;/td&gt;
+		&lt;td&gt;Allows import up to 5 tabs for a product. This field contains the tab name&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr&gt;
+		&lt;td&gt;Tab1Content ... Tab5Content&lt;/td&gt;
+		&lt;td&gt;FALSE&lt;/td&gt;
+		&lt;td&gt;string&lt;/td&gt;
+		&lt;td&gt;Allows import up to 5 tabs for a product. This field contains the content of the tab&lt;/td&gt;
+	&lt;/tr&gt;
+		&lt;tr&gt;
+		&lt;td valign="top"&gt;PDFdataSheet&lt;/td&gt;
+		&lt;td valign="top"&gt;FALSE&lt;/td&gt;
+		&lt;td valign="top"&gt;string&lt;/td&gt;
+		&lt;td&gt;Allows you to attach a PDF document as the product datasheet. The PDF must already exist on the server in the portal home directory. To attached the file "samplePDF.pdf" in the root of the portal home directory the correct value for the CSV would be "samplePDF.pdf". If the PDF was in a subfolder called "datasheets" then the correct value would be "datasheets/samplePDF.pdf". Note if you have copied the PDFs to the server using FTP then you will need to "Synchronize Files" with the DNN File Manager first.&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr&gt;
+		&lt;td valign="top"&gt;SupplierName&lt;/td&gt;
+		&lt;td valign="top"&gt;FALSE&lt;/td&gt;
+		&lt;td valign="top"&gt;string&lt;/td&gt;
+		&lt;td&gt;Allows you to assign a supplier to this product, note the supplier MUST exist in the store for the product to be assigned to it.&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr&gt;
+		&lt;td valign="top"&gt;IsArchived&lt;/td&gt;
+		&lt;td valign="top"&gt;FALSE&lt;/td&gt;
+		&lt;td valign="top"&gt;yes/no&lt;/td&gt;
+		&lt;td&gt;Allows you to define if the product is archived or not.&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr&gt;
+		&lt;td valign="top"&gt;QtyRestriction&lt;/td&gt;
+		&lt;td valign="top"&gt;FALSE&lt;/td&gt;
+		&lt;td valign="top"&gt;string&lt;/td&gt;
+		&lt;td&gt;Defines the restrictions that this product can be purchased in.&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr&gt;
+		&lt;td valign="top"&gt;InStorePickup&lt;/td&gt;
+		&lt;td valign="top"&gt;FALSE&lt;/td&gt;
+		&lt;td valign="top"&gt;yes/no&lt;/td&gt;
+		&lt;td&gt;Defines in the product can be picked up from the store only.&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr&gt;
+		&lt;td valign="top"&gt;SupplierName&lt;/td&gt;
+		&lt;td valign="top"&gt;FALSE&lt;/td&gt;
+		&lt;td valign="top"&gt;string&lt;/td&gt;
+		&lt;td&gt;Allows you to assign a supplier to this product, note the supplier MUST exist in the store for the product to be assigned to it.&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr&gt;
+		&lt;td valign="top"&gt;PurchasePrice&lt;/td&gt;
+		&lt;td valign="top"&gt;FALSE&lt;/td&gt;
+		&lt;td valign="top"&gt;decimal&lt;/td&gt;
+		&lt;td&gt;Defaults to zero if not supplied.&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr&gt;
+		&lt;td valign="top"&gt;IsFeatured&lt;/td&gt;
+		&lt;td valign="top"&gt;FALSE&lt;/td&gt;
+		&lt;td valign="top"&gt;yes/no&lt;/td&gt;
+		&lt;td&gt;Defaults to false if not supplied.&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr&gt;
+		&lt;td valign="top"&gt;PageTitle&lt;/td&gt;
+		&lt;td valign="top"&gt;FALSE&lt;/td&gt;
+		&lt;td valign="top"&gt;string&lt;/td&gt;
+		&lt;td&gt;&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr&gt;
+		&lt;td valign="top"&gt;MetaDescription&lt;/td&gt;
+		&lt;td valign="top"&gt;FALSE&lt;/td&gt;
+		&lt;td valign="top"&gt;string&lt;/td&gt;
+		&lt;td&gt;&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr&gt;
+		&lt;td valign="top"&gt;QPLowerLimitN&lt;/td&gt;
+		&lt;td valign="top"&gt;FALSE&lt;/td&gt;
+		&lt;td valign="top"&gt;int&lt;/td&gt;
+		&lt;td&gt;Allows the important of quantity price bands. This field defines the lower limit.&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr&gt;
+		&lt;td valign="top"&gt;QPUpperLimitN&lt;/td&gt;
+		&lt;td valign="top"&gt;FALSE&lt;/td&gt;
+		&lt;td valign="top"&gt;int&lt;/td&gt;
+		&lt;td&gt;Allows the important of quantity price bands. This field defines the upper limit.&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr&gt;
+		&lt;td valign="top"&gt;QPPriceN&lt;/td&gt;
+		&lt;td valign="top"&gt;FALSE&lt;/td&gt;
+		&lt;td valign="top"&gt;decimal&lt;/td&gt;
+		&lt;td&gt;Allows the important of quantity price bands. This field defines the price or if the field ends in a percentage symbol % then it defines the discount to apply to the regular price when purchasing.&lt;/td&gt;
+	&lt;/tr&gt;
+	&lt;tr&gt;
+		&lt;td valign="top"&gt;QPRolesN&lt;/td&gt;
+		&lt;td valign="top"&gt;FALSE&lt;/td&gt;
+		&lt;td valign="top"&gt;string&lt;/td&gt;
+		&lt;td&gt;Allows the important of quantity price bands. Role that the user needs to be a member of to get the quantity price break. If this price break is to be available to all users leave this field blank.&lt;/td&gt;
+	&lt;/tr&gt;
+&lt;/table&gt;</value>
+  </data>
+  <data name="lblHeaderText.Text" xml:space="preserve">
+    <value>Import Products</value>
+  </data>
+</root>

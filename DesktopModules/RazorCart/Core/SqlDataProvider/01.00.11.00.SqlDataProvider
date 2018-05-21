@@ -1,0 +1,582 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****               Create Tables                      *****/
+/************************************************************/
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ProductTemplate') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_ProductTemplate
+	(
+		[PTID] [INT] IDENTITY(1,1) NOT NULL,
+		[Label] [NVARCHAR](150) NULL,
+		[Type] [VARCHAR](50) NULL,
+		[Value] [NVARCHAR](500) NULL,
+		[SortOrder] [INT] NULL,
+		[Share] [BIT] NULL,
+		[TabModuleId] [INT] NULL,
+		[PortalId] [INT] NULL,
+		[CategoryID] [INT] NULL,
+		[StoreID] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_ProductTemplate] PRIMARY KEY CLUSTERED
+		(
+			[PTID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ProductCustomFields') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_ProductCustomFields
+	(
+		[PCID] [INT] IDENTITY(1,1) NOT NULL,
+		[ProductID] [INT] NOT NULL,
+		[Label] [NVARCHAR](150) NULL,
+		[Type] [VARCHAR](50) NULL,
+		[Value] [NVARCHAR](500) NULL,
+		[CustomFieldValue] [NVARCHAR](50) NULL,
+		[TabName] [VARCHAR](50) NULL,
+		[SortOrder] [INT] NULL,
+		[Share] [BIT] NULL,
+		[TabModuleId] [INT] NULL,
+		[PortalId] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_ProductCustomFields] PRIMARY KEY CLUSTERED
+		(
+			[PCID] ASC
+		)
+	)
+END
+GO
+
+
+
+/************************************************************/
+/*****                  Alter Tables                    *****/
+/************************************************************/
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ProductTemplate') AND type in (N'U'))
+BEGIN
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ProductTemplate') AND name = N'StoreID')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_ProductTemplate
+		ADD
+			[StoreID] [INT]
+	END
+END
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ProductCustomFields') AND type in (N'U'))
+BEGIN
+	IF EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ProductCustomFields') AND name = N'CustomFieldValue')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_ProductCustomFields
+		ALTER COLUMN
+			[CustomFieldValue] [NVARCHAR](50)
+	END
+END
+GO
+
+
+
+/************************************************************/
+/*****                Drop Sprocs                       *****/
+/************************************************************/
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_CreateProductTemplateField') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateProductTemplateField
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_GetProductTemplateFieldByID') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_GetProductTemplateFieldByID
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListProductTemplateFields') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListProductTemplateFields
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListProductCategoryTemplateFields') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListProductCategoryTemplateFields
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_UpdateProductTemplateField') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateProductTemplateField
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_DeleteProductTemplateField') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_DeleteProductTemplateField
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_CreateProductCustomField') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateProductCustomField
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_GetProductCustomFieldByID') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_GetProductCustomFieldByID
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_GetProductCustomFieldByLabel') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_GetProductCustomFieldByLabel
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListProductCustomFields') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListProductCustomFields
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListProductGridCustomFields') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListProductGridCustomFields
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_UpdateProductCustomField') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateProductCustomField
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_DeleteProductCustomField') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_DeleteProductCustomField
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_GetCategoryBySEO') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_GetCategoryBySEO
+GO
+
+
+
+/************************************************************/
+/*****               Create Sprocs                      *****/
+/************************************************************/
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateProductTemplateField
+	@Label NVARCHAR(150) = NULL,
+	@Type VARCHAR(50) = NULL,
+	@Value NVARCHAR(500) = NULL,
+	@SortOrder INT = NULL,
+	@Share BIT = NULL,
+	@TabModuleId INT = NULL,
+	@PortalId INT = NULL,
+	@CategoryID INT = NULL,
+	@StoreID INT = NULL
+AS
+BEGIN
+	INSERT INTO
+		{databaseOwner}{objectQualifier}Smith_ProductTemplate
+		([Label]
+		,[Type]
+		,[Value]
+		,[SortOrder]
+		,[Share]
+		,[TabModuleId]
+		,[PortalId]
+		,[CategoryID]
+		,[StoreID])
+	VALUES
+		(@Label
+		,@Type
+		,@Value
+		,@SortOrder
+		,@Share
+		,@TabModuleId
+		,@PortalId
+		,@CategoryID
+		,@StoreID)
+	SELECT SCOPE_IDENTITY()
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_GetProductTemplateFieldByID
+	@PTID INT = NULL,
+	@PortalId INT = NULL
+AS
+BEGIN
+	SELECT
+		PT.*
+	FROM
+		{databaseOwner}{objectQualifier}Smith_ProductTemplate PT
+	WHERE
+		PT.[PTID] = @PTID
+		AND PT.[PortalId] = @PortalId
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListProductTemplateFields
+	@StoreID INT = NULL,
+	@PortalId INT = NULL
+AS
+BEGIN
+	SELECT
+		PT.*
+	FROM
+		{databaseOwner}{objectQualifier}Smith_ProductTemplate PT
+	WHERE
+		(PT.[StoreID] = @StoreID OR PT.[TabModuleId] = @StoreID OR PT.[Share] = 1)
+		AND PT.[PortalId] = @PortalId
+	ORDER BY
+		PT.[SortOrder] ASC
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListProductCategoryTemplateFields
+	@CategoryID INT = NULL,
+	@StoreID INT = NULL,
+	@PortalId INT = NULL
+AS
+BEGIN
+	SELECT
+		PT.*
+	FROM
+		{databaseOwner}{objectQualifier}Smith_ProductTemplate PT
+	INNER JOIN
+		{databaseOwner}{objectQualifier}Smith_Category C
+	ON
+		C.[CategoryID] = PT.[CategoryID]
+	WHERE
+		(PT.[CategoryID] = @CategoryID OR @CategoryID = -1)
+		AND (PT.[StoreID] = @StoreID OR PT.[TabModuleId] = @StoreID OR PT.[Share] = 1)
+		AND PT.[PortalId] = @PortalId
+	ORDER BY
+		PT.[SortOrder] ASC
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateProductTemplateField
+	@PTID INT = NULL,
+	@Label NVARCHAR(150) = NULL,
+	@Type VARCHAR(50) = NULL,
+	@Value NVARCHAR(500) = NULL,
+	@SortOrder INT = NULL,
+	@Share BIT = NULL,
+	@TabModuleId INT = NULL,
+	@PortalId INT = NULL,
+	@CategoryID INT = NULL,
+	@StoreID INT = NULL
+AS
+BEGIN
+	UPDATE
+		{databaseOwner}{objectQualifier}Smith_ProductTemplate
+	SET
+		[Label] = @Label,
+		[Type] = @Type,
+		[Value] = @Value,
+		[SortOrder] = @SortOrder,
+		[Share] = @Share,
+		[TabModuleId] = @TabModuleId,
+		[PortalId] = @PortalId,
+		[CategoryID] = @CategoryID,
+		[StoreID] = @StoreID
+	WHERE
+		[PTID] = @PTID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_DeleteProductTemplateField
+	@PTID INT = NULL,
+	@PortalId INT = NULL
+AS
+BEGIN
+	DELETE FROM
+		{databaseOwner}{objectQualifier}Smith_ProductTemplate
+	WHERE
+		[PTID] = @PTID
+		AND [PortalId] = @PortalId
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateProductCustomField
+	@ProductID INT = NULL,
+	@Label NVARCHAR(150) = NULL,
+	@Type VARCHAR(50) = NULL,
+	@Value NVARCHAR(500) = NULL,
+	@CustomFieldValue NVARCHAR(50) = NULL,
+	@TabName VARCHAR(50) = NULL,
+	@SortOrder INT = NULL,
+	@Share BIT = NULL,
+	@TabModuleId INT = NULL,
+	@PortalId INT = NULL
+AS
+BEGIN
+	INSERT INTO
+		{databaseOwner}{objectQualifier}Smith_ProductCustomFields
+		([ProductID]
+		,[Label]
+		,[Type]
+		,[Value]
+		,[CustomFieldValue]
+		,[TabName]
+		,[SortOrder]
+		,[Share]
+		,[TabModuleId]
+		,[PortalId])
+	VALUES
+		(@ProductID
+		,@Label
+		,@Type
+		,@Value
+		,@CustomFieldValue
+		,@TabName
+		,@SortOrder
+		,@Share
+		,@TabModuleId
+		,@PortalId)
+	SELECT SCOPE_IDENTITY()
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_GetProductCustomFieldByID
+	@PCID INT = NULL,
+	@PortalId INT = NULL
+AS
+BEGIN
+	SELECT
+		PCF.*
+	FROM
+		{databaseOwner}{objectQualifier}Smith_ProductCustomFields PCF
+	WHERE
+		PCF.[PCID] = @PCID
+		AND PCF.[PortalId] = @PortalId
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_GetProductCustomFieldByLabel
+	@Label NVARCHAR(150) = NULL,
+	@ProductID INT = NULL,
+	@PortalId INT = NULL
+AS
+BEGIN
+	SELECT TOP 1
+		PCF.*
+	FROM
+		{databaseOwner}{objectQualifier}Smith_ProductCustomFields PCF
+	WHERE
+		PCF.[Label] = @Label
+		AND PCF.[ProductID] = @ProductID
+		AND PCF.[PortalId] = @PortalId
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListProductCustomFields
+	@ProductID INT = NULL,
+	@PortalId INT = NULL
+AS
+BEGIN
+	SELECT
+		PCF.*
+	FROM
+		{databaseOwner}{objectQualifier}Smith_ProductCustomFields PCF
+	WHERE
+		PCF.[ProductID] = @ProductID
+		AND PCF.[PortalId] = @PortalId
+	ORDER BY
+		PCF.[SortOrder] ASC
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListProductGridCustomFields
+	@PageNumber INT = NULL,
+	@PageSize INT = NULL,
+	@CategoryID INT = NULL,
+	@Filter NVARCHAR(MAX) = NULL,
+	@PortalId INT = NULL
+AS
+BEGIN
+	DECLARE @Query NVARCHAR(MAX)
+	DECLARE @Columns VARCHAR(MAX)
+	SELECT @Columns = STUFF((
+		SELECT DISTINCT
+			'],[' + LTRIM([Label])
+		FROM 
+			{databaseOwner}{objectQualifier}Smith_ProductCustomFields PCF
+		INNER JOIN
+			{databaseOwner}{objectQualifier}Smith_Products P
+		ON
+			PCF.[ProductID] = P.[ProductID]
+		INNER JOIN
+			{databaseOwner}{objectQualifier}Smith_CategoryProduct CP
+		ON
+			CP.[ProductID] = P.[ProductID]
+		WHERE
+			CP.[CategoryID] = @CategoryID
+			AND P.[LogicallyDeleted] <> 1
+			AND P.[Archived] <> 1
+			AND P.[HideProduct] <> 1
+			AND PCF.[PortalId] = @PortalId
+		ORDER BY
+			'],[' + LTRIM([Label])
+		FOR XML
+			PATH('')
+	), 1, 2, '') + ']'
+
+	IF NULLIF(@Filter, 'ALL') IS NULL
+		BEGIN
+			SET @Query = '
+				DECLARE @PageRecordStart INT
+				DECLARE @PageRecordEnd INT
+				SET @PageRecordStart = ((' + CAST(@PageNumber AS VARCHAR(15)) + ' - 1 ) * ' + CAST(@PageSize AS VARCHAR(15)) + ') + 1
+				SET @PageRecordEnd = ' + CAST(@PageNumber AS VARCHAR(15)) + ' * ' + CAST(@PageSize AS VARCHAR(15)) + '
+				;WITH [FieldsPage] AS
+				(
+					SELECT
+						Row_Number() OVER (ORDER BY P.[SortOrder] ASC) AS [RowNo],
+						P.[ModelNumber], P.[ModelName], P.[SEOURL], P.[QuantityOnHand], P.[UnitCost], P.[PortalID], PVT.*
+					FROM (
+						SELECT
+							PCF.[ProductID], PCF.[Label], PCF.[CustomFieldValue]
+						FROM
+							{databaseOwner}{objectQualifier}Smith_ProductCustomFields PCF
+						WHERE
+							PCF.[PortalId] = ' + CAST(@PortalId AS VARCHAR(8)) + '
+					) SRC
+					PIVOT (
+						MAX([CustomFieldValue]) FOR [Label]
+						IN (' + @Columns + ')
+					) AS PVT
+					INNER JOIN
+						{databaseOwner}{objectQualifier}Smith_Products P
+					ON
+						PVT.[ProductID] = P.[ProductID]
+					INNER JOIN
+						{databaseOwner}{objectQualifier}Smith_CategoryProduct CP
+					ON
+						CP.[ProductID] = P.[ProductID]
+					WHERE 
+						P.[Logicallydeleted] <> 1
+						AND P.[Archived] <> 1
+						AND P.[HideProduct] <> 1
+						AND CP.[CategoryID] = ' + CAST(@CategoryID AS VARCHAR(8)) + '
+						AND P.[PortalID] = ' + CAST(@PortalId AS VARCHAR(8)) +
+				')
+				SELECT
+					F.*,
+					TotalRecords = (
+						SELECT COUNT(*) FROM [FieldsPage]
+					),
+					MoreRecords = (
+						SELECT COUNT(*) FROM [FieldsPage]
+						WHERE [RowNo] > @PageRecordEnd
+					)
+				FROM
+					[FieldsPage] F
+				WHERE
+					F.[RowNo] BETWEEN @PageRecordStart AND @PageRecordEnd
+				ORDER BY
+					F.[RowNo]
+				;'
+		END
+	ELSE
+		BEGIN
+			SET @Query = '
+				DECLARE @PageRecordStart INT
+				DECLARE @PageRecordEnd INT
+				SET @PageRecordStart = ((' + CAST(@PageNumber AS VARCHAR(15)) + ' - 1 ) * ' + CAST(@PageSize AS VARCHAR(15)) + ') + 1
+				SET @PageRecordEnd = ' + CAST(@PageNumber AS VARCHAR(15)) + ' * ' + CAST(@PageSize AS VARCHAR(15)) + '
+				;WITH [FieldsPage] AS
+				(
+					SELECT
+						Row_Number() OVER (ORDER BY P.[SortOrder] ASC) AS [RowNo],
+						P.[ModelNumber], P.[ModelName], P.[SEOURL], P.[QuantityOnHand], P.[UnitCost], P.[PortalID], PVT.*
+					FROM (
+						SELECT
+							PCF.[ProductID], PCF.[Label], PCF.[CustomFieldValue]
+						FROM
+							{databaseOwner}{objectQualifier}Smith_ProductCustomFields PCF
+						WHERE
+							PCF.[PortalId] = ' + CAST(@PortalId AS VARCHAR(8)) + '
+					) SRC
+					PIVOT (
+						MAX([CustomFieldValue]) FOR [Label]
+						IN (' + @Columns + ')
+					) AS PVT
+					INNER JOIN
+						{databaseOwner}{objectQualifier}Smith_Products P
+					ON
+						PVT.[ProductID] = P.[ProductID]
+					INNER JOIN
+						{databaseOwner}{objectQualifier}Smith_CategoryProduct CP
+					ON
+						CP.[ProductID] = P.[ProductID]
+					WHERE 
+						P.[Logicallydeleted] <> 1
+						AND P.[Archived] <> 1
+						AND P.[HideProduct] <> 1
+						AND CP.[CategoryID] = ' + CAST(@CategoryID AS VARCHAR(8)) + '
+						AND P.[PortalID] = ' + CAST(@PortalId AS VARCHAR(8)) + '
+						' + @Filter + '
+				)
+				SELECT
+					F.*,
+					TotalRecords = (
+						SELECT COUNT(*) FROM [FieldsPage]
+					),
+					MoreRecords = (
+						SELECT COUNT(*) FROM [FieldsPage]
+						WHERE [RowNo] > @PageRecordEnd
+					)
+				FROM
+					[FieldsPage] F
+				WHERE
+					F.[RowNo] BETWEEN @PageRecordStart AND @PageRecordEnd
+				ORDER BY
+					F.[RowNo]
+				;'
+		END
+	EXECUTE (@Query)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateProductCustomField
+	@PCID INT = NULL,
+	@ProductID INT = NULL,
+	@Label NVARCHAR(150) = NULL,
+	@Type VARCHAR(50) = NULL,
+	@Value NVARCHAR(500) = NULL,
+	@CustomFieldValue NVARCHAR(50) = NULL,
+	@TabName VARCHAR(50) = NULL,
+	@SortOrder INT = NULL,
+	@Share BIT = NULL,
+	@TabModuleId INT = NULL,
+	@PortalId INT = NULL
+AS
+BEGIN
+	UPDATE
+		{databaseOwner}{objectQualifier}Smith_ProductCustomFields
+	SET
+		[ProductID] = @ProductID,
+		[Label] = @Label,
+		[Type] = @Type,
+		[Value] = @Value,
+		[CustomFieldValue] = @CustomFieldValue,
+		[TabName] = @TabName,
+		[SortOrder] = @SortOrder,
+		[Share] = @Share,
+		[TabModuleId] = @TabModuleId,
+		[PortalId] = @PortalId
+	WHERE
+		[PCID] = @PCID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_DeleteProductCustomField
+	@PCID INT = NULL,
+	@PortalId INT = NULL
+AS
+BEGIN
+	DELETE FROM
+		{databaseOwner}{objectQualifier}Smith_ProductCustomFields
+	WHERE
+		[PCID] = @PCID
+		AND [PortalId] = @PortalId
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_GetCategoryBySEO
+	@CatSEOURL VARCHAR(50) = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SELECT TOP 1
+		C.*
+	FROM
+		{databaseOwner}{objectQualifier}Smith_Category C
+	WHERE
+		C.[CatSEOURL] = @CatSEOURL
+		AND C.[PortalID] = @PortalID
+END
+GO
+
+
+
+/************************************************************/
+/*****               End of Script                      *****/
+/************************************************************/

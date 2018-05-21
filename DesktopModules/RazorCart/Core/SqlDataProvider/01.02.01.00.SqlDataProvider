@@ -1,0 +1,303 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****               Create Tables                      *****/
+/************************************************************/
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_OrderFulfillments') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_OrderFulfillments
+	(
+		[FulfillmentID] [INT] IDENTITY(1, 1) NOT NULL,
+		[OrderID] [INT] NOT NULL,
+		[ShipCarrier] [NVARCHAR](64) NULL,
+		[ShipMethod] [NVARCHAR](128) NULL,
+		[ShipDate] [DATETIME] NULL,
+		[Width] [DECIMAL](12,2) NULL,
+		[Height] [DECIMAL](12,2) NULL,
+		[Length] [DECIMAL](12,2) NULL,
+		[Shipped] [BIT] NOT NULL,
+		[TrackingNumber] [NVARCHAR](128) NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_OrderFulfillments] PRIMARY KEY CLUSTERED
+		(
+			[FulfillmentID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_OrderFulfillmentDetails') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_OrderFulfillmentDetails
+	(
+		[ID] [INT] IDENTITY(1, 1) NOT NULL,
+		[FulfillmentID] [INT] NOT NULL,
+		[OrderDetailID] [INT] NOT NULL,
+		[Quantity] [DECIMAL](10,2) NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_OrderFulfillmentDetails] PRIMARY KEY CLUSTERED
+		(
+			[ID] ASC
+		)
+	)
+END
+GO
+
+
+
+/************************************************************/
+/*****                  Alter Tables                    *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****                Drop Sprocs                       *****/
+/************************************************************/
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_CreateOrderFulfillment') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateOrderFulfillment
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_GetOrderFulfillmentByID') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_GetOrderFulfillmentByID
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListOrderFulfillments') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListOrderFulfillments
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_UpdateOrderFulfillment') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateOrderFulfillment
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_DeleteOrderFulfillment') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_DeleteOrderFulfillment
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_CreateFulfillmentDetail') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateFulfillmentDetail
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListFulfillmentDetails') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListFulfillmentDetails
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_DeleteFulfillmentDetail') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_DeleteFulfillmentDetail
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ClearFulfillmentDetails') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ClearFulfillmentDetails
+GO
+
+
+
+/************************************************************/
+/*****               Create Sprocs                      *****/
+/************************************************************/
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateOrderFulfillment
+	@OrderID INT = NULL,
+	@ShipCarrier NVARCHAR(64) = NULL,
+	@ShipMethod NVARCHAR(128) = NULL,
+	@ShipDate DATETIME = NULL,
+	@Width DECIMAL(12,2) = NULL,
+	@Height DECIMAL(12,2) = NULL,
+	@Length DECIMAL(12,2) = NULL,
+	@Shipped BIT = NULL,
+	@TrackingNumber NVARCHAR(128) = NULL
+AS
+BEGIN
+	INSERT INTO {databaseOwner}{objectQualifier}Smith_OrderFulfillments
+		([OrderID]
+		,[ShipCarrier]
+		,[ShipMethod]
+		,[ShipDate]
+		,[Width]
+		,[Height]
+		,[Length]
+		,[Shipped]
+		,[TrackingNumber])
+	VALUES
+		(@OrderID
+		,@ShipCarrier
+		,@ShipMethod
+		,@ShipDate
+		,@Width
+		,@Height
+		,@Length
+		,@Shipped
+		,@TrackingNumber)
+	SELECT SCOPE_IDENTITY()
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_GetOrderFulfillmentByID
+	@FulfillmentID INT = NULL,
+	@OrderID INT = NULL
+AS
+BEGIN
+	SELECT
+		F.*
+	FROM
+		{databaseOwner}{objectQualifier}Smith_OrderFulfillments F
+	INNER JOIN
+		{databaseOwner}{objectQualifier}Smith_StoreOrders O
+	ON
+		O.[OrderID] = F.[OrderID]
+	WHERE
+		F.[FulfillmentID] = @FulfillmentID
+		AND O.[OrderID] = @OrderID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListOrderFulfillments
+	@OrderID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SELECT
+		F.*
+	FROM
+		{databaseOwner}{objectQualifier}Smith_OrderFulfillments F
+	INNER JOIN
+		{databaseOwner}{objectQualifier}Smith_StoreOrders O
+	ON
+		O.[OrderID] = F.[OrderID]
+	WHERE
+		F.[OrderID] = @OrderID
+		AND O.[PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateOrderFulfillment
+	@FulfillmentID INT = NULL,
+	@OrderID INT = NULL,
+	@ShipCarrier NVARCHAR(64) = NULL,
+	@ShipMethod NVARCHAR(128) = NULL,
+	@ShipDate DATETIME = NULL,
+	@Width DECIMAL(12,2) = NULL,
+	@Height DECIMAL(12,2) = NULL,
+	@Length DECIMAL(12,2) = NULL,
+	@Shipped BIT = NULL,
+	@TrackingNumber NVARCHAR(128) = NULL
+AS
+BEGIN
+	UPDATE
+		{databaseOwner}{objectQualifier}Smith_OrderFulfillments
+	SET
+		[OrderID] = @OrderID,
+		[ShipCarrier] = @ShipCarrier,
+		[ShipMethod] = @ShipMethod,
+		[ShipDate] = @ShipDate,
+		[Width] = @Width,
+		[Height] = @Height,
+		[Length] = @Length,
+		[Shipped] = @Shipped,
+		[TrackingNumber] = @TrackingNumber
+	WHERE
+		[FulfillmentID] = @FulfillmentID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_DeleteOrderFulfillment
+	@FulfillmentID INT = NULL,
+	@OrderID INT = NULL
+AS
+BEGIN
+	DELETE F FROM
+		{databaseOwner}{objectQualifier}Smith_OrderFulfillments F
+	INNER JOIN
+		{databaseOwner}{objectQualifier}Smith_StoreOrders O
+	ON
+		O.[OrderID] = F.[OrderID]
+	WHERE
+		F.[FulfillmentID] = @FulfillmentID
+		AND O.[OrderID] = @OrderID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateFulfillmentDetail
+	@FulfillmentID INT = NULL,
+	@OrderDetailID INT = NULL,
+	@Quantity DECIMAL(10,2) = NULL
+AS
+BEGIN
+	INSERT INTO
+		{databaseOwner}{objectQualifier}Smith_OrderFulfillmentDetails
+		([FulfillmentID]
+		,[OrderDetailID]
+		,[Quantity])
+	VALUES
+		(@FulfillmentID
+		,@OrderDetailID
+		,@Quantity)
+	SELECT SCOPE_IDENTITY()
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListFulfillmentDetails
+	@FulfillmentID INT = NULL,
+	@OrderID INT = NULL
+AS
+BEGIN
+	SELECT
+		FD.*
+	FROM
+		{databaseOwner}{objectQualifier}Smith_OrderFulfillmentDetails FD
+	INNER JOIN
+		{databaseOwner}{objectQualifier}Smith_OrderFulfillments F
+	ON
+		F.[FulfillmentID] = FD.[FulfillmentID]
+	INNER JOIN
+		{databaseOwner}{objectQualifier}Smith_StoreOrders O
+	ON
+		O.[OrderID] = F.[OrderID]
+	WHERE
+		FD.[FulfillmentID] = @FulfillmentID
+		AND O.[OrderID] = @OrderID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_DeleteFulfillmentDetail
+	@ID INT = NULL,
+	@FulfillmentID INT = NULL
+AS
+BEGIN
+	DELETE FD FROM
+		{databaseOwner}{objectQualifier}Smith_OrderFulfillmentDetails FD
+	INNER JOIN
+		{databaseOwner}{objectQualifier}Smith_OrderFulfillments F
+	ON
+		F.[FulfillmentID] = FD.[FulfillmentID]
+	WHERE
+		FD.[ID] = @ID
+		AND F.[FulfillmentID] = @FulfillmentID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ClearFulfillmentDetails
+	@FulfillmentID INT = NULL,
+	@OrderID INT = NULL
+AS
+BEGIN
+	DELETE FD FROM
+		{databaseOwner}{objectQualifier}Smith_OrderFulfillmentDetails FD
+	INNER JOIN
+		{databaseOwner}{objectQualifier}Smith_OrderFulfillments F
+	ON
+		F.[FulfillmentID] = FD.[FulfillmentID]
+	INNER JOIN
+		{databaseOwner}{objectQualifier}Smith_StoreOrders O
+	ON
+		O.[OrderID] = F.[OrderID]
+	WHERE
+		FD.[FulfillmentID] = @FulfillmentID
+		AND O.[OrderID] = @OrderID
+END
+GO
+
+
+
+/************************************************************/
+/*****               End of Script                      *****/
+/************************************************************/

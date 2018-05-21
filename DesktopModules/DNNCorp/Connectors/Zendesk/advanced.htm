@@ -1,0 +1,81 @@
+﻿<div class="conn-zd-advancedSetting panel firstPanel">
+    <div data-bind="html: resx.AutoTicketCreation" class="title">
+    </div>
+    <div class="form-group">
+        <label>
+            <span data-bind="text: resx.EnableTicketCreation"></span>
+        </label>
+        <div class="form-element">
+            <div class="onoffswitch">
+                <input data-bind="checked: isAutomaticTicketCreationEnabled" type="checkbox" name="enableTicketCreationSwitcher" class="onoffswitch-checkbox" id="enableTicketCreationSwitcher">
+                <label class="onoffswitch-label" for="enableTicketCreationSwitcher">
+                    <span class="onoffswitch-inner"></span>
+                    <span class="onoffswitch-switch"></span>
+                    <span class="message">Siwtch</span>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="enable-ticket-creation-settings" data-bind="css:{ 'show-panel':isAutomaticTicketCreationEnabled }">
+        <div class="form-group">
+            <label for="zdRole">
+                <span data-bind="text: resx.CreateTicketsForRole"></span>
+            </label>
+            <div class="form-element">
+                <input id="zdRole" type="text" id="zendeskRolePicker"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="zdCreateTicketForAnswersAfterHours">
+                <span data-bind="text: resx.CreateTicketForAnswersAfterHours"></span>
+            </label>
+            <div class="form-element">
+                <input id="zdCreateTicketForAnswersAfterHours" type="text" data-bind="value: createTicketForAnswersAfterHours">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="zdCreateTicketForDiscussionAfterHours">
+                <span data-bind="text: resx.CreateTicketForDiscussionsAfterHours"></span>
+            </label>
+            <div class="form-element">
+                <input id="zdCreateTicketForDiscussionAfterHours" type="text" data-bind="value: createTicketForDiscussionAfterHours">
+            </div>
+        </div>
+    </div>
+
+    <div data-bind="html: resx.SelectedFields" class="title">
+    </div>
+    <div class="rule-grid">
+        <ul class="item header">
+            <li class="col-fieldName" data-bind="html: resx.FieldName"></li>
+            <li class="col-fieldType" data-bind="html: resx.FieldType"></li>
+            <li class="col-remove" data-bind="html: resx.Remove"></li>
+        </ul>
+        <div class="items" data-bind="foreach: fields">
+            <ul class="item">
+                <li class="col-fieldName" data-bind="html: fieldName"></li>
+                <li class="col-fieldType" data-bind="html: fieldType"></li>
+                <li class="col-remove">
+                    <!-- ko if: removable -->
+                    <a href="#" data-bind="attr: {title: $parent.resx.Remove}, click: $parent.removeField" aria-label="Remove"></a>
+                    <!-- /ko -->
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div data-bind="html: resx.SelectAdditionalFields" class="title">
+    </div>
+    <div class="addFields">
+        <select class="conn-zd-fieldSelect" id="FieldsDropDown" name="FieldsDropDown"
+                data-bind="value: editModel.field, options: fieldData, optionsText: 'FieldName', optionsValue: 'FieldId'" aria-label="Field"></select>
+        <a class="primarybtn conn-zd-addField" data-bind="html: resx.AddFieldButton"></a>
+    </div>
+    <div class="noFields" data-bind="html: resx.NoFields"></div>
+</div>
+
+<div class="dnnFormMessage dnnFormSuccess" data-bind="visible: showSuccessMessage(),html: resx.AdvancedSettingsSaved" style="display:none; margin-bottom:0;">
+
+</div>             
+<div class="dnnFormMessage dnnFormError" data-bind="visible: showErrorMessage(),html: errorMessage()" style="display:none; margin-bottom:0;">
+
+</div> 

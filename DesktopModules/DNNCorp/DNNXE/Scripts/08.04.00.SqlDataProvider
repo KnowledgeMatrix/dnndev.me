@@ -1,0 +1,20 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+/***** CONTENT-5810: update friendly name to Optimizely Connector. *****/
+DECLARE @PackageID INT
+SELECT @PackageID = PackageID FROM {databaseOwner}[{objectQualifier}Packages] WHERE [Name] = 'Evoq.OptimizelyConnector'
+UPDATE {databaseOwner}[{objectQualifier}Packages] SET FriendlyName = 'Optimizely Connector' WHERE PackageID = @PackageID
+UPDATE {databaseOwner}[{objectQualifier}DesktopModules] SET FriendlyName = 'Optimizely Connector' WHERE PackageID = @PackageID
+GO
+
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/

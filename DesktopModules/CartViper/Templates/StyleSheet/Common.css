@@ -1,0 +1,1104 @@
+/* ===============*/
+/* General layout */
+/* ===============*/
+
+.ProductEditMasterTABLE,
+.ProductEditSpecialOfferTABLE,
+#grdCategories,
+.CatalogSettingsFeaturedProductList,
+.CatalogSettingsPopularProductList,
+.CatalogSettingsNewProductListTABLE,
+.CatalogSettingsMasterTABLE,
+.CatalogSettingsCategoryProductList,
+.CatalogSettingsProductDetails,
+.AddressEditMasterTABLE { width:100%; border:0; }
+.AddressEditMasterTABLERightCell { width:35% }
+.AddressEditMasterTABLERLeftCell { width:65% }
+.ReviewListMasterTABLE { width:100%; }
+.ReviewEditMasterTABLE { width:80% }
+.ReviewEditMasterTABLELeftCell { width:33% }
+.ReviewEditMasterTABLERightCell { width:67% }
+.ProductListMasterTABLE { width:100%; }
+.ProductDetailMasterTABLE { width:100%; }
+.CustomerProfileMasterTABLE { width:100%; }
+.CustomerOrdersMasterTABLE { width:100%; text-align:left; }
+.CustomerOrdersDetailMasterTABLE { width:100%; }
+.CustomerCartMasterTABLE { width:100%; }
+.CheckoutMasterTABLE { width:100%; }
+.CategorySettingsMasterTABLE { width:100%; }
+.CategorySettingsMasterTABLERightCell { }
+.CategorySettingsMasterTABLELeftCell { }
+.Store-DataGrid { text-align:center; width:100%; border:0; }
+.CartDetailsMasterTABLE .Store-DataGrid { width:100%; border:0; }
+.CartDetailsMasterTABLE { width:100%; border:0; }
+.Store-CommandDetails .Normal { text-align:left; border:0; }
+.Store-CommandDetails .NormalBold { text-align:left; border:0; }
+.Store-checkout-Entity { }
+table.StoreAdmin div.Help {width:150px; white-space:normal;}
+
+
+ul.tabs {
+	margin: 0;
+	padding: 0;
+	float: left;
+	list-style: none;
+	overflow:hidden;
+	border-bottom: 1px solid #999;
+	border-left: 1px solid #999;
+	width: 100%;
+}
+ul.tabs li {
+	float: left;
+	margin: 0;
+	padding: 0px !important;
+	/*height: 31px; --Subtract 1px from the height of the unordered list--*/
+	/*line-height: 31px; --Vertically aligns the text within the tab--*/
+	border: 1px solid #999;
+	border-left: none;
+	margin-bottom: -1px; /*--Pull the list item down 1px--*/
+	/*overflow: hidden;
+	position: relative; --this is turned off so the DNN menu bar doesnt get under the tab*/ 
+	background: #e0e0e0;
+	background-image: none !important;
+	list-style-type:none;
+}
+ul.tabs li a {
+	text-decoration: none;
+	color: #000;
+	display: block;
+	font-size: 1.2em;
+	padding: 0 5px;
+	border: 1px solid #fff; /*--Gives the bevel look with a 1px white border inside the list item--*/
+	outline: none;
+	height:100%;
+}
+ul.tabs li a:hover {
+	background: #ccc;
+}
+html ul.tabs li.active, html ul.tabs li.active a:hover  { /*--Makes sure that the active tab does not listen to the hover properties--*/
+	background: #fff;
+	border-bottom: 1px solid #fff; /*--Makes the active tab look like it's connected with its content--*/
+}
+.tab_container {
+	border: 1px solid #999;
+	border-top: none;
+	overflow: hidden;
+	clear: both;
+	float: left; width: 100%;
+	background: #fff;
+}
+.tab_content {
+	padding: 20px;
+	font-size: 1.2em;
+}
+
+img{
+border:none;
+}
+
+.cvgalleryimage{
+float:left;
+margin: 10px;
+}
+
+.cvgalleryimageadmin{
+float:left;
+margin: 15px;
+min-width:160px;
+text-align:center;
+}
+
+.cvImageThumbnail{
+border: 1px solid #999;
+margin-bottom:10px;
+}
+.cvImageTitleCaption{
+cursor: pointer;
+margin-bottom:10px;
+border:1px solid #ccc;
+background: #fff;
+}
+.cvnocaption{
+font-style:italic;
+color:#999;
+}
+.cvMixMatchAdminCategoryTree,
+.cvAdminCategoryTree {
+border:1px solid #ccc;
+overflow:scroll;
+height:300px;
+width:290px;
+}
+
+.cvAdminCategoryTree ul,
+.cvMixMatchAdminCategoryTree ul
+{
+padding-left:25px;
+}
+.cvAdminCategoryTree li,
+.cvMixMatchAdminCategoryTree li{
+text-align:left;
+list-style-type:none;
+}
+
+table.stripe {
+    border-collapse: collapse;
+    text-align:left;
+}
+
+.stripeHeader {
+    background: #77B3EF;
+    color: #fff;
+    font-weight: bold;
+    padding: 2px 11px;
+    text-align: left;
+    line-height: 1.2;
+}
+
+.stripe td {
+    padding: 6px 11px;
+    border-bottom: 1px solid #95bce2;
+    vertical-align: top;
+}
+
+.stripe  td img {
+   padding: 2px;
+}
+
+tr.alt td {
+    background: #ecf6fc;
+}
+
+tr.over td {
+    background: #bcd4ec;
+}
+
+#divVariantEdit{
+	margin-bottom:15px;
+}
+
+#divVariantTextControlHelp,
+.infoCaption
+{
+text-align:left;
+border:1px solid #cecf67;
+background:#ffffef;
+padding:10px;
+width:95%;
+}
+
+.infoAnonCheckoutCaption
+{
+text-align:left;
+border:1px solid #cecf67;
+background:#ffffef;
+padding:10px;
+width:500px;
+}
+
+.cvVariantOptions
+{
+margin:10px;
+}
+
+.cvVariantOption
+{
+margin:10px 0px 0px 0px;
+}
+
+.cvVariantOptionLabel
+{
+margin:0px 10px 0px 0px;
+}
+
+.cvCartVariantCaption{
+font-style: italic;
+font-size: 10px;
+}
+
+.cvReportsPrices
+{
+	font-weight:bold;
+	color:Red;
+}
+
+.adminPercentageInfo{
+font-style:italic;
+font-size:10px;
+}
+
+.adminDefaultImage
+{
+background:#ffffbf;
+border:1px solid #cecf67;
+padding:5px;
+}
+
+.yAxisLabel
+{
+	display:block;
+	color:#864343;
+	font-size: 12px;
+	font-weight: bold;
+	-webkit-transform: rotate(-90deg);
+	-moz-transform: rotate(-90deg);
+	/* for ie */
+	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+}
+
+.xAxisLabel
+{
+	color:#864343;
+	font-size: 12px;
+	font-weight: bold;
+}
+
+.graphTitle
+{
+	color:#864343;
+	font-size: 14px;
+	font-weight: bold;
+	
+}
+
+
+
+.jsddm,
+.cvActionMenu
+{	margin: 0px !important;
+	padding: 0px !important;
+font-weight:400;
+}
+	
+.cvActionMenu li
+{
+background:url("../Images/applications-system.png") no-repeat 1px 2px #DFEFFF !important;
+border:1px solid #999999;
+float:left;
+list-style:none outside none;
+margin:0px !important;
+padding:3px 3px 3px 20px !important;
+}
+
+.cvActionMenu li a
+{	
+display: block;
+background: #20548E;
+width: 70px;
+color: #EAFFED;
+white-space: nowrap
+}
+
+.cvActionMenu li a:hover
+{
+background: #1A4473;
+}
+	
+.cvActionMenu li ul
+{	
+margin: 0;
+padding: 0;
+position: absolute;
+visibility: hidden;
+min-width:80px;
+}
+		
+.cvActionMenu li ul li
+{	
+float: none;
+display: inline;
+border: none;
+margin:0px !important;
+padding:0px !important;
+}
+		
+.cvActionMenu li ul li a
+{
+width: auto;
+background: #CFE7FF;
+color:#333;
+border-bottom:1px solid #aaa;
+margin:0px !important;
+padding:3px !important;
+}
+		
+.cvActionMenu li ul li a:hover
+{background: #A7C3DF}
+
+.donationsTemplateWrapper
+{
+	width:100%;
+	text-align:left;
+}
+.cvDonationAmountRadioButton
+{
+	padding-right:5px;
+}
+
+.charCountContainer{
+font-size:10px;
+color:#666;
+}
+
+.cvInventoryInfoSkuNotUnique
+{
+	background-color:#F1D0CB;
+}
+
+/*
+ * image selector style
+ */
+
+.imgareaselect-border1 {
+	background: url(../border-v.gif) repeat-y left top;
+}
+
+.imgareaselect-border2 {
+    background: url(../border-h.gif) repeat-x left top;
+}
+
+.imgareaselect-border3 {
+    background: url(../border-v.gif) repeat-y right top;
+}
+
+.imgareaselect-border4 {
+    background: url(../border-h.gif) repeat-x left bottom;
+}
+
+.imgareaselect-border1, .imgareaselect-border2,
+.imgareaselect-border3, .imgareaselect-border4 {
+    opacity: 0.5;
+    filter: alpha(opacity=50);
+}
+
+.imgareaselect-handle {
+    background-color: #fff;
+    border: solid 1px #000;
+    opacity: 0.5;
+    filter: alpha(opacity=50);
+}
+
+.imgareaselect-outer {
+    background-color: #000;
+    opacity: 0.5;
+    filter: alpha(opacity=50);
+}
+
+.imgareaselect-selection {  
+}
+
+.cvSerialNumberCaption{
+font-style: italic;
+font-size: 10px;
+}
+
+
+/*admin mega menu*/
+ul#topnav {
+	margin: 0; padding: 0;
+	float:left;
+	width: 100%;
+	text-align:left;
+	list-style-type: none;
+	background-image:none;
+}
+ul#topnav li {
+	float: left;
+	margin: 0; padding: 0;
+	position: relative; /*--Important--*/
+	list-style-type: none;
+	background-image:none;
+	overflow:visible;
+}
+ul#topnav li a {
+	float: left;
+	text-indent: -9999px; /*--Push text off of page--*/
+	/*height: 44px;*/
+}
+ul#topnav li:hover a, ul#topnav li a:hover { background-position: left bottom; } /*--Hover State--*/
+
+ul#topnav a.storeAdmin {
+	width: 117px;
+	text-align:right;
+	font-size:14px;
+	padding:0px 0px 0px 4px;
+}
+
+#storeAdminMegaMenu
+{
+	display:block;
+	background: url(../images/action.gif) no-repeat 0px 3px;
+	height:20px;
+}
+
+ul#topnav li .sub {
+	position: absolute; /*--Important--*/
+	top: 26px; left: 0;
+	z-index: 99999;
+	background: #fff;
+	padding: 5px 10px;
+	float: left;
+border:1px solid #ccc;
+	/*--Bottom right rounded corner--*/
+	-moz-border-radius-bottomright: 5px;
+	-khtml-border-radius-bottomright: 5px;
+	-webkit-border-bottom-right-radius: 5px;
+	/*--Bottom left rounded corner--*/
+	-moz-border-radius-bottomleft: 5px;
+	-khtml-border-radius-bottomleft: 5px;
+	-webkit-border-bottom-left-radius: 5px;
+	display: none; /*--Hidden for those with js turned off--*/
+	list-style-type: none;
+}
+ul#topnav li .row { /*--If needed to break out into rows--*/
+	clear: both;
+	float: left;
+	width: 100%;
+	margin-bottom: 10px;
+}
+ul#topnav li .sub ul{
+	list-style: none;
+	margin: 0px 10px; padding: 0;
+	width: 150px;
+	float: left;
+}
+ul#topnav .sub ul li {
+	width: 100%; /*--Override parent list item--*/
+	color: #fff;
+}
+ul#topnav .sub ul li h2 { /*--Sub nav heading style--*/
+	padding: 0;  margin: 0;
+	font-size: 1.3em;
+	font-weight: normal;
+}
+ul#topnav .sub ul li h2 { /*--Sub nav heading link style--*/
+	padding: 2px 0;
+	background-image: none;
+	color: #2e3d66;
+	font-weight:900;
+	border-bottom:1px solid #ccc;
+}
+ul#topnav .sub ul li a {
+	float: none;
+	text-indent: 0; /*--Override text-indent from parent list item--*/
+	height: auto; /*--Override height from parent list item--*/
+	padding: 4px 5px 4px 15px;
+	display: block;
+	text-decoration: none;
+	color: #00c;
+}
+ul#topnav .sub ul li a:hover {
+	color: #003;
+text-decoration:underline;
+}
+
+.megaMenuIcon
+{
+	margin-right:5px;
+}
+
+.cvSalesStatsGraph iframe{
+border:1px solid #ccc;
+margin:20px 0px;
+}
+
+.cvSaleStatMetrics{
+clear:both;
+width:390px;
+float:left;
+text-align:left;
+padding-left:40px;
+}
+
+.cvSaleSaleItem{
+border:0px solid #ccc;
+padding:1px;
+display:block;
+background:#fff;
+margin:1px 0px;
+}
+
+.cvSalesSalesCaption{
+font-size:15px;
+border:1px solid #ccc;
+padding:3px 6px;
+margin:0px;
+display:inline-block;
+font-weight:900;
+font-family: arial, sans-serif;
+background:#f7f7f7;
+}
+
+.cvSalesSalesValue{
+font-size:15px;
+border:1px solid #ccc;
+padding:3px 6px;
+margin:0px;
+display:inline-block;
+font-weight:900;
+font-family: arial, sans-serif;
+background:#fff;
+}
+
+.txtProductNameSearch{
+width:200px;
+}
+
+.cvStoreAdminModerateOrderAdd
+{
+    margin-top:30px;
+}
+
+.urlControl .dnnFormItem
+{
+    clear:left;
+}
+.cvStoreAdminContainer .Help
+{
+width:260px;
+}
+
+.cvStoreAdminContainer .dnnHelpText,
+.cvStoreAdminContainer .Help span{
+white-space:normal;
+}
+
+.storeAdminOptionsMenu ul{
+width:150px;
+float:left;
+text-align:left;
+padding:0px;
+margin:0px 25px 0px 0px;
+}
+
+.storeAdminOptionsMenu ul li{
+list-style-type:none;
+margin-bottom:10px;
+background: none !important;
+}
+
+.storeAdminOptionsMenu ul li a{
+color: #00c;
+}
+
+.storeAdminOptionsMenu ul li h2 {
+    background-image: none;
+    border-bottom: 1px solid #CCCCCC;
+    color: #2E3D66;
+    font-weight: 900;
+    padding: 2px 0;
+	font-size:15px;
+}
+
+
+.warningCaption
+{
+text-align:left;
+border:1px solid #891E1E;
+color:#891E1E;
+font-weight:900;
+background:#fdd;
+padding:10px;
+margin:5px 0px;
+width:95%;
+display:block;
+}
+
+div.time-picker {
+  position: absolute;
+  height: 191px;
+  width:80px;
+  overflow: auto;
+  background: #fff;
+  border: 1px solid #aaa;
+  z-index: 99;
+  margin: 0;
+}
+div.time-picker-12hours {
+  width:80px;
+}
+
+div.time-picker ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+div.time-picker li {
+  cursor: pointer;
+  height: 10px;
+  font: 12px/1 Helvetica, Arial, sans-serif;
+  padding: 4px 3px;
+}
+div.time-picker li.selected {
+  background: #0063CE;
+  color: #fff;
+}
+
+.cvAdminRecurringPriceInput li{
+margin:5px 0px 0px 0px;
+background:none !important;
+list-style-type:none;
+}
+
+.cvRoleSelectorPanel {
+border:1px solid #ccc;
+overflow-y:scroll;
+height:200px;
+width:190px;
+}
+
+.cvBackOrderCartItem {
+    font-size: 10px;
+    font-style: italic;
+    display:inline-block;
+}
+
+.cvArchivedCategory
+{
+    text-decoration:line-through;
+}
+
+.cvPieChartOrderStatus
+{
+    float:left;
+}
+
+.cvCommandButton{
+border:1px solid #999;
+  display:inline-block;
+  padding:3px;
+}
+
+.makeCustomerQuote
+{
+    margin-left:30px;
+}
+
+.CvStandardButton {
+  display: inline-block;
+  *display: inline;
+  padding: 4px 12px;
+  margin-bottom: 0;
+  *margin-left: .3em;
+  font-size: 11px;
+  line-height: 20px;
+  color: #333333;
+  text-align: center;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+  vertical-align: middle;
+  cursor: pointer;
+  background-color: #f5f5f5;
+  *background-color: #e6e6e6;
+  background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
+  background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
+  background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
+  background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
+  background-repeat: repeat-x;
+  border: 1px solid #bbbbbb;
+  *border: 0;
+  border-color: #e6e6e6 #e6e6e6 #bfbfbf;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  border-bottom-color: #a2a2a2;
+  -webkit-border-radius: 4px;
+     -moz-border-radius: 4px;
+          border-radius: 4px;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#ffe6e6e6', GradientType=0);
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  *zoom: 1;
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+     -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.CvStandardButton:hover,
+.CvStandardButton:active,
+.CvStandardButton.active,
+.CvStandardButton.disabled,
+.CvStandardButton[disabled] {
+  color: #333333;
+  background-color: #e6e6e6;
+  *background-color: #d9d9d9;
+}
+
+.CvStandardButton:active,
+.CvStandardButton.active {
+  background-color: #cccccc \9;
+}
+
+.btn:first-child {
+  *margin-left: 0;
+}
+
+.CvStandardButton:hover {
+  color: #333333;
+  text-decoration: none;
+  background-position: 0 -15px;
+  -webkit-transition: background-position 0.1s linear;
+     -moz-transition: background-position 0.1s linear;
+       -o-transition: background-position 0.1s linear;
+          transition: background-position 0.1s linear;
+}
+
+.CvStandardButton:focus {
+  outline: thin dotted #333;
+  outline: 5px auto -webkit-focus-ring-color;
+  outline-offset: -2px;
+}
+
+.CvStandardButton.active,
+.CvStandardButton:active {
+  background-image: none;
+  outline: 0;
+  -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+     -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+          box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.CvStandardButton.disabled,
+.CvStandardButton[disabled] {
+  cursor: default;
+  background-image: none;
+  opacity: 0.65;
+  filter: alpha(opacity=65);
+  -webkit-box-shadow: none;
+     -moz-box-shadow: none;
+          box-shadow: none;
+}
+
+.CvStandardButton-danger,
+.DeleteCart {
+  color: #ffffff !important;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #da4f49;
+  *background-color: #bd362f;
+  background-image: -moz-linear-gradient(top, #ee5f5b, #bd362f);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ee5f5b), to(#bd362f));
+  background-image: -webkit-linear-gradient(top, #ee5f5b, #bd362f);
+  background-image: -o-linear-gradient(top, #ee5f5b, #bd362f);
+  background-image: linear-gradient(to bottom, #ee5f5b, #bd362f);
+  background-repeat: repeat-x;
+  border-color: #bd362f #bd362f #802420;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffee5f5b', endColorstr='#ffbd362f', GradientType=0);
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+}
+
+.CvStandardButton-danger:hover,
+.CvStandardButton-danger:active,
+.CvStandardButton-danger.active,
+.CvStandardButton-danger.disabled,
+.CvStandardButton-danger[disabled],
+.DeleteCart:hover,
+.DeleteCart:active,
+.DeleteCart.active,
+.DeleteCart.disabled,
+.DeleteCart[disabled]{
+  color: #ffffff;
+  background-color: #bd362f;
+  *background-color: #a9302a;
+}
+
+.CvStandardButton-danger:active,
+.CvStandardButton-danger.active,
+.DeleteCart:active,
+.DeleteCart.active {
+  background-color: #942a25 \9;
+}
+
+.btn-primary,
+.ProceedCheckout,
+.RequestQuote,
+.cvAddToCartLink,
+.btnPlaceOrderCv,
+.AdminOrderCreation,
+.makeCustomerOrder,
+.makeCustomerQuote,
+.MakeDonation{
+  color: #ffffff !important;
+  font-size: 12px;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #6E3636;
+  *background-color: #864343;
+  background-image: -moz-linear-gradient(top, #864343, #642C2C);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#864343), to(#642C2C));
+  background-image: -webkit-linear-gradient(top, #864343, #642C2C);
+  background-image: -o-linear-gradient(top, #864343, #642C2C);
+  background-image: linear-gradient(to bottom, #864343, #642C2C);
+  background-repeat: repeat-x;
+  border-color: #6E3636 #6E3636 #002a80;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0044cc', GradientType=0);
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+}
+
+
+.CvStandardButton-success, 
+.CvStandardButton-success:link{
+  color: #ffffff;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #5bb75b;
+  *background-color: #51a351;
+  background-image: -moz-linear-gradient(top, #98E998, #00C700);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#98E998), to(#00C700));
+  background-image: -webkit-linear-gradient(top, #98E998, #00C700);
+  background-image: -o-linear-gradient(top, #98E998, #00C700);
+  background-image: linear-gradient(to bottom, #98E998, #00C700);
+  background-repeat: repeat-x;
+  border-color: #51a351 #51a351 #387038;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff98E998', endColorstr='#ff00C700', GradientType=0);
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+}
+
+.CvStandardButton-success:hover,
+.CvStandardButton-success:focus,
+.CvStandardButton-success:active,
+.CvStandardButton-success.active,
+.CvStandardButton-success.disabled,
+.CvStandardButton-success[disabled] {
+  color: #ffffff;
+  background-color: #01B901;
+  *background-color: #01B901;
+}
+
+.CvStandardButton-success:active,
+.CvStandardButton-success.active {
+  background-color: #01B901 \9;
+}
+
+
+.btn-primary:hover,
+.btn-primary:active,
+.btn-primary.active,
+.btn-primary.disabled,
+.btn-primary[disabled],
+.ProceedCheckout:hover,
+.ProceedCheckout:active,
+.ProceedCheckout.active,
+.ProceedCheckout.disabled,
+.ProceedCheckout[disabled],
+.RequestQuote:hover,
+.RequestQuote:active,
+.RequestQuote.active,
+.RequestQuote.disabled,
+.RequestQuote[disabled],
+.cvAddToCartLink:hover,
+.cvAddToCartLink:active,
+.cvAddToCartLink.active,
+.cvAddToCartLink.disabled,
+.cvAddToCartLink[disabled],
+.btnPlaceOrderCv:hover,
+.btnPlaceOrderCv:active,
+.btnPlaceOrderCv.active,
+.btnPlaceOrderCv.disabled,
+.btnPlaceOrderCv[disabled],
+.AdminOrderCreation:hover,
+.AdminOrderCreation:active,
+.AdminOrderCreation.active,
+.AdminOrderCreation.disabled,
+.AdminOrderCreation[disabled],
+.makeCustomerOrder:hover,
+.makeCustomerOrder:active,
+.makeCustomerOrder.active,
+.makeCustomerOrder.disabled,
+.makeCustomerOrder[disabled],
+.makeCustomerQuote:hover,
+.makeCustomerQuote:active,
+.makeCustomerQuote.active,
+.makeCustomerQuote.disabled,
+.MakeDonation[disabled],
+.MakeDonation:hover,
+.MakeDonation:active,
+.MakeDonation.active,
+.MakeDonation.disabled,
+.MakeDonation[disabled]
+ {
+  color: #ffffff;
+  background-color: #552727;
+  *background-color: #003bb3;
+}
+
+.btn-primary:active,
+.btn-primary.active,
+.ProceedCheckout:active,
+.ProceedCheckout.active,
+.RequestQuote:active,
+.RequestQuote.active,
+.cvAddToCartLink:active,
+.cvAddToCartLink.active,
+.btnPlaceOrderCv:active,
+.btnPlaceOrderCv.active,
+.AdminOrderCreation:active,
+.AdminOrderCreation.active,
+.makeCustomerOrder:active,
+.makeCustomerOrder.active,
+.makeCustomerQuote:active,
+.makeCustomerQuote.active,
+.MakeDonation:active,
+.MakeDonation.active {
+  background-color: #552727 \9;
+}
+
+.cvHelpIcon
+{
+    color:#666;
+}
+
+ul.licenseDetails{
+padding:0px;
+}
+
+.licenseDetails li{
+margin:0px;
+list-style-type:none;
+}
+
+.licenseDetails li a{
+margin:5px;
+}
+
+.btnUpgrade
+{
+    font-size:14px;
+    margin:10px 0px;
+}
+
+.cvGlobalScopeBoundary td > .dnnLabel {
+    min-width: 220px;
+	width:auto;
+}
+
+.cvGlobalScopeBoundary .dnnLabel{
+text-align:left;
+}
+.ddUploadOptions{
+display:inline-block;
+}
+
+.ddUploadOptions li{
+display:inline;
+margin-right:10px;
+}
+
+.row
+{
+    margin-left:0px;
+}
+
+.gmnImage{
+font-size:3em;
+}
+
+.gmnCaption{
+font-size:14px;
+}
+
+.repeatOrderResult
+{
+    color:#FF7E87;
+    font-weight:bold;
+    font-size:12px;
+}
+
+.cvAdminPagination{
+}
+
+.cvAdminPagination li{
+list-style-type:none;
+float:left;
+margin-left:15px;
+}
+
+#searchInput a
+{
+    margin-bottom:30px;
+}
+
+#adminSearch
+{
+    margin-bottom:15px;
+}
+
+.ajaxPaging
+{
+    margin: 10px 0px;
+}
+
+.ajaxPaging li
+{
+    list-style-type:none;
+    display:inline-block;
+    margin-right:10px;
+    padding:0px 3px;
+}
+
+.ajaxPaging li.selected
+{
+    font-weight:900;
+    border:1px solid red;
+}
+
+
+.open > .dropdown-toggle.btn-default {
+  color: #333;
+  background-color: #e6e6e6;
+  border-color: #adadad;
+}
+
+.open > .dropdown-menu {
+  display: block;
+}
+
+.btn-group,
+.btn-group-vertical {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+}
+.btn-group > .btn,
+.btn-group-vertical > .btn {
+  position: relative;
+  float: left;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  display: none;
+  float: left;
+  min-width: 160px;
+  padding: 5px 0;
+  margin: 2px 0 0;
+  font-size: 14px;
+  text-align: left;
+  list-style: none;
+  background-color: #fff;
+  -webkit-background-clip: padding-box;
+          background-clip: padding-box;
+  border: 1px solid #ccc;
+  border: 1px solid rgba(0, 0, 0, .15);
+  border-radius: 4px;
+  -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+          box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+}
+
+.dropdown-menu li
+{
+    list-style:none;
+}
+
+.dropdown-menu a
+{
+    cursor:pointer;
+}
+
+.hyperlinkUnderline{
+    text-decoration: underline !important;
+}
+
+.cvStoreAdminContainer .dnnLabel{
+white-space:normal;
+}

@@ -1,0 +1,93 @@
+﻿IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Wiki_Article_Search]', N'P') IS NOT NULL
+    DROP PROCEDURE {databaseOwner}[{objectQualifier}Wiki_Article_Search]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Wiki_Article_Search]
+    @PortalId INT,
+    @ModuleId INT,
+    @GroupId INT,
+    @PageSize INT,
+    @PageIndex INT,
+    @SortColumn VARCHAR(32),
+    @SortAscending BIT,
+    @UserId INT,
+    @Tags NVARCHAR(256),
+    @draftOnly BIT
+AS
+BEGIN
+
+    DECLARE @MetaDataID int
+    SELECT @MetaDataID=MetaDataID FROM {databaseOwner}{objectQualifier}MetaData WITH ( NOLOCK ) WHERE MetaDataName = 'Title'
+
+    ;WITH OrderedSet
+    AS (
+        SELECT
+                COUNT(*) OVER () AS TotalRecords,
+                ArticleId,
+                ArticleTypeId,
+                A.ContentItemId,
+                SummaryContentItemId,
+                PortalId,
+                GroupId,
+                ViewCount,
+                Protected,
+                Elements,
+                S.Content AS [Summary],
+                CI.Content,
+                CI.ContentTypeID,
+                CI.TabID,
+                CI.ModuleID,
+                CI.ContentKey,
+                CI.Indexed,
+                CI.CreatedByUserID,
+                CI.[CreatedOnDate],
+                CI.LastModifiedByUserID,
+                CI.[LastModifiedOnDate],
+                CIMD.[MetaDataValue] AS [ContentTitle],
+                ROW_NUMBER() OVER (
+                    ORDER BY
+                        CASE WHEN @SortColumn = 'CreatedDate' AND @SortAscending = 1 THEN CI.CreatedOnDate END ASC,
+                        CASE WHEN @SortColumn = 'CreatedDate' AND @SortAscending = 0 THEN CI.CreatedOnDate END DESC,
+                        CASE WHEN @SortColumn = 'LastActive' AND @SortAscending = 1 THEN CI.LastModifiedOnDate END ASC,
+                        CASE WHEN @SortColumn = 'LastActive' AND @SortAscending = 0 THEN CI.LastModifiedOnDate END DESC,
+                        CASE WHEN @SortColumn = 'Title' AND @SortAscending = 1 THEN MetaDataValue END ASC,
+                        CASE WHEN @SortColumn = 'Title' AND @SortAscending = 0 THEN MetaDataValue END DESC,
+                        CASE WHEN @SortColumn = 'Views' AND @SortAscending = 0 THEN ViewCount END DESC,
+                        CASE WHEN @SortColumn = 'Views' AND @SortAscending = 1 THEN ViewCount END ASC
+                    ) AS [RowNumber]
+        FROM {databaseOwner}{objectQualifier}Wiki_Article A WITH ( NOLOCK )
+                    INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI WITH ( NOLOCK ) ON CI.ContentItemID = A.ContentItemID
+                    INNER JOIN {databaseOwner}{objectQualifier}Users U WITH ( NOLOCK ) ON U.UserID = CI.CreatedByUserID
+                    INNER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD WITH ( NOLOCK )
+                        ON CIMD.ContentItemID = A.ContentItemID
+                    LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems S WITH (NOLOCK) ON A.SummaryContentItemId = S.ContentItemID
+        WHERE (ArticleTypeId > 0)
+		  AND CI.ModuleID = @ModuleID
+		  AND (A.PortalId = @PortalId)
+          AND (CIMD.MetaDataID = @MetaDataID)
+          AND ((@GroupId < 1 AND A.GroupId < 1) OR A.GroupId = @GroupId)
+          AND (
+                (@DraftOnly = 1 AND @UserID < 1 AND NOT EXISTS(
+                    SELECT 1 FROM {databaseOwner}{objectQualifier}Revisions R WITH (NOLOCK)
+                    WHERE R.ContentItemID = A.ContentItemID AND R.State = 2)
+                )
+                OR
+                (@DraftOnly = 0 AND @UserID < 1 AND
+                    EXISTS(SELECT 1 FROM {databaseOwner}{objectQualifier}Revisions R WITH (NOLOCK) WHERE R.ContentItemID = A.ContentItemID AND R.State = 2)
+                )
+                OR
+                (CI.CreatedByUserID = @UserId)
+            )
+        AND	(@Tags IS NULL OR LEN(@Tags) = 0 OR
+            (SELECT COUNT(*)
+                FROM   {databaseOwner}{objectQualifier}ContentItems_Tags CIT WITH ( NOLOCK )
+                INNER JOIN {databaseOwner}{objectQualifier}Taxonomy_Terms TT WITH ( NOLOCK ) ON CIT.TermID = TT.TermID
+                INNER JOIN {databaseOwner}{objectQualifier}ConvertListToTable(',', @Tags) T ON TT.Name = T.RowValue
+                WHERE  CIT.ContentItemID = A.ContentItemId) = ( SELECT LEN(@Tags) - LEN(REPLACE(@Tags, ',', '')) + 1))
+    )
+
+    SELECT	TOP (@PageSize) *
+    FROM    OrderedSet
+    WHERE   RowNumber >= (@PageIndex * @PageSize) + 1
+END
+GO

@@ -1,0 +1,611 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****               Create Tables                      *****/
+/************************************************************/
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_StorePermissions') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_StorePermissions
+	(
+		[ID] [INT] IDENTITY(1,1) NOT NULL,
+		[RoleID] [INT] NOT NULL,
+		[Access] [SMALLINT] NULL,
+		[Section] [SMALLINT] NULL,
+		[CreatedBy] [INT] NULL,
+		[DateCreated] [DATETIME] NULL,
+		[ModifiedBy] [INT] NULL,
+		[DateModified] [DATETIME] NULL,
+		[StoreID] [INT] NULL,
+		[PortalID] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_StorePermissions] PRIMARY KEY CLUSTERED
+		(
+			[ID] ASC
+		)
+	)
+END
+
+
+
+/************************************************************/
+/*****                  Alter Tables                    *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****              Drop Functions                      *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****              Create Functions                    *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****                Drop Sprocs                       *****/
+/************************************************************/
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_CreateStorePermission') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateStorePermission
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_GetStorePermissionByID') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_GetStorePermissionByID
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListStorePermissions') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListStorePermissions
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListStorePermissionsBySection') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListStorePermissionsBySection
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListStorePermissionsByRole') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListStorePermissionsByRole
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_UpdateStorePermission') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateStorePermission
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_DeleteStorePermission') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_DeleteStorePermission
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_CreateOrder') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateOrder
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_UpdateOrder') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateOrder
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListOrdersByFilter') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListOrdersByFilter
+GO
+
+
+/************************************************************/
+/*****               Create Sprocs                      *****/
+/************************************************************/
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateStorePermission
+	@RoleID INT = NULL,
+	@Access SMALLINT = NULL,
+	@Section SMALLINT = NULL,
+	@CreatedBy INT = NULL,
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	INSERT INTO {databaseOwner}{objectQualifier}Smith_StorePermissions
+		([RoleID]
+		,[Access]
+		,[Section]
+		,[CreatedBy]
+		,[DateCreated]
+		,[StoreID]
+		,[PortalID])
+	VALUES
+		(@RoleID
+		,@Access
+		,@Section
+		,@CreatedBy
+		,GETDATE()
+		,@StoreID
+		,@PortalID)
+	SELECT SCOPE_IDENTITY()
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_GetStorePermissionByID
+	@ID INT = NULL,
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SELECT
+		P.*, R.RoleName
+	FROM
+		{databaseOwner}{objectQualifier}Smith_StorePermissions P
+	LEFT JOIN
+		{databaseOwner}{objectQualifier}Roles R
+	ON
+		R.[RoleID] = P.[RoleID]
+	WHERE
+		P.[ID] = @ID
+		AND P.[StoreID] = @StoreID
+		AND P.[PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListStorePermissions
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SELECT
+		P.*, R.RoleName
+	FROM
+		{databaseOwner}{objectQualifier}Smith_StorePermissions P
+	LEFT JOIN
+		{databaseOwner}{objectQualifier}Roles R
+	ON
+		R.[RoleID] = P.[RoleID]
+	WHERE
+		P.[StoreID] = @StoreID
+		AND P.[PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListStorePermissionsBySection
+	@Section SMALLINT = NULL,
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SELECT
+		P.*, R.RoleName
+	FROM
+		{databaseOwner}{objectQualifier}Smith_StorePermissions P
+	LEFT JOIN
+		{databaseOwner}{objectQualifier}Roles R
+	ON
+		R.[RoleID] = P.[RoleID]
+	WHERE
+		P.[Section] = @Section
+		AND P.[StoreID] = @StoreID
+		AND P.[PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListStorePermissionsByRole
+	@RoleID INT = NULL,
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SELECT
+		P.*, R.RoleName
+	FROM
+		{databaseOwner}{objectQualifier}Smith_StorePermissions P
+	LEFT JOIN
+		{databaseOwner}{objectQualifier}Roles R
+	ON
+		R.[RoleID] = P.[RoleID]
+	WHERE
+		P.[RoleID] = @RoleID
+		AND P.[StoreID] = @StoreID
+		AND P.[PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateStorePermission
+	@ID INT = NULL,
+	@RoleID INT = NULL,
+	@Access SMALLINT = NULL,
+	@Section SMALLINT = NULL,
+	@ModifiedBy INT = NULL,
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	UPDATE
+		{databaseOwner}{objectQualifier}Smith_StorePermissions
+	SET
+		[RoleID] = @RoleID,
+		[Access] = @Access,
+		[Section] = @Section,
+		[ModifiedBy] = @ModifiedBy,
+		[DateModified] = GETDATE()
+	WHERE
+		[ID] = @ID
+		AND [StoreID] = @StoreID
+		AND [PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_DeleteStorePermission
+	@ID INT = NULL,
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	DELETE FROM
+		{databaseOwner}{objectQualifier}Smith_StorePermissions
+	WHERE
+		[ID] = @ID
+		AND [StoreID] = @StoreID
+		AND [PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateOrder
+	@CustomerID INT = NULL,
+	@OrderDate DATETIME = NULL,
+	@PayHistID INT = NULL,
+	@ShippingTotal MONEY = 0,
+	@TaxTotal MONEY = 0,
+	@HandlingCharge MONEY = 0,
+	@ShipFirstName NVARCHAR(50) = NULL,
+	@ShipLastName NVARCHAR(50) = NULL,
+	@ShipAddress1 VARCHAR(200) = NULL,
+	@ShipAddress2 VARCHAR(200) = NULL,
+	@ShipCity VARCHAR(60) = NULL,
+	@ShipState VARCHAR(60) = NULL,
+	@ShipZipcode VARCHAR(25) = NULL,
+	@ShipCountry VARCHAR(50) = NULL,
+	@Status VARCHAR(20) = 'Open',
+	@ShipMethod NVARCHAR(50) = '',
+	@AffiliateId VARCHAR(20) = NULL,
+	@CouponId INT = 0,
+	@Discount MONEY = 0,
+	@MemberDiscount MONEY = 0,
+	@MemberRole NVARCHAR(50) = '-Select-',
+	@TrackingNumber VARCHAR(50) = NULL,
+	@PortalID INT = NULL,
+	@Surcharge MONEY = 0,
+	@UDF1 VARCHAR(50) = NULL,
+	@UDF2 VARCHAR(50) = NULL,
+	@SpecialInstructions NVARCHAR(500) = NULL,
+	@ShipDate DATETIME = NULL,
+	@DeletedFlag BIT = 0,
+	@ShipCarrier NVARCHAR(50) = '',
+	@DNNUserID INT = 0,
+	@ResidentialStatus VARCHAR(100) = NULL,
+	@IPAddress VARCHAR(50) = NULL,
+	@ModifiedBy NVARCHAR(100) = NULL,
+	@AuctionID INT = 0,
+	@SubTotal MONEY = 0,
+	@GrandTotal MONEY = 0,
+	@RecalcTax BIT = 0,
+	@RecalcShipping BIT = 0,
+	@StoreID INT = NULL
+AS
+BEGIN
+	INSERT INTO {databaseOwner}{objectQualifier}Smith_StoreOrders
+		([CustomerID]
+		,[OrderDate]
+		,[PayHistID]
+		,[ShippingTotal]
+		,[TaxTotal]
+		,[HandlingCharge]
+		,[ShipFirstName]
+		,[ShipLastName]
+		,[ShipAddress1]
+		,[ShipAddress2]
+		,[ShipCity]
+		,[ShipState]
+		,[ShipZipcode]
+		,[ShipCountry]
+		,[Status]
+		,[ShipMethod]
+		,[AffiliateId]
+		,[CouponId]
+		,[Discount]
+		,[MemberDiscount]
+		,[MemberRole]
+		,[TrackingNumber]
+		,[PortalID]
+		,[Surcharge]
+		,[UDF1]
+		,[UDF2]
+		,[SpecialInstructions]
+		,[ShipDate]
+		,[DeletedFlag]
+		,[ShipCarrier]
+		,[DNNUserID]
+		,[ResidentialStatus]
+		,[IPAddress]
+		,[ModifiedBy]
+		,[DateModified]
+		,[AuctionID]
+		,[SubTotal]
+		,[GrandTotal]
+		,[RecalcTax]
+		,[RecalcShipping]
+		,[TabModuleId]
+		,[StoreID])
+	VALUES
+		(@CustomerID
+		,@OrderDate
+		,@PayHistID
+		,@ShippingTotal
+		,@TaxTotal
+		,@HandlingCharge
+		,@ShipFirstName
+		,@ShipLastName
+		,@ShipAddress1
+		,@ShipAddress2
+		,@ShipCity
+		,@ShipState
+		,@ShipZipcode
+		,@ShipCountry
+		,@Status
+		,@ShipMethod
+		,@AffiliateId
+		,@CouponId
+		,@Discount
+		,@MemberDiscount
+		,@MemberRole
+		,@TrackingNumber
+		,@PortalID
+		,@Surcharge
+		,@UDF1
+		,@UDF2
+		,@SpecialInstructions
+		,@ShipDate
+		,@DeletedFlag
+		,@ShipCarrier
+		,@DNNUserID
+		,@ResidentialStatus
+		,@IPAddress
+		,@ModifiedBy
+		,GETDATE()
+		,@AuctionID
+		,@SubTotal
+		,@GrandTotal
+		,@RecalcTax
+		,@RecalcShipping
+		,@StoreID
+		,@StoreID)
+	SELECT SCOPE_IDENTITY()
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateOrder
+	@OrderID INT = NULL,
+	@CustomerID INT = NULL,
+	@OrderDate DATETIME = NULL,
+	@PayHistID INT = NULL,
+	@ShippingTotal MONEY = NULL,
+	@TaxTotal MONEY = NULL,
+	@HandlingCharge MONEY = NULL,
+	@ShipFirstName NVARCHAR(50) = NULL,
+	@ShipLastName NVARCHAR(50) = NULL,
+	@ShipAddress1 VARCHAR(200) = NULL,
+	@ShipAddress2 VARCHAR(200) = NULL,
+	@ShipCity VARCHAR(60) = NULL,
+	@ShipState VARCHAR(60) = NULL,
+	@ShipZipcode VARCHAR(25) = NULL,
+	@ShipCountry VARCHAR(50) = NULL,
+	@Status VARCHAR(20) = NULL,
+	@ShipMethod NVARCHAR(50) = NULL,
+	@AffiliateId VARCHAR(20) = NULL,
+	@CouponId INT = NULL,
+	@Discount MONEY = NULL,
+	@MemberDiscount MONEY = NULL,
+	@MemberRole NVARCHAR(50) = NULL,
+	@TrackingNumber VARCHAR(50) = NULL,
+	@PortalID INT = NULL,
+	@Surcharge MONEY = NULL,
+	@UDF1 VARCHAR(50) = NULL,
+	@UDF2 VARCHAR(50) = NULL,
+	@SpecialInstructions NVARCHAR(500) = NULL,
+	@ShipDate DATETIME = NULL,
+	@DeletedFlag BIT = NULL,
+	@ShipCarrier NVARCHAR(50) = NULL,
+	@DNNUserID INT = 0,
+	@ResidentialStatus VARCHAR(100) = NULL,
+	@IPAddress VARCHAR(50) = NULL,
+	@ModifiedBy NVARCHAR(100) = NULL,
+	@AuctionID INT = NULL,
+	@SubTotal MONEY = NULL,
+	@GrandTotal MONEY = NULL,
+	@RecalcTax BIT = NULL,
+	@RecalcShipping BIT = NULL,
+	@StoreID INT = NULL
+AS
+BEGIN
+	UPDATE
+		{databaseOwner}{objectQualifier}Smith_StoreOrders
+	SET
+		[CustomerID] = @CustomerID,
+		[OrderDate] = @OrderDate,
+		[PayHistID] = @PayHistID,
+		[ShippingTotal] = @ShippingTotal,
+		[TaxTotal] = @TaxTotal,
+		[HandlingCharge] = @HandlingCharge,
+		[ShipFirstName] = @ShipFirstName,
+		[ShipLastName] = @ShipLastName,
+		[ShipAddress1] = @ShipAddress1,
+		[ShipAddress2] = @ShipAddress2,
+		[ShipCity] = @ShipCity,
+		[ShipState] = @ShipState,
+		[ShipZipcode] = @ShipZipcode,
+		[ShipCountry] = @ShipCountry,
+		[Status] = @Status,
+		[ShipMethod] = @ShipMethod,
+		[AffiliateId] = @AffiliateId,
+		[CouponId] = @CouponId,
+		[Discount] = @Discount,
+		[MemberDiscount] = @MemberDiscount,
+		[MemberRole] = @MemberRole,
+		[TrackingNumber] = @TrackingNumber,
+		[PortalID] = @PortalID,
+		[Surcharge] = @Surcharge,
+		[UDF1] = @UDF1,
+		[UDF2] = @UDF2,
+		[SpecialInstructions] = @SpecialInstructions,
+		[ShipDate] = @ShipDate,
+		[DeletedFlag] = @DeletedFlag,
+		[ShipCarrier] = @ShipCarrier,
+		[DNNUserID] = @DNNUserID,
+		[ResidentialStatus] = @ResidentialStatus,
+		[IPAddress] = @IPAddress,
+		[ModifiedBy] = @ModifiedBy,
+		[DateModified] = GETDATE(),
+		[AuctionID] = @AuctionID,
+		[SubTotal] = @SubTotal,
+		[GrandTotal] = @GrandTotal,
+		[RecalcTax] = @RecalcTax,
+		[RecalcShipping] = @RecalcShipping,
+		[StoreID] = @StoreID
+	WHERE
+		[OrderID] = @OrderID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListOrdersByFilter
+	@PageNumber INT = NULL,
+	@PageSize INT = NULL,
+	@OrderColumn VARCHAR(128) = NULL,
+	@OrderDirection VARCHAR(4) = NULL,
+	@Status VARCHAR(128) = NULL,
+	@PayStatus VARCHAR(128) = NULL,
+	@PayMethod VARCHAR(128) = NULL,
+	@SearchValue NVARCHAR(256) = NULL,
+	@CustomerID INT = NULL,
+	@DateFrom DATETIME = NULL,
+	@DateTo DATETIME = NULL,
+	@ModifiedFrom DATETIME = NULL,
+	@ModifiedTo DATETIME = NULL,
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SET NOCOUNT ON;
+	DECLARE @PageRecordStart INT
+	DECLARE @PageRecordEnd INT
+
+	SET @PageRecordStart = ((@PageNumber - 1) * @PageSize) + 1
+	SET @PageRecordEnd = @PageNumber * @PageSize
+
+	;WITH [OrdersPage] AS
+	(
+		SELECT
+			(
+				CASE
+					WHEN @OrderColumn = 'Status' AND @OrderDirection = 'ASC' THEN ROW_NUMBER() OVER (ORDER BY O.[Status] ASC)
+					WHEN @OrderColumn = 'Status' AND @OrderDirection = 'DESC' THEN ROW_NUMBER() OVER (ORDER BY O.[Status] DESC)
+					WHEN @OrderColumn = 'PayMethod' AND @OrderDirection = 'ASC' THEN ROW_NUMBER() OVER (ORDER BY PM.[PayMethod] ASC)
+					WHEN @OrderColumn = 'PayMethod' AND @OrderDirection = 'DESC' THEN ROW_NUMBER() OVER (ORDER BY PM.[PayMethod] DESC)
+					WHEN @OrderColumn = 'OrderID' AND @OrderDirection = 'ASC' THEN ROW_NUMBER() OVER (ORDER BY O.[OrderID] ASC)
+					WHEN @OrderColumn = 'OrderID' AND @OrderDirection = 'DESC' THEN ROW_NUMBER() OVER (ORDER BY O.[OrderID] DESC)
+					WHEN @OrderColumn = 'OrderDate' AND @OrderDirection = 'ASC' THEN ROW_NUMBER() OVER (ORDER BY O.[OrderDate] ASC)
+					WHEN @OrderColumn = 'OrderDate' AND @OrderDirection = 'DESC' THEN ROW_NUMBER() OVER (ORDER BY O.[OrderDate] DESC)
+					WHEN @OrderColumn = 'GrandTotal' AND @OrderDirection = 'ASC' THEN ROW_NUMBER() OVER (ORDER BY O.[GrandTotal] ASC)
+					WHEN @OrderColumn = 'GrandTotal' AND @OrderDirection = 'DESC' THEN ROW_NUMBER() OVER (ORDER BY O.[GrandTotal] DESC)
+					WHEN @OrderColumn = 'DateModified' AND @OrderDirection = 'ASC' THEN ROW_NUMBER() OVER (ORDER BY O.[DateModified] ASC)
+					WHEN @OrderColumn = 'DateModified' AND @OrderDirection = 'DESC' THEN ROW_NUMBER() OVER (ORDER BY O.[DateModified] DESC)
+				ELSE ROW_NUMBER() OVER (ORDER BY O.[OrderID] ASC)
+				END
+			) AS [RowNo], O.*, PM.[PayMethod], P.[PayTotal]
+		FROM
+			{databaseOwner}{objectQualifier}Smith_StoreOrders O
+		OUTER APPLY
+		(
+			SELECT
+				STUFF((
+					SELECT
+						', ' + PH.[PayType]
+					FROM
+						(
+							SELECT
+								PH.[PayType], MIN(PH.[PayHistID]) AS 'PayHistID'
+							FROM
+								{databaseOwner}{objectQualifier}Smith_PayHist PH
+							WHERE
+								PH.[OrderID] = O.[OrderID]
+								AND PH.[Success] = 1
+							GROUP BY
+								PH.[PayType]
+						) PH
+					ORDER BY
+						PH.[PayHistID]
+					FOR XML PATH('')), 1, 2, ''
+				) AS 'PayMethod'
+		) PM
+		OUTER APPLY
+		(
+			SELECT
+				ISNULL(SUM(PH.[Amount]), 0) AS 'PayTotal'
+			FROM
+				{databaseOwner}{objectQualifier}Smith_PayHist PH
+			WHERE
+				PH.[OrderID] = O.[OrderID]
+				AND PH.[Success] = 1
+		) P
+		WHERE
+			(NULLIF(@SearchValue, '') IS NULL
+				OR (
+					(LEFT(@SearchValue, 1) = '#' AND O.[OrderID] = TRY_CONVERT(INT, SUBSTRING(@SearchValue, 2, LEN(@SearchValue))))
+					OR (LEFT(@SearchValue, 1) <> '#'
+						AND (
+							O.[ShipFirstName] LIKE '%' + @SearchValue + '%'
+							OR O.[ShipLastName] LIKE '%' + @SearchValue + '%'
+							OR O.[ShipAddress1] LIKE '%' + @SearchValue + '%'
+							OR O.[ShipAddress2] LIKE '%' + @SearchValue + '%'
+							OR O.[ShipCity] LIKE '%' + @SearchValue + '%'
+							OR O.[ShipZipcode] LIKE '%' + @SearchValue + '%'
+							OR O.[ShipMethod] LIKE '%' + @SearchValue + '%'
+							OR O.[SpecialInstructions] LIKE '%' + @SearchValue + '%'
+						)
+					)
+				)
+			)
+			AND (NULLIF(@PayMethod, '') IS NULL OR PM.[PayMethod] LIKE '%' + @PayMethod + '%')
+			AND (NULLIF(@Status, '') IS NULL OR O.[Status] = @Status)
+			AND (NULLIF(@PayStatus, '') IS NULL
+				OR (
+					(@PayStatus = 'Unpaid' AND P.[PayTotal] <= 0)
+					OR (@PayStatus = 'PartiallyPaid' AND P.[PayTotal] > 0 AND P.[PayTotal] < O.[GrandTotal])
+					OR (@PayStatus = 'Paid' AND P.[PayTotal] >= O.[GrandTotal])
+				)
+			)
+			AND (
+				CONVERT(DATE, O.[OrderDate]) BETWEEN ISNULL(@DateFrom, CAST(-53690 AS DATETIME)) AND ISNULL(@DateTo, GETDATE())
+			)
+			AND (
+				CONVERT(DATETIME, O.[DateModified]) BETWEEN ISNULL(@ModifiedFrom, CAST(-53690 AS DATETIME)) AND ISNULL(@ModifiedTo, GETDATE())
+			)
+			AND (NULLIF(@CustomerID, '-1') IS NULL OR O.[CustomerID] = @CustomerID)
+			AND (O.[StoreID] = @StoreID OR @StoreID = -1)
+			AND O.[PortalID] = @PortalID
+	)
+	SELECT
+		*,
+		TotalRecords = (
+			SELECT COUNT(*) FROM [OrdersPage]
+		),
+		MoreRecords = (
+			SELECT COUNT(*) FROM [OrdersPage]
+			WHERE [RowNo] > @PageRecordEnd
+		)
+	FROM
+		[OrdersPage]
+	WHERE
+		[RowNo] BETWEEN @PageRecordStart AND @PageRecordEnd
+	ORDER BY
+		[RowNo];
+END
+GO
+
+
+
+/************************************************************/
+/*****               End of Script                      *****/
+/************************************************************/

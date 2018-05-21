@@ -1,0 +1,275 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****               Create Tables                      *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****                  Alter Tables                    *****/
+/************************************************************/
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ProductCustomFields') AND type in (N'U'))
+BEGIN
+	IF EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ProductCustomFields') AND name = N'CustomFieldValue')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_ProductCustomFields
+		ALTER COLUMN
+			[CustomFieldValue] [NVARCHAR](1024)
+	END
+END
+GO
+
+
+
+/************************************************************/
+/*****              Drop Functions                      *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****              Create Functions                    *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****                Drop Sprocs                       *****/
+/************************************************************/
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListOrdersByFilter') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListOrdersByFilter
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_CreateProductCustomField') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateProductCustomField
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_UpdateProductCustomField') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateProductCustomField
+GO
+
+
+/************************************************************/
+/*****               Create Sprocs                      *****/
+/************************************************************/
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateProductCustomField
+	@ProductID INT = NULL,
+	@Label NVARCHAR(150) = NULL,
+	@Type VARCHAR(50) = NULL,
+	@Value NVARCHAR(500) = NULL,
+	@CustomFieldValue NVARCHAR(1024) = NULL,
+	@TabName VARCHAR(50) = NULL,
+	@SortOrder INT = NULL,
+	@Share BIT = NULL,
+	@TabModuleId INT = NULL,
+	@PortalId INT = NULL
+AS
+BEGIN
+	INSERT INTO
+		{databaseOwner}{objectQualifier}Smith_ProductCustomFields
+		([ProductID]
+		,[Label]
+		,[Type]
+		,[Value]
+		,[CustomFieldValue]
+		,[TabName]
+		,[SortOrder]
+		,[Share]
+		,[TabModuleId]
+		,[PortalId])
+	VALUES
+		(@ProductID
+		,@Label
+		,@Type
+		,@Value
+		,@CustomFieldValue
+		,@TabName
+		,@SortOrder
+		,@Share
+		,@TabModuleId
+		,@PortalId)
+	SELECT SCOPE_IDENTITY()
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateProductCustomField
+	@PCID INT = NULL,
+	@ProductID INT = NULL,
+	@Label NVARCHAR(150) = NULL,
+	@Type VARCHAR(50) = NULL,
+	@Value NVARCHAR(500) = NULL,
+	@CustomFieldValue NVARCHAR(1024) = NULL,
+	@TabName VARCHAR(50) = NULL,
+	@SortOrder INT = NULL,
+	@Share BIT = NULL,
+	@TabModuleId INT = NULL,
+	@PortalId INT = NULL
+AS
+BEGIN
+	UPDATE
+		{databaseOwner}{objectQualifier}Smith_ProductCustomFields
+	SET
+		[ProductID] = @ProductID,
+		[Label] = @Label,
+		[Type] = @Type,
+		[Value] = @Value,
+		[CustomFieldValue] = @CustomFieldValue,
+		[TabName] = @TabName,
+		[SortOrder] = @SortOrder,
+		[Share] = @Share,
+		[TabModuleId] = @TabModuleId,
+		[PortalId] = @PortalId
+	WHERE
+		[PCID] = @PCID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListOrdersByFilter
+	@PageNumber INT = NULL,
+	@PageSize INT = NULL,
+	@OrderColumn VARCHAR(128) = NULL,
+	@OrderDirection VARCHAR(4) = NULL,
+	@Status VARCHAR(128) = NULL,
+	@PayMethod VARCHAR(128) = NULL,
+	@SearchValue NVARCHAR(256) = NULL,
+	@CustomerID INT = NULL,
+	@DateFrom DATETIME = NULL,
+	@DateTo DATETIME = NULL,
+	@ModifiedFrom DATETIME = NULL,
+	@ModifiedTo DATETIME = NULL,
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SET NOCOUNT ON;
+	DECLARE @PageRecordStart INT
+	DECLARE @PageRecordEnd INT
+
+	SET @PageRecordStart = ((@PageNumber - 1) * @PageSize) + 1
+	SET @PageRecordEnd = @PageNumber * @PageSize
+
+	;WITH [OrdersPage] AS
+	(
+		SELECT
+			(
+				CASE
+					WHEN @OrderColumn = 'Status' AND @OrderDirection = 'ASC' THEN ROW_NUMBER() OVER (ORDER BY O.[Status] ASC)
+					WHEN @OrderColumn = 'Status' AND @OrderDirection = 'DESC' THEN ROW_NUMBER() OVER (ORDER BY O.[Status] DESC)
+					WHEN @OrderColumn = 'PayMethod' AND @OrderDirection = 'ASC' THEN ROW_NUMBER() OVER (ORDER BY PM.[PayMethod] ASC)
+					WHEN @OrderColumn = 'PayMethod' AND @OrderDirection = 'DESC' THEN ROW_NUMBER() OVER (ORDER BY PM.[PayMethod] DESC)
+					WHEN @OrderColumn = 'OrderID' AND @OrderDirection = 'ASC' THEN ROW_NUMBER() OVER (ORDER BY O.[OrderID] ASC)
+					WHEN @OrderColumn = 'OrderID' AND @OrderDirection = 'DESC' THEN ROW_NUMBER() OVER (ORDER BY O.[OrderID] DESC)
+					WHEN @OrderColumn = 'OrderDate' AND @OrderDirection = 'ASC' THEN ROW_NUMBER() OVER (ORDER BY O.[OrderDate] ASC)
+					WHEN @OrderColumn = 'OrderDate' AND @OrderDirection = 'DESC' THEN ROW_NUMBER() OVER (ORDER BY O.[OrderDate] DESC)
+					WHEN @OrderColumn = 'GrandTotal' AND @OrderDirection = 'ASC' THEN ROW_NUMBER() OVER (ORDER BY O.[GrandTotal] ASC)
+					WHEN @OrderColumn = 'GrandTotal' AND @OrderDirection = 'DESC' THEN ROW_NUMBER() OVER (ORDER BY O.[GrandTotal] DESC)
+					WHEN @OrderColumn = 'DateModified' AND @OrderDirection = 'ASC' THEN ROW_NUMBER() OVER (ORDER BY O.[DateModified] ASC)
+					WHEN @OrderColumn = 'DateModified' AND @OrderDirection = 'DESC' THEN ROW_NUMBER() OVER (ORDER BY O.[DateModified] DESC)
+				ELSE ROW_NUMBER() OVER (ORDER BY O.[OrderID] ASC)
+				END
+			) AS [RowNo], O.*, PM.[PayMethod], P.[PaidTotal]
+		FROM
+			{databaseOwner}{objectQualifier}Smith_StoreOrders O
+		OUTER APPLY
+		(
+			SELECT
+				STUFF((
+					SELECT
+						', ' + PH.[PayType]
+					FROM
+						(
+							SELECT
+								PH.[PayType], MIN(PH.[PayHistID]) AS 'PayHistID'
+							FROM
+								{databaseOwner}{objectQualifier}Smith_PayHist PH
+							WHERE
+								PH.[OrderID] = O.[OrderID]
+								AND PH.[Success] = 1
+							GROUP BY
+								PH.[PayType]
+						) PH
+					ORDER BY
+						PH.[PayHistID]
+					FOR XML PATH('')), 1, 2, ''
+				) AS 'PayMethod'
+		) PM
+		OUTER APPLY
+		(
+			SELECT
+				ISNULL(SUM(PH.[Amount]), 0) AS 'PaidTotal'
+			FROM
+				{databaseOwner}{objectQualifier}Smith_PayHist PH
+			WHERE
+				PH.[OrderID] = O.[OrderID]
+				AND PH.[Success] = 1
+		) P
+		WHERE
+			(NULLIF(@SearchValue, '') IS NULL
+				OR (
+					(LEFT(@SearchValue, 1) = '#' AND O.[OrderID] = TRY_CONVERT(INT, SUBSTRING(@SearchValue, 2, LEN(@SearchValue))))
+					OR (LEFT(@SearchValue, 1) <> '#'
+						AND (
+							O.[ShipFirstName] LIKE '%' + @SearchValue + '%'
+							OR O.[ShipLastName] LIKE '%' + @SearchValue + '%'
+							OR O.[ShipAddress1] LIKE '%' + @SearchValue + '%'
+							OR O.[ShipAddress2] LIKE '%' + @SearchValue + '%'
+							OR O.[ShipCity] LIKE '%' + @SearchValue + '%'
+							OR O.[ShipZipcode] LIKE '%' + @SearchValue + '%'
+							OR O.[ShipMethod] LIKE '%' + @SearchValue + '%'
+							OR O.[SpecialInstructions] LIKE '%' + @SearchValue + '%'
+							OR O.[Status] IN (SELECT * FROM {databaseOwner}{objectQualifier}RZC_FxSplit(@SearchValue, ','))
+						)
+					)
+				)
+			)
+			AND (NULLIF(@PayMethod, '') IS NULL OR PM.[PayMethod] LIKE '%' + @PayMethod + '%')
+			AND (NULLIF(@Status, '') IS NULL
+				OR (
+					O.[Status] = @Status
+					OR ('Unpaid' IN (SELECT * FROM {databaseOwner}{objectQualifier}RZC_FxSplit(@Status, ',')) AND P.[PaidTotal] < O.[GrandTotal])
+					OR ('Paid' IN (SELECT * FROM {databaseOwner}{objectQualifier}RZC_FxSplit(@Status, ',')) AND P.[PaidTotal] >= O.[GrandTotal])
+				)
+			)
+			AND (
+				CONVERT(DATE, O.[OrderDate]) BETWEEN ISNULL(@DateFrom, CAST(-53690 AS DATETIME)) AND ISNULL(@DateTo, GETDATE())
+			)
+			AND (
+				CONVERT(DATETIME, O.[DateModified]) BETWEEN ISNULL(@ModifiedFrom, CAST(-53690 AS DATETIME)) AND ISNULL(@ModifiedTo, GETDATE())
+			)
+			AND (NULLIF(@CustomerID, '-1') IS NULL OR O.[CustomerID] = @CustomerID)
+			AND (O.[StoreID] = @StoreID OR @StoreID = -1)
+			AND O.[PortalID] = @PortalID
+	)
+	SELECT
+		*,
+		TotalRecords = (
+			SELECT COUNT(*) FROM [OrdersPage]
+		),
+		MoreRecords = (
+			SELECT COUNT(*) FROM [OrdersPage]
+			WHERE [RowNo] > @PageRecordEnd
+		)
+	FROM
+		[OrdersPage]
+	WHERE
+		[RowNo] BETWEEN @PageRecordStart AND @PageRecordEnd
+	ORDER BY
+		[RowNo];
+END
+GO
+
+
+
+/************************************************************/
+/*****               End of Script                      *****/
+/************************************************************/

@@ -1,0 +1,57 @@
+@using System.Dynamic;
+@using CartViper.Modules.Store.Admin;
+@using CartViper.Modules.Store.WebControls;
+@using CartViper.Modules.Store.Catalog;
+@using CartViper.Modules.Store.Extensions;
+
+@inherits DotNetNuke.Web.Razor.DotNetNukeWebPage<dynamic>
+@{
+
+var cats = (IEnumerable<CategoryInfo>)Model.Categories;
+				
+var catNav = new CatalogNavigation(Request.QueryString);
+
+var storeInfo = new StoreController().GetStoreInfo(Dnn.Portal.PortalId);
+
+}
+
+@helper RenderCategories(int currentCatId, 
+						 IEnumerable<CategoryInfo> cats, 
+						 CatalogNavigation catNav,
+						 StoreInfo storeInfo){
+
+	var siblings = cats.Where(c => c.ParentCategoryID == currentCatId &&
+                                   c.HasCurrentUserPermissionToViewCategory)
+                       .OrderBy(c => c.OrderID);
+										 
+	<ul id="navMenu">	
+	
+	@foreach(var c in siblings){
+			
+		if(c.CategoryID == catNav.CategoryID){
+			@:<li class="cvSelectedCategory">
+		}else{
+			@:<li>
+		}
+		
+		if(this.IsEdit()){
+			<a href="@this.EditCategoryUrl(c)"><img alt="Edit Category" class="pull-left" style="margin:0px 4px 0px 0px;" src="/images/Edit.gif" title="Edit Category"></a>
+		}
+			
+			
+		if(c.CategoryPageId.HasValue && c.CategoryPageId.Value > 0){
+			<a href="@this.CreateCategoryPagingUrl(c.CategoryPageId.Value, c.CategoryID, null)">@c.CategoryName</a>
+		}else{
+			<a href="@this.CreateCategoryPagingUrl(this.StoreSettings().StorePageID, c.CategoryID, null)">@c.CategoryName</a>
+		}
+		
+		@RenderCategories(c.CategoryID, cats, catNav, storeInfo)				
+			
+		@:</li>
+		
+	}
+	</ul>									 
+}
+
+
+@RenderCategories(-1, cats, catNav, storeInfo)

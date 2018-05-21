@@ -1,0 +1,40 @@
+﻿@inherits DotNetNuke.Web.Mvc.Framework.DnnWebViewPage<List<Christoc.Modules.HeaderModule.Models.Category>>
+
+@{
+    /**/
+
+    ViewBag.Title = "Index";
+}
+
+@using Christoc.Modules.HeaderModule.Models
+
+
+
+<div class="">
+    <div class="container">
+        <nav class="navbar navbar-inverse">
+            <div class="navbar-header">
+                <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".js-navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+            <div class="collapse navbar-collapse js-navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li class="dropdown mega-dropdown" ng-repeat="parts in partsList">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{parts[0].ParentName}}<span class="caret"></span></a>
+                        <ul class="dropdown-menu mega-dropdown-menu">
+                            <li class="col-sm-2">
+                                <ul ng-repeat="part in parts">
+                                    <li ng-if="part.ParentID!=0"><a href="{{parentLocation}}/productslist/categories/{{part.CatSEOURL}}">{{part.CategoryName}}</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    </ul>
+                </div>
+          </nav>
+        </div>
+    </div>

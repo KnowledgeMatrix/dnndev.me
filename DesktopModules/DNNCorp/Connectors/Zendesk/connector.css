@@ -1,0 +1,350 @@
+﻿#connector-Zendesk > div.edit-fields > div > div {
+    width: 100%;
+}
+
+    #connector-Zendesk > div.edit-fields > div > div label {
+        width: 25%;
+    }
+
+    #connector-Zendesk > div.edit-fields > div > div input[type='text'] {
+        width: 65%;
+    }
+
+#connector-Zendesk .advancedSetting {
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    display: block;
+    right: 10px;
+    top: -67px;
+    background: url('Images/Icon-Adv-Settings.png') no-repeat 0 0;
+    border: black;
+}
+
+#connector-Zendesk.mobile-view .advancedSetting {
+    top: -43px;
+}
+
+.conn-zd-advancedSetting .conn-zd-fieldSelect {
+    min-width: 250px;
+}
+
+.conn-zd-advancedSetting .rule-grid {
+    background-color: #fff;
+    border: solid 1px #ddd;
+}
+
+    .conn-zd-advancedSetting .rule-grid .emptyinfo {
+        height: 40px;
+        line-height: 40px;
+        text-align: center;
+    }
+
+    .conn-zd-advancedSetting .rule-grid .items {
+        outline: none;
+    }
+
+    .conn-zd-advancedSetting .rule-grid ul.item {
+        width: 100%;
+        height: 40px;
+        line-height: 40px;
+        border-bottom: solid 1px #ddd;
+        margin-right: 20px;
+    }
+
+        .conn-zd-advancedSetting .rule-grid ul.item:last-child {
+            border-bottom: none;
+        }
+
+        .conn-zd-advancedSetting .rule-grid ul.item:after {
+            clear: both;
+            content: '';
+        }
+
+        .conn-zd-advancedSetting .rule-grid ul.item.header {
+            background-color: #efefef;
+        }
+
+        .conn-zd-advancedSetting .rule-grid ul.item li {
+            float: left;
+            text-align: center;
+            border-right: 1px solid #ddd;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+            .conn-zd-advancedSetting .rule-grid ul.item li:last-child {
+                border-right: none;
+            }
+
+            .conn-zd-advancedSetting .rule-grid ul.item li.col-remove {
+                width: 20%;
+            }
+
+                .conn-zd-advancedSetting .rule-grid ul.item li.col-remove a {
+                    display: inline-block;
+                    width: 16px;
+                    height: 16px;
+                    background: url('Images/icon-delete.png') no-repeat center center;
+                    vertical-align: middle;
+                }
+
+            .conn-zd-advancedSetting .rule-grid ul.item li.col-fieldName {
+                width: 45%;
+            }
+
+            .conn-zd-advancedSetting .rule-grid ul.item li.col-fieldType {
+                width: 35%;
+            }
+
+    /* Scroll Bar Styles*/
+    /* SCROLL BAR Style */
+    .conn-zd-advancedSetting .rule-grid.jspScrollable {
+        border: solid 1px #ddd;
+    }
+
+    .conn-zd-advancedSetting .rule-grid .jspVerticalBar .jspCap {
+        display: block;
+        height: 3px;
+        width: 11px;
+    }
+
+    .conn-zd-advancedSetting .rule-grid .jspDrag {
+        position: relative;
+        top: 0;
+        left: 0;
+        -ms-border-radius: 3px 3px 3px 3px;
+        border-radius: 3px 3px 3px 3px;
+        -ms-opacity: .75;
+        opacity: .75;
+        background: #000;
+        cursor: pointer;
+    }
+
+    .conn-zd-advancedSetting .rule-grid .jspContainer {
+        overflow: hidden;
+        position: relative;
+    }
+
+        .conn-zd-advancedSetting .rule-grid .jspContainer .jspPane {
+            width: 100% !important;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            position: absolute;
+        }
+
+        .conn-zd-advancedSetting .rule-grid .jspContainer .jspVerticalBar {
+            border-left: 1px solid #ddd;
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 11px;
+            height: 100%;
+            background-color: #fff;
+        }
+
+    .conn-zd-advancedSetting .rule-grid .jspVerticalBar .jspTrack {
+        width: 7px !important;
+    }
+
+        .conn-zd-advancedSetting .rule-grid .jspVerticalBar .jspTrack .jspDrag {
+            -ms-opacity: 0.5 !important;
+            opacity: 0.5 !important;
+        }
+
+    .conn-zd-advancedSetting .rule-grid .jspVerticalBar * {
+        margin: 0;
+        padding: 0;
+    }
+
+    .conn-zd-advancedSetting .rule-grid .jspCap {
+        display: none;
+    }
+
+    .conn-zd-advancedSetting .rule-grid .jspTrack {
+        background: transparent;
+        position: relative;
+    }
+
+    .conn-zd-advancedSetting .rule-grid .jspVerticalBar .jspTrack {
+        width: 10px;
+        margin: 0 0 0 3px;
+    }
+
+
+
+.conn-zd-advancedSetting .helpIcon {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background: #888;
+    text-align: center;
+    font-weight: bold;
+    font-size: 13px;
+    border-radius: 50px;
+    color: white;
+    position: relative;
+    font-style: italic;
+    font-family: initial;
+}
+
+    .conn-zd-advancedSetting .helpIcon:hover:before {
+        background: #555;
+        border-radius: 3px;
+        bottom: 22px;
+        box-sizing: border-box;
+        content: attr(data-tooltip);
+        display: block;
+        position: absolute;
+        text-align: center;
+        width: 230px;
+        padding: 8px 10px;
+        color: #fff;
+        left: -100px;
+        z-index: 20;
+        font-style: normal;
+    }
+
+    .conn-zd-advancedSetting .helpIcon:hover:after {
+        content: '';
+        display: block;
+        width: 0;
+        height: 0;
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        border-top: 8px solid #555;
+        position: absolute;
+        top: -8px;
+        left: 0px;
+        z-index: 5;
+    }
+    
+.conn-zd-advancedSetting .form-group > label {
+    width: 38%;
+    margin-top: 8px;
+    display: inline-block;
+    float:left;
+}
+
+.conn-zd-advancedSetting .form-group {
+    clear:both;
+    margin-bottom: 20px;
+}
+
+.conn-zd-advancedSetting .form-group::after {
+    clear:both;
+    content:'';
+    display:block;
+}
+
+.conn-zd-advancedSetting .form-element {
+    float:left;
+    width: 60%;
+}
+
+.conn-zd-advancedSetting .form-group .form-element input[type="text"] {
+    width: 150px;
+    display: inline-block;
+    margin-bottom: 5px;
+}
+
+.conn-zd-advancedSetting .validationMessage {
+    display:block;
+    color: red;
+}
+
+.onoffswitch {
+    position: relative; width: 110px;
+    -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+}
+.onoffswitch-checkbox {
+    display: none;
+}
+.onoffswitch-label {
+    display: block; overflow: hidden; cursor: pointer;
+    border: 2px solid #FFFFF; border-radius: 8px;
+}
+.onoffswitch-label span.message{ display: none;}
+.onoffswitch-inner {
+    display: block; width: 200%; margin-left: -100%;
+    transition: margin 0.3s ease-in 0s;
+}
+.onoffswitch-inner:before, .onoffswitch-inner:after {
+    display: block; float: left; width: 50%; height: 32px; padding: 0; line-height: 32px;
+    font-size: 16px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
+    box-sizing: border-box;
+}
+.onoffswitch-inner:before {
+    content: "ON";
+    padding-left: 15px;
+    background-color: #1688C4; color: #FFFFFF;
+}
+.onoffswitch-inner:after {
+    content: "OFF";
+    padding-right: 15px;
+    background-color: #cacaca; color: #FFFFFF;
+    text-align: right;
+}
+.onoffswitch-switch {
+    display: block; width: 18px; margin: 7px;
+    background: #FFFFFF;
+    position: absolute; top: 0; bottom: 0;
+    right: 74px;
+    border: 2px solid #FFFFF; border-radius: 8px;
+    transition: all 0.3s ease-in 0s; 
+}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+    margin-left: 0;
+}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
+    right: 0px; 
+}
+
+.enable-ticket-creation-settings {
+    max-height: 0;
+    overflow: hidden;
+    -webkit-transition: max-height .5s;
+    -moz-transition: max-height .5s;
+    -ms-transition: max-height .5s;
+    -o-transition: max-height .5s;
+    transition: max-height .5s;
+}
+
+.enable-ticket-creation-settings.show-panel {
+    max-height: 500px;
+}
+
+
+.conn-zd-advancedSetting .token-input-list {
+    width: 100%;
+}
+
+    .conn-zd-advancedSetting .token-input-list input[type="text"] {
+        box-shadow: none;
+        margin-bottom: 0px;
+    }
+
+.conn-zd-advancedSetting .token-input-token {
+    border: 1px solid #eee;
+    border-radius: 3px;
+    float: left;
+    line-height: 22px;
+    margin-right: 5px;
+}
+
+.conn-zd-advancedSetting .token-input-input-token {
+    float: left;
+}
+
+.conn-zd-advancedSetting .token-input-delete-token {
+    display: inline-block;
+    line-height: 22px;
+    width: 22px;
+    text-align: center;
+}
+
+div.token-input-dropdown {
+    z-index: 999999999 !important;
+}

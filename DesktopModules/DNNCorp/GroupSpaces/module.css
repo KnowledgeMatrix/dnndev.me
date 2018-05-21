@@ -1,0 +1,532 @@
+﻿.groupStatusLabel,
+.groupStatusLabel:hover {
+	cursor: default;
+	display: inline-block;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	line-height: 1;
+	text-align: center;
+	color: #666;
+	padding: 10px;
+	border: 1px solid #ddd;
+	margin-bottom: 10px;
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	text-shadow: 0px 1px 1px #ffffff;
+    min-width: 80px;
+}
+
+
+/*** GROUP OVERVIEW ***/
+.return-groupDirectory {
+    display: block;
+	float: left;
+    color: #ff5f76;
+    cursor: pointer;
+}
+.leave-group {
+    float: right;
+    color: #ff5f76;
+    cursor: pointer;
+}
+    
+.groupOverview-container {
+    background-color: #fff;
+}
+
+.groupOverview-main {
+    display: block;
+    position: relative;
+	height: 270px;
+}
+
+.groupOverview-search {
+    clear: both;
+    display: none;
+    background-color: #808080;
+}
+
+.groupOverview-primary {
+    display: inline-block;
+    width: 90%;
+	padding-top: 70px;
+}
+    .groupOverview-imageContainer {
+        display: block;
+        width: 120px;
+        margin: 0 20px 0 20px;
+        float: left;
+    }
+
+        .groupOverview-imageContainer .group-image {
+            width: 120px;
+            height: 120px;
+            display: block;
+            margin-bottom: 20px;
+            background-color: #ddd;
+        }
+
+            .groupOverview-imageContainer .group-image span {
+                display: inline-block;
+                border: transparent;
+                text-decoration: none;
+                height: 120px;
+                width: 120px;
+                overflow: hidden;
+            }
+
+                .groupOverview-imageContainer .group-image span em {
+                    display: table-cell;
+                    width: 120px;
+                    height: 120px;
+                    vertical-align: middle;
+                }
+
+                    .groupOverview-imageContainer .group-image span em img {
+                        display: inline-block;
+                        border: none;
+                        width: 100%;
+                    }
+
+    .groupOverview-primary .groupOverview-infoContainer {
+        display: block;
+        width: 80%;
+        height: 180px;
+        padding-left: 160px;
+    }
+
+        .groupOverview-primary .groupOverview-infoContainer .group-summary {
+            height: 180px;
+            overflow: hidden;
+            padding-top: 15px;
+            text-overflow: ellipsis;
+        }
+
+            .groupOverview-primary .groupOverview-infoContainer .group-summary .group-name {
+                font-size: 32px;
+                color: #666;
+            }
+
+            .groupOverview-primary .groupOverview-infoContainer .group-summary .group-description {
+                height: 6em;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                margin-top: 10px;
+                margin-bottom: 10px;
+            }
+
+            .groupOverview-primary .groupOverview-infoContainer .group-summary .group-stats {
+                border-top: 1px solid #edeae9;
+                padding-top: 12px;
+            }
+
+                .groupOverview-primary .groupOverview-infoContainer .group-summary .group-stats .members {
+                    display: inline-block;
+                    min-width: 125px;
+                    border-right: 1px solid #edeae9;
+                    text-align: center;
+                    vertical-align: top;
+                }
+
+                .groupOverview-primary .groupOverview-infoContainer .group-summary .group-stats .activity {
+                    display: none;
+                    min-width: 125px;
+                    border-right: 1px solid #edeae9;
+                    vertical-align: top;
+                    text-align: center;
+                }
+
+                .groupOverview-primary .groupOverview-infoContainer .group-summary .group-stats .score {
+                    display: none;
+                    min-width: 125px;
+                    border-right: 1px solid #edeae9;
+                    vertical-align: top;
+                    text-align: center;
+                }
+
+                .groupOverview-primary .groupOverview-infoContainer .group-summary .group-stats .created {
+                    display: inline-block;
+                    min-width: 125px;
+                    vertical-align: top;
+                    text-align: center;
+                }
+
+                .groupOverview-primary .groupOverview-infoContainer .group-summary .group-stats .stat {
+                    font-weight: bold;
+                    font-size: 18px;
+                    color: #666;
+                    padding-bottom: 50px;
+                }
+
+                .groupOverview-primary .groupOverview-infoContainer .group-summary .group-stats .statDate {
+                    font-size: 12px;
+                    font-weight: bold;
+                    color: #666;
+                }
+
+                .groupOverview-primary .groupOverview-infoContainer .group-summary .group-stats .statName {
+                    font-weight: bold;
+                    color: #B8B8B8;
+                }
+
+
+.groupOverview-nav {
+    display: block;
+    width: 70px;
+    margin: 0px -4.5px 0 0;
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+}
+
+    .groupOverview-nav .groupOverview-nav-button {
+        border-left: 1px solid #edeae9;
+        border-top: 1px solid #edeae9;
+        border-bottom: 1px solid #edeae9;
+        width: 65px;
+        height: 55px;
+        padding-top: 10px;
+        background-position: center;
+        background-repeat: no-repeat;
+        cursor: pointer;
+    }
+
+    .groupOverview-nav .active {
+        background-color: #dfdfdf;
+    }
+
+    .groupOverview-nav .inactive {
+        background-color: #fff;
+    }
+
+    .groupOverview-nav #navSearch.active {
+        background-color: #808080;
+        border-bottom: 0 !important;
+        background-image: url('images/icon-search-active.png') !important;
+    }
+
+    .groupOverview-nav .hidden {
+        display: none;
+    }
+
+    .groupOverview-nav .navHome {
+        background-image: url('images/icon-home-inactive.png');
+    }
+
+    .groupOverview-nav .navSettings {
+        background-image: url('images/icon-settings-inactive.png');
+    }
+
+    .groupOverview-nav .navAnalytics {
+        background-image: url('images/icon-analytics-inactive.png');
+    }
+
+    .groupOverview-nav .navSearch {
+        background-image: url('images/icon-search-inactive.png');
+    }
+
+.group-invite-container {
+	margin-top: 20px;
+}
+
+/*** GROUP SPACES ***/
+.groupspace-container {
+    margin-top: 25px;
+    background-color: #fff;
+}
+
+.dnnGroupSpaces ul.dnnAdminTabNav {
+    display: block;
+    overflow: hidden;
+    margin: 0;
+    border-radius: 0;
+    border-bottom: 1px solid #eee;
+}
+
+.dnnAdminTabNav .tabNav {
+    overflow: hidden;
+}
+
+.dnnAdminTabNav .fixedTabContainer {
+    width: 95%;
+    overflow: hidden;
+    float: left;
+}
+
+.dnnAdminTabNav .moveableTabContainer {
+    width: 200%;
+    position: relative;
+    left: 0;
+}
+
+.dnnAdminTabNav .tabscroll-left {
+    width: 15px;
+    float: left;
+    height: 100%;
+    margin-left: 5px;
+    margin-right: 0;
+    background-image: url('images/arrow-left.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 40%;
+    cursor: pointer;
+    margin: 0px;
+    -moz-box-shadow: 0 0 7px #d4cfce;
+    -webkit-box-shadow: 0 0 7px #d4cfce;
+    box-shadow: 0 0 0px #d4cfce;
+}
+
+.dnnAdminTabNav .tabscroll-right {
+    width: 15px;
+    float: left;
+    height: 100%;
+    margin-left: 5px;
+    margin-right: 0;
+    background-image: url('images/arrow-right.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 40%;
+    cursor: pointer;
+    margin: 0px;
+    -moz-box-shadow: 0 0 7px #d4cfce;
+    -webkit-box-shadow: 0 0 7px #d4cfce;
+    box-shadow: 0 0 0px #d4cfce;
+}
+
+.dnnAdminTabNav li.tabNavTab {
+    margin: 0;
+}
+
+    .dnnAdminTabNav li.tabNavTab.tabNavCurrentTab a {
+        background: linear-gradient(to bottom, #d1cdc8 0, #b6afa9 100%);
+        border-style: solid;
+        border-color: #ddd;
+        border-radius: 0;
+        border-left: none;
+        border-bottom: none;
+        color: #fff;
+        text-shadow: 0 -1px 0 #999;
+        box-shadow: none;
+    }
+
+    .dnnAdminTabNav li.tabNavTab a {
+        border-style: solid;
+        border-radius: 0;
+        border-left: none;
+        border-color: #ddd;
+        border-bottom: none;
+        color: #777;
+        text-shadow: 0 1px 0 #fff;
+        background: linear-gradient(to bottom, #fff 0,#eee6e5 100%);
+        box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 1);
+        padding: 9px 15px 9px 15px;
+    }
+
+    .dnnAdminTabNav li.tabNavTab:first-child a {
+        border-left: 1px solid #ddd;
+    }
+
+.dnnGroupSpaces .ui-tabs-anchor {
+    height: initial !important;
+    margin: 0px !important;
+    -moz-box-shadow: 0 0 7px #d4cfce !important;
+    -webkit-box-shadow: 0 0 7px #d4cfce !important;
+    box-shadow: 0 0 7px #d4cfce !important;
+    background-color: #fff !important;
+    border-bottom: 0px;
+}
+
+.addTab {
+    width: 20px;
+    min-width: 20px !important;
+    margin: 0px;
+    -moz-box-shadow: 0 0 7px #d4cfce;
+    -webkit-box-shadow: 0 0 7px #d4cfce;
+    box-shadow: 0 0 0px #d4cfce;
+}
+
+    .addTab a {
+        width: 20px;
+        min-width: 20px !important;
+    }
+
+
+/***** EDIT TABS *****/
+.groupTabs-container {
+    padding-top: 25px;
+}
+
+	.groupTabs-container .noGroupFeatures {
+		display: none;	
+	}
+
+    .groupTabs-container .dnnFormItem {
+        margin-bottom: 10px;
+    }
+
+    .groupTabs-container .checkboxlist {
+        margin-left: 280px;
+        width: 300px;
+        background-color: #eee;
+    }
+
+    .groupTabs-container select {
+        width: 300px;
+    }
+	
+	.groupTabs-container .dnnActions {
+		display: block;
+	}
+
+/***** Search *****/
+.nav-searchContainer {
+    position: relative;
+    z-index: 90001;
+}
+
+.groups-searchContainer {
+    position: absolute;
+    z-index: 90001;
+}
+
+.groupOverview-search .txtWrapper {
+    float: left;
+    width: 83%;
+}
+
+.groupOverview-search .group-search-input {
+    margin: 15px;
+    width: 100%;
+}
+
+.groupOverview-search .actionWrapper {
+    float: right;
+    margin: 15px;
+    width: 100px;
+}
+
+    .groupOverview-search .actionWrapper a {
+        margin: 0;
+    }
+
+.groups-search-results {
+    padding: 20px 0px 20px 0px;
+    background: #fff;
+    margin-top: 80px;
+    display: none;
+}
+
+    .groups-search-results > .triangle {
+        width: 39px;
+        height: 31px;
+        background-image: url('../SocialLibrary/Images/triangle.png');
+        margin: -50px 0 20px 30px;
+    }
+
+.groups-search-results-title {
+    width: 450px;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 10px 0 10px 10px;
+    border-bottom: 1px solid #ddd;
+    margin: 0px 20px 0px 20px;
+}
+
+.groups-search-results ul.groups-results-list {
+    width: inherit;
+    color: #999;
+    margin: 0 20px 20px 20px;
+    min-height: 10px;
+}
+
+    .groups-search-results ul.groups-results-list .grouped-result {
+        width: 300px;
+        display: inline-block;
+        margin: 15px 0 15px 0;
+        vertical-align: top;
+    }
+
+     .groups-search-results ul.groups-results-list .grouped-result > span {
+         font-weight: bold;
+         font-size: 14px;
+     }
+
+    .groups-search-results ul.groups-results-list > li {
+        width: 180px;
+        margin: 0 10px 5px 10px;
+        display: inline-block;
+    }
+
+.results-modalShadow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.65);
+    display: none;
+}
+
+.group-owner-container,
+.recommended-members-container,
+.group-administrators-container,
+.related-group-container {
+    background-color: #fff;
+    padding: 20px;
+    margin: 0;
+}
+
+.recommended-members-container .dnnPagingButtons,
+.group-administrators-container .dnnPagingButtons,
+.related-group-container .dnnPagingButtons {
+    margin-top: 10px;
+}
+
+        .group-owner-container .group-name > a.dnnSocialLink {
+            font-size: 115%;
+            font-weight: bold;
+            z-index: 5;
+        }
+
+table.group-space-sidelist-tbl {
+    width: 100%;
+}
+
+table.group-space-sidelist-tbl tr {
+    border-bottom: 1px solid #eee;
+}
+
+table.group-space-sidelist-tbl tr:first-child {
+    border: none;
+}
+
+table.group-space-sidelist-tbl td {
+    padding: 10px 10px 10px 0;
+    vertical-align: middle;
+}
+
+table.group-space-sidelist-tbl td.group-name {
+    width: 100%;
+}
+
+    table.group-space-sidelist-tbl td.group-name > a {
+        width: 161px;
+        overflow: hidden;
+        display: inline-block;
+        text-overflow: ellipsis;
+    }
+
+.featureListModeContainer {
+	margin-left: 350px;
+}
+.featureListModeWarning {
+	width: 450px;
+}
+
+div.invite-button-area > a.invite-button.dnnSecondaryAction {
+    display: block;
+}
+
+.DnnModule-GroupSpaces + div .list-container{ margin-top: 0; }

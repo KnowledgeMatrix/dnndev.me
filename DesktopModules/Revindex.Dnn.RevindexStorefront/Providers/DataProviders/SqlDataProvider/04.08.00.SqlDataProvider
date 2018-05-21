@@ -1,0 +1,73 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+SET XACT_ABORT ON
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+	
+	-- Support product redirection
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Product ADD	RedirectUrl varchar(255) NULL
+	
+	-- Support manufacturer module control
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD ManufacturerDisplayTemplate varchar(255) NULL
+	
+	-- Add Manufacturer.UrlName column
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Manufacturer ADD UrlName xml NULL
+	
+	-- Support price and manufacturer product filters
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		ProductFilterManufacturerFilterable bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductFilterManufacturerFilterable DEFAULT 1,
+		ProductFilterManufacturerDisplayOrder int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductFilterManufacturerDisplayOrder DEFAULT 1000,
+		ProductFilterPriceFilterable bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductFilterPriceFilterable DEFAULT 1,
+		ProductFilterPriceDisplayOrder int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductFilterPriceDisplayOrder DEFAULT 1000
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductFilterManufacturerFilterable
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductFilterManufacturerDisplayOrder
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductFilterPriceFilterable
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductFilterPriceDisplayOrder
+	
+	-- Support Authorize.net AIM and SIM compatible payment gateways
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD 
+		PaymentGatewaysAuthorizeNetAIMGatewayUrl varchar(255) NULL, 
+		PaymentGatewaysAuthorizeNetSIMGatewayUrl varchar(255) NULL
+	
+COMMIT TRANSACTION
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+
+		-- Upgrade default ProductDetail template to "Standard11"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductDetailDisplayTemplate = 'Standard11' WHERE ProductDetailDisplayTemplate LIKE 'Standard%'
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Product] SET DisplayTemplate = 'Standard11' WHERE DisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default ProductList template to "Standard7"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductListDisplayTemplate = 'Standard7' WHERE ProductListDisplayTemplate LIKE 'Standard%'
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Category] SET DisplayTemplate = 'Standard7' WHERE DisplayTemplate LIKE 'Standard%'
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Manufacturer] SET DisplayTemplate = 'Standard7' WHERE DisplayTemplate LIKE 'Standard%'
+		
+		-- Set Manufacturer default display template
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ManufacturerDisplayTemplate = 'Standard1' 
+		
+		-- Upgrade default ProductFilter template to "Standard2"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductFilterDisplayTemplate = 'Standard2' WHERE ProductFilterDisplayTemplate LIKE 'Standard%'
+		
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

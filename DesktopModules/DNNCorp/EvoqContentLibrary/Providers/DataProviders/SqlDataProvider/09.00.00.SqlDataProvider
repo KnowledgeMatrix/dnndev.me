@@ -1,0 +1,152 @@
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_GetBounceSessionCount]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Analytics_GetBounceSessionCount]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_GetChannels]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Analytics_GetChannels]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_GetDevices]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Analytics_GetDevices]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_GetNavigationSummaryExitPages]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Analytics_GetNavigationSummaryExitPages]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_GetNavigationSummaryReferrers]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Analytics_GetNavigationSummaryReferrers]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_GetPageViews]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Analytics_GetPageViews]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_GetTotalConversionsCount]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Analytics_GetTotalConversionsCount]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_GetTotalConversionsPage]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Analytics_GetTotalConversionsPage]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_GetTotalOperatingSystemsCount]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Analytics_GetTotalOperatingSystemsCount]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_GetTotalOperatingSystemsPage]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Analytics_GetTotalOperatingSystemsPage]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_GetTotalPageViewsCount]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Analytics_GetTotalPageViewsCount]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_GetTotalPageViewsPage]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Analytics_GetTotalPageViewsPage]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_GetTotalReferrersCount]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Analytics_GetTotalReferrersCount]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_GetTotalReferrersPage]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Analytics_GetTotalReferrersPage]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_GetTotalSessionsCount]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Analytics_GetTotalSessionsCount]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_GetTotalVisitsCount]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Analytics_GetTotalVisitsCount]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_GetVisitors]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Analytics_GetVisitors]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_MigratePageViews]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Analytics_MigratePageViews]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_ProcessEventData]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Analytics_ProcessEventData]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_ProcessPageViews]') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Analytics_ProcessPageViews]
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_GetAllDatesFromCsv]') IS NOT NULL
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_GetAllDatesFromCsv
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_DateIdToDate]') IS NOT NULL
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_DateIdToDate
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_DateToDateId]') IS NOT NULL
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_DateToDateId
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Analytics_GetContentItemIdFromUrl]') IS NOT NULL
+	DROP FUNCTION {databaseOwner}{objectQualifier}Analytics_GetContentItemIdFromUrl
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Fact_Conversions') AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
+    DROP TABLE {databaseOwner}{objectQualifier}Analytics_Fact_Conversions
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Fact_Devices') AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
+    DROP TABLE {databaseOwner}{objectQualifier}Analytics_Fact_Devices
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Fact_ExitPages') AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
+    DROP TABLE {databaseOwner}{objectQualifier}Analytics_Fact_ExitPages
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Fact_LinkClicked') AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
+    DROP TABLE {databaseOwner}{objectQualifier}Analytics_Fact_LinkClicked
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Fact_PageViews') AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
+    DROP TABLE {databaseOwner}{objectQualifier}Analytics_Fact_PageViews
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Fact_Referrers') AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
+    DROP TABLE {databaseOwner}{objectQualifier}Analytics_Fact_Referrers
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Fact_Sessions') AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
+    DROP TABLE {databaseOwner}{objectQualifier}Analytics_Fact_Sessions
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Fact_Users') AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
+    DROP TABLE {databaseOwner}{objectQualifier}Analytics_Fact_Users
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Analytics_Fact_Visitors') AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
+    DROP TABLE {databaseOwner}{objectQualifier}Analytics_Fact_Visitors
+GO
+
+DECLARE @AnalyticsSchedulerType VARCHAR(512)
+SET @AnalyticsSchedulerType =
+	N'Evoq.Content.Library.Components.Analytics.AnalyticsScheduledTask%'
+
+DELETE FROM {databaseOwner}[{objectQualifier}Schedule] WHERE [TypeFullName] LIKE @AnalyticsSchedulerType
+GO
+
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/

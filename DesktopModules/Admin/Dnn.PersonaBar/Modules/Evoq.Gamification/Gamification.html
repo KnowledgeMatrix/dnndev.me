@@ -1,0 +1,413 @@
+﻿<!-- gaming panel -->
+<div class="socialpanelheader">
+    <h3 data-bind="html: $root.resx.nav_Gaming"></h3>
+</div>
+<div class="socialpanelbody">
+    <div>
+        <ul class="tabControl" data-bind="with: panel">
+            <li data-panel-id="scoringpanel" data-bind="click: activate, html: $root.resx.gaming_Scoring"></li>
+            <li data-panel-id="privilegespanel" data-bind="click: activate, html: $root.resx.gaming_Privileges"></li>
+            <li data-panel-id="badgespanel" data-bind="click: activate, html: $root.resx.gaming_Badges"></li>
+        </ul>
+        <div id="scoringpanel" class="tabPanel" data-bind="with: scoringViewModel">
+            <h4 data-bind="html: $root.resx.title_Scoring"></h4>
+            <div class="searchpanel">
+                <input type="text" class="searchbox" data-bind="value: searchText, valueUpdate: 'afterkeydown', attr: { 'placeholder': $root.resx.placeholder_Search }" aria-label="Search" />
+                <select class="filterbox" data-bind="options: modules, optionsText: 'moduleName', optionsValue: 'desktopModuleId', value: moduleFilterId" aria-label="Filter"></select>
+            </div>
+
+            <table class="cmxtbl">
+                <colgroup>
+                    <col class="scoring-col-activity"/>
+                    <col class="scoring-col-module"/>
+                    <col class="scoring-col-experience-points"/>
+                    <col class="scoring-col-reputation-points"/>
+                    <col class="scoring-col-limits"/>
+                    <col class="scoring-col-actions"/>
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th><a data-column="ActionDisplayName" data-bind="click: sort, attr: { 'class': sortColumnClass('ActionDisplayName') }, html: $root.resx.col_Activity"></a></th>
+                        <th><a data-column="ModuleName" data-bind="click: sort, attr: { 'class': sortColumnClass('ModuleName') }, html: $root.resx.col_Module"></a></th>
+                        <th><a data-column="ExperiencePoints" data-bind="click: sort, attr: { 'class': sortColumnClass('ExperiencePoints') }, html: $root.resx.col_EXP"></a></th>
+                        <th><a data-column="ReputationPoints" data-bind="click: sort, attr: { 'class': sortColumnClass('ReputationPoints') }, html: $root.resx.col_REP"></a></th>
+                        <th><a data-bind="html: $root.resx.col_Limits"></a></th>
+                        <th><a data-bind="html: $root.resx.col_Actions"></a></th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <td colspan="6">
+                            <div>
+                                <div class="left" data-bind="html: pagerItemsDescription"></div>
+                                <ul class="right pager" data-bind="visible: pagerVisible">
+                                    <li><a data-bind="click: prev, attr: { 'class': pagerPrevClass }" aria-label="Prev"></a></li>
+                                    <li><a data-bind="click: next, attr: { 'class': pagerNextClass }" aria-label="Next"></a></li>
+                                </ul>
+                                <div class="right" data-bind="html: pagerDescription"></div>
+                            </div>
+                        </td>
+                    </tr>
+                </tfoot>
+
+                <tbody data-bind="foreach: results">
+                    <tr  data-bind="click: edit">
+                        <td><div class="qaTooltip"><em data-bind="text: actionDisplayName"></em><div class="tag-menu"><p data-bind="html: actionDescription"></p></div></div></td>
+                        <td data-bind="text: moduleName"></td>
+                        <td data-bind="text: experiencePoints"></td>
+                        <td data-bind="text: reputationPoints"></td>
+                        <td data-bind="text: limit"></td>
+                        <td class="edit-cell"><a></a></td>
+                    </tr>
+                </tbody>
+
+                <tbody id="scoring-editbody" class='edit-body'>
+                    <tr class="edit-row" id="scoring-editrow" data-bind="with: scoringActionEditing">
+                        <td colspan="6">
+                            <div>
+                                <div>
+                                    <label for="scoring-experiencepoints" data-bind="html: $root.resx.label_Experience" class="formRequired"></label>
+                                    <input id="scoring-experiencepoints" type="text" data-bind="value: experiencePoints" class="required number nonnegativenumber"  />
+                                </div>
+
+                                <div>
+                                    <label for="scoring-maxcount" data-bind="html: $root.resx.label_Maximum" class="formRequired"></label>
+                                    <input id="scoring-maxcount" type="text" data-bind="value: maxCount" class="required number nonnegativenumber"  />
+                                </div>
+
+                                <div>
+                                    <label for="scoring-reputationpoints" data-bind="html: $root.resx.label_Reputation" class="formRequired"></label>
+                                    <input id="scoring-reputationpoints" type="text" data-bind="value: reputationPoints" class="required number customValidate nolargerthanexp"  />
+                                </div>
+
+                                <div>
+                                    <label for="scoring-timeframe" data-bind="html: $root.resx.label_Timeframe"></label>
+                                    <select id="scoring-timeframe" data-bind="value: timeframe">
+                                        <option value="l" data-bind="html: $root.resx.opt_NoLimit"></option>
+                                        <option value="d" data-bind="html: $root.resx.opt_Daily"></option>
+                                        <option value="w" data-bind="html: $root.resx.opt_Weekly"></option>
+                                        <option value="m" data-bind="html: $root.resx.opt_Monthly"></option>
+                                        <option value="y" data-bind="html: $root.resx.opt_Yearly"></option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <a class="secondarybtn" data-bind="click: cancel, html: $root.resx.btn_Cancel"></a>
+                                    <div class="clear"></div>
+                                </div>
+
+                                <div>
+                                    <a class="primarybtn"data-bind="click: save, html: $root.resx.btn_Save"></a>
+                                    <div class="clear"></div>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+        </div>
+
+        <div id="privilegespanel" class="tabPanel" data-bind="with: privilegesViewModel">
+            <h4 data-bind="html: $root.resx.title_Privilege"></h4>
+            <div class="searchpanel">
+                <input type="text" class="searchbox" data-bind="value: searchText, valueUpdate: 'afterkeydown', attr: { 'placeholder': $root.resx.placeholder_Search }" aria-label="Search" />
+                <select class="filterbox" data-bind="options: modules, optionsText: 'moduleName', optionsValue: 'desktopModuleId', value: moduleFilterId" aria-label="Filter"></select>
+            </div>
+
+            <table class="cmxtbl">
+                <colgroup>
+                    <col class="privileges-col-name"/>
+                    <col class="privileges-col-module"/>
+                    <col class="privileges-col-reputation-points"/>
+                    <col class="privileges-col-actions"/>
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th><a data-column="PrivilegeName" data-bind="click: sort, attr: { 'class': sortColumnClass('PrivilegeName') }, html: $root.resx.col_Privilege"></a></th>
+                        <th><a data-column="ModuleName" data-bind="click: sort, attr: { 'class': sortColumnClass('ModuleName') }, html: $root.resx.col_Module"></a></th>
+                        <th><a data-column="ReputationPoints" data-bind="click: sort, attr: { 'class': sortColumnClass('ReputationPoints') }, html: $root.resx.col_REP"></a></th>
+                        <th><a data-bind="html: $root.resx.col_Actions"></a></th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <td colspan="4">
+                            <div>
+                                <div class="left" data-bind="html: pagerItemsDescription"></div>
+                                <ul class="right pager" data-bind="visible: pagerVisible">
+                                    <li><a data-bind="click: prev, attr: { 'class': pagerPrevClass }" aria-label="Prev"></a></li>
+                                    <li><a data-bind="click: next, attr: { 'class': pagerNextClass }" aria-label="Next"></a></li>
+                                </ul>
+                                <div class="right" data-bind="html: pagerDescription"></div>
+                            </div>
+                        </td>
+                    </tr>
+                </tfoot>
+
+                <tbody data-bind="foreach: results">
+                    <tr  data-bind="click: edit">
+                        <td><div class="qaTooltip"><em data-bind="text: privilegeDisplayName"></em><div class="tag-menu"><p data-bind="    html: description"></p></div></div></td>
+                        <td data-bind="text: moduleName"></td>
+                        <td data-bind="text: reputationPoints"></td>
+                        <td class="edit-cell"><a></a></td>
+                    </tr>
+                </tbody>
+
+                <tbody id='privileges-editbody' class='edit-body'>
+                    <tr class="edit-row" id="privilege-editrow" data-bind="with: privilegeEditing">
+                        <td colspan="4">
+                            <div>
+                                <div>
+                                    <label for="privileges-reputationpoints" data-bind="html: $root.resx.label_Reputation" class="formRequired"></label>
+                                    <input id="privileges-reputationpoints" type="text" data-bind="value: reputationPoints" class="required number nonDecimalNumber nonnegativenumber"  />
+                                </div>
+
+                                <div style="height: 36px"></div><!-- a placeholder -->
+
+                                <div>
+                                    <a class="secondarybtn" data-bind="click: cancel, html: $root.resx.btn_Cancel"></a>
+                                    <div class="clear"></div>
+                                </div>
+
+                                <div>
+                                    <a class="primarybtn"data-bind="click: save, html: $root.resx.btn_Save"></a>
+                                    <div class="clear"></div>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <div id="badgespanel" class="tabPanel" data-bind="with: badgesViewModel">
+            <h4 data-bind="html: $root.resx.title_Badges"></h4>
+
+            <div class="searchpanel">
+                <input type="text" class="searchbox" data-bind="value: searchText, valueUpdate: 'afterkeydown', attr: { 'placeholder': $root.resx.placeholder_Search }" aria-label="Search" />
+                <a class="plainbtn right" data-bind="click: create, html: $root.resx.btn_CreateBadge"></a>
+            </div>
+
+            <table class="cmxtbl" id="createbadgestbl">
+                <tbody>
+                </tbody>
+            </table>
+            <table class="cmxtbl" id="badgestbl">
+                <colgroup>
+                    <col class="badges-col-name"/>
+                    <col class="badges-col-tier"/>
+                    <col class="badges-col-timeframe"/>
+                    <col class="badges-col-goals"/>
+                    <col class="badges-col-actions"/>
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th><a data-column="BadgeName" data-bind="click: sort, attr: { 'class': sortColumnClass('BadgeName') }, html: $root.resx.col_Badge"></a></th>
+                        <th><a data-column="Tier" data-bind="click: sort, attr: { 'class': sortColumnClass('Tier') }, html: $root.resx.col_Tier"></a></th>
+                        <th><a data-column="TimeFrameInDays" data-bind="click: sort, attr: { 'class': sortColumnClass('TimeFrameInDays') }, html: $root.resx.col_Timeframe"></a></th>
+                        <th><a data-bind="html: $root.resx.col_Goals"></a></th>
+                        <th><a data-bind="html: $root.resx.col_Actions"></a></th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <td colspan="5">
+                            <div>
+                                <div class="left" data-bind="html: pagerItemsDescription"></div>
+                                <ul class="right pager" data-bind="visible: pagerVisible">
+                                    <li><a data-bind="click: prev, attr: { 'class': pagerPrevClass }" aria-label="Prev"></a></li>
+                                    <li><a data-bind="click: next, attr: { 'class': pagerNextClass }" aria-label="Next"></a></li>
+                                </ul>
+                                <div class="right" data-bind="html: pagerDescription"></div>
+                            </div>
+                        </td>
+                    </tr>
+                </tfoot>
+
+                <tbody data-bind="foreach: results">
+                    <tr data-bind="click: edit">
+                        <td><img data-bind="attr: { 'src': imageUrl, alt: badgeName }" /><em data-bind="    html: badgeName"></em></td>
+                        <td data-bind="html: tierName"></td>
+                        <td data-bind="html: timeframe"></td>
+                        <td>
+                            <div>
+                                <span data-bind="html: scoringModule"></span>
+                                <a class='qaTooltip'>
+                                    <span data-bind="html: $root.resx.tooltip_ShowAll"></span>
+                                    <div class='tag-menu' data-bind="html: scoringDetails"></div>
+                                </a>
+                            </div>
+                        </td>
+                        <td class="edit-cell"><a class="delete" data-bind="click: remove" aria-label="Remove"></a><a></a></td>
+                    </tr>
+                </tbody>
+
+                <tbody id="badges-editbody" class='edit-body'>
+                    <tr class="edit-row" id="badge-editrow" data-bind="with: badgeEditing">
+                        <td colspan="5">
+                            <div>
+                                <div class='wizard'>
+                                    <ul>
+                                        <li data-tab-id='badge-creation'>
+                                            <span>1</span>
+                                            <div>
+                                                <span class='wizard-step-title' data-bind='visible: showTitle, html: $root.resx.step_EditBadge'></span>
+                                                <span class='wizard-step-title' data-bind='visible: !showTitle(), html: $root.resx.step_CreateBadge'></span>
+                                                <span class='wizard-step-description' data-bind="html: $root.resx.desc_EditBadge"></span>
+                                            </div>
+                                        </li>
+
+                                        <li data-tab-id='badge-association'>
+                                            <span>2</span>
+                                            <div>
+                                                <span class='wizard-step-title' data-bind='html: $root.resx.step_Scoring'></span>
+                                                <span class='wizard-step-description' data-bind='html: $root.resx.desc_Scoring'></span>
+                                            </div>
+                                        </li>
+
+                                        <li data-tab-id='badge-goal'>
+                                            <span>3</span>
+                                            <div>
+                                                <span class='wizard-step-title' data-bind='html: $root.resx.step_Goal'></span>
+                                                <span class='wizard-step-description' data-bind='html: $root.resx.desc_Goal'></span>
+                                            </div>
+                                        </li>
+                                    </ul>
+
+                                    <div id='badge-creation' class='wizard-tab'>
+                                        <div>
+                                            <label for="badge-name" data-bind='html: $root.resx.label_BadgeName' class="formRequired"></label>
+                                            <input id="badge-name" type="text" class="required" data-bind="value: badgeName"  />
+                                        </div>
+
+                                        <div>
+                                            <label for="badge-tier" data-bind='html: $root.resx.label_BadgeTier'></label>
+                                            <select id="badge-tier" data-bind="value: tier">
+                                                <option value="1" data-bind="html: $root.resx.opt_Bronze"></option>
+                                                <option value="2" data-bind="html: $root.resx.opt_Silver"></option>
+                                                <option value="3" data-bind="html: $root.resx.opt_Gold"></option>
+                                            </select>
+                                        </div>
+
+                                        <div>
+                                            <label data-bind='html: $root.resx.label_BadgeBanner'></label>
+                                            <div class='fileupload'>
+                                                <div class='fileuploaddropzone' id="badge-dropzone">
+                                                    <img data-bind="visible: imageUrl() !== '', attr: { 'src': imageUrl, alt: 'Preview' }"/>
+                                                    <span data-bind='html: $root.resx.label_DropFile'></span>
+                                                </div>
+                                                <select data-bind="options: images, optionsText: 'name', optionsValue: 'fileId', value: imageFileId" aria-label="File Id"></select>
+                                                <a class='secondarybtn'>Browse
+                                                    <input type="file" multiple name="postfile" id="badge-uploader" aria-label="File" />
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label for="badge-description" data-bind='html: $root.resx.label_BadgeDesc' class="formRequired"></label>
+                                            <textarea id="badge-description" data-bind="value: description" class="required"></textarea>
+                                        </div>
+
+                                        <div class="clear"></div>
+                                    </div>
+
+                                    <div id='badge-association' class='wizard-tab'>
+                                        <div>
+                                            <select class="filterbox" data-bind="options: modules, optionsText: 'moduleName', optionsValue: 'desktopModuleId', value: moduleFilterId" aria-label="Filter"></select>
+                                        </div>
+
+                                        <table id='actions-tbl'>
+                                            <tbody>
+                                                <tr>
+                                                    <td class='actionList' data-bind="with: actions">
+                                                        <div class="actionsHeader" data-bind='html: $root.resx.label_AvailableActions'></div>
+                                                        <div data-bind="foreach: results">
+                                                            <div data-bind="attr: { 'class': css }">
+                                                                <input type="checkbox" data-bind="checked: checked, enable: enable" aria-label="Enabled" />
+                                                                <span data-bind="html: actionDisplayName"></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="actionsBottom" data-bind="visible: pagerVisible">
+                                                            <ul class="right pager">
+                                                                <li><a data-bind="click: prev, attr: { 'class': pagerPrevClass }" aria-label="Prev"></a></li>
+                                                                <li><a data-bind="click: next, attr: { 'class': pagerNextClass }" aria-label="Next"></a></li>
+                                                            </ul>
+                                                            <div class="right" data-bind="html: pagerDescription"></div>
+                                                            <div class="clear"></div>
+                                                        </div>
+                                                    </td>
+
+                                                    <td class='actionButtons'>
+                                                        <div class="actionsAddButton" data-bind="click: add"></div>
+                                                        <div class="actionsRemoveButton" data-bind="click: remove"></div>
+                                                    </td>
+
+                                                    <td class='actionList' data-bind="with: selectedActions">
+                                                        <div class="actionsHeader" data-bind='html: $root.resx.label_SelectedActions' id='selectedActionsHeader'></div>
+                                                        <div data-bind="foreach: results">
+                                                            <div data-bind="attr: { 'class': css }">
+                                                                <div class="right" style="position: relative">
+                                                                    <span data-bind='html: $root.resx.label_Count'></span>
+                                                                    <input type="text" data-bind="value: count" class="number" aria-label="Count"/>
+                                                                </div>
+                                                                <div style="margin-right: 100px">
+                                                                    <input type="checkbox" data-bind="checked: checked" aria-label="Checked" />
+                                                                    <span class="actionModuleName" data-bind="html: moduleName"></span>
+                                                                    <span data-bind="html: actionDisplayName"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="actionsBottom" data-bind="visible: pagerVisible">
+                                                            <ul class="right pager">
+                                                                <li><a data-bind="click: prev, attr: { 'class': pagerPrevClass }" aria-label="Prev"></a></li>
+                                                                <li><a data-bind="click: next, attr: { 'class': pagerNextClass }" aria-label="Next"></a></li>
+                                                            </ul>
+                                                            <div class="right" data-bind="html: pagerDescription"></div>
+                                                            <div class="clear"></div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+                                        <div class="clear"></div>
+                                    </div>
+
+                                    <div id='badge-goal' class='wizard-tab'>
+
+                                        <div>
+                                            <label for="badge-goal-timeframe" data-bind='html: $root.resx.label_Days' class="formRequired"></label>
+                                            <input id="badge-goal-timeframe" type="text" class="required number nonnegativenumber" data-bind="value: timeframe"  />
+                                        </div>
+
+                                        <div class="clear"></div>
+
+                                    </div>
+
+                                    <div class='wizard-navbar'>
+                                        <div>
+                                            <a class="secondarybtn" data-bind="click: prev" aria-label="Prev"></a>
+                                            <div class="clear"></div>
+                                        </div>
+
+                                        <div>
+                                            <a class="primarybtn" data-bind="click: next" aria-label="Next"></a>
+                                            <div class="clear"></div>
+                                        </div>
+                                        <div class="clear"></div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

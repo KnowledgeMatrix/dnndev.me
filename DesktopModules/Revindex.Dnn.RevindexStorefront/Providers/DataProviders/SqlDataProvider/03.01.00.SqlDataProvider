@@ -1,0 +1,57 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+SET XACT_ABORT ON
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Product ADD	UrlName xml NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Category ADD UrlName xml NULL
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD ProductDetailInventoryShow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductDetailInventoryShow DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductDetailInventoryShow
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD ProductDetailSKUShow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductDetailSkuShow DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductDetailSKUShow
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentMethodsNoneActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsNoneActive DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsNoneActive
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentMethodsNoneAvailabilityRule xml NULL
+	
+COMMIT TRANSACTION
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+	
+			-- Make sure DynamicFormCode has root node
+			UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_Product SET DynamicFormCode = '<div>' + DynamicFormCode + '</div>' WHERE DynamicFormCode IS NOT NULL AND DynamicFormCode <> ''
+			UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_ProductVariant SET DynamicFormCode = '<div>' + DynamicFormCode + '</div>' WHERE DynamicFormCode IS NOT NULL AND DynamicFormCode <> ''
+			UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration SET CheckoutDynamicFormCode = '<div>' + CheckoutDynamicFormCode + '</div>' WHERE CheckoutDynamicFormCode IS NOT NULL AND CheckoutDynamicFormCode <> ''
+			
+			-- Upgrade default ProductDetail template to "Standard5"
+			UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductDetailDisplayTemplate = 'Standard5' WHERE ProductDetailDisplayTemplate LIKE 'Standard%'
+			
+			-- Upgrade default Checkout template to "Standard5".
+			UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CheckoutDisplayTemplate = 'Standard5' WHERE CheckoutDisplayTemplate LIKE 'Standard%'
+		
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

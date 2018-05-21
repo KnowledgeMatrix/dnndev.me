@@ -1,0 +1,16 @@
+﻿SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyDNNstyleWizardData]') AND type in (N'U'))
+BEGIN
+CREATE TABLE {databaseOwner}[{objectQualifier}EasyDNNstyleWizardData](
+	[PackageId] [nchar](32) NOT NULL,
+	[Value] [nvarchar](500) NOT NULL,
+ CONSTRAINT [PK_{objectQualifier}EasyDNNstyleWizardData] PRIMARY KEY CLUSTERED 
+(
+	[PackageId] ASC
+)WITH (STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF)
+)
+END
+GO

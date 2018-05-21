@@ -1,0 +1,30 @@
+﻿DECLARE @mecanicsDesktopModuleId INT
+SET @mecanicsDesktopModuleId = (SELECT DesktopModuleID 
+						FROM {databaseOwner}[{objectQualifier}DesktopModules] 
+						WHERE ModuleName = 'Mechanics Admin' AND FolderName = 'DNNCorp/MechanicsAdmin')
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 12
+	WHERE ActionName = 'ReceivedBadge' AND DesktopModuleId = @mecanicsDesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 9
+	WHERE ActionName = 'AdhocScoringAction' AND DesktopModuleId = @mecanicsDesktopModuleId
+
+DELETE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	WHERE ActionName = 'ProfileUpdate' AND DesktopModuleId = @mecanicsDesktopModuleId
+
+DECLARE @activitiesDesktopModuleId INT
+SET @activitiesDesktopModuleId = (SELECT DesktopModuleID 
+						FROM {databaseOwner}{objectQualifier}DesktopModules 
+						WHERE FriendlyName = 'Activities')
+
+UPDATE {databaseOwner}{objectQualifier}Mechanics_ScoringActionDefinition
+	SET DesktopModuleID = @activitiesDesktopModuleId
+WHERE  DesktopModuleId = @mecanicsDesktopModuleId
+
+UPDATE {databaseOwner}{objectQualifier}Analytics_Dim_ActionDefinition
+	SET DesktopModuleID = @activitiesDesktopModuleId
+WHERE  DesktopModuleId = @mecanicsDesktopModuleId
+
+GO

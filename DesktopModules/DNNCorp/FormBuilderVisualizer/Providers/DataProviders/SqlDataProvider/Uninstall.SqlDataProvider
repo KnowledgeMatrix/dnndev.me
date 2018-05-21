@@ -1,0 +1,36 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}FormBuilder_Visualizer_FormUsage_AddFormTemplateUsage]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}FormBuilder_Visualizer_FormUsage_AddFormTemplateUsage]
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}FormBuilder_Visualizer_FormUsage_GetFormTemplateUsageByModuleId]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}FormBuilder_Visualizer_FormUsage_GetFormTemplateUsageByModuleId]
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}FormBuilder_Visualizer_FormUsage_GetModulesCountByFormTemplateId]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}FormBuilder_Visualizer_FormUsage_GetModulesCountByFormTemplateId]
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}FormBuilder_Visualizer_FormUsage_DeleteUsage]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}FormBuilder_Visualizer_FormUsage_DeleteUsage]
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}FormBuilder_Visualizer_FormUsage]') AND type in (N'U'))
+	DROP TABLE {databaseOwner}{objectQualifier}FormBuilder_Visualizer_FormUsage
+GO
+
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}[{objectQualifier}FormBuilder_UpdateFolderUniqueId]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}FormBuilder_UpdateFolderUniqueId]
+GO
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/

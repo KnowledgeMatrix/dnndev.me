@@ -1,0 +1,24 @@
+﻿@using Revindex.Dnn.RevindexStorefront.Models;
+@using Revindex.Web.Mvc.Dnn.Helpers;
+@inherits Revindex.Dnn.RevindexStorefront.Views.ManufacturerWebViewPage<ManufacturerViewModel>
+
+<div class="rvdsf rvdsf-manufacturer-container">
+    <nav class="navbar navbar-default visible-xs">
+        <div class="navbar-header">
+            <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#rvdsfManufacturerList">
+                <i class="glyphicon glyphicon-align-justify"></i>
+            </button>
+            <a class="navbar-brand">@Html.LocalizeString("Header")</a>
+        </div>
+    </nav>
+    <div id="rvdsfManufacturerList" class="collapse-xs">
+        <ul class="list-group">
+            @foreach (var m in Model.AvailableManufacturers)
+            {
+                <li class="list-group-item @(m.ManufacturerID == Model.ManufacturerID ? "node-selected active" : "node-" )">
+                    <a href="@m.ProductList.TabUrl" style="color: inherit">@m.Name</a>
+                </li>
+            }
+        </ul>
+    </div>
+</div>

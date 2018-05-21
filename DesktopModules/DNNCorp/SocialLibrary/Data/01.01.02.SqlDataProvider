@@ -1,0 +1,39 @@
+﻿
+IF EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Social_ListComments') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Social_ListComments
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_ListComments]
+	@JounalId INT
+AS
+BEGIN
+SELECT	jc.CommentId,
+		jc.JournalId,
+		jc.Comment,
+		jc.DateCreated,
+		jc.DateUpdated,
+		jc.CommentXML, 
+		"UserId" = CASE WHEN ISNULL(u.UserId,-1) > 0 AND u.IsDeleted = 0 AND up.IsDeleted = 0 THEN u.UserId ELSE -1 END,
+		u.UserName,
+		u.FirstName, 
+		u.LastName,
+		u.IsSuperUser,
+		u.AffiliateId,
+		u.Email,
+		u.DisplayName,
+		u.UpdatePassword,
+		u.LastIPAddress,
+		u.IsDeleted,
+		u.CreatedByUserID,
+		u.CreatedOnDate,
+		u.LastModifiedByUserID,
+		u.LastModifiedOnDate,
+		u.PasswordResetToken,
+		u.PasswordResetExpiration
+	FROM {databaseOwner}[{objectQualifier}Journal_Comments] as jc 
+	INNER JOIN {databaseOwner}[{objectQualifier}Users] as u ON jc.UserId = u.UserId
+	LEFT OUTER JOIN {databaseOwner}[{objectQualifier}UserPortals] as up ON up.UserId = u.UserId
+WHERE jc.JournalId = @JounalId
+ORDER BY jc.CommentId ASC
+END
+GO

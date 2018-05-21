@@ -1,0 +1,778 @@
+/**** obj qualif checks ****/
+if '{objectQualifier}' <> ''
+BEGIN
+
+/**** 010000 ****/
+BEGIN TRY
+ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGalleryCategory]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyGalleryCategory]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyGalleryCategory]', N'{objectQualifier}EasyGalleryCategory', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyGalleryCategory', N'PK_{objectQualifier}EasyGalleryCategory', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyGallery_EasyGalleryCategory', N'FK_{objectQualifier}EasyGallery_{objectQualifier}EasyGalleryCategory', 'OBJECT'
+  END
+ END
+END TRY
+BEGIN CATCH
+END CATCH
+
+BEGIN TRY
+  IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGallery]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyGallery]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyGallery]', N'{objectQualifier}EasyGallery', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyGallery', N'PK_{objectQualifier}EasyGallery', 'OBJECT'
+  END
+ END
+ END TRY
+BEGIN CATCH
+END CATCH
+
+BEGIN TRY
+   IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyDNNThumbs]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyDNNThumbs]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyDNNThumbs]', N'{objectQualifier}EasyDNNThumbs', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyDNNThumbs', N'PK_{objectQualifier}EasyDNNThumbs', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyDNNThumbs_EasyGallery', N'FK_{objectQualifier}EasyDNNThumbs_{objectQualifier}EasyGallery', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyDNNThumbs_{objectQualifier}Modules', N'FK_{objectQualifier}EasyDNNThumbs_{objectQualifier}Modules', 'OBJECT'
+  END
+ END
+ END TRY
+BEGIN CATCH
+END CATCH
+ 
+BEGIN TRY
+   IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGalleryPictures]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyGalleryPictures]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyGalleryPictures]', N'{objectQualifier}EasyGalleryPictures', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyGalleryPictures', N'PK_{objectQualifier}EasyGalleryPictures', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyGalleryPictures_EasyGallery', N'FK_{objectQualifier}EasyGalleryPictures_{objectQualifier}EasyGallery', 'OBJECT'
+  END
+ END
+ END TRY
+BEGIN CATCH
+END CATCH
+
+BEGIN TRY
+   IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGalleryIntegration]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyGalleryIntegration]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyGalleryIntegration]', N'{objectQualifier}EasyGalleryIntegration', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyGalleryIntegration', N'PK_{objectQualifier}EasyGalleryIntegration', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyGalleryIntegration_EasyGallery', N'FK_{objectQualifier}EasyGalleryIntegration_{objectQualifier}EasyGallery', 'OBJECT'
+  END
+ END
+ END TRY
+BEGIN CATCH
+END CATCH
+/**** 010000 ****/
+
+/**** 010600 ****/
+BEGIN TRY
+ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGallerySettings]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyGallerySettings]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyGallerySettings]', N'{objectQualifier}EasyGallerySettings', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyGallerySettings', N'PK_{objectQualifier}EasyGallerySettings', 'OBJECT'
+  END
+ END
+END TRY
+BEGIN CATCH
+END CATCH
+/**** 010600 ****/
+
+
+/**** 020200 ****/
+BEGIN TRY
+ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyDNNMediaLocalization]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyDNNMediaLocalization]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyDNNMediaLocalization]', N'{objectQualifier}EasyDNNMediaLocalization', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyDNNMediaLocalization', N'PK_{objectQualifier}EasyDNNMediaLocalization', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyDNNMediaLocalization_EasyGalleryPictures', N'FK_{objectQualifier}EasyDNNMediaLocalization_{objectQualifier}EasyGalleryPictures', 'OBJECT'
+  END
+ END
+ END TRY
+BEGIN CATCH
+END CATCH
+
+BEGIN TRY
+  IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyDNNGalleryLocalization]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyDNNGalleryLocalization]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyDNNGalleryLocalization]', N'{objectQualifier}EasyDNNGalleryLocalization', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyDNNGalleryLocalization', N'PK_{objectQualifier}EasyDNNGalleryLocalization', 'OBJECT'
+    EXECUTE sp_rename N'FK_EasyDNNGalleryLocalization_EasyGallery', N'FK_{objectQualifier}EasyDNNGalleryLocalization_{objectQualifier}EasyGallery', 'OBJECT'
+  END
+ END
+ END TRY
+BEGIN CATCH
+END CATCH
+
+BEGIN TRY
+   IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyDNNCategoryLocalization]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyDNNCategoryLocalization]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyDNNCategoryLocalization]', N'{objectQualifier}EasyDNNCategoryLocalization', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyDNNCategoryLocalization', N'PK_{objectQualifier}EasyDNNCategoryLocalization', 'OBJECT'
+    EXECUTE sp_rename N'FK_EasyDNNCategoryLocalization_EasyGalleryCategory', N'FK_{objectQualifier}EasyDNNCategoryLocalization_{objectQualifier}EasyGalleryCategory', 'OBJECT'
+  END
+ END
+ END TRY
+BEGIN CATCH
+END CATCH
+ 
+/**** 020200 ****/
+
+/**** 020400 ****/
+
+BEGIN TRY
+IF EXISTS (SELECT * FROM sys.key_constraints WHERE type = 'PK' AND parent_object_id = OBJECT_ID('{databaseOwner}[{objectQualifier}EasyDNNMediaLocalization]') AND Name = 'PK_EasyDNNMediaLocalization')
+BEGIN
+ EXECUTE sp_rename N'PK_EasyDNNMediaLocalization', N'PK_{objectQualifier}EasyDNNMediaLocalization', 'OBJECT'
+END
+
+IF EXISTS (SELECT * FROM sys.key_constraints WHERE type = 'PK' AND parent_object_id = OBJECT_ID('{databaseOwner}[{objectQualifier}EasyDNNGalleryLocalization]') AND Name = 'PK_EasyDNNGalleryLocalization')
+BEGIN
+ EXECUTE sp_rename N'PK_EasyDNNGalleryLocalization', N'PK_{objectQualifier}EasyDNNGalleryLocalization', 'OBJECT'
+END
+
+IF EXISTS (SELECT * FROM sys.key_constraints WHERE type = 'PK' AND parent_object_id = OBJECT_ID('{databaseOwner}[{objectQualifier}EasyDNNCategoryLocalization]') AND Name = 'PK_EasyDNNCategoryLocalization')
+BEGIN
+ EXECUTE sp_rename N'PK_EasyDNNCategoryLocalization', N'PK_{objectQualifier}EasyDNNCategoryLocalization', 'OBJECT'
+END
+ END TRY
+BEGIN CATCH
+END CATCH
+/**** 020400 ****/
+
+
+/**** 030000 ****/
+BEGIN TRY
+ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGalleryUpload]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyGalleryUpload]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyGalleryUpload]', N'{objectQualifier}EasyGalleryUpload', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyGalleryUpload', N'PK_{objectQualifier}EasyGalleryUpload', 'OBJECT'
+  END
+ END
+  END TRY
+BEGIN CATCH
+END CATCH
+/**** 030000 ****/
+
+/**** 040100 ****/
+BEGIN TRY
+ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyDNNRotatorGalleryBridge]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.key_constraints WHERE type = 'FK' AND parent_object_id = OBJECT_ID('{databaseOwner}[{objectQualifier}EasyDNNRotatorGalleryBridge]') AND Name = 'FK_EasyDNNRotatorGallerySettings_EasyGallery')
+  BEGIN
+   EXECUTE sp_rename N'FK_EasyDNNRotatorGallerySettings_EasyGallery', N'FK_{objectQualifier}EasyDNNRotatorGallerySettings_{objectQualifier}EasyGallery', 'OBJECT'
+  END
+ END
+  END TRY
+BEGIN CATCH
+END CATCH
+/**** 040100 ****/
+
+/**** 040600 ****/
+BEGIN TRY
+ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGalleryInfo]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyGalleryInfo]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyGalleryInfo]', N'{objectQualifier}EasyGalleryInfo', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyGalleryInfoPrimary', N'PK_{objectQualifier}EasyGalleryInfoPrimary', 'OBJECT'
+  END
+ END
+   END TRY
+BEGIN CATCH
+END CATCH
+/**** 040600 ****/
+
+/**** 040700 ****/
+BEGIN TRY
+ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGalleryPortalSharing]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyGalleryPortalSharing]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyGalleryPortalSharing]', N'{objectQualifier}EasyGalleryPortalSharing', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyGalleryPortalSharing', N'PK_{objectQualifier}EasyGalleryPortalSharing', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyGalleryPortalSharing_Portals1', N'FK_{objectQualifier}EasyGalleryPortalSharing_{objectQualifier}Portals1', 'OBJECT'
+  END
+ END
+    END TRY
+BEGIN CATCH
+END CATCH
+/**** 040700 ****/
+
+/**** 040805 ****/
+BEGIN TRY
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGalleryModuleCategory]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyGalleryModuleCategory]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyGalleryModuleCategory]', N'{objectQualifier}EasyGalleryModuleCategory', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyGalleryModuleCategory', N'PK_{objectQualifier}EasyGalleryModuleCategory', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyGalleryModuleCategory_EasyGalleryCategory', N'FK_{objectQualifier}EasyGalleryModuleCategory_{objectQualifier}EasyGalleryCategory', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyGalleryModuleCategory_Modules', N'FK_{objectQualifier}EasyGalleryModuleCategory_{objectQualifier}Modules', 'OBJECT'
+  END
+ END 
+    END TRY
+BEGIN CATCH
+END CATCH
+
+BEGIN TRY
+  IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGalleryCreatedThumbs]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyGalleryCreatedThumbs]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyGalleryCreatedThumbs]', N'{objectQualifier}EasyGalleryCreatedThumbs', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyGalleryCreatedThumbs', N'PK_{objectQualifier}EasyGalleryCreatedThumbs', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyGalleryCreatedThumbs_EasyGalleryPictures', N'FK_{objectQualifier}EasyGalleryCreatedThumbs_{objectQualifier}EasyGalleryPictures', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyGalleryCreatedThumbs_Modules', N'FK_{objectQualifier}EasyGalleryCreatedThumbs_{objectQualifier}Modules', 'OBJECT'
+  END
+ END 
+    END TRY
+BEGIN CATCH
+END CATCH
+
+BEGIN TRY
+   IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGalleryModuleSettings]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyGalleryModuleSettings]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyGalleryModuleSettings]', N'{objectQualifier}EasyGalleryModuleSettings', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyGalleryModuleSettings', N'PK_{objectQualifier}EasyGalleryModuleSettings', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyGalleryModuleSettings_Modules', N'FK_{objectQualifier}EasyGalleryModuleSettings_{objectQualifier}Modules', 'OBJECT'
+  END
+ END 
+    END TRY
+BEGIN CATCH
+END CATCH
+
+BEGIN TRY
+    IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGallerySecurity]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyGallerySecurity]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyGallerySecurity]', N'{objectQualifier}EasyGallerySecurity', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyGallerySecurity', N'PK_{objectQualifier}EasyGallerySecurity', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyGallerySecurity_EasyGallery', N'FK_{objectQualifier}EasyGallerySecurity_{objectQualifier}EasyGallery', 'OBJECT'
+  END
+ END
+    END TRY
+BEGIN CATCH
+END CATCH
+
+BEGIN TRY
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[DF_EasyGallerySecurity_SecurityKey]') AND type = 'D')
+	BEGIN
+		EXECUTE sp_rename N'DF_EasyGallerySecurity_SecurityKey', N'DF_{objectQualifier}EasyGallerySecurity_{objectQualifier}SecurityKey', 'OBJECT'
+	END
+
+IF EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[FK_EasyGalleryPictures_{objectQualifier}Journal]') AND parent_object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGalleryPictures]'))
+	BEGIN
+		EXECUTE sp_rename N'[FK_EasyGalleryPictures_{objectQualifier}Journal]', N'FK_{objectQualifier}EasyGalleryPictures_{objectQualifier}Journal', 'OBJECT'
+	END
+    END TRY
+BEGIN CATCH
+END CATCH
+
+
+BEGIN TRY
+    IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyDNNGalleryJournalBridge]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyDNNGalleryJournalBridge]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyDNNGalleryJournalBridge]', N'{objectQualifier}EasyDNNGalleryJournalBridge', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyDNNGalleryJournalBridge', N'PK_{objectQualifier}EasyDNNGalleryJournalBridge', 'OBJECT'
+   EXECUTE sp_rename N'[FK_EasyDNNGalleryJournalBridge_{objectQualifier}Portals]', N'FK_{objectQualifier}EasyDNNGalleryJournalBridge_{objectQualifier}Portals', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyDNNGalleryJournalBridge_EasyGalleryCategory', N'FK_{objectQualifier}EasyDNNGalleryJournalBridge_{objectQualifier}EasyGalleryCategory', 'OBJECT'
+  END
+ END 
+     END TRY
+BEGIN CATCH
+END CATCH
+
+/**** 040805 ****/
+
+/**** 040806 ****/
+
+BEGIN TRY
+ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGallerySocialGroups]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyGallerySocialGroups]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyGallerySocialGroups]', N'{objectQualifier}EasyGallerySocialGroups', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyGallerySocialGroups', N'PK_{objectQualifier}EasyGallerySocialGroups', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyGallerySocialGroups_EasyGallery', N'FK_{objectQualifier}EasyGallerySocialGroups_{objectQualifier}EasyGallery', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyGallerySocialGroups_Roles', N'FK_{objectQualifier}EasyGallerySocialGroups_{objectQualifier}Roles', 'OBJECT'
+  END
+ END
+      END TRY
+BEGIN CATCH
+END CATCH
+/**** 040806 ****/
+
+
+/**** 050000 ****/
+BEGIN TRY
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGalleryComments]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyGalleryComments]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyGalleryComments]', N'{objectQualifier}EasyGalleryComments', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyGalleryComments', N'PK_{objectQualifier}EasyGalleryComments', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyGalleryComments_EasyGalleryPictures', N'FK_{objectQualifier}EasyGalleryComments_{objectQualifier}EasyGalleryPictures', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyGalleryComments_Portals', N'FK_{objectQualifier}EasyGalleryComments_{objectQualifier}Portals', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyGalleryComments_Users', N'FK_{objectQualifier}EasyGalleryComments_{objectQualifier}Userss', 'OBJECT'
+  END
+ END
+       END TRY
+BEGIN CATCH
+END CATCH
+
+ BEGIN TRY
+  IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGalleryUserPermissions]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyGalleryUserPermissions]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyGalleryUserPermissions]', N'{objectQualifier}EasyGalleryUserPermissions', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyGalleryUserPermissions', N'PK_{objectQualifier}EasyGalleryUserPermissions', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyGalleryUserPermissions_Modules', N'FK_{objectQualifier}EasyGalleryUserPermissions_{objectQualifier}Modules', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyGalleryUserPermissions_Users', N'FK_{objectQualifier}EasyGalleryUserPermissions_{objectQualifier}Users', 'OBJECT'
+  END
+ END 
+      END TRY
+BEGIN CATCH
+END CATCH
+
+BEGIN TRY
+   IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGalleryRolePermissions]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyGalleryRolePermissions]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyGalleryRolePermissions]', N'{objectQualifier}EasyGalleryRolePermissions', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyGalleryRolePermissions', N'PK_{objectQualifier}EasyGalleryRolePermissions', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyGalleryRolePermissions_Modules', N'FK_{objectQualifier}EasyGalleryRolePermissions_{objectQualifier}Modules', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyGalleryRolePermissions_Roles', N'FK_{objectQualifier}EasyGalleryRolePermissions_{objectQualifier}Roles', 'OBJECT'
+  END
+ END 
+      END TRY
+BEGIN CATCH
+END CATCH
+ 
+BEGIN TRY
+   IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGalleryUserRating]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyGalleryUserRating]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyGalleryUserRating]', N'{objectQualifier}EasyGalleryUserRating', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyGalleryUserRating', N'PK_{objectQualifier}EasyGalleryUserRating', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyGalleryUserRating_EasyGalleryPictures', N'FK_{objectQualifier}EasyGalleryUserRating_{objectQualifier}EasyGalleryPictures', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyGalleryUserRating_Users', N'FK_{objectQualifier}EasyGalleryUserRating_{objectQualifier}Users', 'OBJECT'
+  END
+ END
+      END TRY
+BEGIN CATCH
+END CATCH
+
+ BEGIN TRY
+   IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGallerySmbSettings]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyGallerySmbSettings]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyGallerySmbSettings]', N'{objectQualifier}EasyGallerySmbSettings', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyGallerySmbSettings', N'PK_{objectQualifier}EasyGallerySmbSettings', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyGallerySmbSettings_Modules', N'FK_{objectQualifier}EasyGallerySmbSettings_{objectQualifier}Modules', 'OBJECT'
+  END
+ END
+       END TRY
+BEGIN CATCH
+END CATCH
+
+/**** 050000 ****/
+
+/**** 050100 ****/
+BEGIN TRY
+ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGalleryUpdate]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyGalleryUpdate]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyGalleryUpdate]', N'{objectQualifier}EasyGalleryUpdate', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyGalleryUpdate', N'PK_{objectQualifier}EasyGalleryUpdate', 'OBJECT'
+  END
+ END
+        END TRY
+BEGIN CATCH
+END CATCH
+/**** 050100 ****/
+
+END
+GO
+/**** obj qualif checks ****/
+/**** stored procs ****/
+/**** 5.0 ***/
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[EasyDNNGalleryPermissions]') AND type in (N'P', N'PC'))
+BEGIN
+drop procedure [dbo].[EasyDNNGalleryPermissions]
+END
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyDNNGalleryPermissions]') AND type in (N'P', N'PC'))
+BEGIN
+drop procedure {databaseOwner}[{objectQualifier}EasyDNNGalleryPermissions]
+END
+
+EXEC dbo.sp_executesql @statement = N'CREATE PROCEDURE {databaseOwner}[{objectQualifier}EasyDNNGalleryPermissions]
+    @UserID int,
+    @PortalID int,
+    @ModuleID int
+AS 
+SET NOCOUNT ON;
+IF @UserID = -1
+BEGIN
+	SELECT [AllowToComment],[CommentEditing],[CommentDeleting],[AllowToRate],[ShowComments],[ShowRating],[AllowToDownload] FROM {databaseOwner}{objectQualifier}EasyGalleryRolePermissions WHERE RoleID IS NULL AND ModuleID = @ModuleID;
+END
+ELSE
+BEGIN
+	WITH RoleAndUserRights as
+	(
+		SELECT DISTINCT [AllowToComment],[CommentEditing],[CommentDeleting],[AllowToRate],[ShowComments],[ShowRating], [AllowToDownload]
+			FROM {databaseOwner}{objectQualifier}EasyGalleryRolePermissions AS rps INNER JOIN {databaseOwner}{objectQualifier}UserRoles AS ur ON ur.RoleID = rps.RoleID INNER JOIN {databaseOwner}{objectQualifier}Roles as r ON r.RoleID = ur.RoleID
+		WHERE ur.UserID = @UserID AND rps.ModuleID = @ModuleID AND r.PortalID = @PortalID
+		UNION
+		SELECT [AllowToComment],[CommentEditing],[CommentDeleting],[AllowToRate],[ShowComments],[ShowRating],[AllowToDownload] FROM  {databaseOwner}{objectQualifier}EasyGalleryUserPermissions AS ups
+		WHERE ups.UserID = @UserID AND ups.ModuleID = @ModuleID
+	)
+	SELECT TOP(1)
+		CASE WHEN EXISTS (SELECT AllowToComment FROM RoleAndUserRights WHERE AllowToComment = 1) THEN CAST(1 AS bit) ELSE CAST(0 AS bit) END AS AllowToComment,
+		CASE WHEN EXISTS (SELECT CommentEditing FROM RoleAndUserRights WHERE CommentEditing = 1) THEN CAST(1 AS bit) ELSE CAST(0 AS bit) END AS CommentEditing,
+		CASE WHEN EXISTS (SELECT CommentDeleting FROM RoleAndUserRights WHERE CommentDeleting = 1) THEN CAST(1 AS bit) ELSE CAST(0 AS bit) END AS CommentDeleting,
+		CASE WHEN EXISTS (SELECT AllowToRate FROM RoleAndUserRights WHERE AllowToRate = 1) THEN CAST(1 AS bit) ELSE CAST(0 AS bit) END AS AllowToRate,
+		CASE WHEN EXISTS (SELECT ShowComments FROM RoleAndUserRights WHERE ShowComments = 1) THEN CAST(1 AS bit) ELSE CAST(0 AS bit) END AS ShowComments,
+		CASE WHEN EXISTS (SELECT ShowRating FROM RoleAndUserRights WHERE ShowRating = 1) THEN CAST(1 AS bit) ELSE CAST(0 AS bit) END AS ShowRating,
+		CASE WHEN EXISTS (SELECT AllowToDownload FROM RoleAndUserRights WHERE AllowToDownload = 1) THEN CAST(1 AS bit) ELSE CAST(0 AS bit) END AS AllowToDownload
+	FROM RoleAndUserRights
+END'
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[EDSGallery_StringListToTable]') AND type in (N'FN', N'IF', N'TF', N'FS', N'FT'))
+BEGIN
+drop function [dbo].[EDSGallery_StringListToTable]
+END
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EDSGallery_StringListToTable]') AND type in (N'FN', N'IF', N'TF', N'FS', N'FT'))
+BEGIN
+drop function {databaseOwner}[{objectQualifier}EDSGallery_StringListToTable]
+END
+execute dbo.sp_executesql @statement = N'CREATE FUNCTION {databaseOwner}[{objectQualifier}EDSGallery_StringListToTable]
+(  
+    @List		nvarchar(max)
+) 
+RETURNS @TableOfValues TABLE
+(  
+	KeyID int not null
+) 
+AS 
+	BEGIN
+		DECLARE @KeyID varchar(10), @Pos int
+		SET @List = LTRIM(RTRIM(@List))+ '',''
+		SET @Pos = CHARINDEX('','', @List, 1)
+		IF REPLACE(@List, '','', '''') <> ''''
+			BEGIN
+				WHILE @Pos > 0
+				BEGIN
+					SET @KeyID = LTRIM(RTRIM(LEFT(@List, @Pos - 1)))
+					IF @KeyID <> ''''
+						BEGIN
+							INSERT INTO @TableOfValues (KeyID) VALUES (CAST(@KeyID AS int))
+						END
+					SET @List = RIGHT(@List, LEN(@List) - @Pos)
+					SET @Pos = CHARINDEX('','', @List, 1)
+				END
+			END	
+	RETURN
+	END'
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[EDSGallery_ParseStringList]') AND type in (N'FN', N'IF', N'TF', N'FS', N'FT'))
+BEGIN
+drop function [dbo].[EDSGallery_ParseStringList]
+END
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EDSGallery_ParseStringList]') AND type in (N'FN', N'IF', N'TF', N'FS', N'FT'))
+BEGIN
+drop function {databaseOwner}[{objectQualifier}EDSGallery_ParseStringList]
+END
+execute dbo.sp_executesql @statement = N'CREATE Function {databaseOwner}[{objectQualifier}EDSGallery_ParseStringList]  (@StringArray nvarchar(max) )  
+Returns @tbl_string Table  (ParsedString nvarchar(max))  As  
+
+BEGIN 
+
+DECLARE @end Int,
+        @start Int
+
+SET @stringArray =  @StringArray + '','' 
+SET @start=1
+SET @end=1
+
+WHILE @end<Len(@StringArray)
+    BEGIN
+        SET @end = CharIndex('','', @StringArray, @end)
+        INSERT INTO @tbl_string 
+            SELECT
+                Substring(@StringArray, @start, @end-@start)
+
+        SET @start=@end+1
+        SET @end = @end+1
+    END
+
+RETURN
+END'
+GO
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[EasyDNNGalleryListByGroupID]') AND type in (N'P', N'PC'))
+BEGIN
+drop procedure [dbo].[EasyDNNGalleryListByGroupID]
+END
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyDNNGalleryListByGroupID]') AND type in (N'P', N'PC'))
+BEGIN
+drop procedure {databaseOwner}[{objectQualifier}EasyDNNGalleryListByGroupID]
+END
+EXEC dbo.sp_executesql @statement = N'
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}EasyDNNGalleryListByGroupID]
+	@PortalID int,
+	@ModuleID int,
+	@GalleryID int,
+	@RoleID int,
+	@CurrentUserID int,
+	@GroupId int = 1,
+	@ItemsFrom int = 1,
+	@ItemsTo int = 500,
+	@OrderBy nvarchar(20) = ''Position ASC'',
+	@MediaType nvarchar(40) = ''Image,Video,Embeded Video,Audio,''
+AS
+SET NOCOUNT ON;
+WITH tempEGP AS (
+	SELECT Distinct egp.[PictureID],egp.[PortalID],egp.[UserID],egp.[GalleryID],egp.[Title],egp.[Description],egp.[FileName],egp.[ThumbUrl],egp.[Position],egp.[MediaType],egp.[ShortEmbedUrl]
+	  ,egp.[ViewerThumb],egp.[Info],egp.[FileExtension],egp.[ImageUrl],egp.[DateUploaded],egp.[StartupImage],egp.[HiResVersion],egp.[JournalId],egp.[RatingValue], egur.Value
+	FROM {databaseOwner}{objectQualifier}EasyGalleryPictures AS egp INNER JOIN {databaseOwner}{objectQualifier}EasyGallery as eg ON eg.GalleryID= egp.GalleryID 
+	INNER JOIN {databaseOwner}{objectQualifier}EasyGalleryCategory AS egc ON eg.CategoryID = egc.CategoryID
+	INNER JOIN {databaseOwner}{objectQualifier}EasyGalleryModuleCategory AS egmc ON  egc.CategoryID = egmc.CategoryID
+	LEFT OUTER JOIN {databaseOwner}{objectQualifier}EasyGallerySecurity AS egs on egs.GalleryID = eg.GalleryID
+	INNER JOIN {databaseOwner}{objectQualifier}Journal_User_Permissions(@PortalId,@CurrentUserId, @GroupId) as t ON t.seckey = egs.SecurityKey OR egs.SecurityKey IS NULL 
+	INNER JOIN {databaseOwner}{objectQualifier}EasyGallerySocialGroups ON eg.GalleryID = {databaseOwner}{objectQualifier}EasyGallerySocialGroups.GalleryID INNER JOIN {databaseOwner}{objectQualifier}Roles AS r ON {databaseOwner}{objectQualifier}EasyGallerySocialGroups.RoleID = r.RoleID
+	left join {databaseOwner}{objectQualifier}EasyGalleryUserRating as egur on egp.PictureID= egur.PictureID AND egur.UserID=@CurrentUserID
+	WHERE egmc.ModuleID= @ModuleID AND egp.JournalID IS NULL AND ((@GalleryID <> 0 AND (egp.GalleryID=@GalleryID)) OR (@GalleryID = 0)) AND r.RoleID=@RoleID AND (egp.MediaApproved = ''True'' OR egp.MediaApproved IS NULL) AND egp.MediaType In (Select ParsedString From {databaseOwner}{objectQualifier}EDSGallery_ParseStringList(@MediaType))
+	UNION ALL
+	SELECT Distinct egp.[PictureID],egp.[PortalID],egp.[UserID],egp.[GalleryID],egp.[Title],egp.[Description],egp.[FileName],egp.[ThumbUrl],egp.[Position],egp.[MediaType],egp.[ShortEmbedUrl]
+	  ,egp.[ViewerThumb],egp.[Info],egp.[FileExtension],egp.[ImageUrl],egp.[DateUploaded],egp.[StartupImage],egp.[HiResVersion],egp.[JournalId],egp.[RatingValue],egur.Value
+	FROM {databaseOwner}{objectQualifier}EasyGalleryPictures AS egp INNER JOIN {databaseOwner}{objectQualifier}Journal_Security as js ON js.JournalId = egp.JournalId
+	INNER JOIN {databaseOwner}{objectQualifier}EasyGallery as eg ON eg.GalleryID= egp.GalleryID 
+	INNER JOIN {databaseOwner}{objectQualifier}EasyGalleryCategory AS egc ON eg.CategoryID = egc.CategoryID
+	INNER JOIN {databaseOwner}{objectQualifier}EasyGalleryModuleCategory AS egmc ON  egc.CategoryID = egmc.CategoryID
+	INNER JOIN {databaseOwner}{objectQualifier}Journal_User_Permissions(@PortalId,@CurrentUserId, @GroupId) as t ON t.seckey = js.SecurityKey
+	INNER JOIN {databaseOwner}{objectQualifier}EasyGallerySocialGroups ON eg.GalleryID = {databaseOwner}{objectQualifier}EasyGallerySocialGroups.GalleryID INNER JOIN {databaseOwner}{objectQualifier}Roles AS r ON {databaseOwner}{objectQualifier}EasyGallerySocialGroups.RoleID = r.RoleID
+	left join {databaseOwner}{objectQualifier}EasyGalleryUserRating as egur on egp.PictureID= egur.PictureID AND egur.UserID=@CurrentUserID
+	WHERE egmc.ModuleID= @ModuleID AND egp.JournalID IS NOT NULL AND ((@GalleryID <> 0 AND (egp.GalleryID=@GalleryID)) OR (@GalleryID = 0)) AND  r.RoleID=@RoleID AND (egp.MediaApproved = ''True'' OR egp.MediaApproved IS NULL) AND egp.MediaType In (Select ParsedString From {databaseOwner}{objectQualifier}EDSGallery_ParseStringList(@MediaType))
+),
+tempct AS (SELECT gct.PictureID, gct.ThumbCreated From {databaseOwner}{objectQualifier}EasyGalleryCreatedThumbs gct Where gct.ModuleID = @ModuleID)
+SELECT * FROM (SELECT Distinct tempEGP.*,tempct.ThumbCreated, ROW_NUMBER() OVER (ORDER BY 
+	 CASE WHEN @OrderBy =''Position ASC'' THEN Position END,
+	 CASE WHEN @OrderBy =''Position DESC'' THEN Position END DESC,
+	 CASE WHEN @OrderBy =''DateUploaded ASC'' THEN DateUploaded END,
+	 CASE WHEN @OrderBy =''DateUploaded DESC'' THEN DateUploaded END DESC,
+	 CASE WHEN @OrderBy =''FileName ASC'' THEN FileName END,
+	 CASE WHEN @OrderBy =''FileName DESC'' THEN FileName END DESC,
+	 CASE WHEN @OrderBy =''Title ASC'' THEN Title END,
+	 CASE WHEN @OrderBy =''Title DESC'' THEN Title END DESC) as Kulike
+ FROM tempEGP left join tempct on tempEGP.PictureID = tempct.PictureID) AS Result
+ WHERE Kulike BETWEEN @ItemsFrom AND @ItemsTo ORDER BY 
+	 CASE WHEN @OrderBy =''Position ASC'' THEN Position END,
+	 CASE WHEN @OrderBy =''Position DESC'' THEN Position END DESC,
+	 CASE WHEN @OrderBy =''DateUploaded ASC'' THEN DateUploaded END,
+	 CASE WHEN @OrderBy =''DateUploaded DESC'' THEN DateUploaded END DESC,
+	 CASE WHEN @OrderBy =''FileName ASC'' THEN FileName END,
+	 CASE WHEN @OrderBy =''FileName DESC'' THEN FileName END DESC,
+	 CASE WHEN @OrderBy =''Title ASC'' THEN Title END,
+	 CASE WHEN @OrderBy =''Title DESC'' THEN Title END DESC
+'
+GO
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[EasyDNNGalleryListByCurrentUser]') AND type in (N'P', N'PC'))
+BEGIN
+drop procedure [dbo].[EasyDNNGalleryListByCurrentUser]
+END
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyDNNGalleryListByCurrentUser]') AND type in (N'P', N'PC'))
+BEGIN
+drop procedure {databaseOwner}[{objectQualifier}EasyDNNGalleryListByCurrentUser]
+END
+EXEC dbo.sp_executesql @statement = N'CREATE PROCEDURE {databaseOwner}[{objectQualifier}EasyDNNGalleryListByCurrentUser]
+	@PortalID int,
+	@ModuleID int,
+	@GalleryID int,
+	@UserID int,
+	@CurrentUserID int,
+	@GroupId int = 1,
+	@ItemsFrom int = 1,
+	@ItemsTo int = 500,
+	@OrderBy nvarchar(20) = ''Position ASC'',
+	@MediaType nvarchar(40) = ''Image,Video,Embeded Video,Audio,''
+AS
+SET NOCOUNT ON;
+WITH tempEGP AS (
+	SELECT Distinct egp.[PictureID],egp.[PortalID],egp.[UserID],egp.[GalleryID],egp.[Title],egp.[Description],egp.[FileName],egp.[ThumbUrl],egp.[Position],egp.[MediaType],egp.[ShortEmbedUrl]
+	  ,egp.[ViewerThumb],egp.[Info],egp.[FileExtension],egp.[ImageUrl],egp.[DateUploaded],egp.[StartupImage],egp.[HiResVersion],egp.[JournalId],egp.[RatingValue],egur.Value
+	FROM {databaseOwner}{objectQualifier}EasyGalleryPictures AS egp INNER JOIN {databaseOwner}{objectQualifier}EasyGallery as eg ON eg.GalleryID= egp.GalleryID 
+	INNER JOIN {databaseOwner}{objectQualifier}EasyGalleryCategory AS egc ON eg.CategoryID = egc.CategoryID
+	INNER JOIN {databaseOwner}{objectQualifier}EasyGalleryModuleCategory AS egmc ON  egc.CategoryID = egmc.CategoryID
+	LEFT OUTER JOIN {databaseOwner}{objectQualifier}EasyGallerySecurity AS egs on egs.GalleryID = eg.GalleryID
+	INNER JOIN {databaseOwner}{objectQualifier}Journal_User_Permissions(@PortalId,@CurrentUserId, @GroupId) as t ON t.seckey = egs.SecurityKey OR egs.SecurityKey IS NULL 
+	left join {databaseOwner}{objectQualifier}EasyGalleryUserRating as egur on egp.PictureID= egur.PictureID AND egur.UserID=@CurrentUserID
+	WHERE egmc.ModuleID= @ModuleID AND egp.JournalID IS NULL AND ((@GalleryID <> 0 AND (egp.GalleryID=@GalleryID)) OR (@GalleryID = 0)) AND eg.UserID=@UserID AND (egp.MediaApproved = ''True'' OR egp.MediaApproved IS NULL) AND egp.MediaType In (Select ParsedString From {databaseOwner}{objectQualifier}EDSGallery_ParseStringList(@MediaType))
+	UNION ALL
+	SELECT Distinct egp.[PictureID],egp.[PortalID],egp.[UserID],egp.[GalleryID],egp.[Title],egp.[Description],egp.[FileName],egp.[ThumbUrl],egp.[Position],egp.[MediaType],egp.[ShortEmbedUrl]
+	  ,egp.[ViewerThumb],egp.[Info],egp.[FileExtension],egp.[ImageUrl],egp.[DateUploaded],egp.[StartupImage],egp.[HiResVersion],egp.[JournalId],egp.[RatingValue],egur.Value
+	FROM {databaseOwner}{objectQualifier}EasyGalleryPictures AS egp INNER JOIN {databaseOwner}{objectQualifier}Journal_Security as js ON js.JournalId = egp.JournalId
+	INNER JOIN {databaseOwner}{objectQualifier}EasyGallery as eg ON eg.GalleryID= egp.GalleryID 
+	INNER JOIN {databaseOwner}{objectQualifier}EasyGalleryCategory AS egc ON eg.CategoryID = egc.CategoryID
+	INNER JOIN {databaseOwner}{objectQualifier}EasyGalleryModuleCategory AS egmc ON  egc.CategoryID = egmc.CategoryID
+	INNER JOIN {databaseOwner}{objectQualifier}Journal_User_Permissions(@PortalId,@CurrentUserId, @GroupId) as t ON t.seckey = js.SecurityKey
+	left join {databaseOwner}{objectQualifier}EasyGalleryUserRating as egur on egp.PictureID= egur.PictureID AND egur.UserID=@CurrentUserID
+	WHERE egmc.ModuleID= @ModuleID AND egp.JournalID IS NOT NULL AND ((@GalleryID <> 0 AND (egp.GalleryID=@GalleryID)) OR (@GalleryID = 0)) AND eg.UserID=@UserID AND (egp.MediaApproved = ''True'' OR egp.MediaApproved IS NULL) AND egp.MediaType In (Select ParsedString From {databaseOwner}{objectQualifier}EDSGallery_ParseStringList(@MediaType))
+),
+tempct AS (SELECT gct.PictureID, gct.ThumbCreated From {databaseOwner}{objectQualifier}EasyGalleryCreatedThumbs gct Where gct.ModuleID = @ModuleID)
+SELECT * FROM (SELECT Distinct tempEGP.*,tempct.ThumbCreated, ROW_NUMBER() OVER (ORDER BY 
+	 CASE WHEN @OrderBy =''Position ASC'' THEN Position END,
+	 CASE WHEN @OrderBy =''Position DESC'' THEN Position END DESC,
+	 CASE WHEN @OrderBy =''DateUploaded ASC'' THEN DateUploaded END,
+	 CASE WHEN @OrderBy =''DateUploaded DESC'' THEN DateUploaded END DESC,
+	 CASE WHEN @OrderBy =''FileName ASC'' THEN FileName END,
+	 CASE WHEN @OrderBy =''FileName DESC'' THEN FileName END DESC,
+	 CASE WHEN @OrderBy =''Title ASC'' THEN Title END,
+	 CASE WHEN @OrderBy =''Title DESC'' THEN Title END DESC) as Kulike
+ FROM tempEGP left join tempct on tempEGP.PictureID = tempct.PictureID) AS Result
+ WHERE Kulike BETWEEN @ItemsFrom AND @ItemsTo ORDER BY 
+	 CASE WHEN @OrderBy =''Position ASC'' THEN Position END,
+	 CASE WHEN @OrderBy =''Position DESC'' THEN Position END DESC,
+	 CASE WHEN @OrderBy =''DateUploaded ASC'' THEN DateUploaded END,
+	 CASE WHEN @OrderBy =''DateUploaded DESC'' THEN DateUploaded END DESC,
+	 CASE WHEN @OrderBy =''FileName ASC'' THEN FileName END,
+	 CASE WHEN @OrderBy =''FileName DESC'' THEN FileName END DESC,
+	 CASE WHEN @OrderBy =''Title ASC'' THEN Title END,
+	 CASE WHEN @OrderBy =''Title DESC'' THEN Title END DESC
+'
+GO
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[EasyDNNGalleryCountListByGroupID]') AND type in (N'P', N'PC'))
+BEGIN
+drop procedure [dbo].[EasyDNNGalleryCountListByGroupID]
+END
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyDNNGalleryCountListByGroupID]') AND type in (N'P', N'PC'))
+BEGIN
+drop procedure {databaseOwner}[{objectQualifier}EasyDNNGalleryCountListByGroupID]
+END
+EXEC dbo.sp_executesql @statement = N'
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}EasyDNNGalleryCountListByGroupID]
+	@PortalID int,
+	@ModuleID int,
+	@GalleryID int,
+	@RoleID int,
+	@CurrentUserID int,
+	@GroupId int = 1,
+	@MediaType nvarchar(40) = ''Image,Video,Embeded Video,Audio,''
+	AS
+SET NOCOUNT ON;
+WITH tempEGP AS (
+	SELECT Distinct egp.[PictureID] FROM {databaseOwner}{objectQualifier}EasyGalleryPictures AS egp
+		INNER JOIN {databaseOwner}{objectQualifier}EasyGallery as eg ON eg.GalleryID= egp.GalleryID
+		INNER JOIN {databaseOwner}{objectQualifier}EasyGalleryCategory AS egc ON eg.CategoryID = egc.CategoryID
+		INNER JOIN {databaseOwner}{objectQualifier}EasyGalleryModuleCategory AS egmc ON  egc.CategoryID = egmc.CategoryID
+		LEFT OUTER JOIN {databaseOwner}{objectQualifier}EasyGallerySecurity AS egs on egs.GalleryID = eg.GalleryID
+		INNER JOIN {databaseOwner}{objectQualifier}Journal_User_Permissions(@PortalId,@CurrentUserId, @GroupId) as t ON t.seckey = egs.SecurityKey OR egs.SecurityKey IS NULL
+		INNER JOIN {databaseOwner}{objectQualifier}EasyGallerySocialGroups ON eg.GalleryID = {databaseOwner}{objectQualifier}EasyGallerySocialGroups.GalleryID INNER JOIN {databaseOwner}{objectQualifier}Roles AS r ON {databaseOwner}{objectQualifier}EasyGallerySocialGroups.RoleID = r.RoleID 
+	WHERE egmc.ModuleID= @ModuleID AND egp.JournalID IS NULL AND ((@GalleryID <> 0 AND (egp.GalleryID=@GalleryID)) OR (@GalleryID = 0)) AND r.RoleID=@RoleID AND (egp.MediaApproved = ''True'' OR egp.MediaApproved IS NULL) AND egp.MediaType In (Select ParsedString From {databaseOwner}{objectQualifier}EDSGallery_ParseStringList(@MediaType))
+	UNION ALL
+	SELECT Distinct egp.[PictureID] FROM {databaseOwner}{objectQualifier}EasyGalleryPictures AS egp
+		INNER JOIN {databaseOwner}{objectQualifier}Journal_Security as js ON js.JournalId = egp.JournalId
+		INNER JOIN {databaseOwner}{objectQualifier}EasyGallery as eg ON eg.GalleryID= egp.GalleryID
+		INNER JOIN {databaseOwner}{objectQualifier}Journal_User_Permissions(@PortalId,@CurrentUserId, @GroupId) as t ON t.seckey = js.SecurityKey
+		INNER JOIN {databaseOwner}{objectQualifier}EasyGallerySocialGroups ON eg.GalleryID = {databaseOwner}{objectQualifier}EasyGallerySocialGroups.GalleryID INNER JOIN {databaseOwner}{objectQualifier}Roles AS r ON {databaseOwner}{objectQualifier}EasyGallerySocialGroups.RoleID = r.RoleID
+	WHERE egp.JournalID IS NOT NULL AND ((@GalleryID <> 0 AND (egp.GalleryID=@GalleryID)) OR (@GalleryID = 0)) AND r.RoleID=@RoleID  AND (egp.MediaApproved = ''True'' OR egp.MediaApproved IS NULL) AND egp.MediaType In (Select ParsedString From {databaseOwner}{objectQualifier}EDSGallery_ParseStringList(@MediaType))
+)
+SELECT COUNT([PictureID]) FROM tempEGP' 
+GO
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[EasyDNNGalleryCountListByCurrentUser]') AND type in (N'P', N'PC'))
+BEGIN
+drop procedure [dbo].[EasyDNNGalleryCountListByCurrentUser]
+END
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyDNNGalleryCountListByCurrentUser]') AND type in (N'P', N'PC'))
+BEGIN
+drop procedure {databaseOwner}[{objectQualifier}EasyDNNGalleryCountListByCurrentUser]
+END
+EXEC dbo.sp_executesql @statement = N'CREATE PROCEDURE {databaseOwner}[{objectQualifier}EasyDNNGalleryCountListByCurrentUser]
+	@PortalID int,
+	@ModuleID int,
+	@GalleryID int,
+	@UserID int,
+	@CurrentUserID int,
+	@GroupId int = 1,
+	@MediaType nvarchar(40) = ''Image,Video,Embeded Video,Audio,''
+AS
+SET NOCOUNT ON;
+WITH tempEGP AS (
+	SELECT Distinct egp.[PictureID] FROM {databaseOwner}{objectQualifier}EasyGalleryPictures AS egp
+		INNER JOIN {databaseOwner}{objectQualifier}EasyGallery as eg ON eg.GalleryID= egp.GalleryID
+		INNER JOIN {databaseOwner}{objectQualifier}EasyGalleryCategory AS egc ON eg.CategoryID = egc.CategoryID
+		INNER JOIN {databaseOwner}{objectQualifier}EasyGalleryModuleCategory AS egmc ON  egc.CategoryID = egmc.CategoryID
+		LEFT OUTER JOIN {databaseOwner}{objectQualifier}EasyGallerySecurity AS egs on egs.GalleryID = eg.GalleryID
+		INNER JOIN {databaseOwner}{objectQualifier}Journal_User_Permissions(@PortalId,@CurrentUserId, @GroupId) as t ON t.seckey = egs.SecurityKey OR egs.SecurityKey IS NULL 
+	WHERE egmc.ModuleID= @ModuleID AND egp.JournalID IS NULL AND ((@GalleryID <> 0 AND (egp.GalleryID=@GalleryID)) OR (@GalleryID = 0)) AND eg.UserID=@UserID AND (egp.MediaApproved = ''True'' OR egp.MediaApproved IS NULL) AND egp.MediaType In (Select ParsedString From {databaseOwner}{objectQualifier}EDSGallery_ParseStringList(@MediaType))
+	UNION ALL
+	SELECT Distinct egp.[PictureID] FROM {databaseOwner}{objectQualifier}EasyGalleryPictures AS egp
+		INNER JOIN {databaseOwner}{objectQualifier}Journal_Security as js ON js.JournalId = egp.JournalId
+		INNER JOIN {databaseOwner}{objectQualifier}EasyGallery as eg ON eg.GalleryID= egp.GalleryID
+		INNER JOIN {databaseOwner}{objectQualifier}Journal_User_Permissions(@PortalId,@CurrentUserId, @GroupId) as t ON t.seckey = js.SecurityKey
+	WHERE egp.JournalID IS NOT NULL AND ((@GalleryID <> 0 AND (egp.GalleryID=@GalleryID)) OR (@GalleryID = 0)) AND eg.UserID=@UserID AND (egp.MediaApproved = ''True'' OR egp.MediaApproved IS NULL) AND egp.MediaType In (Select ParsedString From {databaseOwner}{objectQualifier}EDSGallery_ParseStringList(@MediaType))
+)
+SELECT COUNT([PictureID]) FROM tempEGP'

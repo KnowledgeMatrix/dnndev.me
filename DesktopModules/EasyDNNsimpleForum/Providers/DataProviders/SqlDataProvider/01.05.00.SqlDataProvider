@@ -1,0 +1,17 @@
+﻿IF NOT EXISTS (SELECT UpdateVersion FROM {databaseOwner}[{objectQualifier}Eds_SimpleForum_Update] WHERE UpdateVersion = '01.05.00')
+BEGIN
+	INSERT {databaseOwner}[{objectQualifier}Eds_SimpleForum_Update]([UpdateVersion],[Finished],[InstallType]) VALUES(N'01.05.00',0, N'DNN')
+END
+GO
+
+IF NOT EXISTS (select * from INFORMATION_SCHEMA.columns where table_name = '{objectQualifier}Eds_SimpleForum_ModuleSettings' and column_name = 'FacebookPostAccessToken')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}Eds_SimpleForum_ModuleSettings] ADD FacebookPostAccessToken NVARCHAR(512) CONSTRAINT DF_{objectQualifier}Eds_SimpleForum_ModuleSettings_FacebookPostAccessToken DEFAULT (N'') NOT NULL
+END
+GO
+
+IF NOT EXISTS (select * from INFORMATION_SCHEMA.columns where table_name = '{objectQualifier}Eds_SimpleForum_PortalSettings' and column_name = 'FacebookPostAccessToken')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}Eds_SimpleForum_PortalSettings] ADD FacebookPostAccessToken NVARCHAR(512) CONSTRAINT DF_{objectQualifier}Eds_SimpleForum_PortalSettings_FacebookPostAccessToken DEFAULT (N'') NOT NULL
+END
+GO

@@ -1,0 +1,580 @@
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Discussions_Topic_Delete') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Discussions_Topic_Delete
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Discussions_Topic_Update') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Discussions_Topic_Update
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Discussions_Topic_Add') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Discussions_Topic_Add
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Discussions_Topic_GetByContentItem') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Discussions_Topic_GetByContentItem
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Discussions_Topic_UpdateViewCount') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Discussions_Topic_UpdateViewCount
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Discussions_Topic_GetSearchable') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Discussions_Topic_GetSearchable
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Discussions_IsSearchMatch]', N'FN') IS NOT NULL
+	DROP FUNCTION {databaseOwner}[{objectQualifier}Discussions_IsSearchMatch]
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'FK_{objectQualifier}Discussions_Topic_{objectQualifier}Portals') and OBJECTPROPERTY(id, N'IsConstraint') = 1)
+	ALTER TABLE {databaseOwner}{objectQualifier}Discussions_Topic DROP CONSTRAINT FK_{objectQualifier}Discussions_Topic_{objectQualifier}Portals
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Discussions_Topic]') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}[{objectQualifier}Discussions_Topic](
+		[TopicId] [int] IDENTITY(1,1) NOT NULL,
+		[ContentItemId] [int] NOT NULL,
+		[GroupId] [int] NULL,
+		[PortalId] [int] NOT NULL,
+		[ViewCount] [int] NOT NULL,
+		[Approved] [bit] NOT NULL,
+		[ApprovedDate] [datetime] NULL,
+		[Deleted] [bit] NOT NULL,
+		[Closed] [bit] NOT NULL,
+		[ClosedDate] [datetime] NULL,
+		[Protected] [bit] NOT NULL,
+		[ProtectedDate] [datetime] NULL,
+		[Pinned] [bit] NOT NULL,
+		[PinnedDate] [datetime] NULL,
+	CONSTRAINT [PK_{objectQualifier}Discussions_Topic] PRIMARY KEY CLUSTERED ( [TopicId] DESC )
+	)
+	
+	ALTER TABLE {databaseOwner}[{objectQualifier}Discussions_Topic] 
+		WITH NOCHECK ADD CONSTRAINT [FK_{objectQualifier}Discussions_Topic_{objectQualifier}Portals] 
+		FOREIGN KEY ([PortalId]) REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID]) ON DELETE CASCADE
+END
+GO
+
+CREATE FUNCTION {databaseOwner}[{objectQualifier}Discussions_IsSearchMatch]
+	(
+	  @ContentItemId INT ,
+	  @GroupId INT ,
+	  @CurrentGroup INT ,
+	  @UserId INT ,
+	  @CreatorUserId INT ,
+	  @Filter INT ,
+	  @Keyword NVARCHAR(255) ,
+	  @Approved BIT ,
+	  @IsPinned BIT ,
+	  @Description NVARCHAR(1000)
+	)
+RETURNS BIT
+AS 
+	BEGIN
+	-- Category filter
+		IF @Filter > -1 
+			BEGIN
+				IF @Filter = 1 -- top/pinned
+					BEGIN
+						IF ( @IsPinned = 1
+							 AND @Approved = 1
+						   ) 
+							RETURN 1
+					END
+				IF @Filter = 2 -- no replies
+					BEGIN
+						IF ( ( SELECT   COUNT(CommentId)
+							   FROM     {databaseOwner}{objectQualifier}Journal_Comments JC
+										INNER JOIN {databaseOwner}{objectQualifier}Journal J ON JC.JournalId = J.JournalId
+							   WHERE    ContentItemId = @ContentItemId
+							 ) < 1 AND @Approved = 1 ) 
+							RETURN 1
+					END
+				IF @Filter = 3 -- my content items
+					BEGIN
+						IF ( @UserId = @CreatorUserId ) 
+							RETURN 1
+					END
+				IF @Filter = 4 -- my comments 
+					BEGIN
+						IF ( ( SELECT   COUNT(CommentId)
+							   FROM     {databaseOwner}{objectQualifier}Journal AS J
+										INNER JOIN {databaseOwner}{objectQualifier}Journal_Comments AS JC ON J.JournalId = JC.JournalId
+							   WHERE    J.ContentItemId = @ContentItemId
+										AND JC.UserId = @UserId
+							 ) > 0 AND @Approved = 1 ) 
+							RETURN 1
+					END
+			END
+		RETURN 0
+	END
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Discussions_Topic_Search') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Discussions_Topic_Search
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Discussions_Topic_Search]
+	@ModuleId INT ,
+	@GroupId INT ,
+	@PageSize INT ,
+	@PageIndex INT ,
+	@Filter INT ,
+	@SortColumn VARCHAR(32) ,
+	@SortAscending BIT ,
+	@Keyword NVARCHAR(128) ,
+	@UserId INT 
+AS 
+	BEGIN
+		SELECT  COUNT(*) AS TotalResults
+		FROM    {databaseOwner}{objectQualifier}Discussions_Topic AS T
+				INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI ON CI.ContentItemID = T.ContentItemId
+		WHERE   CI.ModuleId = @ModuleId
+				AND Deleted = 0
+				AND ( @GroupId < 1 OR T.GroupId = @GroupId )
+				AND ((@Filter <= 0  AND T.Approved = 1) OR (@Filter > 0 AND {databaseOwner}{objectQualifier}Discussions_IsSearchMatch(T.ContentItemId, @GroupId,
+												  T.GroupId, @UserId,
+												  CI.CreatedByUserID, @Filter,
+												  @Keyword, T.Approved, T.Pinned,
+												  CI.Content) = 1));
+		WITH    TopicSet
+				  AS ( SELECT   TopicId ,
+								T.ContentItemId ,
+								GroupId ,
+								PortalId ,
+								ViewCount ,
+								Approved ,
+								ApprovedDate ,
+								Deleted ,
+								Closed ,
+								ClosedDate ,
+								Protected ,
+								ProtectedDate ,
+								Pinned ,
+								PinnedDate ,
+								Content ,
+								ContentTypeID ,
+								TabID ,
+								ModuleID ,
+								ContentKey ,
+								Indexed ,
+								CI.CreatedByUserID ,
+								CI.CreatedOnDate ,
+								CI.LastModifiedByUserID ,
+								CI.LastModifiedOnDate ,
+								CIMD.MetaDataValue AS ContentTitle ,
+								U.DisplayName AS DisplayName
+					   FROM     {databaseOwner}{objectQualifier}Discussions_Topic AS T
+								INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI ON CI.ContentItemID = T.ContentItemId
+								INNER JOIN {databaseOwner}{objectQualifier}Users U ON U.UserID = CI.CreatedByUserID
+								LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD ON CIMD.ContentItemID = T.ContentItemId
+															  AND CIMD.MetaDataID = ( SELECT
+															  MetaDataID
+															  FROM
+															  {databaseOwner}[{objectQualifier}MetaData]
+															  WHERE
+															  MetaDataName = 'Title'
+															  )
+					   WHERE    CI.ModuleId = @ModuleId
+								AND Deleted = 0
+								AND ( @GroupId < 1 OR T.GroupId = @GroupId )
+								AND ((@Filter <= 0  AND T.Approved = 1) OR (@Filter > 0 AND {databaseOwner}{objectQualifier}Discussions_IsSearchMatch(T.ContentItemId,
+															  @GroupId,
+															  T.GroupId,
+															  @UserId,
+															  CI.CreatedByUserID,
+															  @Filter,
+															  @Keyword,
+															  T.Approved,
+															  T.Pinned,
+															  CI.Content) = 1))
+					 ),
+				TopicSort
+				  AS ( SELECT   ROW_NUMBER() OVER ( ORDER BY CASE
+															  WHEN @SortColumn = 'CreatedDate'
+															  AND @SortAscending = 1
+															  THEN T.CreatedOnDate
+															 END ASC, CASE
+															  WHEN @SortColumn = 'CreatedDate'
+															  AND @SortAscending = 0
+															  THEN T.CreatedOnDate
+															  END DESC, CASE
+															  WHEN @SortColumn = 'LastActive'
+															  AND @SortAscending = 1
+															  THEN T.LastModifiedOnDate
+															  END ASC, CASE
+															  WHEN @SortColumn = 'LastActive'
+															  AND @SortAscending = 0
+															  THEN T.LastModifiedOnDate
+															  END DESC, CASE
+															  WHEN @SortColumn = 'Title'
+															  AND @SortAscending = 1
+															  THEN T.ContentTitle
+															  END ASC, CASE
+															  WHEN @SortColumn = 'Title'
+															  AND @SortAscending = 0
+															  THEN T.ContentTitle
+															  END DESC, CASE
+															  WHEN @SortColumn = 'Author'
+															  AND @SortAscending = 1
+															  THEN T.DisplayName
+															  END ASC, CASE
+															  WHEN @SortColumn = 'Author'
+															  AND @SortAscending = 0
+															  THEN T.DisplayName
+															  END DESC, CASE
+															  WHEN @SortColumn = 'Views'
+															  AND @SortAscending = 0
+															  THEN T.ViewCount
+															  END DESC, CASE
+															  WHEN @SortColumn = 'Views'
+															  AND @SortAscending = 1
+															  THEN T.ViewCount
+															  END ASC, T.CreatedOnDate DESC ) AS RowNumber ,
+								T.*
+					   FROM     TopicSet T
+					 )
+			SELECT  *
+			FROM    TopicSort
+			WHERE   RowNumber BETWEEN ( @PageIndex * @PageSize + 1 )
+							  AND     ( ( @PageIndex + 1 ) * @PageSize )
+	END
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Discussions_Topic_Search_ByTags') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Discussions_Topic_Search_ByTags
+GO
+
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Discussions_Topic_Search_ByTags]
+	@ModuleId INT ,
+	@GroupId INT ,
+	@PageSize INT ,
+	@PageIndex INT ,
+	@Filter INT ,
+	@SortColumn VARCHAR(32) ,
+	@SortAscending BIT ,
+	@Keyword NVARCHAR(128) ,
+	@UserId INT ,
+	@Tags NVARCHAR(256)
+AS 
+	BEGIN
+		SELECT  COUNT(*) AS TotalResults
+		FROM    {databaseOwner}{objectQualifier}Discussions_Topic AS T
+				INNER JOIN {databaseOwner}[{objectQualifier}ContentItems] CI ON CI.ContentItemID = T.ContentItemId
+				INNER JOIN {databaseOwner}[{objectQualifier}ContentItems_Tags] CIT ON ci.ContentItemID = CIT.ContentItemID 
+				INNER JOIN {databaseOwner}[{objectQualifier}Taxonomy_Terms] TT ON CIT.TermID = TT.TermID
+		WHERE   CI.ModuleId = @ModuleId
+				AND Deleted = 0
+				AND ( @GroupId < 1 OR T.GroupId = @GroupId )
+				AND TT.Name IN (SELECT RowValue FROM {databaseOwner}[{objectQualifier}ConvertListToTable](',', @Tags))
+				AND ((@Filter <= 0 AND T.Approved = 1) OR (@Filter > 0 AND {databaseOwner}{objectQualifier}Discussions_IsSearchMatch(T.ContentItemId, @GroupId,
+												  T.GroupId, @UserId,
+												  CI.CreatedByUserID, @Filter,
+												  @Keyword, T.Approved, T.Pinned,
+												  CI.Content) = 1));
+		WITH    TopicSet
+				  AS ( SELECT   TopicId ,
+								T.ContentItemId ,
+								GroupId ,
+								PortalId ,
+								ViewCount ,
+								Approved ,
+								ApprovedDate ,
+								Deleted ,
+								Closed ,
+								ClosedDate ,
+								Protected ,
+								ProtectedDate ,
+								Pinned ,
+								PinnedDate ,
+								Content ,
+								ContentTypeID ,
+								TabID ,
+								ModuleID ,
+								ContentKey ,
+								Indexed ,
+								CI.CreatedByUserID ,
+								CI.CreatedOnDate ,
+								CI.LastModifiedByUserID ,
+								CI.LastModifiedOnDate ,
+								CIMD.MetaDataValue AS ContentTitle ,
+								U.DisplayName AS DisplayName
+					   FROM     {databaseOwner}{objectQualifier}Discussions_Topic AS T
+								INNER JOIN {databaseOwner}[{objectQualifier}ContentItems] CI ON CI.ContentItemID = T.ContentItemId
+								INNER JOIN {databaseOwner}[{objectQualifier}ContentItems_Tags] CIT ON ci.ContentItemID = CIT.ContentItemID 
+								INNER JOIN {databaseOwner}[{objectQualifier}Taxonomy_Terms] TT ON CIT.TermID = TT.TermID
+								INNER JOIN {databaseOwner}{objectQualifier}Users U ON U.UserID = CI.CreatedByUserID
+								LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD ON CIMD.ContentItemID = T.ContentItemId
+															  AND CIMD.MetaDataID = ( SELECT
+															  MetaDataID
+															  FROM
+															  {databaseOwner}[{objectQualifier}MetaData]
+															  WHERE
+															  MetaDataName = 'Title'
+															  )
+					   WHERE    CI.ModuleId = @ModuleId
+								AND Deleted = 0
+								AND ( @GroupId < 1 OR T.GroupId = @GroupId )
+								AND TT.Name IN (SELECT RowValue FROM {databaseOwner}[{objectQualifier}ConvertListToTable](',', @Tags))
+								AND ((@Filter <= 0  AND T.Approved = 1) OR (@Filter > 0 AND {databaseOwner}{objectQualifier}Discussions_IsSearchMatch(T.ContentItemId,
+															  @GroupId,
+															  T.GroupId,
+															  @UserId,
+															  CI.CreatedByUserID,
+															  @Filter,
+															  @Keyword,
+															  T.Approved,
+															  T.Pinned,
+															  CI.Content) = 1))
+					 ),
+				TopicSort
+				  AS ( SELECT   ROW_NUMBER() OVER ( ORDER BY CASE
+															  WHEN @SortColumn = 'CreatedDate'
+															  AND @SortAscending = 1
+															  THEN T.CreatedOnDate
+															 END ASC, CASE
+															  WHEN @SortColumn = 'CreatedDate'
+															  AND @SortAscending = 0
+															  THEN T.CreatedOnDate
+															  END DESC, CASE
+															  WHEN @SortColumn = 'LastActive'
+															  AND @SortAscending = 1
+															  THEN T.LastModifiedOnDate
+															  END ASC, CASE
+															  WHEN @SortColumn = 'LastActive'
+															  AND @SortAscending = 0
+															  THEN T.LastModifiedOnDate
+															  END DESC, CASE
+															  WHEN @SortColumn = 'Title'
+															  AND @SortAscending = 1
+															  THEN T.ContentTitle
+															  END ASC, CASE
+															  WHEN @SortColumn = 'Title'
+															  AND @SortAscending = 0
+															  THEN T.ContentTitle
+															  END DESC, CASE
+															  WHEN @SortColumn = 'Author'
+															  AND @SortAscending = 1
+															  THEN T.DisplayName
+															  END ASC, CASE
+															  WHEN @SortColumn = 'Author'
+															  AND @SortAscending = 0
+															  THEN T.DisplayName
+															  END DESC, CASE
+															  WHEN @SortColumn = 'Views'
+															  AND @SortAscending = 0
+															  THEN T.ViewCount
+															  END DESC, CASE
+															  WHEN @SortColumn = 'Views'
+															  AND @SortAscending = 1
+															  THEN T.ViewCount
+															  END ASC, T.CreatedOnDate DESC ) AS RowNumber ,
+								T.*
+					   FROM     TopicSet T
+					 )
+			SELECT  *
+			FROM    TopicSort
+			WHERE   RowNumber BETWEEN ( @PageIndex * @PageSize + 1 )
+							  AND     ( ( @PageIndex + 1 ) * @PageSize )
+	END
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Discussions_Topic_GetSearchable]
+	@StartDate DATETIME ,
+	@ModuleID INT
+AS 
+	SELECT  TopicId ,
+			T.ContentItemId ,
+			GroupId ,
+			PortalId ,
+			ViewCount ,
+			Approved ,
+			ApprovedDate ,
+			Deleted ,
+			Closed ,
+			ClosedDate ,
+			Protected ,
+			ProtectedDate ,
+			Pinned ,
+			PinnedDate ,
+			Content ,
+			ContentTypeID ,
+			TabID ,
+			ModuleID ,
+			ContentKey ,
+			Indexed ,
+			CreatedByUserId ,
+			CreatedOnDate ,
+			LastModifiedByUserID ,
+			LastModifiedOnDate ,
+			CIMD.MetaDataValue AS ContentTitle ,
+			1 AS TotalRecords
+	FROM    {databaseOwner}{objectQualifier}Discussions_Topic T
+			INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI ON T.ContentItemId = CI.ContentItemID
+			LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD ON CIMD.ContentItemID = T.ContentItemId
+															  AND CIMD.MetaDataID = ( SELECT
+															  MetaDataID
+															  FROM
+															  {databaseOwner}[{objectQualifier}MetaData]
+															  WHERE
+															  MetaDataName = 'Title'
+															  )
+	WHERE   Deleted = 0
+			AND Approved = 1
+			AND ModuleID = @ModuleID
+			AND LastModifiedOnDate > @StartDate
+			AND ((GroupId IS NULL) OR (GroupId < 1))
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Discussions_Topic_UpdateViewCount]
+	@ContentItemId INT ,
+	@PortalId INT
+AS 
+	UPDATE  {databaseOwner}{objectQualifier}Discussions_Topic
+	SET     ViewCount = ViewCount + 1
+	WHERE   PortalID = @PortalId
+			AND ContentItemId = @ContentItemId
+			AND Approved = 1
+			AND Deleted = 0
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Discussions_Topic_GetByContentItem]
+	@ContentItemId INT ,
+	@ModuleId INT
+AS 
+	SELECT  TopicId ,
+			T.ContentItemId ,
+			GroupId ,
+			PortalId ,
+			ViewCount ,
+			Approved ,
+			ApprovedDate ,
+			Deleted ,
+			Closed ,
+			ClosedDate ,
+			Protected ,
+			ProtectedDate ,
+			Pinned ,
+			PinnedDate ,
+			Content ,
+			ContentTypeID ,
+			TabID ,
+			ModuleID ,
+			ContentKey ,
+			Indexed ,
+			CreatedByUserId ,
+			CreatedOnDate ,
+			LastModifiedByUserID ,
+			LastModifiedOnDate ,
+			CIMD.MetaDataValue AS ContentTitle ,
+			1 AS TotalRecords
+	FROM    {databaseOwner}{objectQualifier}Discussions_Topic T
+			INNER JOIN {databaseOwner}{objectQualifier}ContentItems CI ON T.ContentItemId = CI.ContentItemID
+			LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD ON CIMD.ContentItemID = T.ContentItemID
+															  AND CIMD.MetaDataID = ( SELECT
+															  MetaDataID
+															  FROM
+															  {databaseOwner}[{objectQualifier}MetaData]
+															  WHERE
+															  MetaDataName = 'Title'
+															  )
+	WHERE   T.ContentItemID = @ContentItemId
+			AND Deleted = 0
+			AND ModuleID = @ModuleId
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Discussions_Topic_Add]
+	@ContentItemId INT ,
+	@GroupId INT ,
+	@PortalId INT ,
+	@Approved BIT ,
+	@ApprovedDate DATETIME ,
+	@Closed BIT ,
+	@ClosedDate DATETIME ,
+	@Pinned BIT ,
+	@PinnedDate DATETIME
+AS 
+	INSERT  {databaseOwner}{objectQualifier}Discussions_Topic
+			( ContentItemId ,
+			  GroupId ,
+			  PortalId ,
+			  ViewCount ,
+			  Approved ,
+			  ApprovedDate ,
+			  Deleted ,
+			  Closed ,
+			  ClosedDate ,
+			  Protected ,
+			  Pinned ,
+			  PinnedDate
+			)
+	VALUES  ( @ContentItemId ,
+			  @GroupId ,
+			  @PortalID ,
+			  0 ,
+			  @Approved ,
+			  @ApprovedDate ,
+			  0 ,
+			  @Closed ,
+			  @ClosedDate ,
+			  0 ,
+			  @Pinned ,
+			  @PinnedDate
+			)
+	SELECT  SCOPE_IDENTITY()
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Discussions_Topic_Update]
+	@TopicId INT ,
+	@ContentItemId INT ,
+	@GroupId INT ,
+	@PortalId INT ,
+	@Approved BIT ,
+	@ApprovedDate DATETIME ,
+	@Deleted BIT ,
+	@Closed BIT ,
+	@ClosedDate DATETIME ,
+	@Protected BIT ,
+	@ProtectedDate DATETIME ,
+	@Pinned BIT ,
+	@PinnedDate DATETIME
+AS 
+	UPDATE  {databaseOwner}{objectQualifier}Discussions_Topic
+	SET     GroupId = @GroupId ,
+			Approved = @Approved ,
+			ApprovedDate = @ApprovedDate ,
+			Deleted = @Deleted ,
+			Closed = @Closed ,
+			ClosedDate = @ClosedDate ,
+			Protected = @Protected ,
+			ProtectedDate = @ProtectedDate ,
+			Pinned = @Pinned ,
+			PinnedDate = @PinnedDate
+	WHERE   ContentItemId = @ContentItemId
+			AND TopicId = @TopicId
+			AND PortalId = @PortalId
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Discussions_Topic_Delete]
+	@TopicId INT ,
+	@PortalId INT ,
+	@SoftDelete BIT
+AS 
+	IF ( @SoftDelete = 1 ) 
+		BEGIN
+			UPDATE  {databaseOwner}{objectQualifier}Discussions_Topic
+			SET     Deleted = 1 ,
+					ContentItemId = 0
+			WHERE   PortalId = @PortalId
+					AND TopicId = @TopicId
+		END
+	ELSE 
+		BEGIN
+			DELETE  {databaseOwner}{objectQualifier}Discussions_Topic
+			WHERE   PortalId = @PortalId
+					AND TopicId = @TopicId
+		END
+GO

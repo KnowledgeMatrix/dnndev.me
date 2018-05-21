@@ -1,0 +1,86 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+SET XACT_ABORT ON
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD CheckoutPageViewMode int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CheckoutPageViewMode DEFAULT 2
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CheckoutPageViewMode
+
+	-- Support SagePay Form
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		PaymentGatewaysSagePayFormVendorName varchar(255) NULL,
+		PaymentGatewaysSagePayFormEncryptionPassword varchar(255) NULL,
+		PaymentGatewaysSagePayFormTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysSagePayFormTestMode DEFAULT 0,
+		PaymentMethodsSagePayFormActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsSagePayFormActive DEFAULT 0,
+		PaymentMethodsSagePayFormAvailabilityRule xml NULL
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysSagePayFormTestMode
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsSagePayFormActive
+
+	-- Add VoucherHint column
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesPayment ADD VoucherHint varchar(4) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_UserPayment ADD VoucherHint varchar(4) NULL
+
+	-- Support Authorize.Net CIM
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		PaymentGatewaysAuthorizeNetCIMLogin varchar(256) NULL,
+		PaymentGatewaysAuthorizeNetCIMTranKey varchar(256) NULL,
+		PaymentGatewaysAuthorizeNetCIMTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysAuthorizeNetCIMTestMode DEFAULT 0
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysAuthorizeNetCIMTestMode
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		PaymentMethodsAuthorizeNetCIMActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsAuthorizeNetCIMActive DEFAULT 0,
+		PaymentMethodsAuthorizeNetCIMAvailabilityRule xml NULL
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsAuthorizeNetCIMActive
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesPayment ADD 
+		ProfileNumber varchar(100) NULL,
+		PaymentNumber varchar(100) NULL,
+		PaymentHint varchar(100) NULL
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_UserPayment ADD 
+		ProfileNumber varchar(100) NULL,
+		PaymentNumber varchar(100) NULL,
+		PaymentHint varchar(100) NULL
+
+	-- Support ShippedDate
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder ADD ShippedDate datetime NULL
+
+COMMIT TRANSACTION
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+		
+		-- Upgrade default Cart template to "Standard11"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CartDisplayTemplate = 'Standard11' WHERE CartDisplayTemplate LIKE 'Standard%'
+
+		-- Upgrade default Checkout template to "Standard18"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CheckoutDisplayTemplate = 'Standard18' WHERE CheckoutDisplayTemplate LIKE 'Standard%'
+
+		-- Upgrade default Confirmation template to "Standard11"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ConfirmationDisplayTemplate = 'Standard11' WHERE ConfirmationDisplayTemplate LIKE 'Standard%'
+
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

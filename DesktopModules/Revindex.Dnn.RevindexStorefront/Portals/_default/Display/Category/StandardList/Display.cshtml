@@ -1,0 +1,50 @@
+﻿@using Revindex.Dnn.RevindexStorefront.Models;
+@using Revindex.Web.Mvc.Dnn.Helpers;
+@inherits Revindex.Dnn.RevindexStorefront.Views.CategoryWebViewPage<CategoryViewModel>
+
+<div class="rvdsf rvdsf-category-container">
+    <nav class="navbar navbar-default visible-xs">
+        <div class="navbar-header">
+            <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#rvdsfCategoryList">
+                <i class="glyphicon glyphicon-align-justify"></i>
+            </button>
+            <a class="navbar-brand">@Html.LocalizeString("Header")</a>
+        </div>
+    </nav>
+    <div id="rvdsfCategoryList" class="collapse-xs">
+        @if (Model.CategoryID.HasValue)
+        {
+            var category = Model.Categories.Where(c => c.CategoryID == Model.CategoryID.Value).FirstOrDefault();
+            if (category != null)
+            {
+                <ul class="list-group">
+                    <li class="list-group-item node-">
+                        <i class="glyphicon glyphicon-chevron-left"></i>
+                        @if (category.ParentCategoryID.HasValue)
+                        {
+                            var parentCategory = Model.Categories.Where(c => c.CategoryID == category.ParentCategoryID.Value).FirstOrDefault();
+                            <a href="@parentCategory.ProductList.TabUrl" style="color: inherit">@parentCategory.Name</a>
+                        }
+                        else
+                        {
+                            <a href="@Model.ProductList.TabUrl" style="color: inherit">@Html.LocalizeString("RootCategories")</a>
+                        }
+                    </li>
+                </ul>
+            }
+        }
+
+        <ul class="list-group">
+            @foreach (var c in Model.Categories.Where(cm => cm.ParentCategoryID == Model.CategoryID))
+            {
+                <li class="list-group-item node-">
+                    <a href="@c.ProductList.TabUrl" style="color: inherit">@c.Name</a>
+                    @if (Model.Categories.Any(cm => cm.ParentCategoryID == c.CategoryID))
+                    {
+                        <i class="glyphicon glyphicon-chevron-right pull-right"></i>
+                    }
+                </li>
+            }
+        </ul>
+    </div>
+</div>

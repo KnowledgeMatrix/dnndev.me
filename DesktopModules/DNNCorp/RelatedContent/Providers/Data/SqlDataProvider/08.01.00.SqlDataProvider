@@ -1,0 +1,47 @@
+﻿IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_GetContentItemsByTerm]', N'P') IS NULL
+	EXEC('CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_GetContentItemsByTerm] AS BEGIN SELECT 1 END');
+GO
+
+ALTER PROCEDURE {databaseOwner}[{objectQualifier}Social_GetContentItemsByTerm]
+	@PortalId INT,
+	@Term NVARCHAR(250)
+AS
+BEGIN
+	DECLARE @TermID int		
+		, @TermLeft int
+		, @TermRight int
+		, @VocabularyID int
+
+	SELECT
+		@TermID = TermID
+		, @TermLeft = TermLeft
+		, @TermRight = TermRight
+		, @VocabularyID = VocabularyID
+	FROM
+		{databaseOwner}[{objectQualifier}Taxonomy_Terms]
+	WHERE
+		Name = @Term
+
+	IF @TermLeft = 0 AND @TermRight = 0
+		BEGIN
+			-- Simple Term
+			SELECT c.*
+			FROM {databaseOwner}[{objectQualifier}ContentItems] As c
+				INNER JOIN {databaseOwner}[{objectQualifier}ContentItems_Tags] ct ON ct.ContentItemID = c.ContentItemID
+				INNER JOIN {databaseOwner}[{objectQualifier}Taxonomy_Terms] t ON t.TermID = ct.TermID
+				INNER JOIN {databaseOwner}[{objectQualifier}Tabs] tb ON tb.TabID = c.TabID AND tb.PortalID = @PortalId
+			WHERE t.TermID = @TermID
+		END 
+	ELSE 
+		BEGIN
+			-- Hierarchical Term
+			SELECT c.*
+			FROM {databaseOwner}[{objectQualifier}ContentItems] As c
+				INNER JOIN {databaseOwner}[{objectQualifier}ContentItems_Tags] ct ON ct.ContentItemID = c.ContentItemID
+				INNER JOIN {databaseOwner}[{objectQualifier}Taxonomy_Terms] t ON t.TermID = ct.TermID
+				INNER JOIN {databaseOwner}[{objectQualifier}Tabs] tb ON tb.TabID = c.TabID AND tb.PortalID = @PortalId
+			WHERE t.TermLeft >= @TermLeft
+				AND t.TermRight <= @TermRight
+				AND t.VocabularyID = @VocabularyID
+		END
+END

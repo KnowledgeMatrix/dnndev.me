@@ -1,0 +1,35 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+GO
+
+BEGIN TRY
+	BEGIN TRANSACTION
+
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+			CheckoutAnonymousAccountActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CheckoutAnonymousAccountActive DEFAULT 0
+		
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration
+			DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CheckoutAnonymousAccountActive
+			
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+			SalesOrderMethodsPurchaseOrderActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_SalesOrderMethodsPurchaseOrderActive DEFAULT 0
+	
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration
+			DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_SalesOrderMethodsPurchaseOrderActive
+		
+		ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder ADD
+			PurchaseOrderNumber varchar(50) NULL
+
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

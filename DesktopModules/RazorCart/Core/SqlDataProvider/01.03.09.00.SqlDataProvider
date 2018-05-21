@@ -1,0 +1,204 @@
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****               Create Tables                      *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****                  Alter Tables                    *****/
+/************************************************************/
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_Products2') AND type in (N'U'))
+BEGIN
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_Products2') AND name = N'MinBookingTimeDuration')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_Products2
+		ADD
+			[MinBookingTimeDuration] INT
+	END
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_Products2') AND name = N'MaxBookingTimeDuration')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_Products2
+		ADD
+			[MaxBookingTimeDuration] INT
+	END
+END
+GO
+
+
+
+/************************************************************/
+/*****              Drop Functions                      *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****              Create Functions                    *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****                Drop Sprocs                       *****/
+/************************************************************/
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_CreateProductII') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateProductII
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_UpdateProductII') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateProductII
+GO
+
+
+
+/************************************************************/
+/*****               Create Sprocs                      *****/
+/************************************************************/
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateProductII
+	@ProductID INT = NULL,
+	@ShowOrderAsIs BIT = NULL,
+	@Ecard BIT = NULL,
+	@BinLocation NVARCHAR(150) = NULL,
+	@NumberOfBoxes NVARCHAR(50) = NULL,
+	@DateAddedToInventory DATETIME = NULL,
+	@Client NVARCHAR(200) = NULL,
+	@Owner NVARCHAR(200) = NULL,
+	@ShowDatePicker BIT = NULL,
+	@ShowTimePicker BIT = NULL,
+	@ProductFlags BIGINT = NULL,
+	@MinPartialAmount DECIMAL(18,2) = NULL,
+	@BookingFields VARCHAR(16) = NULL,
+	@BookingDuration VARCHAR(32) = NULL,
+	@FirstBookingDate INT = NULL,
+	@MinBookingDuration INT = NULL,
+	@MaxBookingDuration INT = NULL,
+	@MinBookingTimeDuration INT = NULL,
+	@MaxBookingTimeDuration INT = NULL,
+	@CustomModalTabID INT = NULL,
+	@AddRolesEffectiveInCart BIT = NULL,
+	@RemoveRolesEffectiveInCart BIT = NULL
+AS
+BEGIN
+	INSERT INTO
+		{databaseOwner}{objectQualifier}Smith_Products2
+		([ProductID]
+		,[ShowOrderAsIs]
+		,[Ecard]
+		,[BinLocation]
+		,[NumberOfBoxes]
+		,[DateAddedToInventory]
+		,[Client]
+		,[Owner]
+		,[ShowDatePicker]
+		,[ShowTimePicker]
+		,[ProductFlags]
+		,[MinPartialAmount]
+		,[BookingFields]
+		,[BookingDuration]
+		,[FirstBookingDate]
+		,[MinBookingDuration]
+		,[MaxBookingDuration]
+		,[MinBookingTimeDuration]
+		,[MaxBookingTimeDuration]
+		,[CustomModalTabID]
+		,[AddRolesEffectiveInCart]
+		,[RemoveRolesEffectiveInCart])
+	VALUES
+		(@ProductID
+		,@ShowOrderAsIs
+		,@Ecard
+		,@BinLocation
+		,@NumberOfBoxes
+		,@DateAddedToInventory
+		,@Client
+		,@Owner
+		,@ShowDatePicker
+		,@ShowTimePicker
+		,@ProductFlags
+		,@MinPartialAmount
+		,@BookingFields
+		,@BookingDuration
+		,@FirstBookingDate
+		,@MinBookingDuration
+		,@MaxBookingDuration
+		,@MinBookingTimeDuration
+		,@MaxBookingTimeDuration
+		,@CustomModalTabID
+		,@AddRolesEffectiveInCart
+		,@RemoveRolesEffectiveInCart)
+	SELECT @ProductID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateProductII
+	@ProductID INT = NULL,
+	@ShowOrderAsIs BIT = NULL,
+	@Ecard BIT = NULL,
+	@BinLocation NVARCHAR(150) = NULL,
+	@NumberOfBoxes NVARCHAR(50) = NULL,
+	@DateAddedToInventory DATETIME = NULL,
+	@Client NVARCHAR(200) = NULL,
+	@Owner NVARCHAR(200) = NULL,
+	@ShowDatePicker BIT = NULL,
+	@ShowTimePicker BIT = NULL,
+	@ProductFlags BIGINT = NULL,
+	@MinPartialAmount DECIMAL(18,2) = NULL,
+	@BookingFields VARCHAR(50) = NULL,
+	@BookingDuration VARCHAR(50) = NULL,
+	@FirstBookingDate INT = NULL,
+	@MinBookingDuration INT = NULL,
+	@MaxBookingDuration INT = NULL,
+	@MinBookingTimeDuration INT = NULL,
+	@MaxBookingTimeDuration INT = NULL,
+	@CustomModalTabID INT = NULL,
+	@AddRolesEffectiveInCart BIT = NULL,
+	@RemoveRolesEffectiveInCart BIT = NULL
+AS
+BEGIN
+	UPDATE
+		{databaseOwner}{objectQualifier}Smith_Products2
+	SET
+		[ShowOrderAsIs] = @ShowOrderAsIs,
+		[Ecard] = @Ecard,
+		[BinLocation] = @BinLocation,
+		[NumberOfBoxes] = @NumberOfBoxes,
+		[DateAddedToInventory] = @DateAddedToInventory,
+		[Client] = @Client,
+		[Owner] = @Owner,
+		[ShowDatePicker] = @ShowDatePicker,
+		[ShowTimePicker] = @ShowTimePicker,
+		[ProductFlags] = @ProductFlags,
+		[MinPartialAmount] = @MinPartialAmount,
+		[BookingFields] = @BookingFields,
+		[BookingDuration] = @BookingDuration,
+		[FirstBookingDate] = @FirstBookingDate,
+		[MinBookingDuration] = @MinBookingDuration,
+		[MaxBookingDuration] = @MaxBookingDuration,
+		[MinBookingTimeDuration] = @MinBookingTimeDuration,
+		[MaxBookingTimeDuration] = @MaxBookingTimeDuration,
+		[CustomModalTabID] = @CustomModalTabID,
+		[AddRolesEffectiveInCart] = @AddRolesEffectiveInCart,
+		[RemoveRolesEffectiveInCart] = @RemoveRolesEffectiveInCart
+	WHERE
+		[ProductID] = @ProductID
+END
+GO
+
+
+
+/************************************************************/
+/*****               End of Script                      *****/
+/************************************************************/

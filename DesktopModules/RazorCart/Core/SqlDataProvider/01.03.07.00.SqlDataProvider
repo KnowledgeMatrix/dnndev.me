@@ -1,0 +1,329 @@
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****               Create Tables                      *****/
+/************************************************************/
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_BookingDisabledTimes') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_BookingDisabledTimes
+	(
+		[ID] [INT] IDENTITY(1,1) NOT NULL,
+		[ProductID] [INT] NOT NULL,
+		[Type] [VARCHAR](32) NULL,
+		[DisableTime] [TIME] NULL,
+		[DisableTimeRangeFrom] [TIME] NULL,
+		[DisableTimeRangeTo] [TIME] NULL,
+		[Calendar] [VARCHAR](32) NULL,
+		[CreatedDate] [DATETIME] NULL,
+		[CreatedBy] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_BookingDisabledTimes] PRIMARY KEY CLUSTERED
+		(
+			[ID] ASC
+		)
+	)
+END
+GO
+
+
+
+/************************************************************/
+/*****                  Alter Tables                    *****/
+/************************************************************/
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_Customer') AND type in (N'U'))
+BEGIN
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_Customer') AND name = N'PhoneCarrier')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_Customer
+		ADD
+			[PhoneCarrier] [VARCHAR](50)
+	END
+END
+GO
+
+
+
+/************************************************************/
+/*****              Drop Functions                      *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****              Create Functions                    *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****                Drop Sprocs                       *****/
+/************************************************************/
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_CreateBookableProductDisabledTime') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateBookableProductDisabledTime
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_DeleteBookableProductDisabledTime') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_DeleteBookableProductDisabledTime
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListBookableProductDisabledTimes') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListBookableProductDisabledTimes
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_CreateCustomer') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateCustomer
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_UpdateCustomer') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateCustomer
+GO
+
+
+
+/************************************************************/
+/*****               Create Sprocs                      *****/
+/************************************************************/
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateBookableProductDisabledTime
+	@ProductID INT = NULL,
+	@Type VARCHAR(50) = NULL,
+	@DisableTime TIME = NULL,
+	@DisableTimeRangeFrom TIME = NULL,
+	@DisableTimeRangeTo TIME = NULL,
+	@Calendar VARCHAR(50) = NULL,
+	@CreatedBy INT = NULL
+AS
+BEGIN
+	INSERT INTO
+		{databaseOwner}{objectQualifier}Smith_BookingDisabledTimes
+		([ProductID]
+		,[Type]
+		,[DisableTime]
+		,[DisableTimeRangeFrom]
+		,[DisableTimeRangeTo]
+		,[Calendar]
+		,[CreatedDate]
+		,[CreatedBy])
+	VALUES
+		(@ProductID
+		,@Type
+		,@DisableTime
+		,@DisableTimeRangeFrom
+		,@DisableTimeRangeTo
+		,@Calendar
+		,GETDATE()
+		,@CreatedBy)
+	SELECT SCOPE_IDENTITY()
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_DeleteBookableProductDisabledTime
+	@ID INT = NULL
+AS
+BEGIN
+	DELETE FROM
+		{databaseOwner}{objectQualifier}Smith_BookingDisabledTimes
+	WHERE
+		[ID] = @ID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListBookableProductDisabledTimes
+	@ProductID INT = NULL
+AS
+BEGIN
+	SELECT
+		BDT.*
+	FROM
+		{databaseOwner}{objectQualifier}Smith_BookingDisabledTimes BDT
+	WHERE
+		BDT.[ProductID] = @ProductID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateCustomer
+	@FirstName VARCHAR(50) = NULL,
+	@LastName VARCHAR(50) = NULL,
+	@Address1 VARCHAR(50) = NULL,
+	@Address2 VARCHAR(50) = NULL,
+	@City VARCHAR(50) = NULL,
+	@Country VARCHAR(50) = NULL,
+	@State VARCHAR(50) = NULL,
+	@Zip VARCHAR(50) = NULL,
+	@HomePhone VARCHAR(50) = NULL,
+	@CellPhone VARCHAR(50) = NULL,
+	@WorkPhone VARCHAR(50) = NULL,
+	@PhoneCarrier VARCHAR(50) = NULL,
+	@Email VARCHAR(50) = NULL,
+	@AccountNo VARCHAR(50) = NULL,
+	@MaskAccountNo VARCHAR(50) = NULL,
+	@ABAExpire VARCHAR(50) = NULL,
+	@BillingAdress VARCHAR(50) = NULL,
+	@BillingZip VARCHAR(50) = NULL,
+	@DNNLogin VARCHAR(50) = NULL,
+	@Contact BIT = NULL,
+	@IPAddress VARCHAR(50) = '',
+	@PortalID INT = 0,
+	@CompanyName VARCHAR(50) = NULL,
+	@BuyerRole VARCHAR(50) = NULL,
+	@AnniversaryDate DATETIME = NULL,
+	@CreditLimit DECIMAL(18,2) = 0,
+	@BidLimit DECIMAL(18,2) = 0,
+	@ModifiedBy VARCHAR(50) = NULL,
+	@TaxID VARCHAR(50) = NULL,
+	@StoreID INT = NULL
+AS
+BEGIN
+	INSERT INTO {databaseOwner}{objectQualifier}Smith_Customer
+		([FirstName]
+		,[LastName]
+		,[Address1]
+		,[Address2]
+		,[City]
+		,[Country]
+		,[State]
+		,[Zip]
+		,[HomePhone]
+		,[CellPhone]
+		,[WorkPhone]
+		,[PhoneCarrier]
+		,[Email]
+		,[AccountNo]
+		,[MaskAccountNo]
+		,[ABAExpire]
+		,[BillingAdress]
+		,[BillingZip]
+		,[DNNLogin]
+		,[DateCreated]
+		,[Contact]
+		,[IPAddress]
+		,[PortalID]
+		,[CompanyName]
+		,[BuyerRole]
+		,[AnniversaryDate]
+		,[CreditLimit]
+		,[BidLimit]
+		,[ModifiedBy]
+		,[DateModified]
+		,[TaxID]
+		,[StoreID])
+	VALUES
+		(@FirstName
+		,@LastName
+		,@Address1
+		,@Address2
+		,@City
+		,@Country
+		,@State
+		,@Zip
+		,@HomePhone
+		,@CellPhone
+		,@WorkPhone
+		,@PhoneCarrier
+		,@Email
+		,@AccountNo
+		,@MaskAccountNo
+		,@ABAExpire
+		,@BillingAdress
+		,@BillingZip
+		,@DNNLogin
+		,GETDATE()
+		,@Contact
+		,@IPAddress
+		,@PortalID
+		,@CompanyName
+		,@BuyerRole
+		,@AnniversaryDate
+		,@CreditLimit
+		,@BidLimit
+		,@ModifiedBy
+		,GETDATE()
+		,@TaxID
+		,@StoreID)
+	SELECT SCOPE_IDENTITY()
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateCustomer
+	@CustomerID INT = NULL,
+	@PortalID INT = NULL,
+	@FirstName VARCHAR(50) = NULL,
+	@LastName VARCHAR(50) = NULL,
+	@Address1 VARCHAR(50) = NULL,
+	@Address2 VARCHAR(50) = NULL,
+	@City VARCHAR(50) = NULL,
+	@Country VARCHAR(50) = NULL,
+	@State VARCHAR(50) = NULL,
+	@Zip VARCHAR(50) = NULL,
+	@HomePhone VARCHAR(50) = NULL,
+	@CellPhone VARCHAR(50) = NULL,
+	@WorkPhone VARCHAR(50) = NULL,
+	@PhoneCarrier VARCHAR(50) = NULL,
+	@Email VARCHAR(50) = NULL,
+	@AccountNo VARCHAR(50) = NULL,
+	@MaskAccountNo VARCHAR(50) = NULL,
+	@ABAExpire VARCHAR(50) = NULL,
+	@BillingAdress VARCHAR(50) = NULL,
+	@BillingZip VARCHAR(50) = NULL,
+	@DNNLogin VARCHAR(50) = NULL,
+	@Contact BIT = NULL,
+	@IPAddress VARCHAR(50) = '',
+	@CompanyName VARCHAR(50) = NULL,
+	@BuyerRole VARCHAR(50) = NULL,
+	@AnniversaryDate DATETIME = NULL,
+	@CreditLimit DECIMAL(18,2) = 0,
+	@BidLimit DECIMAL(18,2) = 0,
+	@ModifiedBy VARCHAR(50) = NULL,
+	@TaxID VARCHAR(50) = NULL,
+	@StoreID INT = NULL
+AS
+BEGIN
+	UPDATE
+		{databaseOwner}{objectQualifier}Smith_Customer
+	SET
+		[FirstName] = @FirstName,
+		[LastName] = @LastName,
+		[Address1] = @Address1,
+		[Address2] = @Address2,
+		[City] = @City,
+		[Country] = @Country,
+		[State] = @State,
+		[Zip] = @Zip,
+		[HomePhone] = @HomePhone,
+		[CellPhone] = @CellPhone,
+		[WorkPhone] = @WorkPhone,
+		[PhoneCarrier] = @PhoneCarrier,
+		[Email] = @Email,
+		[AccountNo] = @AccountNo,
+		[MaskAccountNo] = @MaskAccountNo,
+		[ABAExpire] = @ABAExpire,
+		[BillingAdress] = @BillingAdress,
+		[BillingZip] = @BillingZip,
+		[DNNLogin] = @DNNLogin,
+		[Contact] = @Contact,
+		[IPAddress] = @IPAddress,
+		[CompanyName] = @CompanyName,
+		[BuyerRole] = @BuyerRole,
+		[AnniversaryDate] = @AnniversaryDate,
+		[CreditLimit] = @CreditLimit,
+		[BidLimit] = @BidLimit,
+		[ModifiedBy] = @ModifiedBy,
+		[DateModified] = GETDATE(),
+		[TaxID] = @TaxID,
+		[StoreID] = @StoreID
+	WHERE
+		[CustomerID] = @CustomerID
+		AND [PortalID] = @PortalID
+END
+GO
+
+
+
+/************************************************************/
+/*****               End of Script                      *****/
+/************************************************************/

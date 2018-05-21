@@ -1,0 +1,1 @@
+<%@ WebHandler Language="C#" CodeBehind="blogpost.ashx.cs" Class="DotNetNuke.Professional.Blogs.BlogPost" %>

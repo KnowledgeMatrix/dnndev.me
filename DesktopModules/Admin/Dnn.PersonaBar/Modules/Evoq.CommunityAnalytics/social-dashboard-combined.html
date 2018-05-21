@@ -1,0 +1,281 @@
+﻿<!-- dashboard panel -->
+<div class="socialpanelheader combined-header dashboard-header">
+    <h3 data-bind="html: dashboardTitle"></h3>
+
+    <div class="module-selector">
+        <ul data-bind="foreach: socialModules">
+            <li data-bind="css: {selected: $parent.moduleName === value}, html: label, click: $parent.switchModule, clickBubble: false"></li>
+        </ul>
+    </div>
+
+    <div class="dashboard-period-date" data-bind="html: periodLabel, click: showPeriodSelect, clickBubble: false, css: {short: !(comparativeOptions().length > 1 && period() !== 'Custom')}"></div>
+
+    <a class="dashboard-export-btn" data-bind="click: exportDashboard, html: $root.resx.Export"></a>
+
+    <div class="dashboard-period" data-bind="visible: choosePeriod, css: {short: !(comparativeOptions().length > 1 && period() !== 'Custom')}">
+        <ul>
+            <li data-bind="css: { selected: period() == 'Day' }, click: changePeriod, html: $root.resx.opt_Day"
+                data-value="Day">
+            </li>
+            <li data-bind="css: { selected: period() == 'Week' }, click: changePeriod, html: $root.resx.opt_Week"
+                data-value="Week">
+            </li>
+            <li data-bind="css: { selected: period() == 'Month' }, click: changePeriod, html: $root.resx.opt_Month"
+                data-value="Month">
+            </li>
+            <li data-bind="css: { selected: period() == 'Year' }, click: changePeriod, html: $root.resx.opt_Year"
+                data-value="Year">
+            </li>
+            <li data-bind="css: { selected: period() == 'Custom' }, click: showCustomCalendar, html: $root.resx.opt_Custom, clickBubble: false"></li>
+        </ul>
+    </div>
+
+    <input type="text" class="dashboard-period-custom-calendar-start-field" aria-label="Start" />
+    <input type="text" class="dashboard-period-custom-calendar-end-field" aria-label="End" />
+    <div class="dashboard-period-custom-calendar-container">
+        <span class="pika-triangle-arrow"></span>
+        <div>
+            <span data-bind="html: startDateLabel"></span>
+            <div class="dashboard-period-custom-calendar-container-left"></div>
+        </div>
+        <div>
+            <span data-bind="html: endDateLabel"></span>
+            <div class="dashboard-period-custom-calendar-container-right"></div>
+        </div>
+        <span class="pika-bottom clear">
+            <a class="pika-calendar-apply-btn disabled" data-bind="html: $root.resx.btn_Apply, click: applyCustomDates, clickBubble: false"></a>
+            <div class="clear"></div>
+        </span>
+    </div>
+
+    <div class="comparative-term" data-bind="css: {invisible: !(comparativeOptions().length > 1 && period() !== 'Custom')}">
+        <span data-bind="html: $root.resx.label_ComparativeTerm">&nbsp;</span>
+        <select data-bind="value: comparativeTerm, options: comparativeOptions" aria-label="Options"></select>
+    </div>
+
+</div>
+<div class="socialpanelbody dashboard-body">
+    <div>
+        <!-- ko if: moduleDashboard -->
+        <h3 data-bind="html: $root.resx.title_ProblemsArea"></h3>
+        <!-- /ko -->
+        <!-- ko ifnot: moduleDashboard -->
+        <h3 data-bind="html: $root.resx.title_ModulePerformance"></h3>
+        <!-- /ko -->
+
+        <div class="module-performance">
+            <!-- ko if: moduleDashboard -->
+            <div class="module-performance-card-holder" data-bind="foreach: areas">
+                <div class="module-performance-card">
+                    <div class="problemarea-top">
+                        <p data-bind="html: area"></p>
+                        <div class="problemarea-chart-area">
+                            <svg class="donut-chart"></svg>
+                            <!-- ko ifnot: isNA -->
+                            <div>
+                                <span data-bind="html: percent"></span>
+                                <sup>%</sup>
+                            </div>
+                            <span data-bind="attr: { 'class': statusClass }"></span>
+                            <!-- /ko -->
+                            <!-- ko if: isNA -->
+                            <div class="not-applicable">
+                                <span data-bind="html: $root.resx.label_NotApplicable"></span>
+                            </div>
+                            <!-- /ko -->
+                        </div>
+                    </div>
+                    <div class="problemarea-bottom">
+                        <p data-bind="html: $root.resx.label_ComparativeTerm">&nbsp;</p>
+                        <div>
+                            <!-- ko ifnot: isNA -->
+                            <label data-bind="html: comparativePercent"></label>
+                            <sup>%</sup>
+                            <!-- /ko -->
+                            <!-- ko if: isNA -->
+                            <label class="not-applicable" data-bind="html: $root.resx.label_NotApplicable"></label>
+                            <!-- /ko -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /ko -->
+            <!-- ko ifnot: moduleDashboard -->
+            <div class="module-performance-card-holder" data-bind="foreach: modulePerformance">
+                <div class="module-performance-card clickable" data-bind="click: loadModuleDashboard">
+                    <span class="module-name" data-bind="html: moduleName"></span>
+                    <div class="percent-progress" data-bind="css: percentProgressCss">
+                        <div class="tag-menu"><p data-bind="html: tooltip"></p></div>
+                    </div>
+                    <span class="percent" data-bind="html: engagementPercent"></span><span class="percent-label">%</span>
+                    <span class="label borderbottom" data-bind="html: $root.resx.label_Engagement.toUpperCase()"></span>
+                    <div class="count-column">
+                        <span class="count" data-bind="html: viewCountAbbreviate, attr: { title: $root.resx.label_Views.toUpperCase() + ' ' + viewCountDetail}"></span>
+                        <span class="label" data-bind="html: $root.resx.label_Views.toUpperCase()"></span>
+                    </div>
+                    <div class="count-column">
+                        <span class="count" data-bind="html: createCountAbbreviate, attr: { title: $root.resx.label_Create.toUpperCase() + ' ' + createCountDetail }"></span>
+                        <span class="label" data-bind="html: $root.resx.label_Create.toUpperCase()"></span>
+                    </div>
+                </div>
+            </div>
+            <!-- /ko -->
+            <a class="module-performance-scroll-left"></a>
+            <a class="module-performance-scroll-right"></a>
+        </div>
+
+        <!-- ko if: moduleDashboard -->
+        <h3 data-bind="html: $root.resx.title_Engagement"></h3>
+        <div class="chart-container module-chart-container module-engagement">
+            <ul class="graph-legend module-engagement-legend"></ul>
+            <div class="line-chart-tooltip" style="display: none;">
+                <span class="title"></span>
+                <span class="info line-1"></span>
+                <span class="info line-2"></span>
+                <div class="line-chart-tooltip-anchor"></div>
+            </div>
+            <div class="clear">
+                <svg class="line-chart"></svg>
+            </div>
+        </div>
+        <div class="chart-statistics-container">
+            <div class="chart-statistics" data-bind="with: engagement">
+                <span class="chart-statistics-label" data-bind="html: $root.resx.title_Engagement">&nbsp;</span>
+                <div class="chart-statistics-data">
+                    <div class="percent-progress" data-bind="css: { 'higher': progress() == $root.percentProgress.higher, 'lower': progress() == $root.percentProgress.lower, 'hidden': progress() == $root.percentProgress.equal }">
+                        <div class="tag-menu"><p data-bind="html: tooltip"></p></div>
+                    </div>
+                    <span class="percent" data-bind="html: percent"></span>
+                    <sup>%</sup>
+                </div>
+            </div>
+            <div data-bind="foreach: engagement.totals">
+                <div class="chart-statistics">
+                    <span class="chart-statistics-label" data-bind="html: label"></span>                
+                    <span class="chart-statistics-data" data-bind="html: total, attr: { title: label + ' ' + totalDetail }"></span>
+                </div>            
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div class="clear"></div>
+
+        <h3 data-bind="html: $root.resx.title_Create"></h3>
+        <div class="module-create chart-container module-chart-container">
+            <ul class="module-create-legend graph-legend"></ul>
+            <div class="line-chart-tooltip" style="display: none;">
+                <span class="title"></span>
+                <span class="info line-1"></span>
+                <span class="info line-2"></span>
+                <div class="line-chart-tooltip-anchor"></div>
+            </div>
+            <div class="clear">
+                <svg class="line-chart"></svg>
+            </div>
+        </div>
+        <div class="chart-statistics-container">
+            <div class="chart-statistics" data-bind="with: create">                
+                <span class="chart-statistics-label" data-bind="html: $root.resx.label_Create.toUpperCase()">&nbsp;</span>
+                <div class="percent-progress" data-bind="css: { 'higher': progress() == $root.percentProgress.higher, 'lower': progress() == $root.percentProgress.lower, 'hidden': progress() == $root.percentProgress.equal }">
+                    <div class="tag-menu">
+                        <p data-bind="html: tooltip"></p>
+                    </div>
+                </div>
+                <span class="chart-statistics-data" data-bind="html: count, attr: { title: $root.resx.label_Create.toUpperCase() + ' ' + countDetail() }"></span>
+            </div>
+            <div class="chart-statistics last">                
+                <span class="chart-statistics-label" data-bind="html: $root.resx.label_View.toUpperCase()">&nbsp;</span>
+                <span class="chart-statistics-data" data-bind="html: totalViews, attr: { title: $root.resx.label_View.toUpperCase() + ' ' + totalViewsDetail() }"></span>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div class="clear"></div>
+        <!-- /ko -->
+
+        <!-- ko ifnot: moduleDashboard -->
+        <h3 data-bind="html: $root.resx.title_AdoptionsAndParticipation"></h3>
+        <div class="adoptions-and-participation chart-container">
+            <ul class="adoptions-and-participation-legend graph-legend"></ul>
+            <div class="line-chart-tooltip" style="display: none;">
+                <span class="title"></span>
+                <span class="info line-1"></span>
+                <span class="info line-2"></span>
+                <div class="line-chart-tooltip-anchor"></div>
+            </div>
+            <svg class="line-chart"></svg>
+        </div>
+        <div class="chart-statistics-container" data-bind="with: adoptionParticipation">
+            <div class="chart-statistics">
+                <span class="chart-statistics-label" data-bind="html: $root.resx.label_Adoptions">Adoption</span>                
+                <span class="chart-statistics-data" data-bind="html: totalAdoption, attr: { title: $root.resx.label_Adoptions + ' ' + totalAdoptionDetail()  }">0</span>                
+            </div>            
+            <div class="chart-statistics">
+                <span class="chart-statistics-label" data-bind="html: $root.resx.label_Participation">Participation</span>                
+                <span class="chart-statistics-data" data-bind="html: totalParticipation, attr: { title: $root.resx.label_Participation + ' ' + totalParticipationDetail() }">0</span>   
+            </div>
+            <div class="chart-statistics">
+                <span class="chart-statistics-label" data-bind="html: $root.resx.label_Spectators">Spectators</span>                
+                <span class="chart-statistics-data" data-bind="html: totalSpectators, attr: { title: $root.resx.label_Spectators + ' ' + totalSpectatorsDetail() }">0</span>                
+            </div>
+        </div>
+        <div class="clear"></div>
+        <h3 data-bind="html: $root.resx.title_ActivityByModule"></h3>
+        <div class="activity-by-modulechart-container">
+            <ul class="activity-by-module-legend graph-legend"></ul>
+            <div class="line-chart-tooltip" style="display: none;">
+                <span class="title"></span>
+                <span class="info line-1"></span>
+                <span class="info line-2"></span>
+                <div class="line-chart-tooltip-anchor"></div>
+            </div>
+            <svg class="line-chart"></svg>
+        </div>
+        <div class="chart-statistics-container" data-bind="foreach: activities.results">
+            <div class = "chart-statistics" data-bind="css: { 'small': label.length <= 12, 'small-long-text': label.length > 12 }">
+                <span class="chart-statistics-label" data-bind="html: label"></span>                
+                <span class="chart-statistics-data" data-bind="html: total, attr: { title: label + ' ' + totalDetail }"></span>                
+            </div>            
+        </div>
+        <div class="clear"></div>
+        <!-- /ko -->
+
+
+        <div class="two-columns" data-bind="with: tagStats">
+            <ul class="right pager" data-bind="visible: pagerVisible">
+                <li><a data-bind="click: prev, attr: { 'class': pagerPrevClass }" aria-label="Prev"></a></li>
+                <li><a data-bind="click: next, attr: { 'class': pagerNextClass }" aria-label="Next"></a></li>
+            </ul>
+            <h3 data-bind="html: $root.resx.title_TrendingTags"></h3>
+            <div class="trending-tags chart-container" style="margin-top: 20px">
+                <svg class="horizontal-bar-chart"></svg>
+            </div>
+        </div>
+
+        <div class="two-columns" data-bind="with: popularContent">
+            <ul class="right pager" data-bind="visible: pagerVisible">
+                <li><a data-bind="click: prev, attr: { 'class': pagerPrevClass }" aria-label="Prev"></a></li>
+                <li><a data-bind="click: next, attr: { 'class': pagerNextClass }" aria-label="Next"></a></li>
+            </ul>
+            <h3 data-bind="html: $root.resx.title_PopularContent"></h3>
+            <ul class="popular-content-list" data-bind="visible: totalResults() > 0, foreach: results">
+                <li>
+                    <div class="left">
+                        <div class="percent-progress" data-bind="css: { 'higher': percentProgress == $root.percentProgress.higher, 'lower': percentProgress == $root.percentProgress.lower, 'hidden': percentProgress == $root.percentProgress.equal }">
+                            <div class="tag-menu"><p data-bind="html: tooltip"></p></div>
+                        </div>
+                        <span class="percent" data-bind="text: percent"></span>
+                        <sup>%</sup>
+                    </div>
+                    <p>
+                        <span class="content-title" data-bind="text: title"></span>
+                        <span><span data-bind="text: moduleName"></span>: <span data-bind="text: date"></span></span>
+                    </p>
+                </li>
+            </ul>
+            <div data-bind="visible: totalResults() < 1">
+                <p data-bind="html: $root.resx.txt_NoPopularContent"></p>
+            </div>
+        </div>
+
+        <div class="clear"></div>
+    </div>
+</div>

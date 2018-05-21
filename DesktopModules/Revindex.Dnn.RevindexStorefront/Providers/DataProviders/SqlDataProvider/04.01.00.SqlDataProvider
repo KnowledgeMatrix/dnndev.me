@@ -1,0 +1,186 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+SET XACT_ABORT ON
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+
+	-- Add configuration column
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD RecurringSalesOrderCustomerSetStatusCancelActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_RecurringSalesOrderCustomerSetStatusCancelActive DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_RecurringSalesOrderCustomerSetStatusCancelActive
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD RecurringSalesOrderCustomerSetStatusHoldActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_RecurringSalesOrderCustomerSetStatusHoldActive DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_RecurringSalesOrderCustomerSetStatusHoldActive
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD RecurringSalesOrderCustomerSetStatusActiveActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_RecurringSalesOrderCustomerSetStatusActiveActive DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_RecurringSalesOrderCustomerSetStatusActiveActive
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD ProductComparisonActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductComparisonActive DEFAULT 1
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductComparisonActive
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentMethodsPayFastActive bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsPayFastActive DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentMethodsPayFastActive
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentMethodsPayFastAvailabilityRule xml NULL
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysPayFastWPMerchantID varchar(255) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysPayFastWPMerchantKey varchar(255) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysPayFastWPTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysPayFastWPTestMode DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysPayFastWPTestMode
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysPayFastWPPDTKey varchar(255) NULL
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD CheckoutPurchaseOrderNumberShow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CheckoutPurchaseOrderNumberShow DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CheckoutPurchaseOrderNumberShow
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD GeneralLogLevel int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_GeneralLogLevel DEFAULT 1
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_GeneralLogLevel
+	
+	-- Create WishList table
+	CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_WishList](
+		[WishListID] [int] IDENTITY(1,1) NOT NULL,
+		[WishListGUID] [uniqueidentifier] NOT NULL,
+		[PortalID] [int] NOT NULL,
+		[UserID] [int] NOT NULL,
+		[Name] [nvarchar](200) NULL,
+		[WishListDate] [datetime] NOT NULL,
+		[CreateDate] [datetime] NOT NULL,
+		[UpdateDate] [datetime] NOT NULL,
+		[RowVersion] [timestamp] NOT NULL,
+	 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_WishList] PRIMARY KEY CLUSTERED 
+	(
+		[WishListID] ASC
+	) 
+	) 
+
+
+	CREATE UNIQUE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_WishList] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_WishList] 
+	(
+		[WishListGUID] ASC
+	) 
+	
+
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_WishList_1] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_WishList] 
+	(
+		[PortalID] ASC
+	) 
+
+
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_WishList_2] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_WishList] 
+	(
+		[UserID] ASC
+	) 
+
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_WishList]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_WishList_Portals] FOREIGN KEY([PortalID])
+	REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID])
+	ON DELETE CASCADE
+	
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_WishList] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_WishList_Portals]
+	
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_WishList]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_WishList_Users] FOREIGN KEY([UserID])
+	REFERENCES {databaseOwner}[{objectQualifier}Users] ([UserID])
+	ON DELETE CASCADE
+	
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_WishList] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_WishList_Users]
+	
+	-- Create WishListDetail table
+	CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_WishListDetail](
+		[WishListDetailID] [int] IDENTITY(1,1) NOT NULL,
+		[WishListID] [int] NOT NULL,
+		[ProductVariantID] [int] NOT NULL,
+		[WishListDetailDate] [datetime] NOT NULL,
+		[CreateDate] [datetime] NOT NULL,
+		[UpdateDate] [datetime] NOT NULL,
+		[RowVersion] [timestamp] NOT NULL,
+	 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_WishListDetail] PRIMARY KEY CLUSTERED 
+	(
+		[WishListDetailID] ASC
+	) 
+	) 
+
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_WishListDetail] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_WishListDetail] 
+	(
+		[WishListID] ASC
+	) 
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_WishListDetail]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_WishListDetail_Revindex_Storefront_ProductVariant] FOREIGN KEY([ProductVariantID])
+	REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant] ([ProductVariantID])
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_WishListDetail] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_WishListDetail_Revindex_Storefront_ProductVariant]
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_WishListDetail]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_WishListDetail_Revindex_Storefront_WishList] FOREIGN KEY([WishListID])
+	REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_WishList] ([WishListID])
+	ON DELETE CASCADE
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_WishListDetail] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_WishListDetail_Revindex_Storefront_WishList]
+	
+	-- Add BasePrice to SalesOrderDetail table
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrderDetail ADD BasePrice decimal(19, 4) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrderDetail_BasePrice DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrderDetail DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrderDetail_BasePrice
+	
+	-- Add support for WorldPayCorporateXmlDirect payment gateway
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysWorldPayCorporateXmlDirectTestMode bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysWorldPayCorporateXmlDirectTestMode DEFAULT 0
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_PaymentGatewaysWorldPayCorporateXmlDirectTestMode
+	
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysWorldPayCorporateXmlDirectMerchantCode varchar(255) NULL
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD PaymentGatewaysWorldPayCorporateXmlDirectXmlPassword varchar(255) NULL
+	
+	-- Add custom login URL and registration URL configuration
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD GeneralNavigationLoginUrl varchar(256) NULL, GeneralNavigationRegistrationUrl varchar(256) NULL
+	
+COMMIT TRANSACTION
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+		
+		-- Upgrade default Cart template to "Standard4"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CartDisplayTemplate = 'Standard4' WHERE CartDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default Confirmation template to "Standard4"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ConfirmationDisplayTemplate = 'Standard4' WHERE ConfirmationDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default Checkout template to "Standard6"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CheckoutDisplayTemplate = 'Standard6' WHERE CheckoutDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default ProductComparison template to "Standard2"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductComparisonDisplayTemplate = 'Standard2' WHERE ProductComparisonDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default ProductDetail template to "Standard7"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductDetailDisplayTemplate = 'Standard7' WHERE ProductDetailDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default ProductList template to "Standard4"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductListDisplayTemplate = 'Standard4' WHERE ProductListDisplayTemplate LIKE 'Standard%'
+		
+		-- Upgrade default ProductShowcase template to "Standard2"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET ProductShowcaseDisplayTemplate = 'Standard2' WHERE ProductShowcaseDisplayTemplate LIKE 'Standard%'
+		
+		-- Update SalesOrderDetail.BasePrice with previous base price numbers
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrderDetail]
+		SET BasePrice = pv.BasePrice
+		FROM {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrderDetail] sod
+		JOIN {databaseOwner}[{objectQualifier}Revindex_Storefront_ProductVariant] pv
+		ON pv.ProductVariantID = sod.ProductVariantID
+		
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO

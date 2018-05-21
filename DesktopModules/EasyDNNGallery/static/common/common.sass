@@ -1,0 +1,1055 @@
+@charset "UTF-8"
+
+@import url("../font-awesome/css/font-awesome.min.css")
+
+@mixin transition ($args...)
+	transition: $args
+	-webkit-transition: $args
+	-o-transition: $args
+	-moz-transition: $args
+
+$color1: #189fd3 /*blue*/
+$color2: #41c981 /*green*/
+$color3: #7dc7d2 /*light blue*/
+$color4: #e07171 /*red*/
+$fontIcon: "FontAwesome"
+
+@mixin small-device-width
+	@media handheld, only screen and (max-width:480px), only screen and (max-device-width:480px)
+		@content
+
+@mixin middle-device-width
+	@media handheld, only screen and (max-width:768px), only screen and (max-device-width:768px)
+		@content
+
+.eds_modalWrapper
+	background-color: rgba(0, 0, 0, .6)
+	position: fixed
+	left: 0
+	right: 0
+	top: 0
+	bottom: 0
+	z-index: 99999
+	@include transition (opacity 200ms ease-in 0s)
+	opacity: 0
+	visibility: hidden
+
+	*
+		-webkit-box-sizing: content-box
+		-moz-box-sizing: content-box
+		box-sizing: content-box
+
+	.eds_modalContent
+		position: relative
+		width: 90%
+		max-width: 600px
+		margin: 6% auto
+		background-color: #fff
+		border-radius: 4px
+		box-shadow: 0 0 3px rgba(0, 0, 0, .5)
+		display: none
+		-moz-box-sizing: border-box
+		box-sizing: border-box
+		font-family: Arial
+		font-color: #7b7b7b
+		font-size: 12px
+
+		> div
+			padding: 20px
+			overflow: auto
+
+		.dnnLabel
+			margin: 0
+			padding: 0
+			text-align: left
+			width: auto
+
+		.dnnFormHelp
+			right: 8px
+
+		.dnnTooltip
+			display: inline
+
+		> h3
+			background-color: #189fd3
+			color: #fff
+			font-family: Arial
+			font-size: 18px
+			font-weight: normal
+			line-height: 44px
+			margin: 0
+			padding: 0 20px
+			letter-spacing: normal
+			border-radius: 3px 3px 0 0
+
+			&:before
+				font-family: $fontIcon
+				color: #fff
+				padding-right: 15px
+				font-size: 30px
+				line-height: 44px
+
+		h4
+			font-family: Arial
+			font-size: 14px
+			line-height: 1
+			font-weight: normal
+			color: #8d8d8d
+			margin: 0 0 15px
+
+			span,
+			label
+				font-family: Arial
+				font-size: 14px
+				line-height: 1
+				padding: 0
+				font-weight: normal
+				color: #8d8d8d
+
+		p
+			font-family: Arial
+			font-size: 12px
+			line-height: 1.3
+			font-weight: normal
+			color: #8d8d8d
+			margin: 0 0 15px
+
+		.edsgg_modalSelect
+			border-bottom: solid 1px #c5c5c5
+			overflow: hidden
+			position: relative
+			width: 80%
+			margin: 25px 20px 0
+
+			&:after
+				font-family: $fontIcon
+				position: absolute
+				content: "\f107"
+				bottom: 12px
+				right: 0
+				color: #16a0cf
+				font-size: 25px
+				line-height: 0
+				z-index: 1
+
+			select
+				background: none transparent
+				border: none
+				webkit-appearance: none
+				box-shadow: none
+				width: 105%
+				padding: 7px 0
+				margin: 0
+				color: #636363
+				line-height: 1
+				font-family: Arial
+				font-size: 11px
+				position: relative
+				z-index: 2
+
+				option
+					background-color: #fff
+
+				&:hover
+					color: #000
+
+			&:hover
+
+				&:after
+					color: #177dd3
+
+		label
+			color: #179fd3
+
+		.uploadControls
+			margin: 30px 0
+			padding: 0
+
+			> .actions
+
+				.action
+					background: none #18a0d4
+					border: none
+						radius: 4px
+					margin-bottom: 10px
+					cursor: pointer
+					@include transition(background-color 100ms linear)
+					@include small-device-width
+						display: block
+						width: 100%
+						-webkit-box-sizing: border-box
+						box-sizing: border-box
+
+					&:hover
+						background-color: #0394cc
+
+					&:before
+						font-family: $fontIcon
+						font-size: 25px
+						display: inline-block
+						margin-right: 10px
+						color: #fff
+						line-height: 15px
+						vertical-align: top
+
+					&.fileSelection,
+					&.upload,
+					&.uploadVideo
+						background-image: none
+						padding: 15px 12px
+
+						> span
+							font-weight: normal
+							color: #fff
+							font-size: 12px
+							text-transform: uppercase
+							cursor: pointer
+
+					&.fileSelection
+
+						&:before
+							content: "\f03e"
+
+					&.upload
+
+						&:before
+							content: "\f093"
+
+					&.uploadVideo
+
+						&:before
+							content: "\f1c8"
+							font-size: 21px
+
+		.uploadDetails
+
+			> ol
+
+				&.fileUploadList
+					margin: 0
+
+					> li
+						background-color: #e7e7e7
+						border-radius: 6px
+						border: none
+						width: 204px
+						@include small-device-width
+							width: 186px
+							margin: 5px 0 0
+
+						> .thumbnail
+							border: solid 1px #23a3d4 !important
+								radius: 3px
+							@include small-device-width
+								width: 55px
+								height: 55px
+
+								> img
+									max-width: 55px
+
+						.filename
+							color: #636363
+							text-shadow: none
+
+						&.failed
+							background-color: #f5a196
+
+							p.filename
+								font-size: 12px
+								text-shadow: none
+
+							p.uploadInfo
+								font-style: normal
+								font-size: 12px
+								text-shadow: none
+								color: #ce1904
+								text-shadow: none
+
+						.details
+
+							> p.filename
+								white-space: normal
+								word-break: break-all
+
+							> .actions
+
+								span
+									font-weight: normal
+									font-size: 12px
+									color: #636363
+
+									&:before
+										font-family: $fontIcon
+										font-size: 14px
+										margin-right: 3px
+
+								.cancel
+
+									&:before
+										content: "\f057"
+										color: #179fd3
+
+								.ok
+									color: #fff
+									text-shadow: none
+
+									&:before
+										content: "\f058"
+										color: #d11901
+
+						&.hasThumb
+
+							> .details
+								width: 120px
+
+		.edsgg_thumbnail
+			padding: 5px
+			background-color: #fff
+			border: solid 1px #dadada
+				radius: 1px
+			display: inline-block
+			margin: 0 7px 15px 0
+			line-height: 0
+			font-size: 0
+
+			img
+				border: none
+
+		.edsgg_labelInput
+			padding: 0
+			margin: 0 0 20px
+
+			> label
+				display: inline-block
+				vertical-align: top
+				color: #636363
+				font-size: 12px
+				line-height: 1
+				width: 30%
+				text-align: right
+				margin: 5px 25px
+
+			> input,
+			> textarea
+				border: solid 1px #c7c7c7
+					radius: 3px
+				padding: 8px 15px
+				line-height: 1
+				background: none #fff !important
+				box-shadow: none !important
+				text-shadow: none !important
+				color: #898989
+				width: 100%
+				-webkit-box-sizing: border-box
+				-moz-box-sizing: border-box
+				box-sizing: border-box
+				font-size: 12px
+				margin: 0
+				@include transition(all 150ms linear)
+
+				&:hover
+					border: solid 1px #c7c7c7
+					box-shadow: 0 0 2px 0 #A4D1E3 !important
+
+				&:focus
+					border: solid 1px #636363
+					box-shadow: none !important
+
+			> textarea
+				height: 100px
+
+			&.edsgg_labelBlock
+
+				> label
+					display: block
+					margin: 10px 0
+					width: auto
+					text-align: left
+
+	.edsgg_embedVideo
+
+		label
+			display: block
+
+		input[type="text"]
+			border: solid 1px #c5c5c5
+				radius: 4px
+			padding: 8px 10px
+			line-height: 1
+			font-family: Arial
+			font-size: 12px
+			color: #636363
+			box-shadow: none
+			width: 80%
+			@include small-device-width
+				width: 97%
+				padding-left: 1%
+				padding-right: 1%
+
+			&:hover
+				border-color: #b5b5b5
+
+			&:focus
+				border-color: #18a0d4
+
+	.edsgg_uploadMessage
+
+		label
+			color: #1e816d
+			background-color: #b8ede3
+			display: block
+			padding: 15px 50px 15px 15px
+			line-height: 1
+			border-radius: 5px
+			position: relative
+
+			&:after
+				position: absolute
+				top: 9px
+				right: 15px
+				content: "\f05a"
+				font-family: $fontIcon
+				color: #00be9c
+				font-size: 25px
+
+			&.edsgg_embedVideoErrorMessage
+				background-color: #f5a196
+				color: #fff
+
+				&:after
+					color: #cd1803
+
+	.edsgg_mainActions
+		text-align: right
+		margin: 20px 0
+
+		> span,
+		> input[type="button"]
+			display: inline-block
+			padding: 0 30px
+			border-radius: 3px
+			font-size: 16px
+			text-decoration: none
+			color: #fff !important
+			margin: 10px 0 10px 10px
+			font-family: Arial
+			line-height: 48px
+			cursor: pointer
+
+			&:hover
+				text-decoration: none
+
+			&:before
+				font-family: $fontIcon
+				font-size: 25px
+				padding-right: 10px
+				vertical-align: top
+				line-height: 45px
+
+			&.edsgg_save
+				background-color: $color1
+
+				&:before
+					content: "\f0c7"
+					color: #106585
+
+				&:hover
+					background-color: $color1 + 20
+
+			&.edsgg_close
+				background-color: #b3b3b3
+
+				&:before
+					color: #838282
+					content: "\f00d"
+
+				&:hover
+					background-color: #b3b3b3 + 20
+
+			&.edsgg_upload
+				background-color: #7dc7d2
+
+				&:before
+					content: "\f093"
+					color: #fff
+
+				&:hover
+					background-color: #7dc7d2 + 20
+
+			&.edsgg_delete
+				background-color: $color4
+
+				&:before
+					content: "\f057"
+					color: #fff
+
+				&:hover
+					background-color: $color4 + 20
+
+			&.edsgg_add
+				background-color: $color1
+
+				&:before
+					content: "\f055"
+					color: #fff
+
+				&:hover
+					background-color: $color1 + 20
+
+			&.edsgg_yes
+				background-color: $color2
+
+				&:before
+					content: "\f00c"
+					color: #fff
+
+				&:hover
+					background-color: $color2 + 20
+
+			&.edsgg_no
+				background-color: $color4
+
+				&:before
+					content: "\f00d"
+					color: #fff
+
+				&:hover
+					background-color: $color4 + 20
+
+		&.edsgg_centered
+			text-align: center
+
+	.edsgg_infoMessages
+		margin: 10px 0
+		display: block
+		line-height: 1.1 !important
+		font-size: 16px !important
+		color: #fff !important
+		padding: 15px 25px
+		border-radius: 2px
+		margin: 5px
+
+		&:before
+			font-size: 21px
+			color: #fff !important
+			font-family: $fontIcon
+			padding-right: 20px
+			line-height: 1
+
+		&.edsgg_success
+			background-color: #00be9c
+
+			&:before
+				content: "\f058"
+
+		&.edsgg_info
+			background-color: #189fd3
+
+			&:before
+				content: "\f05a"
+
+		&.edsgg_warning
+			background-color: #f3c500
+
+			&:before
+				content: "\f071"
+
+		&.edsgg_error
+			background-color: #e07171
+
+			&:before
+				content: "\f06a"
+
+	.edsgg_flashMessages
+		position: absolute
+		top: 80px
+		left: 0
+		right: 0
+		text-align: center
+		z-index: 1
+		height: 0
+		@include small-device-width
+			padding-left: 40px
+			padding-right: 40px
+
+		.edsgg_infoMessages
+			display: inline-block
+			border-style: solid
+			border-width: 2px
+			border-radius: 4px
+			box-shadow: 0 0 3px rgba(0, 0, 0, 0.5)
+			margin-top: 10px
+
+			&.edsgg_success
+				background-color: rgba(0, 190, 156, .85)
+				border-color: #00be9c
+
+			&.edsgg_info
+				background-color: rgba(24, 159, 211, .85)
+				border-color: #189fd3
+
+			&.edsgg_warning
+				background-color: rgba(247, 197, 0, .85)
+				border-color: #f3c500
+
+			&.edsgg_error
+				background-color: rgba(224, 113, 113, .85)
+				border-color: #e07171
+
+	.eds_closeWindowButtonOuter
+		position: absolute
+		top: 8px
+		right: 8px
+		width: 30px
+		height: 30px
+		text-align: center
+		border: solid 1px #115f7d
+			radius: 3px
+		line-height: 0
+		font-size: 0
+		cursor: pointer
+		@include transition(background 100ms linear)
+
+		&:before
+			font-family: $fontIcon
+			color: #fff
+			font-size: 22px
+			line-height: 28px
+			content: "\f00d"
+
+		&:hover
+			background-color: #115f7d
+
+	.edsgg_textCenterBiger
+		text-align: center
+		font-size: 14px
+		font-family: Arial
+		color: #363636
+		line-height: 1.1
+		padding: 20px 0
+
+	&.edsgg_userCreateCategoryWrapper
+
+		.eds_modalContent
+
+			> h3
+				background-color: $color1
+
+				&:before
+					content: "\f055"
+
+	&.edsgg_userEditCategoryWrapper
+
+		.eds_modalContent
+
+			> h3
+				background-color: $color1
+
+				&:before
+					content: "\f0ad"
+
+	&.edsgg_userCreateGalleryWrapper
+
+		.eds_modalContent
+
+			> h3
+				background-color: $color2
+
+				&:before
+					content: "\f055"
+
+		.eds_closeWindowButtonOuter
+			border-color: #007106
+
+			&:hover
+				background-color: #007106
+
+	&.edsgg_userEditGalleryWrapper
+
+		.eds_modalContent
+
+			> h3
+				background-color: $color2
+
+				&:before
+					content: "\f0ad"
+
+		.eds_closeWindowButtonOuter
+			border-color: #007106
+
+			&:hover
+				background-color: #007106
+
+	&.edsgg_userUploadMediaWrapper
+
+		.eds_modalContent
+
+			> h3
+
+				&:before
+					content: "\f093"
+
+	&.edsgg_userEditMediaWrapper
+
+		.eds_modalContent
+
+			> h3
+
+				&:before
+					content: "\f0ad"
+
+	&.edsgg_userReportMediaWrapper
+
+		.eds_modalContent
+
+			> h3
+				background-color: #e07171
+
+				&:before
+					content: "\f071"
+
+		.eds_closeWindowButtonOuter
+			border-color: #853a3a
+
+			&:hover
+				background-color: #853a3a
+
+	&.eds_modalVisible
+		opacity: 1
+		visibility: visible
+
+		.eds_modalContent
+			display: block
+
+	.eds_animated
+		-webkit-animation-duration: 1s
+		animation-duration: 1s
+		-webkit-animation-fill-mode: both
+		animation-fill-mode: both
+
+	@-webkit-keyframes fadeInDown
+		0%
+			opacity: 0
+			-webkit-transform: translateY(-20px)
+			transform: translateY(-20px)
+
+		100%
+			opacity: 1
+			-webkit-transform: translateY(0)
+			transform: translateY(0)
+
+	@keyframes fadeInDown
+		0%
+			opacity: 0
+			-webkit-transform: translateY(-20px)
+			-ms-transform: translateY(-20px)
+			transform: translateY(-20px)
+
+		100%
+			opacity: 1
+			-webkit-transform: translateY(0)
+			-ms-transform: translateY(0)
+			transform: translateY(0)
+
+	.eds_fadeInDown
+		-webkit-animation-name: fadeInDown
+		animation-name: fadeInDown
+
+.edg_Tabulator
+
+	.eds_tabsNav
+		margin: 0
+		padding: 0
+		font-size: 0
+		line-height: 0
+
+		> li
+			display: inline-block
+			list-style-type: none
+			cursor: pointer
+			color: #a3a3a3
+			font-size: 18px
+			border: solid 1px #d4d4d4
+			border-bottom: none
+			padding: 7px 20px
+			margin: 0
+			line-height: 1
+			position: relative
+			z-index: 1
+			background-color: #eee
+			@include small-device-width
+				display: block
+
+			&:after
+				content: ""
+				position: absolute
+				bottom: -3px
+				left: -1px
+				right: -1px
+				opacity: 0
+				visibility: hidden
+				border-bottom: solid 3px #18a0d4
+
+			&:hover,
+			&.edsTabulator_active
+				color: #18a0d4
+				background-color: #fff
+
+			&:first-child
+				border-top-left-radius: 5px
+				margin-left: 0 !important
+				@include small-device-width
+					border-top-left-radius: 5px !important
+					border-top-right-radius: 5px !important
+
+			&:last-child
+				border-top-right-radius: 5px
+
+			&.edsTabulator_active
+				z-index: 2
+				margin: 0 -5px
+				border-top-left-radius: 5px
+				border-top-right-radius: 5px
+				@include small-device-width
+					margin: 0
+					border-top-left-radius: 0
+					border-top-right-radius: 0
+
+				&:after
+					visibility: visible
+					opacity: 1
+
+	.edsTabulator_tabsWrapper
+		overflow: hidden
+		border: solid 1px #d4d4d4
+			radius: 0 5px 5px 5px
+		@include small-device-width
+			border-top-right-radius: 0
+
+		> h4
+			padding: 25px 25px 0
+			margin: 0
+
+		.edsTabulator_tab
+			padding: 25px 50px
+			display: none
+			overflow: hidden
+			position: absolute
+			box-sizing: border-box
+			z-index: 0
+			overflow: hidden
+			@include small-device-width
+				padding: 25px
+
+			&.edsTabulator_active
+				position: relative
+				z-index: 1
+				display: block
+
+.edsgg_userActionsWrapper
+	max-width: 100%
+	font-size: 0
+	line-height: 0
+
+	> div
+		border: solid 1px #9e9fa0
+			left-width: 8px
+			radius: 5px
+		overflow: hidden
+		background-color: #f5f5f5
+		font-size: 0
+		line-height: 0
+
+	.edsgg_userAction
+		display: block
+		font-family: Arial
+		color: #636262 !important
+		text-decoration: none !important
+		padding: 0 30px 0 23px
+		line-height: 60px
+		cursor: pointer
+		border-top: solid 1px #9e9fa0
+		font-size: 16px
+		margin-top: -1px
+		white-space: nowrap
+		@include transition(background 100ms linear, color 200ms linear)
+
+		&:hover
+			background-color: #2b93dd
+			text-decoration: none !important
+			color: #fff !important
+
+			&:before
+				color: #fff
+
+		&:before
+			font-family: $fontIcon
+			font-size: 28px
+			display: inline-block
+			padding-right: 23px
+			color: #2b93dd
+			line-height: 58px
+			vertical-align: top
+
+		&.edsgg_userUploadMedia
+
+			&:before
+				content: "\f0aa"
+
+		&.edsgg_userApproveMedia
+
+			&:before
+				content: "\f058"
+
+		&.edsgg_userAddMedia
+
+			&:before
+				content: "\f055"
+
+		&.edsgg_userEditMedia
+
+			&:before
+				content: "\f040"
+
+		&.edsgg_userCommentsModeration
+
+			&:before
+				content: "\f27a"
+
+	&.edsgg_detailsActions
+		border-left-width: 1px
+		border-bottom-width: 8px
+		text-align: center
+		margin-bottom: 15px
+		margin-top: 20px
+
+		> div
+			display: inline-block
+			border-left-width: 1px
+			border-bottom-width: 8px
+
+		.edsgg_userAction
+			display: inline-block
+			border-top: none
+			border-left: solid 1px #9e9fa0
+			margin-top: 0
+			margin-left: -1px
+			@include middle-device-width
+				padding-right: 23px
+
+			> span
+				@include middle-device-width
+					display: none
+
+			&:before
+				@include middle-device-width
+					padding-right: 0
+
+.edsgg_userEditActions
+	position: absolute
+	top: 0
+	left: 100%
+
+	> a
+		display: inline-block
+		background-color: #fff
+		position: relative
+		line-height: 0
+		font-size: 0
+		width: 25px
+		height: 25px
+		border: solid 1px #d6d6d6
+		border-left: none
+		border-radius: 0 2px 2px 0
+		z-index: 1
+		-webkit-box-sizing: content-box
+		-moz-box-sizing: content-box
+		box-sizing: content-box
+		@include transition(background 150ms linear)
+
+		> span
+			display: inline-block
+			position: absolute
+			top: -1px
+			bottom: -1px
+			right: 25px
+			color: #979797
+			font-size: 12px
+			line-height: 28px
+			width: 0
+			overflow: hidden
+			white-space: nowrap
+			background-color: #fff
+			border-radius: 2px 0 0 2px
+			text-align: center
+			box-shadow: 0 0 0 1px #d6d6d6 inset
+			border-right: none
+			@include transition(width 200ms linear, all 100ms linear)
+
+		&:before
+			font-family: $fontIcon
+			content: "\f040"
+			font-size: 19px
+			color: #757575
+			line-height: 1
+			position: absolute
+			top: 4px
+			left: 6px
+
+		&:hover
+			background-color: #d6d6d6
+
+			> span
+				width: 70px
+
+.edsgg__userMediaReport
+	line-height: 22px
+	font-size: 11px
+	text-decoration: none !important
+	display: inline-block
+	position: relative
+
+	> span
+		font-size: 11px
+		line-height: 22px
+		text-decoration: none !important
+		color: #979797 !important
+		position: absolute
+		bottom: 20px
+		right: 50%
+		width: 60px
+		margin-right: -20px
+		text-align: center
+		background-color: #fff
+		border: solid 1px #d6d6d6
+			radius: 3px
+		opacity: 0
+		visibility: hidden
+		@include transition(all 100ms linear)
+
+	&:before
+		font-family: $fontIcon
+		content: "\f071"
+		font-size: 17px
+		color: #757575
+		line-height: 1
+
+	&:hover
+		text-decoration: none !important
+
+		> span
+			color: #979797 !important
+			opacity: 1
+			visibility: visible
+
+		&:before
+			color: #ff5959 !important
+
+.edsgg__itemContainer
+	position: relative
+
+
+
+
+
+

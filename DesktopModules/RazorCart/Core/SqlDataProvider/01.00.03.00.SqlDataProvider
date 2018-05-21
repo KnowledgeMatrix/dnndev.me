@@ -1,0 +1,1905 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****               Create Tables                      *****/
+/************************************************************/
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_LicenseKey') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_LicenseKey
+	(
+		[LicenseKeyID] [INT] IDENTITY(1,1) NOT NULL,
+		[Hostname] [VARCHAR](256) NULL,
+		[LicenseKey] [VARCHAR](MAX) NULL,
+		[CreateDate] [DATETIME] NULL,
+		[CreatedByUser] [INT] NULL,
+		[PortalID] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_LicenseKey] PRIMARY KEY CLUSTERED
+		(
+			[LicenseKeyID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_Customer') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_Customer
+	(
+		[CustomerID] [INT] IDENTITY(1,1) NOT NULL,
+		[FirstName] [VARCHAR](50) NULL,
+		[LastName] [VARCHAR](50) NULL,
+		[Address1] [VARCHAR](50) NULL,
+		[Address2] [VARCHAR](50) NULL,
+		[City] [VARCHAR](50) NULL,
+		[Country] [VARCHAR](50) NULL,
+		[State] [VARCHAR](50) NULL,
+		[Zip] [VARCHAR](50) NULL,
+		[HomePhone] [VARCHAR](50) NULL,
+		[CellPhone] [VARCHAR](50) NULL,
+		[WorkPhone] [VARCHAR](50) NULL,
+		[Email] [VARCHAR](50) NULL,
+		[AccountNo] [VARCHAR](50) NULL,
+		[MaskAccountNo] [VARCHAR](50) NULL,
+		[ABAExpire] [VARCHAR](50) NULL,
+		[BillingAdress] [VARCHAR](50) NULL,
+		[BillingZip] [VARCHAR](50) NULL,
+		[DNNLogin] [VARCHAR](50) NULL,
+		[DateCreated] [DATETIME] NULL,
+		[Contact] [BIT] NULL,
+		[IPAddress] [VARCHAR](50) NULL,
+		[UDF] [VARCHAR](50) NULL,
+		[PortalID] [INT] NULL,
+		[UDTB1] [VARCHAR](50) NULL DEFAULT (''),
+		[UDTB2] [VARCHAR](50) NULL DEFAULT (''),
+		[CompanyName] [VARCHAR](50) NULL DEFAULT (''),
+		[UDDate] [DATETIME] NULL DEFAULT (GETDATE()),
+		[BuyerRole] [VARCHAR](50) NULL DEFAULT (''),
+		[AnniversaryDate] [DATETIME] NULL,
+		[CreditLimit] [DECIMAL](18, 2) NULL,
+		[BidLimit] [DECIMAL](18, 2) NULL,
+		[ModifiedBy] [NVARCHAR](100) NULL,
+		[DateModified] [DATETIME] NULL,
+		[TaxID] [VARCHAR](50) NULL DEFAULT (''),
+		[StoreID] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_Customer] PRIMARY KEY CLUSTERED
+		(
+			[CustomerID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_StoreOrders') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_StoreOrders
+	(
+		[OrderID] [INT] IDENTITY(1,1) NOT NULL,
+		[CustomerID] [INT] NOT NULL,
+		[OrderDate] [DATETIME] NOT NULL,
+		[PayHistID] [INT] NULL,
+		[ShippingTotal] [MONEY] NULL,
+		[TaxTotal] [MONEY] NULL,
+		[HandlingCharge] [MONEY] NULL,
+		[ShipFirstName] [NVARCHAR](50) NULL,
+		[ShipLastName] [NVARCHAR](50) NULL,
+		[ShipAddress1] [VARCHAR](200) NULL,
+		[ShipAddress2] [VARCHAR](200) NULL,
+		[ShipCity] [VARCHAR](60) NULL,
+		[ShipState] [VARCHAR](60) NULL,
+		[ShipZipcode] [VARCHAR](25) NULL,
+		[ShipCountry] [VARCHAR](50) NULL,
+		[Status] [VARCHAR](20) NULL,
+		[ShipMethod] [NVARCHAR](50) NULL,
+		[AffiliateId] [VARCHAR](20) NULL,
+		[CouponId] [INT] NULL,
+		[Discount] [MONEY] NULL,
+		[MemberDiscount] [MONEY] NULL,
+		[MemberRole] [NVARCHAR](50) NULL,
+		[TrackingNumber] [VARCHAR](50) NULL,
+		[PortalID] [INT] NULL,
+		[Surcharge] [MONEY] NULL DEFAULT ((0)),
+		[PDTextbox] [VARCHAR](50) NULL DEFAULT (''),
+		[UDF1] [VARCHAR](50) NULL DEFAULT (''),
+		[UDF2] [VARCHAR](50) NULL DEFAULT (''),
+		[UDDropDown] [VARCHAR](50) NULL DEFAULT (''),
+		[UDDate] [DATETIME] NULL DEFAULT (GETDATE()),
+		[SpecialInstructions] [NVARCHAR](500) NULL DEFAULT (''),
+		[ShipDate] [DATETIME] NULL,
+		[DeletedFlag] [BIT] NOT NULL DEFAULT ((0)),
+		[UDDate1] [DATETIME] NULL DEFAULT (GETDATE()),
+		[UDDate2] [DATETIME] NULL DEFAULT (GETDATE()),
+		[DNNProfileField] [NVARCHAR](150) NULL,
+		[ShipCarrier] [NVARCHAR](50) NULL DEFAULT (''),
+		[DNNUserID] [INT] NULL DEFAULT ((0)),
+		[ResidentialStatus] [VARCHAR](100) NULL DEFAULT (''),
+		[IPAddress] [VARCHAR](50) NULL,
+		[ModifiedBy] [NVARCHAR](100) NULL,
+		[DateModified] [DATETIME] NULL,
+		[AuctionID] [INT] NULL,
+		[SubTotal] [MONEY] NULL,
+		[GrandTotal] [MONEY] NULL,
+		[RecalcTax] [BIT] NULL DEFAULT ((0)),
+		[RecalcShipping] [BIT] NULL DEFAULT ((0)),
+		[TabModuleId] [INT] NULL,
+		[StoreID] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_StoreOrders] PRIMARY KEY CLUSTERED
+		(
+			[OrderID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_StoreOrderDetails') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_StoreOrderDetails
+	(
+		[OrderDetailID] [INT] IDENTITY(1,1) NOT NULL,
+		[OrderID] [INT] NOT NULL,
+		[ProductID] [INT] NOT NULL,
+		[Quantity] [DECIMAL](10, 2) NOT NULL,
+		[UnitCost] [MONEY] NOT NULL,
+		[ProductName] [NVARCHAR](1000) NULL,
+		[ProductSKU] [VARCHAR](50) NULL,
+		[Shipped] [BIT] NULL,
+		[Returned] [BIT] NULL,
+		[DateUpdated] [DATETIME] NULL,
+		[PortalID] [INT] NULL,
+		[OrderDetailGUID] [UNIQUEIDENTIFIER] NULL DEFAULT (NEWID()),
+		[SerialNumber] [VARCHAR](70) NULL DEFAULT (''),
+		[WebServiceData] [VARCHAR](255) NULL DEFAULT (''),
+		[VendorID] [INT] NULL,
+		[TaxRate] [FLOAT] NULL DEFAULT ((0)),
+		[Commission] [MONEY] NULL DEFAULT ((0)),
+		[StatusID] [INT] NULL,
+		[QtyShipped] [DECIMAL](10, 2) NULL,
+		[Weight] [DECIMAL](12, 2) NULL,
+		[CartAddDate] [DATETIME] NULL,
+		[OtherDetailFields] [NVARCHAR](MAX) NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_StoreOrderDetails] PRIMARY KEY CLUSTERED
+		(
+			[OrderDetailID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_OrderNotes') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_OrderNotes
+	(
+		[ID] [INT] IDENTITY(1,1) NOT NULL,
+		[OrderID] [INT] NOT NULL,
+		[Notes] [NVARCHAR](MAX) NULL,
+		[ModifiedBy] [NVARCHAR](100) NULL,
+		[DateModified] [DATETIME] NULL,
+		[DateCreated] [DATETIME] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_OrderNotes] PRIMARY KEY CLUSTERED
+		(
+			[ID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_PayHist') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_PayHist
+	(
+		[PayHistID] [INT] IDENTITY(1,1) NOT NULL,
+		[CustomerID] [INT] NOT NULL,
+		[PayType] [VARCHAR](50) NULL,
+		[PayDate] [DATETIME] NULL,
+		[Amount] [MONEY] NULL,
+		[Quantity] [INT] NULL,
+		[AcctNo] [VARCHAR](64) NULL,
+		[ExpRoute] [VARCHAR](50) NULL,
+		[TransID] [VARCHAR](50) NULL,
+		[BillingAddress] [VARCHAR](50) NULL,
+		[BillingCity] [VARCHAR](50) NULL,
+		[BillingState] [VARCHAR](50) NULL,
+		[BillingZip] [VARCHAR](50) NULL,
+		[BillingCountry] [VARCHAR](50) NULL,
+		[Coupon] [VARCHAR](50) NULL,
+		[Notes] [VARCHAR](50) NULL,
+		[Status] [VARCHAR](50) NULL,
+		[AuthCode] [VARCHAR](50) NULL,
+		[BillingName] [VARCHAR](50) NULL,
+		[PortalID] [INT] NULL,
+		[CVV] [VARCHAR](50) NULL DEFAULT (''),
+		[InvoiceNo] [VARCHAR](50) NULL DEFAULT (''),
+		[PONumber] [VARCHAR](50) NULL DEFAULT (''),
+		[Success] [BIT] NULL DEFAULT ((0)),
+		[GiftCardID] [INT] NULL DEFAULT ((0)),
+		[OrderID] [INT] NULL DEFAULT ((0)),
+		[IPAddress] [VARCHAR](50) NULL,
+		[ModifiedBy] [NVARCHAR](100) NULL,
+		[DateModified] [DATETIME] NULL,
+		[MaskAcctNo] [VARCHAR](50) NULL,
+		[TransType] [VARCHAR](50) NULL,
+		[ClearDate] [DATETIME] NULL,
+		[AdminNotes] [NVARCHAR](MAX) NULL DEFAULT (''),
+		[OffsetID] [INT] NULL,
+		[TabModuleId] [INT] NULL,
+		[SubscriptionID] [INT] NULL,
+		[PayMethodID] [INT] NULL,
+		[StoreID] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_PayHist] PRIMARY KEY CLUSTERED
+		(
+			[PayHistID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_Manufacturer') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_Manufacturer
+	(
+		[ManufacturerID] [INT] IDENTITY(1,1) NOT NULL,
+		[ManufacturerName] [NVARCHAR](50) NOT NULL,
+		[PortalID] [INT] NULL,
+		[FirstName] [NVARCHAR](50) NULL DEFAULT (''),
+		[LastName] [NVARCHAR](50) NULL DEFAULT (''),
+		[Address1] [NVARCHAR](50) NULL DEFAULT (''),
+		[Address2] [NVARCHAR](50) NULL DEFAULT (''),
+		[City] [NVARCHAR](50) NULL DEFAULT (''),
+		[State] [NVARCHAR](50) NULL DEFAULT (''),
+		[Country] [NVARCHAR](50) NULL DEFAULT (''),
+		[Zip] [VARCHAR](50) NULL DEFAULT (''),
+		[Phone] [VARCHAR](50) NULL DEFAULT (''),
+		[Fax] [VARCHAR](50) NULL DEFAULT (''),
+		[Email] [VARCHAR](50) NULL DEFAULT (''),
+		[IDNumber] [VARCHAR](50) NULL DEFAULT (''),
+		[ContactName] [NVARCHAR](75) NULL DEFAULT (''),
+		[Description] [NVARCHAR](100) NULL DEFAULT (''),
+		[Occupation] [NVARCHAR](50) NULL DEFAULT (''),
+		[Comments] [NTEXT] NULL DEFAULT (''),
+		[AccountNumber] [VARCHAR](50) NULL,
+		[RoutingNumber] [VARCHAR](50) NULL,
+		[Share] [BIT] NULL,
+		[StoreID] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_Manufacturer] PRIMARY KEY CLUSTERED
+		(
+			[ManufacturerID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_Department') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_Department
+	(
+		[DepartmentID] [INT] IDENTITY(1,1) NOT NULL,
+		[ParentID] [INT] NULL,
+		[SortOrder] [INT] NULL,
+		[DepartmentName] [NVARCHAR](50) NOT NULL,
+		[DeptDescription] [NVARCHAR](MAX) NULL,
+		[DeptSEOURL] [VARCHAR](50) NULL,
+		[Share] [BIT] NULL,
+		[ShowDepartmentRole] [BIT] NULL,
+		[MinOrderQty] [INT] NULL,
+		[MinOrderAmount] [MONEY] NULL,
+		[TabModuleId] [INT] NULL,
+		[PortalID] [INT] NULL,
+		[Featured] [BIT] NULL,
+		[DeptImage] [NVARCHAR](500) NULL,
+		[StoreID] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_Department] PRIMARY KEY CLUSTERED
+		(
+			[DepartmentID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_Category') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_Category
+	(
+		[CategoryID] [INT] IDENTITY(1,1) NOT NULL,
+		[CategoryName] [VARCHAR](50) NOT NULL,
+		[SortOrder] [INT] NULL,
+		[Share] [BIT] NULL,
+		[TabModuleId] [INT] NULL,
+		[ParentID] [INT] NULL,
+		[PortalID] [INT] NULL,
+		[CatSEOURL] [VARCHAR](50) NULL DEFAULT (''),
+		[CatDescription] [NTEXT] NULL DEFAULT (''),
+		[ShowCategoryRole] [BIT] NULL DEFAULT ((0)),
+		[MinOrderAmount] [MONEY] NULL DEFAULT ((0)),
+		[MinOrderQty] [INT] NULL DEFAULT ((0)),
+		[DepartmentID] [INT] NULL,
+		[Featured] [BIT] NULL,
+		[CatImage] [NVARCHAR](500) NULL,
+		[BreadCrumb] [NVARCHAR](200) NULL,
+		[LinkUrl] [NVARCHAR](1000) NULL,
+		[H2Tag] [NVARCHAR](100) NULL,
+		[AltTag] [NVARCHAR](120) NULL,
+		[MetaDescription] [NVARCHAR](160) NULL,
+		[StoreID] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_Category] PRIMARY KEY CLUSTERED
+		(
+			[CategoryID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_CategoryProduct') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_CategoryProduct
+	(
+		[Id] [INT] IDENTITY(1,1) NOT NULL,
+		[CategoryID] [INT] NULL,
+		[ProductID] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_CategoryProduct] PRIMARY KEY CLUSTERED
+		(
+			[Id] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_Products') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_Products
+	(
+		[ProductID] [INT] IDENTITY(1,1) NOT NULL,
+		[CategoryID] [INT] NULL,
+		[Manufacturer] [NVARCHAR](50) NULL,
+		[ModelNumber] [NVARCHAR](50) NULL,
+		[ModelName] [NVARCHAR](200) NULL,
+		[ProductImage] [NVARCHAR](500) NULL,
+		[ThumbnailImage] [NVARCHAR](500) NULL,
+		[UnitCost] [MONEY] NOT NULL,
+		[QuantityOnHand] [INT] NULL,
+		[Summary] [NVARCHAR](1000) NULL,
+		[Description] [NTEXT] NULL,
+		[DownloadUrl] [NVARCHAR](1000) NULL,
+		[Featured] [BIT] NOT NULL,
+		[Archived] [BIT] NOT NULL,
+		[Weight] [DECIMAL](12, 2) NULL,
+		[SortOrder] [INT] NULL,
+		[ExcludeCoupon] [BIT] NULL,
+		[Items] [INT] NULL,
+		[Share] [BIT] NULL,
+		[TabModuleId] [INT] NULL,
+		[CreatedByUser] [NVARCHAR](100) NULL,
+		[CreatedDate] [DATETIME] NULL,
+		[LogicallyDeleted] [BIT] NULL,
+		[Recurring] [BIT] NULL,
+		[SubscriptionInterval] [VARCHAR](50) NULL,
+		[RecurringOccurances] [INT] NULL,
+		[UrlGUID] [VARCHAR](1000) NULL,
+		[EncryptUrl] [BIT] NULL,
+		[AddDNNRole] [VARCHAR](50) NULL,
+		[RequireLogin] [BIT] NULL,
+		[UsePriPriceWght] [BIT] NULL,
+		[MasterBundleID] [INT] NULL,
+		[BundleID] [INT] NULL,
+		[RoleExpireDays] [NVARCHAR](500) NULL DEFAULT (''),
+		[MemberPrice] [MONEY] NULL DEFAULT ((0)),
+		[TaxExempt] [BIT] NULL DEFAULT ((0)),
+		[PortalID] [INT] NULL,
+		[ShipCodes] [VARCHAR](100) NULL DEFAULT (''),
+		[ShipText] [NVARCHAR](500) NULL DEFAULT (''),
+		[AffiliateURL] [NVARCHAR](1000) NULL DEFAULT (''),
+		[TitleTag] [VARCHAR](85) NULL DEFAULT (''),
+		[DescriptionTag] [NVARCHAR](200) NULL DEFAULT (''),
+		[KeywordTag] [NVARCHAR](300) NULL DEFAULT (''),
+		[ShipCost] [MONEY] NULL DEFAULT ((0)),
+		[RequireCoupon] [BIT] NULL DEFAULT ((0)),
+		[ShowPDUDF] [BIT] NULL DEFAULT ((0)),
+		[ProductImage2] [NVARCHAR](500) NULL DEFAULT (''),
+		[ProductImage3] [NVARCHAR](500) NULL DEFAULT (''),
+		[ProductImage4] [NVARCHAR](500) NULL DEFAULT (''),
+		[ProductImage5] [NVARCHAR](500) NULL DEFAULT (''),
+		[ProductImage6] [NVARCHAR](500) NULL DEFAULT (''),
+		[Description2] [NTEXT] NULL DEFAULT (''),
+		[Description3] [NTEXT] NULL DEFAULT (''),
+		[Description4] [NTEXT] NULL DEFAULT (''),
+		[Description5] [NTEXT] NULL DEFAULT (''),
+		[TabName1] [VARCHAR](50) NULL DEFAULT (''),
+		[TabName2] [VARCHAR](50) NULL DEFAULT (''),
+		[TabName3] [VARCHAR](50) NULL DEFAULT (''),
+		[TabName4] [VARCHAR](50) NULL DEFAULT (''),
+		[TabName5] [VARCHAR](50) NULL DEFAULT (''),
+		[AutoGUID] [BIT] NULL DEFAULT ((0)),
+		[SEOURL] [VARCHAR](80) NULL DEFAULT (''),
+		[HideThumbnail] [BIT] NULL DEFAULT ((0)),
+		[HidePrice] [BIT] NULL DEFAULT ((0)),
+		[AltTag1] [VARCHAR](150) NULL DEFAULT (''),
+		[AltTag2] [VARCHAR](150) NULL DEFAULT (''),
+		[AltTag3] [VARCHAR](150) NULL DEFAULT (''),
+		[AltTag4] [VARCHAR](150) NULL DEFAULT (''),
+		[AltTag5] [VARCHAR](150) NULL DEFAULT (''),
+		[AltTag6] [VARCHAR](150) NULL DEFAULT (''),
+		[PriceClass] [VARCHAR](20) NULL DEFAULT (''),
+		[MinOrderQty] [INT] NULL,
+		[ChargeHandling] [BIT] NULL DEFAULT ((0)),
+		[LeadTime] [VARCHAR](50) NULL DEFAULT (''),
+		[HideQuantity] [BIT] NULL DEFAULT ((0)),
+		[PriceUnits] [NVARCHAR](50) NULL DEFAULT (''),
+		[MaxOrderQty] [INT] NULL DEFAULT ((-1)),
+		[Width] [INT] NULL DEFAULT ((-1)),
+		[Height] [INT] NULL DEFAULT ((-1)),
+		[Length] [INT] NULL DEFAULT ((-1)),
+		[RecurringStartDate] [VARCHAR](15) NULL DEFAULT (''),
+		[ExcludeVariantRecur] [BIT] NULL DEFAULT ((0)),
+		[WholesalePrice] [MONEY] NULL DEFAULT ((0)),
+		[SalePrice] [MONEY] NULL DEFAULT ((0)),
+		[HideProduct] [BIT] NULL DEFAULT ((0)),
+		[RemoveDNNRole] [VARCHAR](70) NULL DEFAULT (''),
+		[ShowProductRole] [BIT] NULL DEFAULT ((0)),
+		[TaxRate] [FLOAT] NULL DEFAULT ((0)),
+		[Upsell] [BIT] NULL DEFAULT ((0)),
+		[EnableTrial] [BIT] NULL DEFAULT ((0)),
+		[TrialInterval] [VARCHAR](50) NULL DEFAULT (''),
+		[TrialOccurences] [VARCHAR](50) NULL DEFAULT (''),
+		[TrialAmount] [MONEY] NULL DEFAULT ((0)),
+		[UseCompanyLogo] [BIT] NULL DEFAULT ((0)),
+		[UserEnteredAmount] [BIT] NULL DEFAULT ((0)),
+		[Booking] [BIT] NULL DEFAULT ((0)),
+		[BookingUnits] [NVARCHAR](100) NULL DEFAULT (''),
+		[RecurStartDateSetup] [VARCHAR](50) NULL DEFAULT (''),
+		[UpdatedDate] [DATETIME] NULL,
+		[ProductDetailUrl] [NVARCHAR](1000) NULL DEFAULT (''),
+		[GiftCard] [BIT] NULL DEFAULT ((0)),
+		[TaxableAmount] [MONEY] NULL DEFAULT ((0)),
+		[SaleStartDate] [DATETIME] NULL,
+		[SaleEndDate] [DATETIME] NULL,
+		[CompareGroup] [NVARCHAR](150) NULL DEFAULT (''),
+		[ProductTypeID] [INT] NULL,
+		[StoreID] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_Products] PRIMARY KEY CLUSTERED
+		(
+			[ProductID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_Products2') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_Products2
+	(
+		[ProductID] [INT] NOT NULL,
+		[ShowOrderAsIs] [BIT] NOT NULL,
+		[Ecard] [BIT] NULL DEFAULT ((0)),
+		[BinLocation] [NVARCHAR](150) NULL DEFAULT (''),
+		[NumberOfBoxes] [NVARCHAR](50) NULL DEFAULT (''),
+		[DateAddedToInventory] [DATETIME] NULL,
+		[Client] [NVARCHAR](200) NULL DEFAULT (''),
+		[Owner] [NVARCHAR](200) NULL DEFAULT (''),
+		[ShowDatePicker] [BIT] NULL DEFAULT ((0)),
+		[ShowTimePicker] [BIT] NULL DEFAULT ((0)),
+		[ProductFlags] [BIGINT] NULL DEFAULT ((0)),
+		[MinPartialAmount] [DECIMAL](18, 2) NULL,
+		[BookingFields] [VARCHAR](16) NULL,
+		[BookingDuration] [VARCHAR](32) NULL,
+		[MinBookingDuration] [INT] NULL,
+		[MaxBookingDuration] [INT] NULL,
+		[FirstBookingDate] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_Products_2] PRIMARY KEY CLUSTERED
+		(
+			[ProductID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ProductImages') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_ProductImages
+	(
+		[ID] [INT] IDENTITY(1,1) NOT NULL,
+		[ProductID] [INT] NULL,
+		[SortOrder] [INT] NULL,
+		[ThumbImage] [NVARCHAR](500) NULL,
+		[LargeImage] [NVARCHAR](500) NULL,
+		[ZoomImage] [NVARCHAR](500) NULL,
+		[Title] [NVARCHAR](100) NULL,
+		[AltTag] [NVARCHAR](200) NULL,
+		[Status] [SMALLINT] NULL,
+		[CreatedDate] [DATETIME] NULL,
+		[CreatedByUser] [NVARCHAR](100) NULL,
+		[ModifiedDate] [DATETIME] NULL,
+		[ModifiedByUser] [NVARCHAR](100) NULL,
+		[PortalID] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_ProductImages] PRIMARY KEY CLUSTERED
+		(
+			[ID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ProductPackage') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_ProductPackage
+	(
+		[ID] [INT] IDENTITY(1,1) NOT NULL,
+		[ProductID] [INT] NOT NULL,
+		[PackageName] [NVARCHAR](255) NULL,
+		[Weight] [DECIMAL](18, 2) NOT NULL,
+		[WeightUnits] [VARCHAR](20) NULL,
+		[Length] [DECIMAL](18, 2) NOT NULL,
+		[Width] [DECIMAL](18, 2) NOT NULL,
+		[Height] [DECIMAL](18, 2) NOT NULL,
+		[DimUnits] [VARCHAR](20) NULL,
+		[Notes] [NVARCHAR](1000) NULL,
+		[IsEnvelope] [BIT] NULL,
+		[ProductPackage_Product] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_ProductPackage] PRIMARY KEY CLUSTERED
+		(
+			[ID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ProductReviews') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_ProductReviews
+	(
+		[ReviewID] [INT] IDENTITY(1,1) NOT NULL,
+		[ProductID] [INT] NULL,
+		[DNNUserName] [VARCHAR](50) NULL,
+		[Rate] [DECIMAL](4, 2) NULL,
+		[Comments] [VARCHAR](2000) NULL,
+		[NickName] [VARCHAR](50) NULL,
+		[ReviewDate] [DATETIME] NULL DEFAULT (GETDATE()),
+		[Approved] [SMALLINT] NULL,
+		[DateApproved] [DATETIME] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_ProductReviews] PRIMARY KEY CLUSTERED
+		(
+			[ReviewID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_RelatedProducts') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_RelatedProducts
+	(
+		[Id] [INT] IDENTITY(1,1) NOT NULL,
+		[ProductID] [INT] NULL,
+		[RelatedProductID] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_RelatedProducts] PRIMARY KEY CLUSTERED
+		(
+			[Id] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ProductVariantGroup') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_ProductVariantGroup
+	(
+		[VariantGroupID] [INT] IDENTITY(1,1) NOT NULL,
+		[ProductID] [INT] NULL,
+		[VariantGroup] [VARCHAR](50) NULL,
+		[VariantHelpURL] [VARCHAR](150) NULL,
+		[PortalId] [INT] NULL,
+		[Hide] [BIT] NULL DEFAULT ((0)),
+		[GroupDescription] [NVARCHAR](50) NULL,
+		[SortOrder] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_ProductVariantGroup] PRIMARY KEY CLUSTERED
+		(
+			[VariantGroupID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ProductVariant') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_ProductVariant
+	(
+		[VariantID] [INT] IDENTITY(1,1) NOT NULL,
+		[ProductID] [INT] NULL,
+		[VariantGroup] [VARCHAR](50) NULL,
+		[VariantName] [VARCHAR](50) NULL,
+		[VariantImage] [NVARCHAR](500) NULL,
+		[PriceAdjustment] [MONEY] NULL,
+		[WeightAdjustment] [FLOAT] NULL,
+		[SortOrder] [INT] NULL,
+		[PortalId] [INT] NULL,
+		[VariantRequired] [BIT] NULL DEFAULT ((0)),
+		[VariantDisplayType] [VARCHAR](50) NULL DEFAULT (''),
+		[VariantGroupID] [INT] NULL,
+		[Sku] [VARCHAR](50) NULL DEFAULT (''),
+		[QtyOnHand] [INT] NULL,
+		[ConditionalGroupID] [INT] NULL,
+		[VariantZoomImage] [NVARCHAR](200) NULL DEFAULT (''),
+		[VariantIconImage] [NVARCHAR](200) NULL DEFAULT (''),
+		[DropDownImageOption] [VARCHAR](50) NULL DEFAULT (''),
+		[IconImageOption] [VARCHAR](50) NULL DEFAULT (''),
+		[RenderTextInImage] [BIT] NULL DEFAULT ((0)),
+		[LifecycleStatus] [VARCHAR](50) NULL DEFAULT (''),
+		[EnablePriceAdjustment] [BIT] NULL DEFAULT ((0)),
+		[SalePrice] [MONEY] NULL DEFAULT ((0)),
+		[Notes] [NVARCHAR](500) NULL DEFAULT (''),
+		[FeaturedVariant] [BIT] NULL DEFAULT ((0)),
+		[TaxableAmount] [MONEY] NULL DEFAULT ((0)),
+		[PriceType] [VARCHAR](50) NULL,
+		[VariantDesc] [NVARCHAR](50) NULL DEFAULT (''),
+		CONSTRAINT [PK_{objectQualifier}Smith_ProductVariant] PRIMARY KEY CLUSTERED
+		(
+			[VariantID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_VariantConditionalGroup') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_VariantConditionalGroup
+	(
+		[ID] [INT] IDENTITY(1,1) NOT NULL,
+		[VariantID] [INT] NOT NULL,
+		[VariantGroupID] [INT] NOT NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_VariantConditionalGroup] PRIMARY KEY CLUSTERED
+		(
+			[ID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_VendorBooking') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_VendorBooking
+	(
+		[ID] [INT] IDENTITY(1,1) NOT NULL,
+		[VendorProductID] [INT] NULL,
+		[OrderDetailID] [INT] NULL,
+		[CustomerID] [INT] NULL,
+		[StartDate] [DATETIME] NULL,
+		[EndDate] [DATETIME] NULL,
+		[BookQtyReserved] [INT] NULL,
+		[BookQtyPurchased] [INT] NULL,
+		[AllDay] [BIT] NULL,
+		[PortalID] [INT] NULL,
+		[IsConfirmed] [BIT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_VendorBooking] PRIMARY KEY CLUSTERED
+		(
+			[ID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_Coupons') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_Coupons
+	(
+		[CouponID] [INT] IDENTITY(1,1) NOT NULL,
+		[CouponCode] [VARCHAR](50) NULL,
+		[CouponName] [VARCHAR](255) NULL,
+		[CouponAmount] [MONEY] NOT NULL,
+		[CouponQuantity] [VARCHAR](50) NULL,
+		[DiscountByItem] [BIT] NULL,
+		[CreatedByUser] [NVARCHAR](100) NULL,
+		[CreatedDate] [DATETIME] NULL,
+		[ProductId] [INT] NULL,
+		[CouponLimit] [INT] NULL,
+		[CouponShipping] [MONEY] NULL,
+		[DiscountPercent] [DECIMAL](18, 0) NULL DEFAULT ((0)),
+		[PortalID] [INT] NULL,
+		[ExpireDate] [DATETIME] NULL,
+		[DiscountFirstPaymentOnly] [BIT] NULL DEFAULT ((0)),
+		[CouponRoleExists] [BIT] NULL DEFAULT ((0)),
+		[MaxUseProduct] [INT] NULL DEFAULT ((0)),
+		[Active] [BIT] NULL DEFAULT ((0)),
+		[StartDate] [DATETIME] NULL,
+		[MinOrderAmount] [MONEY] NULL DEFAULT ((0)),
+		[FreeStandardShipping] [BIT] NULL DEFAULT ((0)),
+		[UpgradeShipping] [BIT] NULL DEFAULT ((0)),
+		[StoreID] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_Coupons] PRIMARY KEY CLUSTERED
+		(
+			[CouponID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ProductQtyDiscounts') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_ProductQtyDiscounts
+	(
+		[QtyDiscountID] [INT] IDENTITY(1,1) NOT NULL,
+		[ProductID] [INT] NOT NULL,
+		[QtyFrom] [INT] NULL,
+		[QtyTo] [INT] NULL,
+		[Price] [MONEY] NULL,
+		[AdjustType] [VARCHAR](50) NULL,
+		[RoleID] [INT] NULL,
+		[PaymentMethod] [VARCHAR](100) NULL,
+		[DisplayLabel] [NVARCHAR](50) NULL,
+		[TabModuleId] [INT] NULL,
+		[PortalId] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_ProductQtyDiscounts] PRIMARY KEY CLUSTERED
+		(
+			[QtyDiscountID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ProductDiscountsByRole') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_ProductDiscountsByRole
+	(
+		[DiscountID] [INT] IDENTITY(1,1) NOT NULL,
+		[ProductID] [INT] NULL,
+		[RoleID] [INT] NULL,
+		[DiscountPercent] [DECIMAL](6, 2) NULL,
+		[DiscountAmount] [MONEY] NULL,
+		[UserName] [NVARCHAR](100) NULL DEFAULT (''),
+		[PortalID] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_ProductDiscountsByRole] PRIMARY KEY CLUSTERED
+		(
+			[DiscountID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_PriceClass') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_PriceClass
+	(
+		[PriceClassID] [INT] IDENTITY(1,1) NOT NULL,
+		[PriceClass] [VARCHAR](20) NULL,
+		[QtyFrom] [INT] NULL,
+		[QtyTo] [INT] NULL,
+		[Price] [MONEY] NULL,
+		[TabModuleId] [INT] NULL,
+		[PortalID] [INT] NULL,
+		[DiscountPercent] [DECIMAL](10, 2) NULL DEFAULT ((0)),
+		[AdjustType] [VARCHAR](50) NULL,
+		[Description] [NVARCHAR](200) NULL,
+		[StoreID] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_PriceClass] PRIMARY KEY CLUSTERED
+		(
+			[PriceClassID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_OrderDiscounts') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_OrderDiscounts
+	(
+		[OrderDiscountID] [INT] IDENTITY(1,1) NOT NULL,
+		[RoleID] [INT] NULL,
+		[DiscountPercent] [DECIMAL](6, 2) NULL,
+		[DiscountAmount] [MONEY] NULL,
+		[TextBox1Required] [BIT] NULL,
+		[TextBox2Required] [BIT] NULL,
+		[DateRequired] [BIT] NULL,
+		[TabModuleID] [INT] NULL,
+		[PortalID] [INT] NULL,
+		[StoreID] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_OrderDiscounts] PRIMARY KEY CLUSTERED
+		(
+			[OrderDiscountID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_PaymentMethodsZones') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_PaymentMethodsZones
+	(
+		[PayZoneID] [INT] IDENTITY(1,1) NOT NULL,
+		[Name] [NVARCHAR](100) NOT NULL,
+		[Country] [VARCHAR](1000) NULL,
+		[State] [VARCHAR](200) NULL,
+		[TabModuleId] [INT] NULL,
+		[PortalId] [INT] NULL,
+		[StoreID] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_PaymentMethodsZones] PRIMARY KEY CLUSTERED
+		(
+			[PayZoneID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_PaymentMethods') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_PaymentMethods
+	(
+		[PayMethodID] [INT] IDENTITY(1,1) NOT NULL,
+		[PayZoneID] [INT] NOT NULL,
+		[Name] [NVARCHAR](100) NOT NULL,
+		[Roles] [VARCHAR](100) NULL,
+		[SurchargeAmount] [DECIMAL](18, 2) NULL,
+		[SurchargePercentage] [DECIMAL](18, 2) NULL,
+		[Step2Label1] [NVARCHAR](200) NULL,
+		[Step2Label2] [NVARCHAR](200) NULL,
+		[EmailMessage] [NVARCHAR](500) NULL,
+		[TabModuleId] [INT] NULL,
+		[PortalId] [INT] NOT NULL,
+		[Type] [VARCHAR](100) NULL,
+		[SortOrder] [INT] NULL DEFAULT ((0)),
+		[PriceFrom] [DECIMAL](18, 2) NULL,
+		[PriceTo] [DECIMAL](18, 2) NULL,
+		[MonthlyLimit] [DECIMAL](18, 2) NULL,
+		[Active] [BIT] NULL DEFAULT ((0)),
+		[DepositRequired] [BIT] NULL DEFAULT ((0)),
+		[DepositPercent] [DECIMAL](18, 2) NULL,
+		[Share] [BIT] NULL DEFAULT ((0)),
+		[StoreID] [INT] NULL,
+		[GatewayCode] [NVARCHAR](64) NULL,
+		[GatewayUserID] [NVARCHAR](64) NULL,
+		[GatewayPassword] [NVARCHAR](64) NULL,
+		[GatewayKey] [NVARCHAR](128) NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_PaymentMethods] PRIMARY KEY CLUSTERED
+		(
+			[PayMethodID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_Tax') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_Tax
+	(
+		[TaxId] [INT] IDENTITY(1,1) NOT NULL,
+		[State] [VARCHAR](50) NULL,
+		[County] [VARCHAR](50) NULL,
+		[City] [VARCHAR](255) NULL,
+		[TaxRate] [FLOAT] NOT NULL,
+		[PostalCode] [VARCHAR](50) NULL DEFAULT (''),
+		[PortalID] [INT] NULL,
+		[StoreID] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_Tax] PRIMARY KEY CLUSTERED
+		(
+			[TaxId] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_TaxStates') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_TaxStates
+	(
+		[TaxStateId] [INT] IDENTITY(1,1) NOT NULL,
+		[StateText] [VARCHAR](200) NULL,
+		[State] [VARCHAR](50) NULL,
+		[CountryCode] [VARCHAR](50) NULL,
+		[PortalID] [INT] NOT NULL,
+		[ZipCode] [VARCHAR](50) NULL,
+		[TaxExemptAmount] [DECIMAL](18, 2) NULL,
+		[TabModuleId] [INT] NULL,
+		[StoreID] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_TaxStates] PRIMARY KEY CLUSTERED
+		(
+			[TaxStateId] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ShipZone') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_ShipZone
+	(
+		[ZoneID] [INT] IDENTITY(1,1) NOT NULL,
+		[ZoneName] [VARCHAR](200) NOT NULL,
+		[Country] [VARCHAR](1000) NULL,
+		[State] [VARCHAR](500) NULL,
+		[Price] [DECIMAL](18, 2) NULL,
+		[TabModuleId] [INT] NULL,
+		[PortalId] [INT] NULL,
+		[FreeShipOverAmount] [DECIMAL](18, 2) NULL,
+		[StoreID] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_ShipZone] PRIMARY KEY CLUSTERED
+		(
+			[ZoneID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ShipMethods') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_ShipMethods
+	(
+		[ShipMethodID] [INT] IDENTITY(1,1) NOT NULL,
+		[ShipMethodName] [VARCHAR](50) NULL,
+		[ShipMethodAmount] [DECIMAL](18, 2) NULL,
+		[Share] [BIT] NULL,
+		[TabModuleId] [INT] NULL,
+		[SortOrder] [INT] NULL,
+		[PortalID] [INT] NULL,
+		[SurchargePercentage] [DECIMAL](18, 2) NULL DEFAULT ((0)),
+		[SurchargeAmount] [DECIMAL](18, 2) NULL DEFAULT ((0)),
+		[RoleID] [INT] NULL DEFAULT ((999999)),
+		[StoreID] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_ShipMethods] PRIMARY KEY CLUSTERED
+		(
+			[ShipMethodID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ShipCategories') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_ShipCategories
+	(
+		[CategoryID] [INT] NOT NULL,
+		[TabModelID] [INT] NOT NULL,
+		[PortalID] [INT] NOT NULL,
+		[StoreID] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_ShipCategories] PRIMARY KEY CLUSTERED
+		(
+			[CategoryID] ASC, [PortalID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ShippingByQuantity') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_ShippingByQuantity
+	(
+		[ShipCostID] [INT] IDENTITY(1,1) NOT NULL,
+		[QuantityFrom] [INT] NULL,
+		[QuantityTo] [INT] NULL,
+		[Price] [MONEY] NULL,
+		[TabModuleId] [INT] NULL,
+		[PortalID] [INT] NULL,
+		[ShipMethodID] [INT] NULL,
+		[CategoryID] [INT] NULL,
+		[ZoneID] [INT] NULL,
+		[ZoneName] [VARCHAR](200) NULL DEFAULT (''),
+		[StoreID] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_ShippingByQuantity] PRIMARY KEY CLUSTERED
+		(
+			[ShipCostID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ShippingByWeight') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_ShippingByWeight
+	(
+		[ShipCostID] [INT] IDENTITY(1,1) NOT NULL,
+		[WeightFrom] [DECIMAL](18, 2) NULL,
+		[WeightTo] [DECIMAL](18, 2) NULL,
+		[Price] [MONEY] NULL,
+		[TabModuleId] [INT] NULL,
+		[PortalID] [INT] NULL,
+		[ShipMethodID] [INT] NULL,
+		[CategoryID] [INT] NULL,
+		[ZoneID] [INT] NULL,
+		[ZoneName] [VARCHAR](200) NULL,
+		[StoreID] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_ShippingByWeight] PRIMARY KEY CLUSTERED
+		(
+			[ShipCostID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ShippingByAmount') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_ShippingByAmount
+	(
+		[ShipCostID] [INT] IDENTITY(1,1) NOT NULL,
+		[AmountFrom] [DECIMAL](18, 2) NULL,
+		[AmountTo] [DECIMAL](18, 2) NULL,
+		[Price] [MONEY] NULL,
+		[TabModuleId] [INT] NULL,
+		[PortalID] [INT] NULL,
+		[ShipMethodID] [INT] NULL,
+		[CategoryID] [INT] NULL,
+		[IsIntl] [BIT] NULL,
+		[StoreID] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_ShippingByAmount] PRIMARY KEY CLUSTERED
+		(
+			[ShipCostID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ShippingByZipCode') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_ShippingByZipCode
+	(
+		[ShipCostID] [INT] IDENTITY(1,1) NOT NULL,
+		[ZipCode] [VARCHAR](50) NULL,
+		[Price] [MONEY] NULL,
+		[TabModuleId] [INT] NULL,
+		[PortalID] [INT] NULL,
+		[ShipMethodID] [INT] NULL,
+		[CategoryID] [INT] NULL,
+		[Country] [VARCHAR](50) NULL,
+		[StoreID] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_ShippingByZipCode] PRIMARY KEY CLUSTERED
+		(
+			[ShipCostID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ShipFree') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_ShipFree
+	(
+		[ID] [INT] IDENTITY(1,1) NOT NULL,
+		[ZipCode] [NVARCHAR](50) NULL,
+		[ShipMethodID] [INT] NULL,
+		[CategoryID] [INT] NULL,
+		[Country] [VARCHAR](50) NULL,
+		[TabModuleId] [INT] NULL,
+		[PortalID] [INT] NULL,
+		[StoreID] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_ShipFree] PRIMARY KEY CLUSTERED
+		(
+			[ID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ShoppingCart') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_ShoppingCart
+	(
+		[CartID] [INT] IDENTITY(1,1) NOT NULL,
+		[ProductID] [INT] NOT NULL,
+		[ProductName] [VARCHAR](255) NULL,
+		[ProductSku] [VARCHAR](50) NULL,
+		[Quantity] [DECIMAL](10, 2) NULL,
+		[UnitCost] [MONEY] NULL,
+		[CartCookie] [VARCHAR](50) NULL,
+		[IsRequired] [BIT] NULL,
+		[PriceClass] [VARCHAR](20) NULL,
+		[VariantCost] [DECIMAL](10, 2) NULL DEFAULT ((0)),
+		[ImageName] [NVARCHAR](200) NULL DEFAULT (''),
+		[BundleID] [INT] NULL DEFAULT ((0)),
+		[DNNLogin] [NVARCHAR](150) NULL DEFAULT (''),
+		[Email] [NVARCHAR](256) NULL DEFAULT (''),
+		[Weight] [DECIMAL](12, 2) NULL,
+		[OtherCartFields] [NVARCHAR](MAX) NULL,
+		[CreateDate] [DATETIME] NULL,
+		[PortalID] [INT] NULL,
+		[StoreID] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_ShoppingCart] PRIMARY KEY CLUSTERED
+		(
+			[CartID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_SavedCart') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_SavedCart
+	(
+		[CartID] [INT] IDENTITY(1,1) NOT NULL,
+		[Description] [VARCHAR](150) NULL,
+		[DNNLogin] [VARCHAR](50) NULL,
+		[PortalID] [INT] NULL,
+		[CreateDate] [DATETIME] NULL,
+		[ShippingTotal] [MONEY] NULL,
+		[HandlingCharge] [MONEY] NULL,
+		[TaxTotal] [MONEY] NULL,
+		[Discount] [MONEY] NULL,
+		[StoreID] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_SavedCart] PRIMARY KEY CLUSTERED
+		(
+			[CartID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_SavedCartDetail') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_SavedCartDetail
+	(
+		[CartDetailID] [INT] IDENTITY(1,1) NOT NULL,
+		[CartID] [INT] NOT NULL,
+		[ProductID] [INT] NOT NULL,
+		[Manufacturer] [VARCHAR](50) NULL,
+		[ModelName] [VARCHAR](255) NULL,
+		[UnitCost] [MONEY] NULL,
+		[QuantityOnHand] [INT] NULL,
+		[Quantity] [INT] NULL,
+		[Weight] [DECIMAL](18, 0) NULL,
+		[ProductName] [VARCHAR](255) NULL,
+		[ProductSku] [VARCHAR](50) NULL,
+		[IsRequired] [BIT] NULL,
+		[BundleID] [INT] NULL,
+		[AddDnnRole] [VARCHAR](50) NULL,
+		[Recurring] [BIT] NULL,
+		[RequireLogin] [BIT] NULL,
+		[UsePriPriceWght] [BIT] NULL,
+		[MasterBundleID] [INT] NULL,
+		[LineItem] [INT] NULL,
+		[RoleExpireDays] [VARCHAR](50) NULL,
+		[MemberPrice] [MONEY] NULL,
+		[TaxExempt] [BIT] NULL,
+		[ShipCodes] [VARCHAR](100) NULL,
+		[ShipText] [NVARCHAR](500) NULL,
+		[ShipCost] [MONEY] NULL,
+		[PriceClass] [VARCHAR](20) NULL,
+		[VariantCost] [MONEY] NULL,
+		[RemoveDNNRole] [VARCHAR](70) NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_SavedCartDetail] PRIMARY KEY CLUSTERED
+		(
+			[CartDetailID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_EmailTemplateSC') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_EmailTemplateSC
+	(
+		[TemplateID] [INT] IDENTITY(1,1) NOT NULL,
+		[Name] [NVARCHAR](50) NOT NULL,
+		[Subject] [NVARCHAR](255) NOT NULL,
+		[Template] [NTEXT] NOT NULL,
+		[TabModuleID] [INT] NOT NULL,
+		[PortalID] [INT] NOT NULL,
+		[LanguageLocale] [NVARCHAR](20) NULL DEFAULT (''),
+		[Type] [NVARCHAR](150) NULL DEFAULT (''),
+		[StoreID] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_EmailTemplateSC] PRIMARY KEY CLUSTERED
+		(
+			[TemplateID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_InvoiceTemplate') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_InvoiceTemplate
+	(
+		[TemplateID] [INT] IDENTITY(1,1) NOT NULL,
+		[Name] [NVARCHAR](100) NOT NULL,
+		[PortalID] [INT] NOT NULL,
+		[LanguageLocale] [NVARCHAR](20) NOT NULL,
+		[Template] [NTEXT],
+		[StoreID] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_InvoiceTemplate] PRIMARY KEY CLUSTERED
+		(
+			[TemplateID] ASC
+		)
+	)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_Analytics') AND type in (N'U'))
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}Smith_Analytics
+	(
+		[ID] [INT] IDENTITY(1,1) NOT NULL,
+		[Date] [DATETIME] NOT NULL,
+		[Action] [VARCHAR](64) NOT NULL,
+		[ProductID] [INT] NOT NULL,
+		[UserID] [INT] NULL,
+		[CartID] [INT] NULL,
+		[PortalID] [INT] NOT NULL,
+		[StoreID] [INT] NULL,
+		CONSTRAINT [PK_{objectQualifier}Smith_Analytics] PRIMARY KEY CLUSTERED
+		(
+			[ID] ASC
+		)
+	)
+END
+GO
+
+
+
+/************************************************************/
+/*****                  Alter Tables                    *****/
+/************************************************************/
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ShoppingCart') AND type in (N'U'))
+BEGIN
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_ShoppingCart') AND name = N'CreateDate')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_ShoppingCart
+		ADD
+			[CreateDate] [DATETIME]
+	END
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_StoreOrderDetails') AND type in (N'U'))
+BEGIN
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_StoreOrderDetails') AND name = N'Weight')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_StoreOrderDetails
+		ADD
+			[Weight] [DECIMAL](18,0)
+	END
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_StoreOrderDetails') AND name = N'CartAddDate')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_StoreOrderDetails
+		ADD
+			[CartAddDate] [DATETIME]
+	END
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_PayHist') AND type in (N'U'))
+BEGIN
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_PayHist') AND name = N'PayMethodID')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_PayHist
+		ADD
+			[PayMethodID] [INT]
+	END
+END
+GO
+
+
+
+/************************************************************/
+/*****                Drop Sprocs                       *****/
+/************************************************************/
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_CreateShoppingCartItem') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateShoppingCartItem
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_CreateOrderDetail') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateOrderDetail
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_CreateAnalyticsEvent') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateAnalyticsEvent
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_UpdateSavedShoppingCart') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateSavedShoppingCart
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListUserOrders') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListUserOrders
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_SaveShoppingCartItem') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_SaveShoppingCartItem
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_CreatePayment') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_CreatePayment
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_UpdatePayment') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdatePayment
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_CreateTaxTableEntry') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateTaxTableEntry
+GO
+
+
+
+/************************************************************/
+/*****               Create Sprocs                      *****/
+/************************************************************/
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateShoppingCartItem
+	@ProductID INT = NULL,
+	@ProductName VARCHAR(255) = NULL,
+	@ProductSku VARCHAR(50) = NULL,
+	@Quantity DECIMAL(10, 2) = NULL,
+	@UnitCost MONEY = NULL,
+	@CartCookie VARCHAR(100) = NULL,
+	@IsRequired BIT = NULL,
+	@PriceClass VARCHAR(20) = NULL,
+	@VariantCost DECIMAL(10, 2) = NULL,
+	@ImageName VARCHAR(200) = NULL,
+	@BundleID INT = NULL,
+	@DNNLogin NVARCHAR(100) = NULL,
+	@Weight DECIMAL(12,2) = NULL,
+	@CreateDate DATETIME = NULL,
+	@OtherCartFields NVARCHAR(MAX) = NULL,
+	@IsBooking BIT = NULL,
+	@PortalID INT = NULL,
+	@StoreID INT = NULL
+AS
+BEGIN
+	DECLARE @CartID [INT],
+			@CartVariantID [INT]
+
+	SELECT
+		@CartID = SC.[CartID]
+	FROM
+		{databaseOwner}{objectQualifier}Smith_ShoppingCart SC
+	WHERE
+		SC.[ProductID] = @ProductID
+		AND SC.[ProductName] = @ProductName
+		AND SC.[ProductSku] = @ProductSku
+		AND SC.[CartCookie] = @CartCookie
+		AND SC.[DNNLogin] = @DNNLogin
+		AND SC.[PortalID] = @PortalID
+		AND SC.[StoreID] = @StoreID
+
+	SELECT
+		@CartVariantID = SCV.[CartVariantID]
+	FROM
+		{databaseOwner}{objectQualifier}Smith_ShoppingCartVariant SCV
+	WHERE
+		SCV.[CartID] = @CartID
+
+	IF (@CartID IS NOT NULL) AND (@CartVariantID IS NULL AND @IsBooking <> 1)
+		BEGIN
+			UPDATE
+				{databaseOwner}{objectQualifier}Smith_ShoppingCart
+			SET
+				[Quantity] += @Quantity,
+				[UnitCost] = @UnitCost
+			WHERE
+				[CartID] = @CartID
+			SELECT @CartID
+		END
+	ELSE
+		BEGIN
+			INSERT INTO {databaseOwner}{objectQualifier}Smith_ShoppingCart
+				([ProductID]
+				,[ProductName]
+				,[ProductSku]
+				,[Quantity]
+				,[UnitCost]
+				,[CartCookie]
+				,[IsRequired]
+				,[PriceClass]
+				,[VariantCost]
+				,[ImageName]
+				,[BundleID]
+				,[DNNLogin]
+				,[Weight]
+				,[CreateDate]
+				,[OtherCartFields]
+				,[PortalID]
+				,[StoreID])
+			 VALUES
+				(@ProductID
+				,@ProductName
+				,@ProductSku
+				,@Quantity
+				,@UnitCost
+				,@CartCookie
+				,@IsRequired
+				,@PriceClass
+				,@VariantCost
+				,@ImageName
+				,@BundleID
+				,@DNNLogin
+				,@Weight
+				,@CreateDate
+				,@OtherCartFields
+				,@PortalID
+				,@StoreID)
+			SELECT SCOPE_IDENTITY()
+		END
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateOrderDetail
+	@OrderID INT = NULL,
+	@ProductID INT = NULL,
+	@Quantity DECIMAL(10,2) = NULL,
+	@UnitCost MONEY = 0,
+	@ProductName NVARCHAR(1000) = NULL,
+	@ProductSKU VARCHAR(50) = NULL,
+	@Shipped BIT = NULL,
+	@Returned BIT = NULL,
+	@DateUpdated DATETIME = NULL,
+	@PortalID INT = NULL,
+	@SerialNumber VARCHAR(70) = NULL,
+	@WebServiceData VARCHAR(255) = NULL,
+	@VendorID INT = NULL,
+	@TaxRate FLOAT = NULL,
+	@Commission MONEY = NULL,
+	@StatusID INT = NULL,
+	@QtyShipped DECIMAL(10,2) = NULL,
+	@Weight DECIMAL(12,2) = NULL,
+	@CartAddDate DATETIME = NULL,
+	@OtherDetailFields NVARCHAR(MAX) = NULL
+AS
+BEGIN
+	INSERT INTO {databaseOwner}{objectQualifier}Smith_StoreOrderDetails
+		([OrderID]
+		,[ProductID]
+		,[Quantity]
+		,[UnitCost]
+		,[ProductName]
+		,[ProductSKU]
+		,[Shipped]
+		,[Returned]
+		,[DateUpdated]
+		,[PortalID]
+		,[SerialNumber]
+		,[WebServiceData]
+		,[VendorID]
+		,[TaxRate]
+		,[Commission]
+		,[StatusID]
+		,[QtyShipped]
+		,[Weight]
+		,[CartAddDate]
+		,[OtherDetailFields])
+	VALUES
+		(@OrderID
+		,@ProductID
+		,@Quantity
+		,@UnitCost
+		,@ProductName
+		,@ProductSKU
+		,@Shipped
+		,@Returned
+		,@DateUpdated
+		,@PortalID
+		,@SerialNumber
+		,@WebServiceData
+		,@VendorID
+		,@TaxRate
+		,@Commission
+		,@StatusID
+		,@QtyShipped
+		,@Weight
+		,@CartAddDate
+		,@OtherDetailFields)
+	SELECT SCOPE_IDENTITY()
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateAnalyticsEvent
+	@Action VARCHAR(64) = NULL,
+	@ProductID INT = NULL,
+	@UserID INT = NULL,
+	@CartID INT = NULL,
+	@PortalID INT = NULL,
+	@StoreID INT = NULL
+AS
+BEGIN
+	INSERT INTO {databaseOwner}{objectQualifier}Smith_Analytics
+		([Action]
+		,[ProductID]
+		,[UserID]
+		,[CartID]
+		,[PortalID]
+		,[StoreID])
+	VALUES
+		(@Action
+		,@ProductID
+		,@UserID
+		,@CartID
+		,@PortalID
+		,@StoreID)
+	SELECT SCOPE_IDENTITY()
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateSavedShoppingCart
+	@CartID INT = NULL,
+	@Description VARCHAR(150) = NULL,
+	@ShippingTotal MONEY = NULL,
+	@HandlingCharge MONEY = NULL,
+	@TaxTotal MONEY = NULL,
+	@Discount MONEY = NULL,
+	@PortalID INT = NULL,
+	@StoreID INT = NULL
+AS
+BEGIN
+	UPDATE
+		{databaseOwner}{objectQualifier}Smith_SavedCart
+	SET
+		[Description] = @Description,
+		[HandlingCharge] = @HandlingCharge,
+		[TaxTotal] = @TaxTotal,
+		[Discount] = @Discount
+	WHERE
+		[CartID] = @CartID
+		AND [PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListUserOrders
+	@DNNLogin VARCHAR(50) = NULL,
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SELECT
+		O.*
+	FROM
+		{databaseOwner}{objectQualifier}Smith_StoreOrders O
+	INNER JOIN
+		{databaseOwner}{objectQualifier}Smith_Customer C
+	ON
+		C.[CustomerID] = O.[CustomerID]
+	WHERE
+		C.[DNNLogin] = @DNNLogin
+		AND (O.[StoreID] = @StoreID OR O.[TabModuleId] = @StoreID OR @StoreID = -1)
+		AND O.[PortalID] = @PortalID
+	ORDER BY
+		O.[OrderDate] DESC
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_SaveShoppingCartItem
+	@CartID INT = NULL,
+	@ProductID INT = NULL,
+	@Manufacturer VARCHAR(50) = NULL,
+	@ModelName VARCHAR(255) = NULL,
+	@UnitCost MONEY = NULL,
+	@QuantityOnHand INT = NULL,
+	@Quantity INT = NULL,
+	@Weight DECIMAL(18,0) = NULL,
+	@ProductName VARCHAR(255) = NULL,
+	@ProductSku VARCHAR(50) = NULL,
+	@IsRequired BIT = NULL,
+	@BundleID INT = NULL,
+	@AddDnnRole VARCHAR(50) = NULL,
+	@Recurring BIT = NULL,
+	@RequireLogin BIT = NULL,
+	@UsePriPriceWght BIT = NULL,
+	@MasterBundleID INT = NULL,
+	@LineItem INT = NULL,
+	@RoleExpireDays VARCHAR(50) = NULL,
+	@MemberPrice MONEY = NULL,
+	@TaxExempt BIT = NULL,
+	@ShipCodes VARCHAR(100) = NULL,
+	@ShipText VARCHAR(500) = NULL,
+	@ShipCost MONEY = NULL,
+	@PriceClass VARCHAR(20) = NULL,
+	@VariantCost MONEY = NULL,
+	@RemoveDNNRole VARCHAR(70) = NULL,
+	@IsBooking BIT = NULL
+AS
+BEGIN
+	DECLARE @CartDetailID [INT],
+			@DetailVariantID [INT]
+
+	SELECT
+		@CartDetailID = SCD.[CartDetailID]
+	FROM
+		{databaseOwner}{objectQualifier}Smith_SavedCartDetail SCD
+	WHERE
+		SCD.[CartID] = @CartID
+		AND SCD.[ProductID] = @ProductID
+		AND SCD.[ModelName] = @ModelName
+		AND SCD.[ProductName] = @ProductName
+		AND SCD.[ProductSku] = @ProductSku
+
+	SELECT
+		@DetailVariantID = SCDV.[DetailVariantID]
+	FROM
+		{databaseOwner}{objectQualifier}Smith_SavedCartDetailVariant SCDV
+	WHERE
+		SCDV.[CartDetailID] = @CartDetailID
+
+	IF (@CartDetailID IS NOT NULL) AND (@DetailVariantID IS NULL AND @IsBooking <> 1)
+		BEGIN
+			UPDATE
+				{databaseOwner}{objectQualifier}Smith_SavedCartDetail
+			SET
+				[Quantity] = @Quantity
+			WHERE
+				[CartDetailID] = @CartDetailID
+			SELECT @CartDetailID
+		END
+	ELSE
+		BEGIN
+			INSERT INTO {databaseOwner}{objectQualifier}Smith_SavedCartDetail
+				([CartID]
+				,[ProductID]
+				,[Manufacturer]
+				,[ModelName]
+				,[UnitCost]
+				,[QuantityOnHand]
+				,[Quantity]
+				,[Weight]
+				,[ProductName]
+				,[ProductSku]
+				,[IsRequired]
+				,[BundleID]
+				,[AddDnnRole]
+				,[Recurring]
+				,[RequireLogin]
+				,[UsePriPriceWght]
+				,[MasterBundleID]
+				,[LineItem]
+				,[RoleExpireDays]
+				,[MemberPrice]
+				,[TaxExempt]
+				,[ShipCodes]
+				,[ShipText]
+				,[ShipCost]
+				,[PriceClass]
+				,[VariantCost]
+				,[RemoveDNNRole])
+			 VALUES
+				(@CartID
+				,@ProductID
+				,@Manufacturer
+				,@ModelName
+				,@UnitCost
+				,@QuantityOnHand
+				,@Quantity
+				,@Weight
+				,@ProductName
+				,@ProductSku
+				,@IsRequired
+				,@BundleID
+				,@AddDnnRole
+				,@Recurring
+				,@RequireLogin
+				,@UsePriPriceWght
+				,@MasterBundleID
+				,@LineItem
+				,@RoleExpireDays
+				,@MemberPrice
+				,@TaxExempt
+				,@ShipCodes
+				,@ShipText
+				,@ShipCost
+				,@PriceClass
+				,@VariantCost
+				,@RemoveDNNRole)
+			SELECT SCOPE_IDENTITY()
+		END
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_CreatePayment
+	@CustomerID INT = NULL,
+	@PayType VARCHAR(50) = NULL,
+	@Amount MONEY = 0,
+	@Quantity INT = NULL,
+	@AcctNo VARCHAR(50) = NULL,
+	@ExpRoute VARCHAR(50) = NULL,
+	@TransID VARCHAR(50) = NULL,
+	@BillingAddress VARCHAR(50) = NULL,
+	@BillingCity VARCHAR(50) = NULL,
+	@BillingState VARCHAR(50) = NULL,
+	@BillingZip VARCHAR(50) = NULL,
+	@BillingCountry VARCHAR(50) = NULL,
+	@Coupon VARCHAR(50) = NULL,
+	@Notes VARCHAR(50) = NULL,
+	@Status VARCHAR(50) = NULL,
+	@AuthCode VARCHAR(50) = NULL,
+	@BillingName VARCHAR(50) = NULL,
+	@PortalID INT = NULL,
+	@InvoiceNo VARCHAR(50) = NULL,
+	@PONumber VARCHAR(50) = NULL,
+	@Success BIT = 0,
+	@GiftCardID INT = NULL,
+	@OrderID INT = 0,
+	@IPAddress VARCHAR(50) = NULL,
+	@ModifiedBy NVARCHAR(100) = NULL,
+	@MaskAcctNo VARCHAR(50) = NULL,
+	@TransType VARCHAR(50) = NULL,
+	@ClearDate DATETIME = NULL,
+	@AdminNotes NVARCHAR(max) = NULL,
+	@OffsetID INT = NULL,
+	@SubscriptionID INT = 0,
+	@PayMethodID INT = NULL,
+	@StoreID INT = NULL
+AS
+BEGIN
+	INSERT INTO {databaseOwner}{objectQualifier}Smith_PayHist
+		([CustomerID]
+		,[PayType]
+		,[PayDate]
+		,[Amount]
+		,[Quantity]
+		,[AcctNo]
+		,[ExpRoute]
+		,[TransID]
+		,[BillingAddress]
+		,[BillingCity]
+		,[BillingState]
+		,[BillingZip]
+		,[BillingCountry]
+		,[Coupon]
+		,[Notes]
+		,[Status]
+		,[AuthCode]
+		,[BillingName]
+		,[PortalID]
+		,[InvoiceNo]
+		,[PONumber]
+		,[Success]
+		,[GiftCardID]
+		,[OrderID]
+		,[IPAddress]
+		,[ModifiedBy]
+		,[DateModified]
+		,[MaskAcctNo]
+		,[TransType]
+		,[ClearDate]
+		,[AdminNotes]
+		,[OffsetID]
+		,[TabModuleId]
+		,[SubscriptionID]
+		,[PayMethodID]
+		,[StoreID])
+	VALUES
+		(@CustomerID
+		,@PayType
+		,GETDATE()
+		,@Amount
+		,@Quantity
+		,@AcctNo
+		,@ExpRoute
+		,@TransID
+		,@BillingAddress
+		,@BillingCity
+		,@BillingState
+		,@BillingZip
+		,@BillingCountry
+		,@Coupon
+		,@Notes
+		,@Status
+		,@AuthCode
+		,@BillingName
+		,@PortalID
+		,@InvoiceNo
+		,@PONumber
+		,@Success
+		,@GiftCardID
+		,@OrderID
+		,@IPAddress
+		,@ModifiedBy
+		,GETDATE()
+		,@MaskAcctNo
+		,@TransType
+		,@ClearDate
+		,@AdminNotes
+		,@OffsetID
+		,@StoreID
+		,@SubscriptionID
+		,@PayMethodID
+		,@StoreID)
+	SELECT SCOPE_IDENTITY()
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdatePayment
+	@PayHistID INT = NULL,
+	@PortalID INT = NULL,
+	@CustomerID INT = NULL,
+	@PayType VARCHAR(50) = NULL,
+	@Amount MONEY = NULL,
+	@Quantity INT = NULL,
+	@AcctNo VARCHAR(50) = NULL,
+	@ExpRoute VARCHAR(50) = NULL,
+	@TransID VARCHAR(50) = NULL,
+	@BillingAddress VARCHAR(50) = NULL,
+	@BillingCity VARCHAR(50) = NULL,
+	@BillingState VARCHAR(50) = NULL,
+	@BillingZip VARCHAR(50) = NULL,
+	@BillingCountry VARCHAR(50) = NULL,
+	@Coupon VARCHAR(50) = NULL,
+	@Notes VARCHAR(50) = NULL,
+	@Status VARCHAR(50) = NULL,
+	@AuthCode VARCHAR(50) = NULL,
+	@BillingName VARCHAR(50) = NULL,
+	@InvoiceNo VARCHAR(50) = NULL,
+	@PONumber VARCHAR(50) = NULL,
+	@Success BIT = 0,
+	@GiftCardID INT = NULL,
+	@OrderID INT = NULL,
+	@IPAddress VARCHAR(50) = NULL,
+	@ModifiedBy NVARCHAR(100) = NULL,
+	@MaskAcctNo VARCHAR(50) = NULL,
+	@TransType VARCHAR(50) = NULL,
+	@ClearDate DATETIME = NULL,
+	@AdminNotes NVARCHAR(max) = NULL,
+	@OffsetID INT = NULL,
+	@SubscriptionID INT = NULL,
+	@PayMethodID INT = NULL
+AS
+BEGIN
+	UPDATE
+		{databaseOwner}{objectQualifier}Smith_PayHist
+	SET
+		[CustomerID] = @CustomerID,
+		[PayType] = @PayType,
+		[Amount] = @Amount,
+		[Quantity] = @Quantity,
+		[AcctNo] = @AcctNo,
+		[ExpRoute] = @ExpRoute,
+		[TransID] = @TransID,
+		[BillingAddress] = @BillingAddress,
+		[BillingCity] = @BillingCity,
+		[BillingState] = @BillingState,
+		[BillingZip] = @BillingZip,
+		[BillingCountry] = @BillingCountry,
+		[Coupon] = @Coupon,
+		[Notes] = @Notes,
+		[Status] = @Status,
+		[AuthCode] = @AuthCode,
+		[BillingName] = @BillingName,
+		[InvoiceNo] = @InvoiceNo,
+		[PONumber] = @PONumber,
+		[Success] = @Success,
+		[GiftCardID] = @GiftCardID,
+		[OrderID] = @OrderID,
+		[IPAddress] = @IPAddress,
+		[ModifiedBy] = @ModifiedBy,
+		[DateModified] = GETDATE(),
+		[MaskAcctNo] = @MaskAcctNo,
+		[TransType] = @TransType,
+		[ClearDate] = @ClearDate,
+		[AdminNotes] = @AdminNotes,
+		[OffsetID] = @OffsetID,
+		[SubscriptionID] = @SubscriptionID,
+		[PayMethodID] = @PayMethodID
+	WHERE
+		[PayHistID] = @PayHistID
+		AND [PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateTaxTableEntry
+	@State VARCHAR(50) = NULL,
+	@County VARCHAR(50) = NULL,
+	@City VARCHAR(255) = NULL,
+	@TaxRate FLOAT = NULL,
+	@PostalCode VARCHAR(50) = NULL,
+	@PortalID INT = NULL,
+	@StoreID INT = NULL
+AS
+BEGIN
+	INSERT INTO
+		{databaseOwner}{objectQualifier}Smith_Tax
+		([State]
+		,[County]
+		,[City]
+		,[TaxRate]
+		,[PostalCode]
+		,[PortalID]
+		,[StoreID])
+	VALUES
+		(@State
+		,@County
+		,@City
+		,@TaxRate
+		,@PostalCode
+		,@PortalID
+		,@StoreID)
+	SELECT SCOPE_IDENTITY()
+END
+GO
+
+
+
+/************************************************************/
+/*****               End of Script                      *****/
+/************************************************************/

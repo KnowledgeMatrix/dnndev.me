@@ -1,0 +1,60 @@
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryGravityGallerySettings' AND column_name = 'SendNewCommentNotification')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryGravityGallerySettings] ADD SendNewCommentNotification BIT CONSTRAINT DF_{objectQualifier}EasyGalleryGravityGallerySettings_SendNewCommentNotification DEFAULT (0) NOT NULL
+END
+GO
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryGravityGallerySettings' AND column_name = 'CommentsMustBeApproved')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryGravityGallerySettings] ADD CommentsMustBeApproved BIT CONSTRAINT DF_{objectQualifier}EasyGalleryGravityGallerySettings_CommentsMustBeApproved DEFAULT (0) NOT NULL
+END
+GO
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryGravityGallerySettings' AND column_name = 'SendNotificationToCommentAuthor')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryGravityGallerySettings] ADD SendNotificationToCommentAuthor BIT CONSTRAINT DF_{objectQualifier}EasyGalleryGravityGallerySettings_SendNotificationToCommentAuthor DEFAULT (0) NOT NULL
+END
+GO
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryGravityGallerySettings' AND column_name = 'SendCommentNotificationToMediaUploader')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryGravityGallerySettings] ADD SendCommentNotificationToMediaUploader BIT CONSTRAINT DF_{objectQualifier}EasyGalleryGravityGallerySettings_SendCommentNotificationToMediaUploader DEFAULT (0) NOT NULL
+END
+GO
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryGravityGallerySettings' AND column_name = 'UseGoogleRecaptchaOnComments')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryGravityGallerySettings] ADD UseGoogleRecaptchaOnComments BIT CONSTRAINT DF_{objectQualifier}EasyGalleryGravityGallerySettings_UseGoogleRecaptchaOnComments DEFAULT (0) NOT NULL
+END
+GO
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryPortalSettings' AND column_name = 'GoogleReCaptchaSiteKey')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryPortalSettings] ADD GoogleReCaptchaSiteKey NVARCHAR(128) NULL
+END
+GO
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryPortalSettings' AND column_name = 'GoogleReCaptchaSecretKey')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryPortalSettings] ADD GoogleReCaptchaSecretKey NVARCHAR(128) NULL
+END
+GO
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryGravityGallerySettings' AND column_name = 'DetailsOpenMediaUrl')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryGravityGallerySettings] ADD DetailsOpenMediaUrl BIT CONSTRAINT DF_{objectQualifier}EasyGalleryGravityGallerySettings_DetailsOpenMediaUrl DEFAULT (0) NOT NULL
+END
+GO
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryGravityGallerySettings' AND column_name = 'ItemsListOpenMediaUrl')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryGravityGallerySettings] ADD ItemsListOpenMediaUrl BIT CONSTRAINT DF_{objectQualifier}EasyGalleryGravityGallerySettings_ItemsListOpenMediaUrl DEFAULT (0) NOT NULL
+END
+GO
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryGravityGallerySettings' AND column_name = 'DetailsOpenMediaUrlTarget')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryGravityGallerySettings] ADD DetailsOpenMediaUrlTarget TINYINT CONSTRAINT DF_{objectQualifier}EasyGalleryGravityGallerySettings_DetailsOpenMediaUrlTarget DEFAULT (0) NOT NULL
+END
+GO
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryGravityGallerySettings' AND column_name = 'ItemsListOpenMediaUrlTarget')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryGravityGallerySettings] ADD ItemsListOpenMediaUrlTarget TINYINT CONSTRAINT DF_{objectQualifier}EasyGalleryGravityGallerySettings_ItemsListOpenMediaUrlTarget DEFAULT (0) NOT NULL
+END
+GO
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryPortfolioProSettings' AND column_name = 'AllButtonPosition')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryPortfolioProSettings] ADD AllButtonPosition TINYINT CONSTRAINT DF_{objectQualifier}EasyGalleryPortfolioProSettings_AllButtonPosition DEFAULT (0) NOT NULL
+END
+GO

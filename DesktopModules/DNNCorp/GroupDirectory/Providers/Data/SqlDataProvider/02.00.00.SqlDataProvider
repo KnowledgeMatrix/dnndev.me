@@ -1,0 +1,204 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+-- SOCIAL-2577 - Paging is broken in group directory for multiple portals
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}GroupDirectory_Group_Search]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}GroupDirectory_Group_Search
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}GroupDirectory_Group_Search]
+	@PortalId INT,
+	@ModuleId INT,
+	@RoleGroupId INT,
+	@PageSize INT,
+	@PageIndex INT,
+	@Filter INT,
+	@SortColumn NVARCHAR(32),
+	@SortAscending BIT,
+	@Keyword NVARCHAR(128),
+	@UserId INT,
+	@Tags NVARCHAR(256)
+AS
+BEGIN
+	DECLARE @TagLength Int
+
+	Set @TagLength = (SELECT LEN(@Tags) - LEN(REPLACE(@Tags, ',', '')) + 1)
+
+	Create Table #Tags(
+		RowNumber smallint,
+		RowValue nvarchar(50) COLLATE DATABASE_DEFAULT )
+
+	Create Table #Taxonomy(
+		TermID Int,
+		Name nvarchar(250) COLLATE DATABASE_DEFAULT )
+
+	Insert Into #Tags
+		Select	RowNumber,RowValue
+		From	{databaseOwner}{objectQualifier}ConvertListToTable(',', @Tags);
+
+	Insert Into #Taxonomy
+		Select	TermID, Name
+		From	{databaseOwner}{objectQualifier}Taxonomy_Terms TT
+				Inner Join #Tags T on TT.Name = T.RowValue;
+
+	WITH GroupSet
+	AS (
+		SELECT	COUNT(*) OVER (PARTITION BY PortalID) AS TotalRecords,
+				R.PortalID As PortalId,
+				R.RoleID AS GroupId,
+				R.RoleName AS GroupName,
+				R.Description,
+				R.IsPublic,
+				R.IconFile,
+				R.Status,
+				R.SecurityMode,
+				R.IsSystemRole,
+				R.RoleGroupId AS RoleGroupId,
+				R.CreatedByUserID,
+				R.CreatedOnDate,
+				R.LastModifiedOnDate,
+				(SELECT TOP 1 LastModifiedOnDate
+					FROM {databaseOwner}{objectQualifier}ContentItems CI INNER JOIN {databaseOwner}{objectQualifier}Journal J ON J.ContentItemId = CI.ContentItemID
+					WHERE	CI.ContentKey LIKE ('%groupid=' +  CAST(R.RoleID AS VARCHAR(10)) + '%')
+							OR
+							J.GroupId = R.RoleID
+					ORDER BY LastModifiedOnDate DESC) AS LastActivityDate,
+				(SELECT CAST ((SELECT SettingValue FROM {databaseOwner}{objectQualifier}RoleSettings WHERE RoleId = R.RoleId AND SettingName = 'ReviewMembers') AS BIT)) AS ReviewMembers,
+				(SELECT COUNT(*) FROM {databaseOwner}{objectQualifier}UserRoles U WHERE U.RoleID = R.RoleID AND U.Status = 1) AS MemberCount
+					FROM    {databaseOwner}{objectQualifier}Roles AS R
+							LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems AS CI
+								ON CI.ContentKey = ('groupid=' +  CAST( r.RoleID AS VARCHAR(10)))
+								AND CI.ContentTypeID = ( SELECT ContentTypeID FROM {databaseOwner}{objectQualifier}ContentTypes WHERE ContentType = 'Group')
+					WHERE
+						R.SecurityMode IN (1,2)
+					AND (	IsPublic = 1
+						 OR
+							-- Check for Module Edit Permissions for Users Roles
+							(EXISTS (SELECT	MP.UserID
+									 FROM	{databaseOwner}{objectQualifier}ModulePermission MP
+									 INNER JOIN {databaseOwner}{objectQualifier}Permission P ON MP.PermissionID = P.PermissionID
+									 INNER JOIN {databaseOwner}{objectQualifier}UserRoles UR ON MP.RoleId = UR.RoleID
+                                     WHERE UR.UserId = @UserId and MP.ModuleId = @ModuleId
+											AND MP.AllowAccess = 1 AND P.PermissionName = 'MODERATORS'
+									 )
+							 )
+						 OR
+							-- Module Edit Permissions for User
+							(EXISTS (SELECT	MP.UserID
+									 FROM	{databaseOwner}{objectQualifier}ModulePermission MP
+									 INNER JOIN {databaseOwner}{objectQualifier}Permission P ON MP.PermissionID = P.PermissionID
+									 WHERE  MP.UserID = @UserId and MP.ModuleId = @ModuleId
+											AND MP.AllowAccess = 1 AND P.PermissionName = 'MODERATORS'
+									 )
+							 )
+						 OR
+							-- SuperUser
+							(EXISTS (SELECT UserId FROM {databaseOwner}{objectQualifier}Users U WHERE U.UserID = @UserID AND U.IsSuperUser = 1))
+						 OR
+							(IsPublic = 0 AND EXISTS (SELECT RoleID FROM {databaseOwner}{objectQualifier}UserRoles WHERE R.RoleID = RoleID AND @UserId = UserID))
+						)
+					AND
+						(	@RoleGroupId = -1
+						OR
+							R.RoleGroupId = @RoleGroupId
+						)
+					AND
+						(	
+							R.Status = 1 -- Group Approved
+							OR
+							(						
+							R.Status != 1 AND
+								(EXISTS (SELECT RoleID FROM {databaseOwner}{objectQualifier}UserRoles WHERE R.RoleID = RoleID AND @UserId = UserID)
+									OR
+										-- Check for Module Moderator Permissions for Users Roles
+										(EXISTS (SELECT	MP.UserID
+												 FROM {databaseOwner}{objectQualifier}ModulePermission MP
+												 INNER JOIN {databaseOwner}{objectQualifier}Permission P ON MP.PermissionID = P.PermissionID
+												 INNER JOIN {databaseOwner}{objectQualifier}UserRoles UR ON MP.RoleId = UR.RoleID
+												 WHERE UR.UserId = @UserId and MP.ModuleId = @ModuleId
+														AND MP.AllowAccess = 1
+														AND P.PermissionKey = 'MODERATORS'
+												 )
+										 )
+									 OR
+										-- Module Moderator Permissions for User
+										(EXISTS (SELECT	MP.UserID
+												 FROM  {databaseOwner}{objectQualifier}ModulePermission MP
+												 INNER JOIN {databaseOwner}{objectQualifier}Permission P ON MP.PermissionID = P.PermissionID
+												 WHERE  MP.UserID = @UserId and MP.ModuleId = @ModuleId
+														AND MP.AllowAccess = 1
+														AND P.PermissionKey = 'MODERATORS'
+												 )
+										)
+									OR
+										-- SuperUser
+										(EXISTS (SELECT UserId FROM {databaseOwner}{objectQualifier}Users U WHERE U.UserID = @UserID AND U.IsSuperUser = 1))
+								)
+							)
+						)
+					/*** FILTERS ***/
+					AND (	/*** ALL GROUPS ***/
+							@Filter = 0
+						 OR /*** MY GROUPS FILTER ***/
+							( @Filter = 1 AND EXISTS (SELECT RoleID FROM {databaseOwner}{objectQualifier}UserRoles UR WHERE UR.RoleID = R.RoleID AND UR.UserId = @UserID))
+						)
+					/*** TAGS ***/
+                    AND (	@Tags IS NULL OR LEN(@Tags) = 0
+							OR (SELECT	COUNT(*)
+								FROM	{databaseOwner}{objectQualifier}ContentItems_Tags CIT
+										INNER JOIN #Taxonomy T On CIT.TermID = T.TermID
+								WHERE	CIT.ContentItemID = CI.ContentItemId ) = @TagLength
+						)
+		),
+		GroupSort
+		AS (
+				SELECT	G.*,
+						ROW_NUMBER() OVER (
+							ORDER BY
+								CASE WHEN @SortColumn = 'GroupName' AND @SortAscending = 1 THEN G.GroupName END ASC,
+								CASE WHEN @SortColumn = 'GroupName' AND @SortAscending = 0 THEN G.GroupName END DESC,
+
+								CASE WHEN @SortColumn = 'CreatedOnDate' AND @SortAscending = 1 THEN G.CreatedOnDate END ASC,
+								CASE WHEN @SortColumn = 'CreatedOnDate' AND @SortAscending = 0 THEN G.CreatedOnDate END DESC,
+
+								CASE WHEN @SortColumn = 'MemberCount' AND @SortAscending = 1 THEN G.MemberCount END ASC,
+								CASE WHEN @SortColumn = 'MemberCount' AND @SortAscending = 0 THEN G.MemberCount END DESC,
+
+								CASE WHEN @SortColumn = 'LastActivityDate' AND @SortAscending = 1 THEN G.LastActivityDate END ASC,
+								CASE WHEN @SortColumn = 'LastActivityDate' AND @SortAscending = 0 THEN G.LastActivityDate END DESC
+							) AS [RowNumber]
+				FROM    GroupSet G
+			)
+		SELECT	TOP (@PageSize) *
+		FROM    GroupSort
+		WHERE   PortalId = @PortalId AND RowNumber >= (@PageIndex * @PageSize) + 1
+
+	Drop Table #Tags
+	Drop Table #Taxonomy
+END
+GO
+
+/* Update mechanics action types (for upgrades) */
+DECLARE @DesktopModuleId INT
+SET @DesktopModuleId = ( SELECT DesktopModuleID FROM {databaseOwner}[{objectQualifier}DesktopModules] WHERE  ModuleName = 'GroupDirectory' AND FolderName = 'DNNCorp/GroupDirectory')
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 7
+	WHERE ActionName = 'JoinedSocialGroup' AND DesktopModuleId = @DesktopModuleId
+
+UPDATE {databaseOwner}[{objectQualifier}Mechanics_ScoringActionDefinition]
+	SET ActionType = 8
+	WHERE ActionName = 'LeftSocialGroup' AND DesktopModuleId = @DesktopModuleId
+GO
+
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/
+

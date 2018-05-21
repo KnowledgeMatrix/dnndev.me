@@ -1,0 +1,24 @@
+﻿IF EXISTS (SELECT * FROM {databaseOwner}SYSOBJECTS WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Blogs_Entry_GetByDates]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Blogs_Entry_GetByDates]
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Blogs_Entry_GetByDates
+	@BlogID INT,
+	@PortalId INT,
+	@GroupId INT,
+	@StartDate DATETIME 
+AS 
+	BEGIN
+
+		SELECT  BE.*
+		FROM    {databaseOwner}{objectQualifier}Blogs_Entry BE
+		INNER JOIN {databaseOwner}{objectQualifier}Blogs_Blog B
+			ON BE.BlogId = B.BlogId
+		WHERE B.PortalId = @PortalId
+			AND ((BE.BlogID = @BlogID AND @BlogID > 0) OR (BE.BlogID > 0 AND @BlogID <= 0))
+			AND ((B.GroupID = @GroupId) OR (B.GroupID is NULL AND @GroupId < 0))
+			AND BE.Approved = 1
+			AND B.Authorized = 1
+			AND BE.PublishOnDate BETWEEN @StartDate AND GetUtcDate()
+	END
+GO

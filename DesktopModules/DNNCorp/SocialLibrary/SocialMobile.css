@@ -1,0 +1,2127 @@
+﻿/* Module Search Part*/
+.dnnMobileTableFilter {
+    margin: 0;
+}
+
+.dnnMobileFilterSet {
+    padding: 15px;
+    background: #edeae9;
+}
+
+    .dnnMobileFilterSet > input[type="text"],
+    .dnnMobileFilterSet > select {
+        display: block;
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        width: 100%;
+        -webkit-border-radius: 0 !important;
+        border-radius: 0 !important;
+        -webkit-box-shadow: none !important;
+        box-shadow: none !important;
+    }
+
+    .dnnMobileFilterSet > a.dnnMobileFilterSet-Cancel {
+        display: none;
+        float: right;
+        width: 15%;
+        padding: 7px 4px 7px 4px;
+        margin: 2px 0 0 0;
+        background: #fe9e47;
+        text-align: center;
+        color: #fff;
+        font-weight: bold;
+    }
+
+.dnnMobileSocialSearchResult {
+    display: none;
+    margin: 66px 0 0 0;
+    background: #fff;
+    padding: 0;
+}
+
+    .dnnMobileSocialSearchResult > ul {
+        display: block;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+        .dnnMobileSocialSearchResult > ul > li {
+            display: block;
+            list-style: none;
+            border-bottom: 1px solid #ccc;
+        }
+
+            .dnnMobileSocialSearchResult > ul > li a {
+                display: block;
+                margin: 10px 15px 10px 15px;
+                font-size: 14px;
+                font-weight: bold;
+            }
+
+.dnnMobileTwoButtonsGroup {
+    width: 100%;
+}
+
+    .dnnMobileTwoButtonsGroup a.dnnPrimaryAction,
+    .dnnMobileTwoButtonsGroup a.dnnSecondaryAction {
+        width: 50%;
+        padding: 20px 0 20px 0;
+        margin: 0;
+        float: left;
+        display: block;
+    }
+
+    .dnnMobileTwoButtonsGroup a.dnnSecondaryAction {
+        float: right;
+    }
+
+.moduleContainer a.dnnMobileCreateNewButton {
+    display: block;
+    background: #fe9e47;
+    padding: 20px;
+    text-align: center;
+    color: #fff;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.moduleContainer a.dnnMobileCreateNewButton-searchResult {
+    display: block;
+    background: #339795;
+    padding: 20px;
+    text-align: center;
+    color: #fff;
+    font-weight: bold;
+    margin: 15px;
+    text-transform: uppercase;
+}
+
+.dnnMobileListContainer {
+    margin: 15px 0 0 0;
+    padding: 15px;
+    background: #fff;
+}
+
+.dnnMobileStatusContainer > select {
+    -webkit-border-radius: 0 !important;
+    border-radius: 0 !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    color: #777;
+    padding: 6px;
+}
+
+.dnnMobileTotalCountContainer {
+    margin: 15px -10px 0 -10px;
+    padding: 15px 10px 15px 10px;
+    background: #fff;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+}
+
+    .dnnMobileTotalCountContainer > span {
+        display: block;
+        font-size: 15px;
+        font-weight: bold;
+        color: #666;
+    }
+
+.dnnMobileListTblContainer {
+    margin: 10px 0 0 0;
+}
+
+.dnnMobileListTbl {
+    width: 100%;
+    table-layout: fixed;
+}
+
+    .dnnMobileListTbl td.dnnMobileIdeaVote {
+        width: 20%;
+        border-right: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;
+        padding: 0;
+        vertical-align: middle;
+    }
+
+        .dnnMobileListTbl td.dnnMobileIdeaVote a.idea-vote-button.dnnTertiaryAction,
+        .dnnMobileListTbl td.dnnMobileIdeaVote a.idea-vote-button.dnnTertiaryAction:hover {
+            display: block;
+            padding: 15px;
+            margin: 0;
+            -webkit-border-radius: 0;
+            border-radius: 0;
+            background: #fff;
+            border: none;
+            min-width: inherit;
+            color: #666;
+            width: auto !important;
+        }
+
+            .dnnMobileListTbl td.dnnMobileIdeaVote a.idea-vote-button.dnnTertiaryAction.voting,
+            .dnnMobileListTbl td.dnnMobileIdeaVote a.idea-vote-button.dnnTertiaryAction.voting:hover {
+                background: #eeeeee;
+                color: #000;
+            }
+
+            .dnnMobileListTbl td.dnnMobileIdeaVote a.idea-vote-button.dnnTertiaryAction > span {
+                display: block;
+                margin: .8em 0 .7em 0;
+                text-align: center;
+                color: #666;
+                line-height: 1em;
+            }
+
+    .dnnMobileListTbl td.dnnMobileEventVote a.idea-vote-button.dnnTertiaryAction > span {
+        margin: 0;
+    }
+
+    .dnnMobileListTbl td.dnnMobileIdeaVote a.idea-vote-button.dnnTertiaryAction.activeIndicator > span {
+        color: #fff;
+        margin: 0;
+        line-height: 1.3em;
+    }
+
+    .dnnMobileListTbl td.dnnMobileIdeaVote.answer-answerCount {
+        background: #eee6e5;
+        padding: 12px 0 12px 0;
+        vertical-align: middle;
+        width: 25%;
+    }
+
+        .dnnMobileListTbl td.dnnMobileIdeaVote.answer-answerCount.answer-noanswer {
+            background-image: url(../answers/images/noanswer.png);
+            background-repeat: no-repeat;
+            background-position: top right;
+        }
+
+        .dnnMobileListTbl td.dnnMobileIdeaVote.answer-answerCount.answer-accepted {
+            background-image: url(../answers/images/mobileCheckmark.png);
+            background-repeat: no-repeat;
+            background-position: top right;
+        }
+
+    .dnnMobileListTbl td.dnnMobileIdeaVote.activeIndicator span {
+        color: #fff !important;
+    }
+
+    .dnnMobileListTbl td.dnnMobileIdeaTitle {
+        border-bottom: 1px solid #ddd;
+        padding: 12px;
+    }
+
+        .dnnMobileListTbl td.dnnMobileIdeaTitle a.dnnSocialLink span.idea-title {
+            font-size: 14px;
+        }
+
+        .dnnMobileListTbl td.dnnMobileIdeaTitle div span {
+            color: #aaa;
+            display: inline-block;
+            margin-right: 3px;
+        }
+
+        .dnnMobileListTbl td.dnnMobileIdeaTitle p.answer-content-summary {
+            color: #aaa;
+            margin: 15px 0 15px 0;
+        }
+
+.dnnMobileListTblContainer a.dnnMobileLoadMoreLink {
+    display: block;
+    background: #ccc;
+    color: #666;
+    text-transform: uppercase;
+    padding: 20px;
+    text-align: center;
+    margin: 10px 0 0 0;
+}
+
+/* Common Detail View */
+.dnnMobile-moduleThreadContainer {
+    background-color: #fff;
+    padding: 15px;
+}
+
+    .dnnMobile-moduleThreadContainer a.dnnMobile-detailViewReturn {
+        display: inline-block;
+        background: #eee;
+        width: 55px;
+        height: 50px;
+        background-image: url(../../../images/datePickerArrows.png);
+        background-repeat: no-repeat;
+        background-position: 3px 0px;
+        vertical-align: top;
+        margin-right: -2px;
+    }
+
+    .dnnMobile-moduleThreadContainer a.dnnMobile-voteButton {
+        display: inline-block;
+        width: 55px;
+        height: 50px;
+        min-width: inherit !important;
+        text-align: center;
+        margin: 0 !important;
+        padding: 0;
+        vertical-align: top;
+    }
+
+        .dnnMobile-moduleThreadContainer a.dnnMobile-voteButton > span {
+            display: block;
+            padding-top: 20px;
+            overflow: hidden;
+        }
+
+ul.dnnMobile-socialActions {
+    margin: 0 0 5px 0;
+    float: right;
+    display: block;
+    list-style-type: none;
+    background-color: #eee;
+}
+
+    ul.dnnMobile-socialActions > li {
+        display: inline-block;
+        float: none;
+        width: auto;
+        height: auto;
+        margin: 0;
+        list-style-type: none;
+    }
+
+        ul.dnnMobile-socialActions > li a {
+            width: 32px;
+            height: 32px;
+            background-color: #eee;
+            background-position: center center;
+            background-repeat: no-repeat;
+            display: block;
+        }
+
+         ul.dnnMobile-socialActions > li span {
+            width: 32px;
+            height: 32px;
+            background-color: #eee;
+            background-position: center center;
+            background-repeat: no-repeat;
+            display: block;
+        }
+
+            ul.dnnMobile-socialActions > li a.dnnSocialSubscribe,
+            ul.dnnMobile-socialActions > li a.dnnSocialSubscribeActive {
+                margin-left: -2px;
+            }
+
+.dnnMobile-moduleThreadContainer .avatar40 {
+    float: left;
+}
+
+.dnnMobile-moduleThreadContainer span.idea-numberOfVotes,
+.dnnMobile-moduleThreadContainer span.idea-votes-span {
+    color: #999;
+    display: inline-block;
+    margin-right: 3px;
+}
+
+.dnnMobile-moduleThreadContainer span.idea-title-status {
+    margin: 0;
+    display: inline-block;
+}
+
+.dnnMobile-moduleThreadContainer h3 {
+    margin: 0 !important;
+    padding: 10px 0 10px 0;
+    font-size: 22px;
+    font-family: Arial;
+    line-height: 1.3em;
+}
+
+.dnnMobile-moduleThreadContainer .comment-info {
+    display: block;
+    vertical-align: top;
+    padding: 12px 0 0 0;
+}
+
+.dnnMobile-moduleThreadContainer span.idea-comments-author,
+.dnnMobile-moduleThreadContainer span.comment-author,
+.dnnMobile-moduleThreadContainer span.idea-comments-date,
+.dnnMobile-moduleThreadContainer span.comment-date {
+    display: inline-block;
+    vertical-align: top;
+    padding: 0 0 0 8px;
+    font-weight: normal;
+    margin: 0;
+}
+
+.dnnMobile-moduleThreadContainer span.idea-comments-date,
+.dnnMobile-moduleThreadContainer span.comment-date {
+    color: #888;
+    margin: 0;
+}
+
+.dnnMobile-contentBody {
+    margin: 15px 0 0 0;
+    word-wrap: break-word;
+}
+
+    .dnnMobile-contentBody p {
+        margin: 0 0 15px 0;
+        color: #888;
+    }
+
+ul.dnnMobile-ideaActions {
+    list-style-type: none;
+    margin: 15px 0 15px 0;
+}
+
+    ul.dnnMobile-ideaActions > li {
+        display: inline-block;
+        margin: 0 -4px 0 0;
+        padding: 0;
+        border: none;
+        width: 33%;
+    }
+
+        ul.dnnMobile-ideaActions > li > a {
+            cursor: pointer;
+            display: block;
+            height: 35px;
+            background-color: #eee;
+            background-repeat: no-repeat;
+            background-position: center center;
+        }
+
+            ul.dnnMobile-ideaActions > li > a.idea-reply {
+                background-image: url('Images/reply.png');
+            }
+
+            ul.dnnMobile-ideaActions > li > a.idea-like {
+                background-image: url('Images/likebtn.png');
+            }
+
+            ul.dnnMobile-ideaActions > li > a.idea-like-liked {
+                background-image: url('Images/likebtnselected.png');
+            }
+
+            ul.dnnMobile-ideaActions > li > a.idea-report {
+                background-image: url('Images/report.png');
+            }
+
+.comments-container-common {
+    display: none;
+}
+
+.dnnMobile-subHeader {
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+    clear: both;
+    margin: 0 0 15px 0;
+}
+
+.dnnMobileLike.likes {
+    margin: 10px 0 10px 0;
+}
+
+/* Comment Control */
+.dnnMobile-moduleThreadContainer div.comment-content {
+    margin: 0 0 15px 55px;
+    padding: 0;
+    color: #999;
+}
+
+ul.dnnMobile-comment-actions {
+    list-style-type: none;
+    margin: 0 0 20px 45px;
+}
+
+    ul.dnnMobile-comment-actions > li {
+        display: inline-block;
+        margin: 0 -2px 0 0;
+        padding: 0;
+        border: none;
+        width: 20%;
+    }
+
+        ul.dnnMobile-comment-actions > li > a {
+            cursor: pointer;
+            display: block;
+            height: 35px;
+            background-color: #fff;
+            background-repeat: no-repeat;
+            background-position: center center;
+        }
+
+            ul.dnnMobile-comment-actions > li > a.dnnMobile-comment-reply {
+                background-image: url('Images/reply.png');
+            }
+
+                ul.dnnMobile-comment-actions > li > a.dnnMobile-comment-reply.authoring {
+                    background-color: #eee;
+                }
+
+            ul.dnnMobile-comment-actions > li > a.dnnMobile-comment-like {
+                background-image: url('Images/likebtn.png');
+            }
+
+            ul.dnnMobile-comment-actions > li > a.dnnMobile-comment-like-liked {
+                background-image: url('Images/likebtnselected.png');
+            }
+
+            ul.dnnMobile-comment-actions > li > a.dnnMobile-comment-report {
+                background-image: url('Images/report.png');
+            }
+
+            ul.dnnMobile-comment-actions > li > a.dnnMobile-comment-remove {
+                background-image: url('Images/remove.png');
+            }
+
+    ul.dnnMobile-comment-actions.dnnMobile-comment-inline-actions {
+        margin: 0 0 20px 0;
+    }
+
+.comments-container-mobileview a.dnnMobile-comment-button,
+.comments-container-mobileview a.dnnMobile-comment-viewmore-button {
+    width: 48%;
+    padding: 20px 0 20px 0;
+    margin: 0 !important;
+    text-transform: uppercase;
+}
+
+.comments-container-mobileview .comment-post.dnnMobile-comment-post {
+    background: #eee;
+    width: auto;
+    float: none;
+    margin: 0;
+    padding: 15px 0 0 0;
+    width: 100%;
+}
+
+    .comments-container-mobileview .comment-post.dnnMobile-comment-post .dnnFormItem {
+        margin: 0 10px 0 10px;
+        background: #fff;
+        display: block;
+        float: none;
+    }
+
+        .comments-container-mobileview .comment-post.dnnMobile-comment-post .dnnFormItem textarea, 
+        .comments-container-mobileview .comment-post.dnnMobile-comment-post .dnnFormItem div[contenteditable] {
+            box-sizing: border-box;
+            width: 100%;
+            padding: 7px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            -moz-border-radius: 0;
+            -webkit-border-radius: 0;
+            border-radius: 0;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+            height: 125px;
+            display: block;
+            max-width: inherit;
+            max-height: inherit;
+            margin: 0 0 10px 0;
+        }
+
+        .comments-container-mobileview .comment-post.dnnMobile-comment-post .dnnFormItem .redactor_box {
+            width: 100%;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            min-height: 125px;
+            display: block;
+            margin: 0 0 10px 0;
+        }
+
+            .comments-container-mobileview .comment-post.dnnMobile-comment-post .dnnFormItem .redactor_box .redactor_editor {
+                min-height: 110px;
+            }
+
+    .comments-container-mobileview .comment-post.dnnMobile-comment-post.dnnMobile-comment-post-reply {
+        margin: -20px 0 20px 0;
+    }
+
+    .comments-container-mobileview .comment-post.dnnMobile-comment-post ul.answer-post-actions {
+        margin: 0;
+        padding: 0;
+        display: block;
+        float: none;
+    }
+
+        .comments-container-mobileview .comment-post.dnnMobile-comment-post ul.answer-post-actions > li {
+            margin: 0;
+            padding: 0;
+            display: inline-block;
+            float: none;
+            width: 49%;
+        }
+
+        .comments-container-mobileview .comment-post.dnnMobile-comment-post ul.answer-post-actions a {
+            width: 100%;
+            display: block;
+            padding: 20px 0 20px 0;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+.comments-container-mobileview .dnnMobileLike.likes {
+    margin: -15px 0 15px 0;
+}
+.comments-container-mobileview .answer-add-panel .redactor-box{ 
+    width: 100%;
+}
+.dnnMobile-comment-post .comment-inline-login {
+    margin: 0 10px 10px 10px;
+}
+
+.dnnMobile-comment-post .comment-inline-login > div > div {
+    margin: 0 0 10px 0;
+}
+
+.dnnMobile-comment-post .comment-inline-login input[type="text"], 
+.dnnMobile-comment-post .comment-inline-login input[type="password"] {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-border-radius: 0;
+    border-radius: 0;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.dnnMobile-comment-post .comment-inline-login a.dnnMobile-comment-option {
+    display: inline-block;
+    padding: 10px 0 10px 0;
+    text-align: center;
+    background: #eee;
+    color: #777;
+    border: 1px solid #ccc;
+    margin-right: -4px;
+    width: 43px;
+    margin-bottom: 15px;
+}
+
+.dnnMobile-comment-post .comment-inline-login a.dnnMobile-comment-option.selected {
+    background: #ccc;
+    color: #fff;
+}
+
+/* inline comment */
+.dnnMobile-comment {
+    margin: 10px 0 10px 0;
+    padding: 10px 0 0 0;
+    border-top: 1px solid #eee;
+}
+
+    .dnnMobile-comment span.dnnMobile-comment-inline-date {
+        display: inline-block;
+        margin-left: 5px;
+        color: #888;
+    }
+
+    .dnnMobile-comment .dnnMobile-comment-inline-content {
+        display: block;
+        margin: 8px 0 0 0;
+        color: #888;
+    }
+
+.dnnMobile-comment-load-more {
+    margin-left: -55px;
+    border-top: 1px solid #eee;
+    font-weight: bold;
+    padding: 10px 0 0 0;
+    text-align: center;
+}
+
+/* REPORT Control */
+.dnnFormPopup.dnnFormPopupMobileView .social-report-content > div,
+.dnnFormPopup.dnnFormPopupMobileView .social-report-content > h3 {
+    font-family: Arial;
+    font-size: 16px;
+}
+
+.dnnFormPopup.dnnFormPopupMobileView .social-report-other > textarea {
+    box-sizing: border-box;
+    padding: 7px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+    border-radius: 0;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    width: 100%;
+    height: 125px;
+    max-width: inherit;
+    max-height: inherit;
+}
+
+/* LIKE POPUP Control */
+.dnnFormPopup.dnnFormPopupMobileView .like-popup-list {
+    height: 100%;
+}
+
+/* IDEA Mobile */
+.dnnMobile-idea-vote-options {
+    position: absolute;
+    background-color: #eee;
+    padding: 15px 10px 10px 10px;
+    display: none;
+    z-index: 50;
+    white-space: nowrap;
+    width: Calc(90% - 30px);
+}
+
+td > .dnnMobile-idea-vote-options {
+    position: static;
+    width: 95%;
+}
+
+.dnnMobile-share-idea-vote-options {
+    width: 100%;
+    padding: 0;
+}
+
+    .dnnMobile-idea-vote-options a.button,
+    .dnnMobile-share-idea-vote-options a.button {
+        display: block;
+        width: 15%;
+        height: 33px;
+        text-align: center;
+        padding-top: 16px;
+        float: left;
+        background: #339795;
+        color: #fff;
+        margin: 0 2px 2px 0;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+        .dnnMobile-idea-vote-options a.button.selectedVotes,
+        .dnnMobile-share-idea-vote-options a.button.selectedVotes {
+            background: #ff5f76;
+        }
+
+        .dnnMobile-idea-vote-options a.button.disabled,
+        .dnnMobile-share-idea-vote-options a.button.disabled {
+            background: #ccc;
+            color: #999;
+        }
+
+.dnnMobile-idea-vote-options div.remaining {
+    margin: 10px 0 5px 0;
+    text-align: center;
+    font-size: 12px;
+    color: #888;
+    font-weight: bold;
+}
+
+    .dnnMobile-idea-vote-options div.remaining span.value {
+        color: #fe9e47;
+    }
+
+/* ANSWER Mobile */
+.dnnMobile-moduleThreadContainer a.dnnMobile-voteButton.activeIndicator {
+    background-image: url(../answers/images/mobileCheckmark.png);
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.dnnMobile-contentBody.answer-content {
+    padding: 0 0 15px 0;
+    margin: 15px 0 15px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.dnnMobile-contentBody .answer-vote {
+    margin: 0;
+}
+
+    .dnnMobile-contentBody .answer-vote > a.answer-vote-upbtn {
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+    }
+
+    .dnnMobile-contentBody .answer-vote > a.answer-vote-downbtn {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+.dnnMobile-contentBody .answer-contentBody {
+    margin-left: 55px;
+    margin-bottom: 15px;
+}
+
+.answer-comments-content {
+    word-wrap: break-word;
+}
+
+.dnnMobile-contentBody img {
+    max-width: 100% !important;
+    height: auto;
+}
+
+.dnnMobile-contentBody iframe {
+    max-width: 100% !important;
+    height: auto;
+}
+
+.dnnMobile-contentBody .answer-contentBody .comment-template-container {
+    padding: 0;
+}
+
+.comments-container-mobileview.answer-comments-panel {
+    margin: 20px 0 20px 0;
+}
+
+ul.dnnMobile-comment-actions.answer-comment-actions {
+    margin: 0 0 0 55px;
+}
+
+ul.dnnMobile-ideaActions.answer-comment-actions {
+    margin: 15px 6px 0 62px;
+}
+
+    ul.dnnMobile-ideaActions.answer-comment-actions + .dnnMobileLike {
+        margin-top: 15px;
+    }
+
+.mobileView .dnnMobile-moduleThreadContainer a.dnnMobile-addanswer-button.dnnPrimaryAction {
+    width: 96%;
+    padding: 20px 0 20px 0;
+    margin: 20px 0 20px 0 !important;
+    text-transform: uppercase;
+}
+
+@media (max-width: 47.9em) {
+    .idea-comment-warning {
+        width: auto !important;
+    }
+}
+
+/* BLOG Mobile */
+.dnnMobile-blog-title {
+    margin: 15px 0 15px 0;
+}
+
+    .dnnMobile-blog-title a.blog-social-rss {
+        margin: -30px 0 0 0;
+    }
+
+.dnnFormPopup.dnnFormPopupMobileView .captioned-box .entry-publishdate {
+    display: inline-block;
+    width: 90%;
+    box-sizing: border-box;
+}
+
+.dnnFormPopup.dnnFormPopupMobileView > .blog-entry-form-container {
+    padding: 0;
+}
+
+.dnnFormPopup.dnnFormPopupMobileView .dnnForm .dnnFormItem.dnnFormItemCheckbox > .dnnLabel {
+    display: inline-block;
+    width: auto !important;
+}
+
+    .dnnFormPopup.dnnFormPopupMobileView .dnnForm .dnnFormItem.dnnFormItemCheckbox > .dnnLabel + span {
+        margin-top: 0;
+        margin-bottom: 12px;
+    }
+
+.dnnBlogEditEntry.blog-list-container.dnnFormPopup.dnnFormPopupMobileView {
+    position: static;
+}
+.dnnFormPopup.dnnFormPopupMobileView.dnnBlogEditEntry .dnnForm .dialog-footer > ul {
+    text-align: right;
+}
+.dnnFormPopup.dnnFormPopupMobileView.dnnBlogEditEntry .dnnForm .dialog-footer > ul > li{
+    max-width: 25%;
+    width: auto;
+    margin: 0;
+}
+
+.mobileView .blog-entry-form-container .dnnMultipleControls.blog-author-select select {
+    width: 100%;
+}
+
+.mobileView .list-row-summary-image {
+    margin: 12px 0 12px 0;
+}
+.mobileView .list-row-summary-image > img {
+    max-width: 100% !important;
+    height: auto;
+}
+
+/* WIKI Mobile */
+.dnnFormPopup.dnnFormPopupMobileView .wiki-editor-form {
+    margin-top: 15px;
+}
+
+/* EVENT Mobile */
+.dnnMobileListTbl .dnnMobileIdeaVote.dnnMobileEventVote {
+    vertical-align: bottom;
+    width: 30%;
+}
+
+.dnnMobileListTbl td.dnnMobileIdeaVote.dnnMobileEventVote a.idea-vote-button.dnnTertiaryAction,
+.dnnMobileListTbl td.dnnMobileIdeaVote.dnnMobileEventVote a.idea-vote-button.dnnTertiaryAction:hover {
+    background: #eee;
+}
+
+.dnnMobileIdeaVote.dnnMobileEventVote .attending-count {
+    margin: 15px 0 10px 0;
+}
+
+    .dnnMobileIdeaVote.dnnMobileEventVote .attending-count span {
+        display: block;
+    }
+
+.dnnMobileIdeaTitle.dnnMobileEventTitle > a.dnnSocialLink {
+    display: block;
+    margin-bottom: 1em;
+}
+
+.dnnMobile-idea-vote-options.dnnMobile-event-vote-options a.button {
+    width: 32%;
+    font-size: 12px;
+}
+
+.dnnMobileIdeaVote.dnnMobileEventVote div.socialevents-todaylabel {
+    left: 0;
+    top: 12px;
+    height: auto;
+}
+
+.dnnFormPopup.dnnFormPopupMobileView .dnnMultipleControls {
+    float: none;
+    width: 100%;
+}
+
+    .dnnFormPopup.dnnFormPopupMobileView #wizard .dnnFormItem .dnnMultipleControls #txtFromDate,
+    .dnnFormPopup.dnnFormPopupMobileView #wizard .dnnFormItem .dnnMultipleControls #txtToDate {
+        display: inline-block;
+        width: 90%;
+        box-sizing: border-box;
+        margin-bottom: 18px;
+        border-radius: 0;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+    }
+
+.dnnFormPopup.dnnFormPopupMobileView #wizard .dnnFormItem #selectFromTimeHours,
+.dnnFormPopup.dnnFormPopupMobileView #wizard .dnnFormItem #selectToTimeHours,
+.dnnFormPopup.dnnFormPopupMobileView #wizard .dnnFormItem #selectFromTimeMinutes,
+.dnnFormPopup.dnnFormPopupMobileView #wizard .dnnFormItem #selectToTimeMinutes,
+.dnnFormPopup.dnnFormPopupMobileView #wizard .dnnFormItem #selectFromTimeAMPM,
+.dnnFormPopup.dnnFormPopupMobileView #wizard .dnnFormItem #selectToTimeAMPM {
+    width: 50px;
+    display: inline-block;
+    padding: 7px 3px 7px 0;
+    margin-bottom: 0;
+    border-radius: 0;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.dnnFormPopup.dnnFormPopupMobileView #guest-page .dnnMultipleControls {
+    float: none !important;
+    width: auto;
+}
+
+.dnnFormPopup.dnnFormPopupMobileView div#inviteFriendsFormItem > div.inviteFriendsDiv {
+    float: none !important;
+    width: auto;
+}
+
+.dnnFormPopup.dnnFormPopupMobileView table.inviteFriendsTable tr th:first-child,
+.dnnFormPopup.dnnFormPopupMobileView table.inviteFriendsTable tr td:first-child {
+    width: 20px;
+    padding: 4px 0 4px 10px;
+}
+
+.dnnFormPopup.dnnFormPopupMobileView table.inviteFriendsTable td input[type="checkbox"].normalCheckBox {
+    margin: 8px 0 0 0;
+}
+
+.dnnFormPopup.dnnFormPopupMobileView .dnnFormItem .inviteFriendsSearch input[type="text"] {
+    display: block;
+    box-sizing: border-box;
+    width: 100% !important;
+    -webkit-border-radius: 0;
+    border-radius: 0;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    max-width: inherit !important;
+}
+
+.dnnFormPopup.dnnFormPopupMobileView .social-wizard a.dnnPrimaryAction {
+    float: right;
+}
+
+.dnnFormPopup.dnnFormPopupMobileView .social-wizard a.dnnSecondaryAction {
+    float: left;
+}
+
+.dnnFormPopup.dnnFormPopupMobileView .social-wizard .wizardStepTitle {
+    color: #000;
+}
+
+.dnnFormPopup.dnnFormPopupMobileView .social-wizard .wizardStepNumber {
+    background-color: #000;
+}
+
+.dnnFormPopup.dnnFormPopupMobileView .social-wizard > ul.wizard-tabs {
+    border-radius: 0;
+    -moz-border-radius: 0;
+}
+
+.dnnFormPopup.dnnFormPopupMobileView .social-wizard .wizardStepDescription {
+    margin: 0;
+}
+
+.dnnFormPopup.dnnFormPopupMobileView .social-wizard > ul.wizard-tabs li .wizardStep {
+    padding-left: 10px !important;
+}
+
+.dnnFormPopup.dnnFormPopupMobileView .social-wizard-indicator {
+    position: absolute;
+    width: 50px;
+    height: 10px;
+    top: 5px;
+    right: 15px;
+}
+
+    .dnnFormPopup.dnnFormPopupMobileView .social-wizard-indicator > span {
+        display: inline-block;
+        background: #aaa;
+        width: 10px;
+        height: 10px;
+        border-radius: 10px;
+        margin-right: 5px;
+    }
+
+.dnnFormPopup.dnnFormPopupMobileView > .social-wizard-indicator > span.active {
+    background: #666;
+}
+
+.dnnMobile-moduleThreadContainer .socialevents-detail-dateaddress span {
+    margin-bottom: 10px;
+}
+
+.dnnMobile-moduleThreadContainer .socialeevents-embedded-map {
+    margin: 12px 0 12px 0;
+}
+
+.dnnMobile-moduleThreadContainer .socialevent-actions {
+    margin-bottom: 10px;
+}
+
+    .dnnMobile-moduleThreadContainer .socialevent-actions > a {
+        width: 48%;
+        padding: 20px 0 20px 0;
+        margin: 0 !important;
+        text-transform: uppercase;
+        display: inline-block;
+    }
+
+        .dnnMobile-moduleThreadContainer .socialevent-actions > a.idea-vote-button.dnnTertiaryAction,
+        a.idea-vote-button.dnnTertiaryAction.attendees-rsvp {
+            border-radius: 0;
+            -moz-border-radius: 0;
+            -webkit-border-radius: 0;
+            box-shadow: none;
+            -moz-box-shadow: none;
+            -webkit-box-shadow: none;
+            text-shadow: none;
+            border: none;
+        }
+
+a.idea-vote-button.dnnTertiaryAction.attendees-rsvp {
+    display: block;
+    float: right;
+    cursor: default;
+}
+
+td.guest-list-name-td.dnnMobileIdeaTitle a.dnnSocialLink {
+    font-size: inherit;
+    display: block;
+}
+
+td.guest-list-name-td.dnnMobileIdeaTitle a.dnnSecondaryAction {
+    margin: 5px 0 0 0;
+}
+
+    td.guest-list-name-td.dnnMobileIdeaTitle a.dnnSecondaryAction.disabled,
+    td.guest-list-name-td.dnnMobileIdeaTitle a.dnnSecondaryAction.disabled:active,
+    td.guest-list-name-td.dnnMobileIdeaTitle a.dnnSecondaryAction.disabled:hover {
+        cursor: default;
+    }
+
+
+/* MYSTATUS EXPAND Mobile */
+.dnnMobile-profile-container {
+    padding: 10px;
+    background: #fff;
+}
+
+	.dnnMobile-profile-container .reportUser > a{
+		padding-left: 25px;
+	}
+
+.dnnMobile-profile-detail {
+    display: block;
+    float: left;
+    margin: 0 0 0 10px;
+    max-width: 100%;
+}
+
+    .dnnMobile-profile-detail span.dnnMobile-profile-fullname {
+        display: block;
+        font-weight: bold;
+        font-size: 13px;
+        word-wrap: break-word;
+    }
+
+    .dnnMobile-profile-detail span.dnnMobile-profile-address {
+        display: block;
+        background: #fff url(../mystatus/images/address.png) no-repeat;
+        padding: 1px 0 0 20px;
+        margin: 5px 0 0 -5px;
+    }
+		
+	.dnnMobile-profile-detail  a.userRemovedMsg
+	{
+		padding: 5px;
+		background-color: #fb0044 !important;
+		background: #fb0044 !important;
+		color: #fff !important;
+		font-weight: bold;
+	}
+
+.dnnMobile-profile-description {
+    font-size: 15px;
+    margin: 12px 0 3px 0;
+    font-family: "Titillium Web", Arial, Helvetica, sans-serif;
+    color: #333;
+}
+
+.dnnMobile-biography {
+    color: #999;
+}
+
+ul.dnnMobile-profile-statistics {
+    width: 100%;
+    margin: 5px 0 0 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+    ul.dnnMobile-profile-statistics > li {
+        display: block;
+        width: 48%;
+        float: left;
+        margin: 5px 5px 0 0;
+        padding: 15px 0 12px 0;
+        background-color: #eee;
+        list-style-type: none;
+    }
+
+        ul.dnnMobile-profile-statistics > li.li-rightside {
+            margin: 5px 0 0 0;
+        }
+
+        ul.dnnMobile-profile-statistics > li > span {
+            display: block;
+            text-align: center;
+            color: #999;
+            font-size: 10px;
+        }
+
+            ul.dnnMobile-profile-statistics > li > span.dnnMobile-profile-item-data {
+                color: #fe9e47;
+                font-size: 18px;
+                font-weight: bold;
+            }
+
+/* Hide mystatus compactview in mobile view */
+@media (max-width: 42.625em) {
+    .ModMyStatusC .status-container {
+        margin: 0;
+    }
+
+    .ModMyStatusC .status-compact-container,
+    .ModMyStatusC .statusLogin {
+        display: none;
+    }
+}
+
+/* BADGE Mobile */
+.mobileView ul.dnnBadgeList {
+    width: 100%;
+}
+
+.mobileView .badgeContainer {
+    margin: 0 0 15px 0;
+    width: 100%;
+    cursor: pointer;
+}
+
+    .mobileView .badgeContainer .dnnMobileUserBadgeDetail {
+        padding: 15px 15px 0 15px;
+        clear: both;
+    }
+
+        .mobileView .badgeContainer .dnnMobileUserBadgeDetail .completed-by {
+            padding: 10px 0 0 0;
+            margin: 10px 0 -5px 0;
+            border-top: 1px solid #ccc;
+        }
+
+            .mobileView .badgeContainer .dnnMobileUserBadgeDetail .completed-by ul {
+                margin: 0;
+                vertical-align: top;
+            }
+
+                .mobileView .badgeContainer .dnnMobileUserBadgeDetail .completed-by ul li {
+                    display: inline-block;
+                    margin: 0 5px 5px 0;
+                }
+
+                    .mobileView .badgeContainer .dnnMobileUserBadgeDetail .completed-by ul li label {
+                        display: block;
+                        font-weight: bold;
+                        margin-top: 13px;
+                    }
+
+                    .mobileView .badgeContainer .dnnMobileUserBadgeDetail .completed-by ul li a {
+                        border: medium none transparent;
+                        display: inline-block;
+                        height: 40px;
+                        overflow: hidden;
+                        text-decoration: none;
+                        width: 40px;
+                        border: 2px solid #ccc;
+                    }
+
+                        .mobileView .badgeContainer .dnnMobileUserBadgeDetail .completed-by ul li a em {
+                            display: table-cell;
+                            height: 40px;
+                            vertical-align: middle;
+                            width: 40px;
+                        }
+
+                    .mobileView .badgeContainer .dnnMobileUserBadgeDetail .completed-by ul li img {
+                        border: medium none;
+                        display: inline-block;
+                        width: 100%;
+                    }
+
+/* GROUP DIRECTORY Mobile */
+.dnnMobileListTbl.dnnMobileGroupDirectoryTbl td.dnnMobileIdeaVote {
+    border-right: none;
+    padding-top: 12px;
+    width: 110px;
+}
+
+.dnnMobileListTbl.dnnMobileGroupDirectoryTbl td.dnnMobileIdeaTitle {
+    padding: 15px 12px 0 12px;
+}
+
+td.dnnMobileIdeaVote .group-member-info {
+    padding: 10px;
+    background-color: #eee;
+}
+
+    td.dnnMobileIdeaVote .group-member-info span {
+        display: block;
+        text-align: center;
+    }
+
+        td.dnnMobileIdeaVote .group-member-info span.member-count {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 3px;
+        }
+
+        td.dnnMobileIdeaVote .group-member-info span.member-label {
+            color: #666;
+        }
+
+td.dnnMobileIdeaVote a.joinButton {
+    display: block;
+    margin-top: 5px;
+}
+
+.dnnMobileListTbl.dnnMobileGroupDirectoryTbl td.dnnMobileIdeaTitle .answer-content-summary {
+    margin: 10px 0 15px 0;
+    line-height: 1.5em;
+    height: 4.5em;
+    overflow: hidden;
+}
+
+/* GROUP SPACE create group wizard fileupload */
+.mobileView #wizard .dnnFormItem .dnnFileUploadScope, 
+.mobileView #postFields .dnnFormItem .dnnFileUploadScope, 
+.mobileView .blog-entry-form-container .dnnFormItem .dnnFileUploadScope {
+    width: 100%;
+    min-width: 100%;
+    margin-right: 0;
+}
+
+    .mobileView .dnnFileUploadScope > .dnnLeft {
+        width: 35%;
+        margin: 10px 0 10px 10px;
+        padding: 0;
+    }
+
+    .mobileView .dnnFileUploadScope > div:first-child {
+        float: right;
+        margin: 0 10px 0 0;
+        width: 50%;
+        position: relative;
+    }
+
+    .mobileView .dnnFileUploadScope .dnnLeft .dnnFormItem {
+        margin: 0;
+        width: 100%;
+    }
+
+    .mobileView .dnnFileUploadScope .dnnLeft .dnnFileUploadDropZone {
+        float: right;
+        width: 100%;
+        height: 100px;
+    }
+
+        .mobileView .dnnFileUploadScope .dnnLeft .dnnFileUploadDropZone span {
+            display: none !important;
+        }
+
+        .mobileView .dnnFileUploadScope .dnnLeft .dnnFileUploadDropZone img {
+            max-width: 100% !important;
+            max-height: 100% !important;
+        }
+
+    .mobileView .dnnFileUploadScope .dnnLeft .dnnFormItem.dnnFileUploadFolder + div {
+        display: none !important;
+    }
+
+    .mobileView .dnnFileUploadScope .dnnLeft .dnnFormItem input[type="button"] {
+        width: 100% !important;
+        border: none;
+        margin: 10px 10px 0 0;
+        background: #999;
+        color: #fff;
+        border-radius: 0;
+        text-shadow: none;
+        box-shadow: none;
+        padding: 10px;
+    }
+
+    .mobileView .dnnFileUploadScope .dnnFormItem span.dnnMobileUploadGroupImage {
+        display: block;
+        float: none;
+        width: 100%;
+        margin: 15px 0 10px -5px;
+        padding: 0;
+        font-weight: bold;
+        text-align: center;
+        text-transform: uppercase;
+    }
+
+    .mobileView .dnnFormPopup {
+        border-radius: 0;
+    }
+
+    .mobileView .dnnFormPopup.fu-dialog {
+        width: auto !important;
+        left: 0 !important;
+        right: 0 !important;
+    }
+
+    .mobileView .dnnFormPopup.fu-dialog .fu-container {
+        padding: 0 !important;
+    }
+
+    .mobileView .dnnFormPopup.fu-dialog div.ui-dialog-titlebar > .ui-dialog-titlebar-close {
+        display: none !important;
+    }
+
+    .mobileView .fu-container .fu-fileupload-statuses-container {
+        height: inherit !important;
+    }
+
+    .mobileView .fu-dialog-content ul.dnnButtonGroup {
+        display: none !important;
+    }
+
+    .mobileView a.fu-fileupload-thumbnail, 
+    .mobileView a.fu-fileupload-thumbnail:link, 
+    .mobileView a.fu-fileupload-thumbnail:visited, 
+    .mobileView a.fu-fileupload-thumbnail:hover, 
+    .mobileView a.fu-fileupload-thumbnail:active {
+         display: none !important;
+    }
+
+.mobileView #wizard .accessibility {
+    width: 100%;
+    padding: 0;
+}
+
+    .mobileView #wizard .accessibility .accessibility-review {
+        margin: 0 10px 10px 30px;
+    }
+
+.mobileView #wizard .accessibility-label {
+    margin: 5px 0 0 5px;
+}
+
+.mobileView #wizard .accessibility-help {
+    margin: 0 10px 8px 35px;
+    display: block;
+}
+
+.mobileView .checkboxlist {
+    width: 100%;
+    float: none;
+}
+
+.mobileView .groupTabs {
+    display: none;
+}
+
+/* GROUP Invite members */
+.mobileView .invite-page {
+    height: auto;
+    margin: 0;
+}
+
+.mobileView .inviteList {
+    overflow: hidden;
+    height: auto;
+}
+
+.mobileView .inviteList .container {
+    width: 100%;
+    margin: 0 0 10px 0;
+}
+
+.mobileView .inviteList .container .primary {
+    margin-bottom: 10px;
+}
+
+.mobileView  .inviteSection,
+.mobileView  .inviteByEmailSection {
+    width: 100%;
+    float: none;
+}
+
+.mobileView  .inviteUser {
+    float: left;
+    margin: 0 0 10px 0;
+}
+
+/* GROUP SPACE Mobile */
+.dnnMobile-groupOverview-main {
+    padding: 15px;
+    background: #fff;
+}
+
+.dnnMobile-groupOverview-nav {
+    width: 100px;
+    float: right;
+}
+
+    .dnnMobile-groupOverview-nav > div {
+        width: 50px;
+        height: 50px;
+        background-position: center;
+        background-repeat: no-repeat;
+        cursor: pointer;
+        float: left;
+    }
+
+        .dnnMobile-groupOverview-nav > div.inactive {
+            background-color: #ddd;
+        }
+
+        .dnnMobile-groupOverview-nav > div.active {
+            background-color: #808080;
+        }
+
+    .dnnMobile-groupOverview-nav .navHome.inactive {
+        background-image: url('../groupSpaces/images/icon-home-inactive.png');
+    }
+
+    .dnnMobile-groupOverview-nav .navHome.active {
+        background-image: url('../groupSpaces/images/icon-home-active.png');
+    }
+
+    .dnnMobile-groupOverview-nav .navSearch.inactive {
+        background-image: url('../groupSpaces/images/icon-search-inactive.png');
+    }
+
+    .dnnMobile-groupOverview-nav .navSearch.active {
+        background-image: url('../groupSpaces/images/icon-search-active.png');
+    }
+
+.dnnMobile-groupOverview-primary {
+    margin: 35px 0 25px 0;
+}
+
+    .dnnMobile-groupOverview-primary .groupOverview-imageContainer {
+        padding: 0;
+        margin: 0 20px 0 0;
+        width: 100px;
+    }
+
+        .dnnMobile-groupOverview-primary .groupOverview-imageContainer .group-image {
+            margin: 0;
+            width: 100px;
+            height: 100px;
+        }
+
+            .dnnMobile-groupOverview-primary .groupOverview-imageContainer .group-image span {
+                width: 100px;
+                height: 100px;
+            }
+
+                .dnnMobile-groupOverview-primary .groupOverview-imageContainer .group-image span em {
+                    width: 100px;
+                    height: 100px;
+                }
+
+    .dnnMobile-groupOverview-primary .groupOverview-infoContainer {
+        margin-left: 115px;
+    }
+
+        .dnnMobile-groupOverview-primary .groupOverview-infoContainer .group-name {
+            font-size: 20px;
+            line-height: 1.5em;
+            font-weight: bold;
+            color: #666;
+            display: block;
+        }
+
+        .dnnMobile-groupOverview-primary .groupOverview-infoContainer .statDate {
+            font-size: 16px;
+            line-height: 1.5em;
+            color: #999;
+            display: block;
+        }
+
+        .dnnMobile-groupOverview-primary .groupOverview-infoContainer .dnnPrimaryAction,
+        .dnnMobile-groupOverview-primary .groupOverview-infoContainer .dnnSecondaryAction {
+            display: inline-block;
+            margin: 8px 0 0 0;
+            font-size: 14px;
+            padding: 12px;
+        }
+
+.dnnMobile-groupOverview-stats {
+    margin: 0 -15px -15px -15px;
+    border-top: 1px solid #eee;
+}
+
+    .dnnMobile-groupOverview-stats > div {
+        border-right: 1px solid #eee;
+        padding: 15px 25px 15px 25px;
+        display: inline-block;
+        vertical-align: top;
+    }
+
+        .dnnMobile-groupOverview-stats > div > span {
+            display: block;
+            text-align: center;
+        }
+
+            .dnnMobile-groupOverview-stats > div > span.stat {
+                font-size: 20px;
+                line-height: 1.4em;
+                font-weight: bold;
+                color: #000;
+            }
+
+            .dnnMobile-groupOverview-stats > div > span.statName {
+                line-height: 1em;
+                color: #999;
+            }
+
+.dnnMobile-groupOverview-search {
+    display: none;
+    background-color: #808080;
+}
+
+    .dnnMobile-groupOverview-search > div {
+        padding: 10px;
+    }
+
+    .dnnMobile-groupOverview-search input[type="text"] {
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        width: 100%;
+        box-shadow: none;
+        border-radius: 0;
+        text-shadow: none;
+    }
+
+.dnnMobileGroupSearchResult {
+    display: none;
+    margin: 56px 0 0 0;
+    background: #fff;
+}
+
+    .dnnMobileGroupSearchResult > ul {
+        display: block;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+        .dnnMobileGroupSearchResult > ul > li {
+            display: block;
+            list-style: none;
+            border-bottom: 1px solid #ccc;
+        }
+
+            .dnnMobileGroupSearchResult > ul > li > span {
+                display: block;
+                padding: 10px 15px 10px 15px;
+                font-size: 14px;
+                font-weight: bold;
+                border-bottom: 1px solid #ccc;
+            }
+
+            .dnnMobileGroupSearchResult > ul > li > ul {
+                margin-left: 10px;
+            }
+
+                .dnnMobileGroupSearchResult > ul > li > ul > li {
+                    display: block;
+                    list-style: none;
+                }
+
+                    .dnnMobileGroupSearchResult > ul > li > ul > li > a {
+                        display: block;
+                        margin: 10px 15px 10px 15px;
+                        font-weight: bold;
+                    }
+
+.dnnMobileGroupSpaces > a.dnnMobileGroupSpaces-indicator {
+    background-image: url('../groupSpaces/images/icon-groups-navbar.png');
+    background-color: transparent;
+    width: 50px;
+    height: 50px;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: block;
+    float: left;
+    border-right: 1px solid #fff;
+}
+
+.dnnMobileGroupSpaces > a.dnnMobileGroupSpaces-label {
+    display: block;
+    padding: 17px 15px 0 15px;
+    font-size: 14px;
+    float: left;
+    color: #fff;
+}
+
+.dnnMobileGroupsTab {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    background: #eee;
+    display: none;
+}
+
+    .dnnMobileGroupsTab > li {
+        padding: 15px;
+        margin: 0;
+        list-style-type: none;
+        border-bottom: 1px solid #ccc;
+    }
+
+        .dnnMobileGroupsTab > li > a {
+            color: #666;
+            font-size: 14px;
+            display: block;
+        }
+
+/* ACTIVITY Mobile */
+.mobileView .journalEditor-Container {
+    display: block;
+    margin: 0 10px 0 10px;
+    z-index: 0;
+}
+
+    .mobileView .journalEditor-Container #journalEditor {
+        border-radius: 0;
+        -moz-border-radius: 0;
+        -webkit-border-radius: 0;
+        -webkit-box-shadow: none;
+        text-shadow: none;
+        width: auto;
+        background: #fff;
+        padding: 5px;
+    }
+
+        .mobileView .journalEditor-Container #journalEditor #journalPlaceholder {
+            white-space: nowrap;
+            overflow: hidden;
+            padding: 0;
+        }
+
+.mobileView .journalrow div.journalitem ul.jcmt li.cmtfakeeditarea input[type="text"] {
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+    border-radius: 0;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.mobileView #journalEditor #journalContent {
+    width: 90%;
+}
+
+.mobileView #journalEditor #tbar {
+    margin-right: 6px;
+    margin-top: 4px;
+    width: auto;
+    min-width: inherit;
+    position: static;
+}
+.mobileView #journalEditor #tbar > span#tbar-perm,
+.mobileView #journalEditor #tbar > span#tbar-attach {
+    display: none;
+}
+
+.mobileView #journalOptionArea div.journal_onlineFileShare {
+    display: none;
+}
+
+.mobileView #journalOptionArea div.journal_localFileShare {
+    width: 100%;
+    float: none;
+}
+
+.mobileView #journalOptionArea div.journal_localFileShare span.dnnInputFileWrapper {
+    width: 80% !important;
+}
+
+.mobileView #journalOptionArea div.journal_localFileShare span.browser-upload-btn {
+    display: none;
+}
+
+.mobileView div.journalTools div#journalOptionArea div.fileUploadArea div#itemUpload .progress_bar_wrapper {
+    display: none !important;
+}
+
+.mobileView div.journalTools div#journalOptionArea div.fileUploadArea div#itemUpload .file-upload-error {
+    display: none !important;
+}
+
+.mobileView .journalTools .avatar {
+    display: none;
+}
+
+.mobileView .journalViewTools-container {
+    padding: 20px 10px 20px 10px;
+}
+
+.mobileView div#journalItems {
+    background-color: #FFFFFF;
+    padding: 20px 10px 0 10px;
+}
+
+.mobileView .journalrow div.journalitem {
+    margin-left: 55px;
+    padding-left: 10px;
+}
+
+    .mobileView .journalrow div.journalitem > div > i {
+        word-wrap: break-word;
+    }
+
+    .mobileView .journalrow div.journalitem .journalfooter abbr {
+        display: block;
+        margin: 0 0 5px 0;
+    }
+
+.mobileView .dnnSocialLink.journalitem-remove {
+    display: none;
+}
+
+.mobileView .journalViewTools {
+    height: auto;
+    padding: 0 0 12px 0;
+}
+
+.mobileView .journalrow div.journalitem .jlink > a {
+    float: none;
+    margin: 0 0 12px 0;
+    padding: 0;
+    width: 100%;
+    max-width: 100%;
+    border: none;
+}
+
+.mobileView .journalrow div.journalitem .jlink > a > img {
+    max-width: 100%;
+}
+
+.mobileView  .journalTools #journalOptionArea #linkArea #imagePreviewer {
+    width: 100%;
+    float: none;
+    margin: 10px 0 10px 0;
+    padding: 0;
+}
+.mobileView .journalTools #journalOptionArea #linkArea #imagePreviewer #image,
+.mobileView .journalTools #journalOptionArea #linkArea #imagePreviewer #image span,
+.mobileView .journalTools #journalOptionArea #linkArea #imagePreviewer #image span em {
+    width: 100%;
+    height: 250px;
+}
+
+.mobileView .select-view {
+    -moz-border-radius: none;
+    -moz-box-shadow: none;
+    -webkit-border-radius: 0;
+    -webkit-box-shadow: none;
+    background: #fff;
+    border-radius: 0;
+    box-shadow: none;
+    display: block;
+    box-sizing: border-box;
+    -moz-box-sizeing: border-box;
+    width: 100%;
+    padding: 7px;
+}
+
+.mobileView .journalTools #share {
+    width: 50%;
+    padding: 15px;
+}
+
+.mobileView a.dnnPrimaryAction#getNew,
+.mobileView div#journalBottomControls a.dnnPrimaryAction{
+    width: 100%;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    padding: 15px;
+}
+
+.mobileView .journalrow div.journalitem .likes {
+    margin-bottom: 5px;
+}
+
+.mobileView .journalrow div.journalitem ul.jcmt {
+    margin-left: -65px;
+    margin-top: -10px;
+}
+
+    .mobileView .journalrow div.journalitem ul.jcmt > li {
+        padding: 5px;
+    }
+
+        .mobileView .journalrow div.journalitem ul.jcmt > li.jcmt-loadmore {
+            border-right: 5px solid #ff5f76;
+            padding-right: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ccc;
+            padding-top: 15px;
+            margin-top: 20px;
+        }
+
+            .mobileView .journalrow div.journalitem ul.jcmt > li.jcmt-loadmore:before,
+            .mobileView .journalrow div.journalitem ul.jcmt > li:first-child:before {
+                display: none;
+            }
+
+        .mobileView .journalrow div.journalitem ul.jcmt > li:first-child {
+            padding-top: 15px;
+        }
+
+    .mobileView .journalrow div.journalitem ul.jcmt li textarea {
+        -webkit-border-radius: 0;
+        border-radius: 0;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+    }
+
+    .mobileView .journalrow div.journalitem ul.jcmt div.jcmtbuttons > a {
+        margin: 0;
+        width: 45%;
+        padding: 10px 0 10px 0;
+    }
+
+    .mobileView .journalrow div.journalitem ul.jcmt ul.cmt-actions {
+        margin-left: 50px;
+    }
+
+    .mobileView .journalrow div.journalitem ul.jcmt > li.cmtfakeeditarea {
+        padding-bottom: 15px;
+    }
+
+.mobileView .journalBottomContorls-container {
+    padding: 20px 10px;
+}
+
+/* hide activity stream filter in mobile view */
+.mobileView .leftPaneNarrow .DnnModule-ActivityStream,
+.mobileView .rightPane .DnnModule-ActivityStream {
+    display: none;
+}
+
+/* Leaderboard */
+.dnnMobileLeaderboardTbl {
+    table-layout: fixed;
+    overflow: hidden;
+    white-space: nowrap;
+}
+.dnnMobileLeaderboardTbl > thead th {
+    padding: 20px 10px 20px 10px;
+    text-align: left;
+    background-color: #eee;
+    border-left: 1px solid #fff;
+    font-weight: bold;
+}
+
+.dnnMobileLeaderboardTbl > thead th:first-child {
+    width: 30px;
+}
+
+.dnnMobileLeaderboardTbl > thead th:first-child + th + th {
+    width: 25px;
+}
+
+.dnnMobileLeaderboardTbl > tbody td {
+    text-align: center;
+    vertical-align: middle;
+    border-right: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+}
+
+.dnnMobileLeaderboardTbl > tbody td:first-child {
+    font-weight: bold;
+    font-size: 13px;
+    border-left: 1px solid #eee;
+}
+
+.dnnMobileLeaderboardTbl > tbody td .avatar40 {
+    display: block;
+    margin: 10px 0 10px 10px;
+    float: left;
+}
+
+.dnnMobileLeaderboardTbl > tbody td .avatar40 + div {
+    margin-left: 65px;
+    overflow: hidden;
+}
+
+.dnnMobileLeaderboardTbl > tbody td a.dnnSocialLink {
+    display: block;
+    margin: 12px 0 3px 0;
+    font-weight: bold;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.dnnMobileLeaderboardTbl > tbody td a.dnnSocialLink + span {
+    display: block;
+    font-size: 11px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.dnnMobileLeaderboardTbl > tbody td span.dnnLeaderboard-points {
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.mobileView .dnnMobileBottomPager > a.dnnSecondaryAction {
+    display: block;
+    width: 49%;
+    margin: 15px 0 0 0;
+    float: left;
+    padding: 25px 0 25px 0;
+}
+
+.mobileView .dnnMobileBottomPager > a.dnnSecondaryAction  + a.dnnSecondaryAction {
+    float: right;
+}
+
+.dnnMobileLeaderboardTbl > tbody > tr.dnnLeaderHighlighted td {
+    background-color: #dfdfdf;
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
+.dnnMobileLeaderboardTbl > tbody > tr.dnnLeaderHighlighted td:first-child {
+    position: relative; /* necessary */
+    text-align: left; /* necessary*/
+    background: none; /* remove background */
+    padding: 0;
+    border-left: none;
+}
+
+
+/* Mozila Firefox fix -- Please don't change it */
+@-moz-document url-prefix() {
+    .dnnMobileLeaderboardTbl > tbody > tr.dnnLeaderHighlighted td:first-child {
+        display: block;
+        width: 100%;
+    }
+}
+    
+.dnnMobileLeaderboardTbl > tbody > tr.dnnLeaderHighlighted td:first-child > div {
+    margin: 0 0 0 10px;
+    padding: 25px 10px 25px 0;
+    height: 100%; /* necessary */
+    width: calc(100% - 20px); /* necessary */
+    background: #dfdfdf; /* reapplies bg to child */
+    background: rgba(0, 0, 0, 0.04); /* reapplies bg to child */
+    text-align: center;
+}
+
+.dnnMobileLeaderboardTbl > tbody > tr.dnnLeaderHighlighted td:first-child:before,
+.dnnMobileLeaderboardTbl > tbody > tr.dnnLeaderHighlighted td:first-child:after {
+    content: '';
+    position: absolute;
+    border-right: 10px solid rgba(0, 0, 0, 0.04);
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.dnnMobileLeaderboardTbl > tbody > tr.dnnLeaderHighlighted td:first-child:before {
+    top: 0;
+    height: 50%;
+    border-bottom: 10px solid transparent;
+}
+
+.dnnMobileLeaderboardTbl > tbody > tr.dnnLeaderHighlighted td:first-child:after {
+    bottom: 0;
+    height: 50%;
+    border-top: 10px solid transparent;
+}
+
+/* challenge mobile */
+.mobileView div.ui-dialog-titlebar > .ui-dialog-titlebar-close {
+    display: none;
+}
+
+.mobileView .dnnFormItem > ul.token-input-list-facebook {
+    width: 100%;
+}
+
+.mobileView .dnnFormPopup.dnnFormPopupMobileView .dnnForm .dnnFormItem > input[type="text"].dateInput {
+    display: inline;
+    width: auto !important;
+}
+
+.mobileView div.chart-summary > div {
+    padding: 8px;
+}
+
+    .mobileView div.chart-summary > div span {
+        display: block;
+        float: right;
+        font-size: 15px;
+        font-weight: bold;
+        min-width: 20px;
+    }
+
+    .mobileView div.chart-summary > div span.summary-title {
+        float: left;
+    }
+
+.mobileView .journalTools #journalOptionArea #itemUpload .filePreviewArea div.preview-photo-item {
+    display: block;
+    float: none;
+    margin: 0 0 10px 0;
+    padding: 0;
+    width: auto;
+}
+
+/* attachments view in detail */
+.dnnMobile-detail-attachments-title {
+    padding: 8px 0 8px 8px;
+    background: #eee;
+    margin-right: 5px;
+}
+
+    .dnnMobile-detail-attachments-title span {
+        display: inline-block;
+        vertical-align: top;
+        height: 22px;
+        margin-top: 5px;
+        font-size: 14px;
+    }
+    .dnnMobile-detail-attachments-title span.dnnMobile-attachments-pin {
+        width: 29px;
+        height: 27px;
+        margin-top: 0;
+        margin-right: 10px;
+        background-image: url('images/pin.png');
+    }
+
+ul.dnnMobile-detail-attachments-expanded {
+    margin: 10px 0 10px 0;
+    padding: 0;
+    list-style-type: none;
+    font-size: 14px;
+}
+
+    ul.dnnMobile-detail-attachments-expanded > li {
+        margin: 0;
+        list-style-type: none;
+        padding: 0;
+    }
+
+/* Gallery control */
+
+#gallery-image-zoom-mobile .owl-wrapper-outer.autoHeight {
+    margin-top: 35px;
+}
+
+#gallery-image-zoom-mobile .gallery-bottom {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 35px;
+    background: rgba(0, 0, 0, 0.65098);
+}
+
+    #gallery-image-zoom-mobile .gallery-bottom a {
+        display: block;
+        float: right;
+        margin: 10px 10px 0 0;
+        font-size: 15px;
+        font-weight: bold;
+        color: #fff;
+    }
+
+#gallery-image-zoom-mobile .owl-wrapper {
+    display: block;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.65);
+}
+
+    #gallery-image-zoom-mobile .item > img {
+        display: block;
+        border: none;
+        height: auto;
+        max-width: 100%;
+        margin: 0 auto 0 auto;
+    }
+
+.dnnFormPopup.dnnFormPopupMobileView a.dnnPrimaryAction,
+.dnnFormPopup.dnnFormPopupMobileView .ui-dialog-buttonpane button.dnnPrimaryAction {
+    float: right;
+}
+
+.dnnFormPopup.dnnFormPopupMobileView a.dnnSecondaryAction,
+.dnnFormPopup.dnnFormPopupMobileView .ui-dialog-buttonpane button.dnnSecondaryAction {
+    float: left;
+}

@@ -1,0 +1,779 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****               Create Tables                      *****/
+/************************************************************/
+
+
+
+/************************************************************/
+/*****                  Alter Tables                    *****/
+/************************************************************/
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_SubscriptionSC') AND type in (N'U'))
+BEGIN
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_SubscriptionSC') AND name = N'PayMethodID')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_SubscriptionSC
+		ADD
+			[PayMethodID] [INT]
+	END
+	IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}Smith_SubscriptionSC') AND name = N'PayType')
+	BEGIN
+		ALTER TABLE
+			{databaseOwner}{objectQualifier}Smith_SubscriptionSC
+		ADD
+			[PayType] [VARCHAR](50)
+	END
+END
+GO
+
+
+
+/************************************************************/
+/*****                Drop Sprocs                       *****/
+/************************************************************/
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListProductsByFilter') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListProductsByFilter
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListProductsByFilterAdmin') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListProductsByFilterAdmin
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListAdvancedSearchProducts') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListAdvancedSearchProducts
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_CreateProductSearchKey') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateProductSearchKey
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_GetProductSearchKeyByID') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_GetProductSearchKeyByID
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_ListProductSearchKeys') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_ListProductSearchKeys
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_UpdateProductSearchKey') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateProductSearchKey
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_DeleteProductSearchKey') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_DeleteProductSearchKey
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_GetProductByID') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_GetProductByID
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_GetProductBySEO') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_GetProductBySEO
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_GetProductBySKU') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_GetProductBySKU
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_GetSubscriptionByOrderID') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_GetSubscriptionByOrderID
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_CreateSubscription') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateSubscription
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_UpdateSubscription') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateSubscription
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}RZC_GetTopStoreNotifications') AND type in (N'P', N'PC'))
+	DROP PROCEDURE {databaseOwner}{objectQualifier}RZC_GetTopStoreNotifications
+GO
+
+
+
+/************************************************************/
+/*****               Create Sprocs                      *****/
+/************************************************************/
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListProductsByFilter
+	@PageNumber INT = NULL,
+	@PageSize INT = NULL,
+	@SortExpression NVARCHAR(128) = NULL,
+	@SearchText NVARCHAR(100) = NULL,
+	@CatIDList VARCHAR(4000) = '',
+	@MinPrice MONEY,
+	@MaxPrice MONEY,
+	@IsSaleEnabled BIT = 0,
+	@IsAdmin BIT = 0,
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SET NOCOUNT ON
+
+	DECLARE @PageRecordStart INT = ((@PageNumber - 1 ) * @PageSize) + 1
+	DECLARE @PageRecordEnd INT = @PageNumber * @PageSize
+
+	DECLARE @TodayDate DATETIME = CONVERT(DATE, GETDATE())
+
+	DECLARE @CatPIDTbl TABLE ([PID] INT)
+	IF @CatIDList <> ''
+	BEGIN
+		DECLARE @CatIDTbl TABLE ([CatID] INT)
+		INSERT INTO @CatIDTbl
+		SELECT [Value] FROM {databaseOwner}{objectQualifier}RZC_FxSplit(@CatIDList, ',')
+
+		INSERT	INTO @CatPIDTbl
+		SELECT	DISTINCT [ProductID]
+		FROM	{databaseOwner}{objectQualifier}Smith_CategoryProduct
+		WHERE	[CategoryID] IN (SELECT [CatID] FROM @CatIDTbl)
+	END
+
+	;WITH [Products_Page] AS
+	(
+		SELECT	P.[ProductID],
+				ROW_NUMBER() OVER
+				(
+					ORDER BY
+						CASE WHEN (@SortExpression = 'Order-ASC') THEN P.[SortOrder] END ASC,
+						CASE WHEN (@SortExpression = 'Order-DESC') THEN P.[SortOrder] END DESC,
+						CASE WHEN (@SortExpression = 'Price-ASC') THEN PR.[SortPrice] END ASC,
+						CASE WHEN (@SortExpression = 'Price-DESC') THEN PR.[SortPrice] END DESC,
+						CASE WHEN (@SortExpression = 'Name-ASC') THEN P.[ModelName] END ASC,
+						CASE WHEN (@SortExpression = 'Name-DESC') THEN P.[ModelName] END DESC,
+						CASE WHEN (@SortExpression = 'SKU-ASC') THEN P.[ModelNumber] END ASC,
+						CASE WHEN (@SortExpression = 'SKU-DESC') THEN P.[ModelNumber] END DESC,
+						CASE WHEN (@SortExpression = 'Brand-ASC') THEN P.[Manufacturer] END ASC,
+						CASE WHEN (@SortExpression = 'Brand-DESC') THEN P.[Manufacturer] END DESC,
+						CASE WHEN (@SortExpression = 'Date-ASC') THEN P.[CreatedDate] END ASC,
+						CASE WHEN (@SortExpression = 'Date-DESC') THEN P.[CreatedDate] END DESC,
+						CASE WHEN (@SortExpression = 'QtyOnHand-ASC') THEN P.[QuantityOnHand] END ASC,
+						CASE WHEN (@SortExpression = 'QtyOnHand-DESC') THEN P.[QuantityOnHand] END DESC,
+						CASE WHEN (@SortExpression = 'ID-ASC') THEN P.[ProductID] END ASC,
+						CASE WHEN (@SortExpression = 'ID-DESC') THEN P.[ProductID] END DESC
+				) AS [RowNo]
+		FROM	{databaseOwner}{objectQualifier}Smith_Products P WITH (NOLOCK)
+				CROSS APPLY
+				(
+					SELECT
+					(
+						CASE WHEN @IsSaleEnabled = 1 OR P.[SalePrice] > 0 AND @TodayDate BETWEEN P.[SaleStartDate] AND P.[SaleEndDate] THEN P.[SalePrice] ELSE P.[UnitCost] END
+					) AS [SortPrice]
+				) PR
+		WHERE	P.[PortalID] = @PortalID
+				AND (P.[StoreID] = @StoreID OR P.[TabModuleId] = @StoreID OR P.[Share] = 1)
+				AND P.[LogicallyDeleted] <> 1
+				AND (@IsAdmin = 1 OR (P.[Archived] <> 1 AND P.[HideProduct] <> 1))
+				AND (@CatIDList = '' OR P.[ProductID] IN (SELECT [PID] FROM @CatPIDTbl))
+				AND (P.[UnitCost] >= @MinPrice OR @MinPrice = -1)
+				AND (P.[UnitCost] <= @MaxPrice OR @MaxPrice = -1)
+				AND (
+					P.[ModelName] LIKE '%' + @SearchText + '%'
+					OR P.[ModelNumber] LIKE '%' + @SearchText + '%'
+					OR P.[Description] Like '%' + @SearchText + '%'
+					OR P.[Summary] Like '%' + @SearchText + '%'
+				)
+	)
+	SELECT	P.*, I.[ThumbImage], I.[LargeImage], I.[ZoomImage],
+			(
+				CASE WHEN EXISTS
+				(
+					SELECT PVT.[VariantID]
+					FROM {databaseOwner}{objectQualifier}Smith_ProductVariant PVT
+					WHERE PVT.[ProductID] = P.[ProductID]
+				) THEN 1 ELSE 0 END
+			) AS HasVariants,
+			TotalRecords = (
+				SELECT COUNT([ProductID])
+				FROM [Products_Page]
+			),
+			MoreRecords = (
+				SELECT COUNT([ProductID])
+				FROM [Products_Page]
+				WHERE [RowNo] > @PageRecordEnd
+			)
+	FROM	[Products_Page] T
+			INNER JOIN {databaseOwner}{objectQualifier}Smith_Products P ON P.[ProductID] = T.[ProductID]
+			OUTER APPLY
+			(
+				SELECT TOP 1 IMG.*
+				FROM {databaseOwner}{objectQualifier}Smith_ProductImages IMG
+				WHERE IMG.[ProductID] = P.[ProductID]
+				ORDER BY IMG.[SortOrder]
+			) I
+	WHERE	[RowNo] BETWEEN @PageRecordStart AND @PageRecordEnd
+	ORDER BY [RowNo]
+
+	SET NOCOUNT OFF
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListAdvancedSearchProducts
+	@MinPrice DECIMAL = NULL,
+	@MaxPrice DECIMAL = NULL,
+	@Keywords NVARCHAR(MAX) = '',
+	@CatList NVARCHAR(MAX) = '',
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	DECLARE @KeywordsTable TABLE
+	(
+		[Keyword] NVARCHAR(250)
+	)
+	INSERT INTO
+		@KeywordsTable ([Keyword])
+	SELECT
+		LTRIM(RTRIM([Value]))
+	FROM
+		{databaseOwner}{objectQualifier}RZC_FxSplit(@Keywords, ',')
+	DELETE FROM
+		@KeywordsTable
+	WHERE
+		[Keyword] IS NULL
+		OR [Keyword] = ''
+
+	DECLARE @CatListTable TABLE
+	(
+		[CategoryID] INT
+	)
+	INSERT INTO
+		@CatListTable ([CategoryID])
+	SELECT
+		CONVERT(INT, LTRIM(RTRIM([Value])))
+	FROM
+		{databaseOwner}{objectQualifier}RZC_FxSplit(@CatList, ',')
+	DELETE FROM
+		@CatListTable
+	WHERE
+		[CategoryID] IS NULL
+		OR [CategoryID] < 1
+
+	SELECT
+		P.[ProductID]
+	FROM
+		{databaseOwner}{objectQualifier}Smith_Products P
+	LEFT JOIN
+	(
+		SELECT S1.[ProductID]
+		FROM @KeywordsTable T1
+		LEFT JOIN {databaseOwner}{objectQualifier}Smith_SearchKeys S1
+		ON S1.[SearchTerm] LIKE '%' + T1.[Keyword] + '%'
+		UNION
+		SELECT P1.[ProductID]
+		FROM @KeywordsTable T1
+		LEFT JOIN dbo.Smith_Products P1
+		ON	P1.[ModelName] LIKE '%' + T1.[Keyword] + '%'
+			OR P1.[ModelNumber] LIKE '%' + T1.[Keyword] + '%'
+			OR P1.[Description] Like '%' + T1.[Keyword] + '%'
+			OR P1.[Summary] Like '%' + T1.[Keyword] + '%'
+	) S2
+	ON
+		S2.[ProductID] = P.[ProductID]
+	LEFT JOIN
+	(
+		SELECT CP1.[ProductID]
+		FROM {databaseOwner}{objectQualifier}Smith_CategoryProduct CP1
+		INNER JOIN @CatListTable CT
+		ON CT.[CategoryID] = CP1.[CategoryID] OR (
+			CP1.[CategoryID] IN (
+				SELECT C.[CategoryID]
+				FROM {databaseOwner}{objectQualifier}Smith_Category C
+				WHERE C.[ParentID] = CT.[CategoryID] AND C.[ParentID] NOT IN (
+					SELECT C2.[ParentID]
+					FROM {databaseOwner}{objectQualifier}Smith_Category C2
+					WHERE C2.[CategoryID] IN (
+						SELECT CT2.[CategoryID]
+						FROM @CatListTable CT2
+					)
+				)
+			)
+		)
+	) CP2
+	ON
+		CP2.[ProductID] = P.[ProductID]
+	WHERE
+		(P.[PortalID] = @PortalID)
+		AND (P.[StoreID] = @StoreID OR P.[TabModuleId] = @StoreID OR P.[Share] = 1)
+		AND (P.[LogicallyDeleted] <> 1 AND P.[Archived] <> 1 AND P.[HideProduct] <> 1)
+		AND (P.[UnitCost] >= @MinPrice OR @MinPrice = -1)
+		AND (P.[UnitCost] <= @MaxPrice OR @MaxPrice = -1)
+		AND (S2.[ProductID] IS NOT NULL OR (SELECT COUNT(T2.[Keyword]) FROM @KeywordsTable T2) < 1)
+		AND (CP2.[ProductID] IS NOT NULL OR (SELECT COUNT(C2.[CategoryID]) FROM @CatListTable C2) < 1)
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateProductSearchKey
+	@ProductID INT = NULL,
+	@SearchTerm NVARCHAR(250) = NULL,
+	@SearchModuleDD1 NVARCHAR(500) = NULL,
+	@SearchModuleDD2 NVARCHAR(500) = NULL
+AS
+BEGIN
+	INSERT INTO {databaseOwner}{objectQualifier}Smith_SearchKeys
+		([ProductID]
+		,[SearchTerm]
+		,[SearchModuleDD1]
+		,[SearchModuleDD2])
+		VALUES
+		(@ProductID
+		,@SearchTerm
+		,@SearchModuleDD1
+		,@SearchModuleDD2)
+	SELECT SCOPE_IDENTITY()
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_GetProductSearchKeyByID
+	@iIndex INT = NULL,
+	@ProductID INT = NULL
+AS
+BEGIN
+	SELECT
+		SK.*
+	FROM
+		{databaseOwner}{objectQualifier}Smith_SearchKeys SK
+	WHERE
+		SK.[iIndex] = @iIndex
+		AND SK.[ProductID] = @ProductID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_ListProductSearchKeys
+	@ProductID INT = NULL
+AS
+BEGIN
+	SELECT
+		SK.*
+	FROM
+		{databaseOwner}{objectQualifier}Smith_SearchKeys SK
+	WHERE
+		SK.[ProductID] = @ProductID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateProductSearchKey
+	@iIndex INT = NULL,
+	@ProductID INT = NULL,
+	@SearchTerm NVARCHAR(250) = NULL,
+	@SearchModuleDD1 NVARCHAR(500) = NULL,
+	@SearchModuleDD2 NVARCHAR(500) = NULL
+AS
+BEGIN
+	UPDATE
+		{databaseOwner}{objectQualifier}Smith_SearchKeys
+	SET
+		[ProductID] = @ProductID,
+		[SearchTerm] = @SearchTerm,
+		[SearchModuleDD1] = @SearchModuleDD1,
+		[SearchModuleDD2] = @SearchModuleDD2
+	WHERE
+		[iIndex] = @iIndex
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_DeleteProductSearchKey
+	@iIndex INT = NULL,
+	@ProductID INT = NULL
+AS
+BEGIN
+	DELETE FROM
+		{databaseOwner}{objectQualifier}Smith_SearchKeys
+	WHERE
+		[iIndex] = @iIndex
+		AND [ProductID] = @ProductID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_GetProductByID
+	@ProductID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SELECT
+		P.*, I.[ThumbImage], I.[LargeImage], I.[ZoomImage], V.[HasVariants]
+	FROM
+		{databaseOwner}{objectQualifier}Smith_Products P
+	OUTER APPLY
+	(
+		SELECT TOP 1
+			IMG.*
+		FROM
+			{databaseOwner}{objectQualifier}Smith_ProductImages IMG
+		WHERE
+			IMG.[ProductID] = P.[ProductID]
+		ORDER BY
+			IMG.[SortOrder] ASC
+	) I
+	CROSS APPLY
+	(
+		SELECT CASE WHEN EXISTS
+		(
+			SELECT PV.[VariantID]
+			FROM {databaseOwner}{objectQualifier}Smith_ProductVariant PV
+			WHERE PV.[ProductID] = P.[ProductID]
+		)
+		THEN CAST(1 AS BIT)
+		ELSE CAST(0 AS BIT)
+		END AS [HasVariants]
+	) V
+	WHERE
+		P.[ProductID] = @ProductID
+		AND P.[PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_GetProductBySEO
+	@ProductSEO VARCHAR(80) = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SELECT TOP 1
+		P.*, I.[ThumbImage], I.[LargeImage], I.[ZoomImage], V.[HasVariants]
+	FROM
+		{databaseOwner}{objectQualifier}Smith_Products P
+	OUTER APPLY
+	(
+		SELECT TOP 1
+			IMG.*
+		FROM
+			{databaseOwner}{objectQualifier}Smith_ProductImages IMG
+		WHERE
+			IMG.[ProductID] = P.[ProductID]
+		ORDER BY
+			IMG.[SortOrder] ASC
+	) I
+	CROSS APPLY
+	(
+		SELECT CASE WHEN EXISTS
+		(
+			SELECT PV.[VariantID]
+			FROM {databaseOwner}{objectQualifier}Smith_ProductVariant PV
+			WHERE PV.[ProductID] = P.[ProductID]
+		)
+		THEN CAST(1 AS BIT)
+		ELSE CAST(0 AS BIT)
+		END AS [HasVariants]
+	) V
+	WHERE
+		P.[SEOURL] = @ProductSEO
+		AND P.[PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_GetProductBySKU
+	@ProductSKU VARCHAR(50) = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SELECT TOP 1
+		P.*, I.[ThumbImage], I.[LargeImage], I.[ZoomImage], V.[HasVariants]
+	FROM
+		{databaseOwner}{objectQualifier}Smith_Products P
+	OUTER APPLY
+	(
+		SELECT TOP 1
+			IMG.*
+		FROM
+			{databaseOwner}{objectQualifier}Smith_ProductImages IMG
+		WHERE
+			IMG.[ProductID] = P.[ProductID]
+		ORDER BY
+			IMG.[SortOrder] ASC
+	) I
+	CROSS APPLY
+	(
+		SELECT CASE WHEN EXISTS
+		(
+			SELECT PV.[VariantID]
+			FROM {databaseOwner}{objectQualifier}Smith_ProductVariant PV
+			WHERE PV.[ProductID] = P.[ProductID]
+		)
+		THEN CAST(1 AS BIT)
+		ELSE CAST(0 AS BIT)
+		END AS [HasVariants]
+	) V
+	WHERE
+		P.[ModelNumber] = @ProductSKU
+		AND P.[PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_GetSubscriptionByOrderID
+	@OrderID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	SELECT TOP 1
+		S.*
+	FROM
+		{databaseOwner}{objectQualifier}Smith_SubscriptionSC S
+	WHERE
+		S.[OrderID] = @OrderID
+		AND S.[PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_CreateSubscription
+	@CustomerID INT = NULL,
+	@ProductID INT = NULL,
+	@CreateDate DATETIME = NULL,
+	@CancelDate DATETIME = NULL,
+	@SubStartDate DATETIME = NULL,
+	@SubEndDate DATETIME = NULL,
+	@TransID VARCHAR(50) = NULL,
+	@PortalID INT = NULL,
+	@IPAddress VARCHAR(50) = NULL,
+	@CreatedBy NVARCHAR(100) = NULL,
+	@ModifiedBy NVARCHAR(100) = NULL,
+	@DateModified DATETIME = NULL,
+	@TabModuleId INT = NULL,
+	@OrderID INT = NULL,
+	@Amount MONEY = NULL,
+	@Interval NVARCHAR(50) = NULL,
+	@Occurrences INT = NULL,
+	@BillingName NVARCHAR(50) = NULL,
+	@BillingAddress NVARCHAR(50) = NULL,
+	@BillingCity NVARCHAR(50) = NULL,
+	@BillingState NVARCHAR(50) = NULL,
+	@BillingCountry NVARCHAR(50) = NULL,
+	@BillingZip NVARCHAR(50) = NULL,
+	@AcctNo VARCHAR(50) = NULL,
+	@MaskAcctNo VARCHAR(50) = NULL,
+	@ExpRoute VARCHAR(50) = NULL,
+	@Active BIT = NULL,
+	@Suspend SMALLINT = NULL,
+	@NextPaymentDate DATE = NULL,
+	@PayMethodID INT = NULL,
+	@PayType VARCHAR(50) = NULL,
+	@StoreID INT = NULL
+AS
+BEGIN
+	INSERT INTO {databaseOwner}{objectQualifier}Smith_SubscriptionSC
+		([CustomerID]
+		,[ProductID]
+		,[CreateDate]
+		,[CancelDate]
+		,[SubStartDate]
+		,[SubEndDate]
+		,[TransID]
+		,[PortalID]
+		,[IPAddress]
+		,[CreatedBy]
+		,[ModifiedBy]
+		,[DateModified]
+		,[TabModuleId]
+		,[OrderID]
+		,[Amount]
+		,[Interval]
+		,[Occurrences]
+		,[BillingName]
+		,[BillingAddress]
+		,[BillingCity]
+		,[BillingState]
+		,[BillingCountry]
+		,[BillingZip]
+		,[AcctNo]
+		,[MaskAcctNo]
+		,[ExpRoute]
+		,[Active]
+		,[Suspend]
+		,[NextPaymentDate]
+		,[PayMethodID]
+		,[PayType]
+		,[StoreID])
+	VALUES
+		(@CustomerID
+		,@ProductID
+		,@CreateDate
+		,@CancelDate
+		,@SubStartDate
+		,@SubEndDate
+		,@TransID
+		,@PortalID
+		,@IPAddress
+		,@CreatedBy
+		,@ModifiedBy
+		,@DateModified
+		,@TabModuleId
+		,@OrderID
+		,@Amount
+		,@Interval
+		,@Occurrences
+		,@BillingName
+		,@BillingAddress
+		,@BillingCity
+		,@BillingState
+		,@BillingCountry
+		,@BillingZip
+		,@AcctNo
+		,@MaskAcctNo
+		,@ExpRoute
+		,@Active
+		,@Suspend
+		,@NextPaymentDate
+		,@PayMethodID
+		,@PayType
+		,@StoreID)
+	SELECT SCOPE_IDENTITY()
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_UpdateSubscription
+	@SubscriptionID INT = NULL,
+	@CustomerID INT = NULL,
+	@ProductID INT = NULL,
+	@CreateDate DATETIME = NULL,
+	@CancelDate DATETIME = NULL,
+	@SubStartDate DATETIME = NULL,
+	@SubEndDate DATETIME = NULL,
+	@TransID VARCHAR(50) = NULL,
+	@PortalID INT = NULL,
+	@IPAddress VARCHAR(50) = NULL,
+	@CreatedBy NVARCHAR(100) = NULL,
+	@ModifiedBy NVARCHAR(100) = NULL,
+	@DateModified DATETIME = NULL,
+	@TabModuleId INT = NULL,
+	@OrderID INT = NULL,
+	@Amount MONEY = NULL,
+	@Interval NVARCHAR(50) = NULL,
+	@Occurrences INT = NULL,
+	@BillingName NVARCHAR(50) = NULL,
+	@BillingAddress NVARCHAR(50) = NULL,
+	@BillingCity NVARCHAR(50) = NULL,
+	@BillingState NVARCHAR(50) = NULL,
+	@BillingCountry NVARCHAR(50) = NULL,
+	@BillingZip NVARCHAR(50) = NULL,
+	@AcctNo VARCHAR(50) = NULL,
+	@MaskAcctNo VARCHAR(50) = NULL,
+	@ExpRoute VARCHAR(50) = NULL,
+	@Active BIT = NULL,
+	@Suspend SMALLINT = NULL,
+	@NextPaymentDate DATE = NULL,
+	@PayMethodID INT = NULL,
+	@PayType VARCHAR(50) = NULL,
+	@StoreID INT = NULL
+AS
+BEGIN
+	UPDATE
+		{databaseOwner}{objectQualifier}Smith_SubscriptionSC
+	SET
+		[CustomerID] = @CustomerID,
+		[ProductID] = @ProductID,
+		[CreateDate] = @CreateDate,
+		[CancelDate] = @CancelDate,
+		[SubStartDate] = @SubStartDate,
+		[SubEndDate] = @SubEndDate,
+		[TransID] = @TransID,
+		[IPAddress] = @IPAddress,
+		[CreatedBy] = @CreatedBy,
+		[ModifiedBy] = @ModifiedBy,
+		[DateModified] = @DateModified,
+		[TabModuleId] = @TabModuleId,
+		[OrderID] = @OrderID,
+		[Amount] = @Amount,
+		[Interval] = @Interval,
+		[Occurrences] = @Occurrences,
+		[BillingName] = @BillingName,
+		[BillingAddress] = @BillingAddress,
+		[BillingCity] = @BillingCity,
+		[BillingState] = @BillingState,
+		[BillingCountry] = @BillingCountry,
+		[BillingZip] = @BillingZip,
+		[AcctNo] = @AcctNo,
+		[MaskAcctNo] = @MaskAcctNo,
+		[ExpRoute] = @ExpRoute,
+		[Active] = @Active,
+		[Suspend] = @Suspend,
+		[NextPaymentDate] = @NextPaymentDate,
+		[PayMethodID] = @PayMethodID,
+		[PayType] = @PayType,
+		[StoreID] = @StoreID
+	WHERE
+		[SubscriptionID] = @SubscriptionID
+		AND [PortalID] = @PortalID
+END
+GO
+-------------------------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE {databaseOwner}{objectQualifier}RZC_GetTopStoreNotifications
+	@Top INT = NULL,
+	@ShowAlerts BIT = NULL,
+	@StoreID INT = NULL,
+	@PortalID INT = NULL
+AS
+BEGIN
+	;WITH [Notifications] ([ID], [Date], [Description], [Type])
+	AS
+	(
+		SELECT *
+		FROM
+			(
+				SELECT TOP 10
+					O.[OrderID] AS [ID], O.[OrderDate] AS [Date], CONCAT('Store Order #', O.[OrderID]) AS [Description], 'Order' AS [Type]
+				FROM
+					{databaseOwner}{objectQualifier}Smith_StoreOrders O
+				WHERE
+					(O.[StoreID] = @StoreID OR @StoreID = -1)
+					AND O.[PortalID] = @PortalID
+				ORDER BY
+					O.[OrderDate] DESC
+			) Orders
+		UNION ALL SELECT *
+		FROM
+			(
+				SELECT  TOP 10
+					C.[CustomerID] AS [ID], C.[DateCreated] AS [Date], CONCAT('New Customer #', C.[CustomerID], ' has been created') AS [Description], 'Customer' AS [Type]
+				FROM
+					{databaseOwner}{objectQualifier}Smith_Customer C
+				WHERE
+					(C.[StoreID] = @StoreID OR @StoreID = -1)
+					AND C.[PortalID] = @PortalID
+				ORDER BY
+					C.[DateCreated] DESC
+			) Customers
+		UNION ALL SELECT *
+		FROM
+			(
+				SELECT TOP 10
+					R.[ReviewID] AS [ID], R.[ReviewDate] AS [Date], CONCAT('Product Review #', R.[ReviewID], ' (Rate: ', R.[Rate], ')') AS [Description], 'Review' AS [Type]
+				FROM
+					{databaseOwner}{objectQualifier}Smith_ProductReviews R
+				INNER JOIN
+					{databaseOwner}{objectQualifier}Smith_Products P
+				ON
+					P.[ProductID] = R.[ProductID]
+				WHERE
+					(P.[StoreID] = @StoreID OR @StoreID = -1)
+					AND P.[PortalID] = @PortalID
+				ORDER BY
+					R.[ReviewDate] DESC
+			) Reviews
+		UNION ALL SELECT *
+		FROM
+			(
+				SELECT  TOP 10
+					EL.[LogEventID] AS [ID], EL.[LogCreateDate] AS [Date], SUBSTRING([LogProperties].value('(/LogProperties/LogProperty/PropertyName)[1]', 'VARCHAR(MAX)'), 48, 100) AS [Description], 'Alert' AS [Type]
+				FROM
+					{databaseOwner}{objectQualifier}EventLog EL
+				WHERE
+					EL.[LogProperties].value('(/LogProperties/LogProperty/PropertyName)[1]', 'VARCHAR(MAX)') LIKE 'RazorCart Pipeline Action Failure%'
+					AND EL.[LogPortalID] = @PortalID
+				ORDER BY
+					EL.[LogCreateDate] DESC
+			) Alerts
+	)
+	SELECT TOP (@Top)
+		[ID], [Date], [Description], [Type]
+	FROM
+		[Notifications]
+	WHERE
+		[Type] <> 'Alert' OR @ShowAlerts = 1
+	ORDER BY
+		[Date] DESC
+END
+GO
+
+
+
+/************************************************************/
+/*****               End of Script                      *****/
+/************************************************************/

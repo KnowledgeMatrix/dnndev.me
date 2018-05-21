@@ -1,0 +1,34 @@
+﻿<data method="BasicRecurringSalesOrderReminderEmail" version="1.0">
+  <mailFrom></mailFrom>
+  <mailTo></mailTo>
+  <subject>Thank you for visiting {xsl:value-of select="in/configuration/generalStoreName" /} [Order #{xsl:value-of select="in/salesOrder/salesOrderNumber" /}]</subject>
+  <htmlBody>
+    &lt;p&gt;Hi {xsl:value-of select=&amp;quot;concat(in/user/firstName, &amp;#39; &amp;#39;, in/user/lastName)&amp;quot; /}&lt;/p&gt;
+
+    &lt;p&gt;This is a friendly reminder that your recurring order will be processed on {xsl:value-of select=&amp;quot;format-dateTime(in/recurringSalesOrders/recurringSalesOrder[1]/nextRecurringDate, &amp;#39;[FNn], [MNn] [D1o], [Y]&amp;#39;)&amp;quot; /}. Please ensure that your address and payment information on file are up-to-date to prevent any service interruption. We hope you continue enjoying our service. If you have any questions, please do not hesitate to contact us.&lt;/p&gt;
+    &lt;a href="{xsl:value-of select='in/manageRecurringOrder/tabUrl' /}"&gt;Click here to manage your recurring orders&lt;/a&gt;&lt;br /&gt;
+    &amp;nbsp;
+    &lt;table border="1" cellpadding="3" cellspacing="0" style="width: 100%; table-layout: fixed; word-wrap: break-word; background-color: #ccc; border-collapse: collapse;"&gt;
+    &lt;tbody&gt;
+    &lt;tr&gt;
+    &lt;td width="60%"&gt;&lt;strong&gt;Item&lt;/strong&gt;&lt;/td&gt;
+    &lt;td width="15%"&gt;&lt;strong&gt;Qty&lt;/strong&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;/tbody&gt;
+    &lt;/table&gt;
+    {xsl:for-each select=&amp;quot;in/recurringSalesOrders/recurringSalesOrder&amp;quot;}
+
+    &lt;table border="1" cellpadding="3" cellspacing="0" style="width: 100%; table-layout: fixed; word-wrap: break-word; border-collapse: collapse;"&gt;
+    &lt;tbody&gt;
+    &lt;tr&gt;
+    &lt;td width="60%"&gt;&lt;span&gt;{xsl:value-of select=&amp;quot;productVariant/product/name&amp;quot; /}&lt;/span&gt;&lt;br /&gt;
+    {xsl:value-of select=&amp;quot;productVariant/name&amp;quot; /}&lt;br /&gt;
+    {xsl:for-each select=&amp;quot;dynamicFormResult/fields/field&amp;quot;}{xsl:value-of select=&amp;quot;replace(@id, &amp;#39;_&amp;#39;, &amp;#39; &amp;#39;)&amp;quot; /}: {xsl:value-of select=&amp;quot;.&amp;quot; /}&lt;br /&gt;
+    {/xsl:for-each}&lt;/td&gt;
+    &lt;td width="15%"&gt;{xsl:value-of select=&amp;quot;quantity&amp;quot; /}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;/tbody&gt;
+    &lt;/table&gt;
+    {/xsl:for-each}
+  </htmlBody>
+</data>

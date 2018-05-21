@@ -1,0 +1,213 @@
+-- //////////////////////////////////////////////////////////////////
+-- The following changes should be moved to platform for 7.2.1
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes
+				WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Journal]')
+				AND name = N'IX_{objectQualifier}Journal_ObjectKey')
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Journal_ObjectKey]
+		ON {databaseOwner}[{objectQualifier}Journal] ([ObjectKey])
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes
+				WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Journal]')
+				AND name = N'IX_{objectQualifier}Journal_JournalTypeID_ContentID')
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Journal_JournalTypeID_ContentID]
+		ON {databaseOwner}[{objectQualifier}Journal] ([JournalTypeId],[ContentItemId])
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes
+				WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Journal_Security]')
+				AND name = N'IX_{objectQualifier}Journal_Security_JournalID')
+    CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Journal_Security_JournalID]
+		ON {databaseOwner}[{objectQualifier}Journal_Security] ([SecurityKey])
+		INCLUDE ([JournalId])
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes
+				WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}ContentItems]')
+				AND name = N'IX_{objectQualifier}ContentItems_CreatedOnDate')
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}ContentItems_CreatedOnDate]
+		ON {databaseOwner}[{objectQualifier}ContentItems] ([CreatedOnDate])
+		INCLUDE ([ContentTypeID],[ModuleID])
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes
+				WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}ContentItems]')
+				AND name = N'IX_{objectQualifier}ContentItems_ModuleID')
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}ContentItems_ModuleID]
+		ON {databaseOwner}[{objectQualifier}ContentItems] ([ModuleID])
+		INCLUDE ([ContentItemID])
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes
+				WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}UserRelationships]')
+				AND name = N'IX_{objectQualifier}UserRelationships_RelatedUserID_Status')
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}UserRelationships_RelatedUserID_Status]
+		ON {databaseOwner}[{objectQualifier}UserRelationships] ([RelatedUserID],[Status])
+		INCLUDE ([UserID],[RelationshipID],[CreatedOnDate])
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes
+				WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}UserRelationships]')
+				AND name = N'IX_{objectQualifier}UserRelationships_UserID_Status')
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}UserRelationships_UserID_Status]
+		ON {databaseOwner}[{objectQualifier}UserRelationships] ([UserID],[Status])
+		INCLUDE ([RelatedUserID],[RelationshipID],[CreatedOnDate])
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes
+				WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}UserRoles]')
+				AND name = N'IX_{objectQualifier}UserRoles_RoleID_UserID')
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}UserRoles_RoleID_UserID]
+		ON {databaseOwner}[{objectQualifier}UserRoles] ([RoleID])
+		INCLUDE ([UserID])
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes
+				WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_Messages]')
+				AND name = N'IX_{objectQualifier}CoreMessaging_NotificationTypeID')
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}CoreMessaging_NotificationTypeID]
+		ON {databaseOwner}[{objectQualifier}CoreMessaging_Messages] ([NotificationTypeID],[Context])
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes
+				WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Journal_Comments]')
+				AND name = N'IX_{objectQualifier}Journal_Comments_JournalID')
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Journal_Comments_JournalID]
+		ON {databaseOwner}[{objectQualifier}Journal_Comments] ([JournalID])
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes
+				WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Taxonomy_Terms]')
+				AND name = N'IX_{objectQualifier}Taxonomy_Terms_TermID_Name')
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Taxonomy_Terms_TermID_Name]
+		ON {databaseOwner}[{objectQualifier}Taxonomy_Terms] ([TermID])
+		INCLUDE ([Name])
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes
+				WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Users]')
+				AND name = N'IX_{objectQualifier}Users_UserID_DisplayName')
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Users_UserID_DisplayName]
+		ON {databaseOwner}[{objectQualifier}Users] ([UserID])
+		INCLUDE ([DisplayName]);
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes
+				WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}UserPortals]')
+				AND name = N'IX_{objectQualifier}UserPortals_PortalID_CreatedDate')
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}UserPortals_PortalID_CreatedDate]
+		ON {databaseOwner}[{objectQualifier}UserPortals] ([PortalId],[CreatedDate])
+		INCLUDE ([UserId])
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes
+				WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}UserProfile]')
+				AND name = N'IX_{objectQualifier}UserProfile_PropertyText_PropertyValue')
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}UserProfile_PropertyText_PropertyValue]
+		ON {databaseOwner}[{objectQualifier}UserProfile]([UserId])
+		INCLUDE ([PropertyText],[PropertyValue])
+GO
+
+-- /////////////////////////////////////////////////////////////////////////////
+-- original PROC located in "<platform-source>\Website\Providers\DataProviders\SqlDataProvider\06.02.00.SqlDataProvider"
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}CoreMessaging_CreateMessageRecipientsForRole]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_CreateMessageRecipientsForRole]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}CoreMessaging_CreateMessageRecipientsForRole]
+    @MessageID int,         -- message id
+    @RoleIDs nvarchar(max), -- comma separated list of RoleIds
+	@CreateUpdateUserID INT -- create / update user id
+AS
+BEGIN
+	Declare @InsertDate DateTime;
+	Set @InsertDate = GETDATE();
+
+	With CTE_RoleIDs (RoleID)
+	As (
+		Select RoleID
+		From {databaseOwner}{objectQualifier}Roles R
+			Inner Join (Select RowValue
+						From {databaseOwner}{objectQualifier}ConvertListToTable(',',@RoleIDs)) RoleIDS
+						ON R.RoleID = RoleIDS.RowValue
+						Where R.Status = 1
+	),
+	CTE_DistinctUserIDs (UserID)
+	As (
+		Select Distinct UR.UserID
+		From {databaseOwner}{objectQualifier}UserRoles UR
+			Inner join CTE_RoleIDs
+			On UR.RoleID = CTE_RoleIDs.RoleID
+	)
+	INSERT {databaseOwner}{objectQualifier}CoreMessaging_MessageRecipients(
+			[MessageID],
+			[UserID],
+			[Read],
+			[Archived],
+			[CreatedByUserID],
+			[CreatedOnDate],
+			[LastModifiedByUserID],
+			[LastModifiedOnDate]
+		)
+		SELECT
+			@MessageID,
+			UserID,
+			0,
+			0,
+			@CreateUpdateUserID,	-- CreatedBy - int
+			@InsertDate,			-- CreatedOn - datetime
+			@CreateUpdateUserID,	-- LastModifiedBy - int
+			@InsertDate				-- LastModifiedOn - datetime
+			FROM CTE_DistinctUserIDs
+END
+GO
+
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}Social_LikeList]', N'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}[{objectQualifier}Social_LikeList]
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Social_LikeList]
+	@PortalId int,
+	@CurrentUserId int,
+	@JournalId int,
+	@RowIndex int,
+	@MaxRows int
+	AS
+
+	IF @RowIndex = 0 BEGIN SET @RowIndex = 1 END
+	DECLARE @EndRow int SET @EndRow = @RowIndex + @MaxRows - 1;
+
+	DECLARE @RegisteredUsersRole int
+	SELECT @RegisteredUsersRole = roleID FROM {databaseOwner}[{objectQualifier}Roles] WHERE RoleName = 'Registered Users'
+
+	DECLARE @FriendRelationshipID int
+	SELECT @FriendRelationshipID = RelationshipTypeID FROM {databaseOwner}[{objectQualifier}Relationships] WHERE Name = 'Friends'
+
+	DECLARE @xdoc xml
+	set @xdoc = (SELECT TOP 1 journalxml.query('//likes') 
+					from {databaseOwner}[{objectQualifier}Journal_Data] as jd
+					INNER JOIN {databaseOwner}[{objectQualifier}Journal] as j ON j.JournalId = jd.JournalId
+					INNER JOIN {databaseOwner}[{objectQualifier}Journal_Security] as js ON js.JournalId = j.JournalId
+					INNER JOIN {databaseOwner}[{objectQualifier}Journal_User_Permissions](@PortalId,@CurrentUserId,@RegisteredUsersRole) as t
+						ON t.seckey = js.SecurityKey 
+					WHERE j.JournalId = @JournalId AND j.PortalId = @PortalId AND j.IsDeleted = 0)
+	;With Likes AS (
+		Select COUNT(*) OVER () AS TotalRecords, u.UserId, u.DisplayName, 
+			CASE WHEN ur.UserRelationshipId IS NOT NULL THEN 1 ELSE 0 END AS Friend,
+			CASE WHEN u.UserId = @CurrentUserId THEN 1 ELSE 0 END AS You
+			FROM @xdoc.nodes('/likes//u') as e(x) 
+		INNER JOIN {databaseOwner}[{objectQualifier}Users] as u ON u.UserID = x.value('@uid[1]','int')
+		LEFT OUTER JOIN {databaseOwner}[{objectQualifier}UserRelationships] ur ON 
+		(((ur.UserId = u.UserId AND ur.RelatedUserID = @CurrentUserId) OR (ur.RelatedUserID = u.UserId AND ur.UserId = @CurrentUserId)) AND ur.Status = 2 AND ur.RelationshipID = @FriendRelationshipID)
+		WHERE u.IsDeleted = 0
+		),
+	LikesSorted AS (
+		SELECT *, ROW_NUMBER() OVER (ORDER BY You DESC, Friend DESC) AS RowNumber FROM Likes
+		)
+	SELECT * FROM LikesSorted WHERE RowNumber BETWEEN @RowIndex AND @EndRow
+GO
+
+-- //////////////////////////////////////////////////////////////////

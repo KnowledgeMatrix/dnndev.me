@@ -1,0 +1,10 @@
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGalleryGravityGallerySettings' AND column_name = 'UseCache')
+BEGIN
+	ALTER TABLE {databaseOwner} [{objectQualifier}EasyGalleryGravityGallerySettings] ADD UseCache BIT CONSTRAINT DF_{objectQualifier}EasyGalleryGravityGallerySettings_UseCache DEFAULT (0) NOT NULL
+END
+GO
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.columns WHERE table_name = '{objectQualifier}EasyGallerySmbSettings' AND column_name = 'ShowDownloadLink')
+BEGIN
+	ALTER TABLE {databaseOwner} [{objectQualifier}EasyGallerySmbSettings] ADD ShowDownloadLink BIT CONSTRAINT DF_{objectQualifier}EasyGallerySmbSettings_ShowDownloadLink DEFAULT (0) NOT NULL
+END
+GO

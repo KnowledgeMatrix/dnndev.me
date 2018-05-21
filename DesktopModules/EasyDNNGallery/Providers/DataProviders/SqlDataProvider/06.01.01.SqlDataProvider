@@ -1,0 +1,10 @@
+if not exists (select * from INFORMATION_SCHEMA.columns where table_name = '{objectQualifier}EasyDNNThumbs' and column_name = 'JpegQuality')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyDNNThumbs] ADD JpegQuality INT CONSTRAINT DF_{objectQualifier}EasyDNNThumbs_JpegQuality DEFAULT (97) NOT NULL
+END
+GO
+if not exists (select * from INFORMATION_SCHEMA.columns where table_name = '{objectQualifier}EasyGalleryPortfolioProSettings' and column_name = 'JpegQuality')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryPortfolioProSettings] ADD JpegQuality INT CONSTRAINT DF_{objectQualifier}EasyGalleryPortfolioProSettings_JpegQuality DEFAULT (97) NOT NULL
+END
+GO

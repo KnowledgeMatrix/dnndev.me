@@ -1,0 +1,71 @@
+﻿
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Answers_Post_Add') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Answers_Post_Add
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Answers_Post_Add]
+	@Body NVARCHAR(MAX) ,
+	@ParentId INT ,
+	@PortalId INT ,
+	@GroupId INT ,
+	@ContentItemId INT ,
+	@Approved BIT ,
+	@Closed BIT ,
+	@CreatedUserId INT
+AS 
+	DECLARE @CreatedOnDate DATETIME
+	DECLARE @LastActive DATETIME
+	SET @LastActive = GETUTCDATE()
+
+	If ( @ParentId > 0 OR @ContentItemId < 0)
+		BEGIN
+			SET @CreatedOnDate = GETUTCDATE()			
+		END
+	ELSE
+		BEGIN
+			SET @CreatedOnDate = (SELECT CreatedOnDate FROM {databaseOwner}{objectQualifier}ContentItems WHERE ContentItemID = @ContentItemId)
+		END 
+
+	IF ( @ParentId > 0 AND @Approved = 1 ) 
+		BEGIN			
+			UPDATE  {databaseOwner}{objectQualifier}ContentItems
+			SET     LastModifiedByUserID = @CreatedUserId ,
+					LastModifiedOnDate = @LastActive
+			WHERE   ContentItemID = @ContentItemId
+		END
+		
+	INSERT  {databaseOwner}{objectQualifier}Answers_Post
+			( Body ,
+			  ParentId ,
+			  PortalId ,
+			  GroupId ,
+			  ContentItemId ,
+			  ViewCount ,
+			  Score ,
+			  Approved ,
+			  Deleted ,
+			  Closed,
+			  Protected ,
+			  CreatedUserId ,
+			  CreatedDate ,
+			  LastModifiedDate ,
+			  LastModifiedUserID 
+			)
+	VALUES  ( @Body ,
+			  @ParentId ,
+			  @PortalId ,
+			  @GroupId ,
+			  @ContentItemId ,
+			  0 ,
+			  0 ,
+			  @Approved ,
+			  0 ,
+			  @Closed ,
+			  0 ,
+			  @CreatedUserId ,
+			  @CreatedOnDate ,
+			  @LastActive ,
+			  @CreatedUserId
+			)
+	SELECT  SCOPE_IDENTITY()
+GO

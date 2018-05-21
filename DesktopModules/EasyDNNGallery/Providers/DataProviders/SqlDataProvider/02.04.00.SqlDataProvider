@@ -1,0 +1,244 @@
+﻿/**** obj qualif checks ****/
+if '{objectQualifier}' <> ''
+BEGIN
+
+/**** 010000 ****/
+BEGIN TRY
+ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGalleryCategory]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyGalleryCategory]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyGalleryCategory]', N'{objectQualifier}EasyGalleryCategory', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyGalleryCategory', N'PK_{objectQualifier}EasyGalleryCategory', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyGallery_EasyGalleryCategory', N'FK_{objectQualifier}EasyGallery_{objectQualifier}EasyGalleryCategory', 'OBJECT'
+  END
+ END
+END TRY
+BEGIN CATCH
+END CATCH
+
+BEGIN TRY
+  IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGallery]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyGallery]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyGallery]', N'{objectQualifier}EasyGallery', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyGallery', N'PK_{objectQualifier}EasyGallery', 'OBJECT'
+  END
+ END
+ END TRY
+BEGIN CATCH
+END CATCH
+
+BEGIN TRY
+   IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyDNNThumbs]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyDNNThumbs]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyDNNThumbs]', N'{objectQualifier}EasyDNNThumbs', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyDNNThumbs', N'PK_{objectQualifier}EasyDNNThumbs', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyDNNThumbs_EasyGallery', N'FK_{objectQualifier}EasyDNNThumbs_{objectQualifier}EasyGallery', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyDNNThumbs_{objectQualifier}Modules', N'FK_{objectQualifier}EasyDNNThumbs_{objectQualifier}Modules', 'OBJECT'
+  END
+ END
+ END TRY
+BEGIN CATCH
+END CATCH
+ 
+BEGIN TRY
+   IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGalleryPictures]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyGalleryPictures]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyGalleryPictures]', N'{objectQualifier}EasyGalleryPictures', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyGalleryPictures', N'PK_{objectQualifier}EasyGalleryPictures', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyGalleryPictures_EasyGallery', N'FK_{objectQualifier}EasyGalleryPictures_{objectQualifier}EasyGallery', 'OBJECT'
+  END
+ END
+ END TRY
+BEGIN CATCH
+END CATCH
+
+BEGIN TRY
+   IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGalleryIntegration]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyGalleryIntegration]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyGalleryIntegration]', N'{objectQualifier}EasyGalleryIntegration', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyGalleryIntegration', N'PK_{objectQualifier}EasyGalleryIntegration', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyGalleryIntegration_EasyGallery', N'FK_{objectQualifier}EasyGalleryIntegration_{objectQualifier}EasyGallery', 'OBJECT'
+  END
+ END
+ END TRY
+BEGIN CATCH
+END CATCH
+/**** 010000 ****/
+
+/**** 010600 ****/
+BEGIN TRY
+ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyGallerySettings]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyGallerySettings]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyGallerySettings]', N'{objectQualifier}EasyGallerySettings', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyGallerySettings', N'PK_{objectQualifier}EasyGallerySettings', 'OBJECT'
+  END
+ END
+END TRY
+BEGIN CATCH
+END CATCH
+/**** 010600 ****/
+
+
+/**** 020200 ****/
+BEGIN TRY
+ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyDNNMediaLocalization]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyDNNMediaLocalization]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyDNNMediaLocalization]', N'{objectQualifier}EasyDNNMediaLocalization', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyDNNMediaLocalization', N'PK_{objectQualifier}EasyDNNMediaLocalization', 'OBJECT'
+   EXECUTE sp_rename N'FK_EasyDNNMediaLocalization_EasyGalleryPictures', N'FK_{objectQualifier}EasyDNNMediaLocalization_{objectQualifier}EasyGalleryPictures', 'OBJECT'
+  END
+ END
+ END TRY
+BEGIN CATCH
+END CATCH
+
+BEGIN TRY
+  IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyDNNGalleryLocalization]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyDNNGalleryLocalization]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyDNNGalleryLocalization]', N'{objectQualifier}EasyDNNGalleryLocalization', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyDNNGalleryLocalization', N'PK_{objectQualifier}EasyDNNGalleryLocalization', 'OBJECT'
+    EXECUTE sp_rename N'FK_EasyDNNGalleryLocalization_EasyGallery', N'FK_{objectQualifier}EasyDNNGalleryLocalization_{objectQualifier}EasyGallery', 'OBJECT'
+  END
+ END
+ END TRY
+BEGIN CATCH
+END CATCH
+
+BEGIN TRY
+   IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyDNNCategoryLocalization]') AND type in (N'U'))
+ BEGIN
+  IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EasyDNNCategoryLocalization]') AND type in (N'U'))
+  BEGIN
+   EXECUTE sp_rename N'{databaseOwner}[EasyDNNCategoryLocalization]', N'{objectQualifier}EasyDNNCategoryLocalization', 'OBJECT'
+   EXECUTE sp_rename N'PK_EasyDNNCategoryLocalization', N'PK_{objectQualifier}EasyDNNCategoryLocalization', 'OBJECT'
+    EXECUTE sp_rename N'FK_EasyDNNCategoryLocalization_EasyGalleryCategory', N'FK_{objectQualifier}EasyDNNCategoryLocalization_{objectQualifier}EasyGalleryCategory', 'OBJECT'
+  END
+ END
+ END TRY
+BEGIN CATCH
+END CATCH
+ 
+/**** 020200 ****/
+
+END
+GO
+/**** obj qualif checks ****/
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyDNNNews]') AND type in (N'U'))
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryCategory] ALTER Column CategoryName nvarchar(50)
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryCategory] ALTER Column CategoryDescription nvarchar(250)
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyDNNNews]') AND type in (N'U'))
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGallery] ALTER Column GalleryName nvarchar(50)
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGallery] ALTER Column GalleryDescription nvarchar(500)
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyDNNNews]') AND type in (N'U'))
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyDNNThumbs] ALTER Column ViewType nvarchar(50)
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyDNNThumbs] ALTER Column ViewerMode nvarchar(50)
+END
+GO
+
+ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryIntegration] ALTER Column GalleryName nvarchar(250)
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}EasyDNNNews]') AND type in (N'U'))
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryPictures] ALTER Column Title nvarchar(250)
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryPictures] ALTER Column Description nvarchar(4000)
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryPictures] ALTER Column FileName nvarchar(2500)
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryPictures] ALTER Column ThumbUrl nvarchar(250)
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryPictures] ALTER Column MediaType nvarchar(30)
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryPictures] ALTER Column ShortEmbedUrl nvarchar(250)
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryPictures] ALTER Column ViewerThumb nvarchar(250)
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryPictures] ALTER Column Info nvarchar(250)
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryPictures] ALTER Column FileExtension nvarchar(5)
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryPictures] ALTER Column ImageUrl nvarchar(1500)
+END
+GO
+
+ALTER TABLE {databaseOwner}[{objectQualifier}EasyGallerySettings] ALTER Column ViewerControl nvarchar(500)
+GO
+
+if not exists (select * from INFORMATION_SCHEMA.columns where table_name = '{objectQualifier}EasyGalleryPictures' and column_name = 'GallerificThumb')
+BEGIN
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyGalleryPictures] ADD ShowMedia nvarchar(5), GallerificThumb nvarchar(250)
+END
+GO
+
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = N'{objectQualifier}EasyDNNMediaLocalization' AND DATA_TYPE = 'varchar' AND COLUMN_NAME = 'LocaleCode')
+BEGIN
+	DELETE FROM {databaseOwner}[{objectQualifier}EasyDNNMediaLocalization] WHERE LocaleCode IS NULL
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyDNNMediaLocalization] ALTER Column LocaleCode nvarchar(20) NOT NULL
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyDNNMediaLocalization] ALTER Column LocaleString nvarchar(150)
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyDNNMediaLocalization] ALTER Column Title nvarchar(150)
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyDNNMediaLocalization] ALTER Column Description nvarchar(1500)
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyDNNMediaLocalization] ALTER Column MediaUrl nvarchar(1500)
+	BEGIN TRY
+	IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_TYPE = 'PRIMARY KEY' AND TABLE_NAME = '{objectQualifier}EasyDNNMediaLocalization' )
+	BEGIN
+		EXEC dbo.sp_executesql @statement = N'ALTER TABLE {databaseOwner}[{objectQualifier}EasyDNNMediaLocalization] ADD CONSTRAINT [PK_{objectQualifier}EasyDNNMediaLocalization] PRIMARY KEY CLUSTERED ([PictureID] ASC,[LocaleCode] ASC) WITH (STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF)';
+	END
+	END TRY
+	BEGIN CATCH
+	END CATCH
+END
+GO
+
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = N'{objectQualifier}EasyDNNGalleryLocalization' AND DATA_TYPE = 'varchar' AND COLUMN_NAME = 'LocaleCode')
+BEGIN
+	DELETE FROM {databaseOwner}[{objectQualifier}EasyDNNGalleryLocalization] WHERE LocaleCode IS NULL
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyDNNGalleryLocalization] ALTER Column LocaleCode nvarchar(20) NOT NULL
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyDNNGalleryLocalization] ALTER Column LocaleString nvarchar(150)
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyDNNGalleryLocalization] ALTER Column Title nvarchar(50) 
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyDNNGalleryLocalization] ALTER Column Description nvarchar(500)
+	BEGIN TRY
+	IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_TYPE = 'PRIMARY KEY' AND TABLE_NAME = '{objectQualifier}EasyDNNGalleryLocalization' )
+	BEGIN
+		EXEC dbo.sp_executesql @statement = N'ALTER TABLE {databaseOwner}[{objectQualifier}EasyDNNGalleryLocalization] ADD CONSTRAINT [PK_{objectQualifier}EasyDNNGalleryLocalization] PRIMARY KEY CLUSTERED ([GalleryID] ASC,[LocaleCode] ASC) WITH (STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF)';
+	END
+	END TRY
+	BEGIN CATCH
+	END CATCH
+
+END
+GO
+
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = N'{objectQualifier}EasyDNNCategoryLocalization' AND DATA_TYPE = 'varchar' AND COLUMN_NAME = 'LocaleCode')
+BEGIN
+	DELETE FROM {databaseOwner}[{objectQualifier}EasyDNNCategoryLocalization] WHERE LocaleCode IS NULL
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyDNNCategoryLocalization] ALTER Column LocaleCode nvarchar(20) NOT NULL
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyDNNCategoryLocalization] ALTER Column LocaleString nvarchar(50)
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyDNNCategoryLocalization] ALTER Column Title nvarchar(50) 
+	ALTER TABLE {databaseOwner}[{objectQualifier}EasyDNNCategoryLocalization] ALTER Column Description nvarchar(500)
+	BEGIN TRY
+	IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_TYPE = 'PRIMARY KEY' AND TABLE_NAME = '{objectQualifier}EasyDNNCategoryLocalization' )
+	BEGIN
+		EXEC dbo.sp_executesql @statement = N'ALTER TABLE {databaseOwner}[{objectQualifier}EasyDNNCategoryLocalization] ADD CONSTRAINT [PK_{objectQualifier}EasyDNNCategoryLocalization] PRIMARY KEY CLUSTERED ([CategoryID] ASC,[LocaleCode] ASC) WITH (STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF)';
+	END
+	END TRY
+	BEGIN CATCH
+	END CATCH
+
+END

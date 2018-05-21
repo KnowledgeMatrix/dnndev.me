@@ -1,0 +1,32 @@
+﻿IF OBJECT_ID(N'{databaseOwner}{objectQualifier}Answers_GetItemsToCreateZendeskTickets', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}Answers_GetItemsToCreateZendeskTickets
+GO    
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Answers_GetItemsToCreateZendeskTickets
+	@GetUnansweredTicketsFromDate DATETIME,
+	@PortalID INT,
+	@RoleIds VARCHAR(MAX),
+    @MaxRows INT = 20
+AS
+BEGIN
+	DECLARE @TicketMetadataId INT
+	SELECT TOP 1 @TicketMetadataId = MetaDataID FROM {databaseOwner}[{objectQualifier}MetaData] where MetaDataName = 'ticketId'
+	
+	DECLARE @Roles TABLE (RoleId INT)
+	INSERT INTO @Roles
+	SELECT * FROM {databaseOwner}{objectQualifier}CsvSplit(@RoleIds, ',')
+
+	SELECT TOP (@MaxRows) VA.[PostId], VA.[ContentItemID], VA.[PortalId], VA.[ModuleID], VA.[TabID]		
+		FROM {databaseOwner}[{objectQualifier}vw_Answers_Posts] VA 
+		INNER JOIN {databaseOwner}[{objectQualifier}UserRoles] UR 
+			ON UR.UserID = VA.CreatedUserId AND RoleID in ( SELECT * FROM @Roles)
+		LEFT OUTER JOIN {databaseOwner}[{objectQualifier}ContentItems_MetaData] CM 
+			ON CM.MetaDataId = @TicketMetadataId AND CM.ContentItemId = VA.ContentItemId
+	WHERE 		
+		CM.MetaDataValue IS NULL
+		AND TotalAnswers = 0 AND ParentId = 0 AND Approved = 1 AND Closed = 0 
+		AND Deleted = 0 AND VA.[CreatedDate] <= @GetUnansweredTicketsFromDate 
+		AND VA.[PortalID] = @PortalId
+	GROUP BY VA.[PostId], VA.[ContentItemID], VA.[PortalId], VA.[ModuleID], VA.[TabID]	
+END
+GO

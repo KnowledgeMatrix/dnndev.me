@@ -1,0 +1,210 @@
+﻿SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET NOCOUNT ON
+SET QUOTED_IDENTIFIER ON
+SET XACT_ABORT ON
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+
+	-- Support new way of autogenerating sequential consecutive order numbers
+	CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrderSequence](
+		[SalesOrderSequenceID] [int] IDENTITY(1,1) NOT NULL,
+		[PortalID] [int] NOT NULL,
+		[NextSalesOrderNumber] [int] NOT NULL,
+	 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_SalesOrderSequence] PRIMARY KEY CLUSTERED 
+	(
+		[SalesOrderSequenceID] ASC
+	))
+
+	CREATE UNIQUE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_SalesOrderSequence] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrderSequence] 
+	(
+		[PortalID] ASC
+	)
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrderSequence]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_SalesOrderSequence_Portals] FOREIGN KEY([PortalID])
+	REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID])
+	ON DELETE CASCADE
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrderSequence] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_SalesOrderSequence_Portals]
+
+	-- Add SalesOrderNumber to SalesOrder table
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder ADD SalesOrderNumber nvarchar(200) NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrder_SalesOrderNumber DEFAULT ''
+
+	-- Support cross-sell
+	CREATE TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_CrosssellProduct](
+		[CrosssellProductID] [int] IDENTITY(1,1) NOT NULL,
+		[PortalID] [int] NOT NULL,
+		[ProductID] [int] NULL,
+		[OfferProductID] [int] NOT NULL,
+		[AvailabilityRule] [xml] NULL,
+		[DisplayOrder] [int] NOT NULL,
+		[Title] [xml] NULL,
+		[Description] [xml] NULL,
+		[CreateDate] [datetime] NOT NULL,
+		[UpdateDate] [datetime] NOT NULL,
+		[RowVersion] [timestamp] NOT NULL,
+		[StartDate] [datetime] NULL,
+		[StopDate] [datetime] NULL,
+		[Active] [bit] NOT NULL,
+	 CONSTRAINT [PK_{objectQualifier}Revindex_Storefront_CrosssellProduct] PRIMARY KEY CLUSTERED 
+	(
+		[CrosssellProductID] ASC
+	))
+
+	CREATE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_CrosssellProduct] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_CrosssellProduct] 
+	(
+		[PortalID] ASC
+	)
+
+	CREATE UNIQUE NONCLUSTERED INDEX [IX_{objectQualifier}Revindex_Storefront_CrosssellProduct_1] ON {databaseOwner}[{objectQualifier}Revindex_Storefront_CrosssellProduct] 
+	(
+		[ProductID] ASC,
+		[OfferProductID] ASC
+	)
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_CrosssellProduct]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_CrosssellProduct_Portals] FOREIGN KEY([PortalID])
+	REFERENCES {databaseOwner}[{objectQualifier}Portals] ([PortalID])
+	ON DELETE CASCADE
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_CrosssellProduct] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_CrosssellProduct_Portals]
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_CrosssellProduct]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_CrosssellProduct_Revindex_Storefront_Product] FOREIGN KEY([ProductID])
+	REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_Product] ([ProductID])
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_CrosssellProduct] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_CrosssellProduct_Revindex_Storefront_Product]
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_CrosssellProduct]  WITH CHECK ADD  CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_CrosssellProduct_Revindex_Storefront_Product1] FOREIGN KEY([OfferProductID])
+	REFERENCES {databaseOwner}[{objectQualifier}Revindex_Storefront_Product] ([ProductID])
+
+	ALTER TABLE {databaseOwner}[{objectQualifier}Revindex_Storefront_CrosssellProduct] CHECK CONSTRAINT [FK_{objectQualifier}Revindex_Storefront_CrosssellProduct_Revindex_Storefront_Product1]
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD CrosssellProductMaxItems int NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CrosssellProductMaxItems DEFAULT 1
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CrosssellProductMaxItems
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		CrosssellProductAddToCartShow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CrosssellProductAddToCartShow DEFAULT 1,
+		CrosssellProductBuyNowShow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CrosssellProductBuyNowShow DEFAULT 1,
+		CrosssellProductQuantityShow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CrosssellProductQuantityShow DEFAULT 1,
+		CrosssellProductSeeDetailsShow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CrosssellProductSeeDetailsShow DEFAULT 0,
+		CrosssellProductPriceShow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CrosssellProductPriceShow DEFAULT 1
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CrosssellProductAddToCartShow
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CrosssellProductBuyNowShow
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CrosssellProductQuantityShow
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CrosssellProductSeeDetailsShow
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CrosssellProductPriceShow
+
+	-- Support entering coupon and estimating shipping and taxes at cart page
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		CartCouponShow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CartCouponShow DEFAULT 1,
+		CartEstimateShippingTaxShow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CartEstimateShippingTaxShow DEFAULT 1
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CartCouponShow
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_CartEstimateShippingTaxShow
+	 
+	-- Support showing/hiding elements in product showcase
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ADD
+		ProductShowcaseAddToCartShow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductShowcaseAddToCartShow DEFAULT 1,
+		ProductShowcaseBuyNowShow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductShowcaseBuyNowShow DEFAULT 1,
+		ProductShowcaseQuantityShow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductShowcaseQuantityShow DEFAULT 1,
+		ProductShowcaseSeeDetailsShow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductShowcaseSeeDetailsShow DEFAULT 1,
+		ProductShowcasePriceShow bit NOT NULL CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductShowcasePriceShow DEFAULT 1
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductShowcaseAddToCartShow
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductShowcaseBuyNowShow
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductShowcaseQuantityShow
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductShowcaseSeeDetailsShow
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_Configuration_ProductShowcasePriceShow
+
+	-- Support additional fields in Distributor
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Distributor ADD
+		Phone varchar(50) NULL,
+		Email nvarchar(256) NULL
+
+	-- Support additional fields in Manufacturer
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Manufacturer ADD
+		Phone varchar(50) NULL,
+		Email nvarchar(256) NULL
+
+	-- Fix Configuration table index is missing unique clause in older Storefront prior to 7.1
+	-- We run this script below in 6.5 because this version changes the SalesOrderSequence and will break
+	-- if duplicate rows in the configuration table is found.
+	IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration]') AND name = N'IX_Revindex_Storefront_Configuration_1' AND is_unique = 1)
+	BEGIN
+		-- Delete duplicate rows by PortalID
+		DELETE FROM {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration
+		WHERE ConfigurationID NOT IN (SELECT MIN(ConfigurationID) FROM
+										{databaseOwner}{objectQualifier}Revindex_Storefront_Configuration
+										GROUP BY PortalID)
+	
+		-- Modify index to be unique
+		DROP INDEX IX_{objectQualifier}Revindex_Storefront_Configuration_1 ON {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration
+		CREATE UNIQUE NONCLUSTERED INDEX IX_{objectQualifier}Revindex_Storefront_Configuration_1 ON {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration (PortalID)
+	END
+
+COMMIT TRANSACTION
+GO
+
+-----------------
+-- DML Statements
+-----------------
+BEGIN TRY
+	BEGIN TRANSACTION
+
+		-- Seed SalesOrderSequence table
+		DECLARE @NextSalesOrderNumber INT
+		SELECT @NextSalesOrderNumber = COALESCE(MAX(SalesOrderID), 0) + 1 FROM {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrder]
+		INSERT INTO {databaseOwner}[{objectQualifier}Revindex_Storefront_SalesOrderSequence] SELECT PortalID, @NextSalesOrderNumber FROM {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration]
+
+		-- Populate SalesOrderNumber column from SalesOrderID with prefix
+		UPDATE so
+		SET so.SalesOrderNumber = COALESCE(cfg.GeneralSalesOrderIDPrefix, '') + CONVERT(VARCHAR(10), so.SalesOrderID)
+		FROM {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder so
+		JOIN {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration cfg
+		ON cfg.PortalID = so.PortalID
+
+		-- Change GeneralSalesOrderIDPrefix to string format type by adding a {0} token
+		UPDATE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration
+		SET GeneralSalesOrderIDPrefix = COALESCE(GeneralSalesOrderIDPrefix, '') + '{0}'
+
+		-- Upgrade default Cart template to "Standard12"
+		UPDATE {databaseOwner}[{objectQualifier}Revindex_Storefront_Configuration] SET CartDisplayTemplate = 'Standard12' WHERE CartDisplayTemplate LIKE 'Standard%'
+
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	DECLARE @errorMessage NVARCHAR(4000)
+	DECLARE @errorSeverity INT
+	DECLARE @errorState INT
+
+	SELECT @errorMessage = ERROR_MESSAGE(), @errorSeverity = ERROR_SEVERITY(), @errorState = ERROR_STATE()
+	RAISERROR (@errorMessage, @errorSeverity, @errorState)
+END CATCH
+GO
+
+--------------------
+-- Schema Statements
+--------------------
+BEGIN TRANSACTION
+
+	-- Add unique index
+	CREATE UNIQUE NONCLUSTERED INDEX IX_{objectQualifier}Revindex_Storefront_SalesOrder_6 ON {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder
+	(
+	SalesOrderNumber,
+	PortalID
+	) 
+
+	-- Drop default constraint
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_SalesOrder DROP CONSTRAINT DF_{objectQualifier}Revindex_Storefront_SalesOrder_SalesOrderNumber
+
+	-- Rename GeneralSalesOrderIDPrefix configuration
+	EXECUTE sp_rename N'{databaseOwner}{objectQualifier}Revindex_Storefront_Configuration.GeneralSalesOrderIDPrefix', N'SalesOrderSalesOrderNumberFormat', 'COLUMN' 
+
+	ALTER TABLE {databaseOwner}{objectQualifier}Revindex_Storefront_Configuration ALTER COLUMN SalesOrderSalesOrderNumberFormat nvarchar(100)
+
+COMMIT TRANSACTION
+GO

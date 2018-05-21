@@ -1,0 +1,187 @@
+﻿IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = object_id('{objectQualifier}Challenges_Challenge') and name = 'IsEditable')
+BEGIN
+	ALTER TABLE {databaseOwner}{objectQualifier}Challenges_Challenge ADD IsEditable bit NOT NULL DEFAULT 0
+END
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Challenges_Challenge_Search') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+DROP PROCEDURE {databaseOwner}{objectQualifier}Challenges_Challenge_Search
+GO
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Challenges_Challenge_Search]
+	@ModuleId INT,
+	@IsAdmin BIT,
+	@PageSize INT,
+	@PageIndex INT,
+	@Category NVARCHAR(20) ,
+	@SortColumn VARCHAR(32),
+	@SortAscending BIT,
+	@Search NVARCHAR(128),
+	@UserId INT,
+	@GroupId INT,
+	@Tags NVARCHAR(256)
+AS
+BEGIN
+	WITH    ChallengeSet
+				AS ( SELECT   COUNT(*) OVER ( ) AS TotalRecords ,
+							ChallengeId,
+							C.ContentItemId,
+							ChallengeTypeId,
+							Url,
+							TargetItemId,
+							RepPoints,
+							SocialNetworks,
+							MessageToShare,
+							LockedMessage,
+							Expires,
+							Approved,
+							GroupId,
+							PortalId,
+							CI.CreatedByUserID,
+							CI.CreatedOnDate,
+							CI.LastModifiedByUserID,
+							CI.LastModifiedOnDate,
+							CI.TabID,
+							CI.Content,
+							C.IsEditable,
+							CIMD.MetaDataValue AS ContentTitle,
+							U.DisplayName AS DisplayName
+					FROM    {databaseOwner}{objectQualifier}ContentItems CI
+							INNER JOIN {databaseOwner}{objectQualifier}Challenges_Challenge C ON CI.ContentItemID = C.ContentItemId
+							INNER JOIN {databaseOwner}{objectQualifier}Users U ON U.UserID = CI.CreatedByUserID
+							LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD ON CIMD.ContentItemID = CI.ContentItemId
+															AND CIMD.MetaDataID = ( SELECT
+															MetaDataID
+															FROM
+															{databaseOwner}{objectQualifier}MetaData
+															WHERE
+															MetaDataName = 'Title'
+															)
+					WHERE    CI.ModuleId = @ModuleId
+							AND ( ( @Category IS NULL
+										AND Approved = 1
+										)
+									OR ( @Category = 'activechallenges'
+										AND Approved = 1
+										--AND Expires < GETUTCDATE()
+										)
+									OR ( @Category = 'mychallenges'
+										AND CI.CreatedByUserID = @UserId
+										)
+									OR ( @Category = 'mycomments'
+										AND ( SELECT COUNT(CommentId)
+												FROM   {databaseOwner}{objectQualifier}Journal AS J
+													INNER JOIN {databaseOwner}{objectQualifier}Journal_Comments
+													AS JC ON J.JournalId = JC.JournalId
+												WHERE  J.ContentItemId = CI.ContentItemId
+													AND JC.UserId = @UserId
+											) > 0
+										AND Approved = 1
+										)
+								)
+							AND ( @Tags IS NULL
+									OR LEN(@Tags) = 0
+									OR ( SELECT   COUNT(*)
+										FROM     {databaseOwner}{objectQualifier}ContentItems_Tags CIT
+												INNER JOIN {databaseOwner}{objectQualifier}Taxonomy_Terms TT ON CIT.TermID = TT.TermID
+												INNER JOIN {databaseOwner}{objectQualifier}ConvertListToTable(',',
+															@Tags) CLT ON TT.Name = CLT.RowValue
+										WHERE    CIT.ContentItemID = CI.ContentItemId
+										) = ( SELECT   LEN(@Tags)
+													- LEN(REPLACE(@Tags,
+															',', '')) + 1
+											)
+								)
+					),
+			ChallengeSort
+				AS ( SELECT   ROW_NUMBER() OVER ( ORDER BY CASE
+															WHEN @SortColumn = 'CreatedDate'
+															AND @SortAscending = 1
+															THEN T.CreatedOnDate
+															END ASC, CASE
+															WHEN @SortColumn = 'CreatedDate'
+															AND @SortAscending = 0
+															THEN T.CreatedOnDate
+															END DESC, CASE
+															WHEN @SortColumn = 'LastActive'
+															AND @SortAscending = 1
+															THEN T.LastModifiedOnDate
+															END ASC, CASE
+															WHEN @SortColumn = 'LastActive'
+															AND @SortAscending = 0
+															THEN T.LastModifiedOnDate
+															END DESC, CASE
+															WHEN @SortColumn = 'Title'
+															AND @SortAscending = 1
+															THEN T.ContentTitle
+															END ASC, CASE
+															WHEN @SortColumn = 'Title'
+															AND @SortAscending = 0
+															THEN T.ContentTitle
+															END DESC, CASE
+															WHEN @SortColumn = 'Author'
+															AND @SortAscending = 1
+															THEN T.DisplayName
+															END ASC, CASE
+															WHEN @SortColumn = 'Author'
+															AND @SortAscending = 0
+															THEN T.DisplayName
+															END DESC, T.CreatedOnDate DESC ) AS RowNumber ,
+							T.*
+					FROM     ChallengeSet T
+					)
+		SELECT  *
+		FROM    ChallengeSort
+		WHERE   RowNumber BETWEEN ( @PageIndex * @PageSize + 1 )
+							AND     ( ( @PageIndex + 1 ) * @PageSize )
+END
+GO
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}Challenges_Challenge_GetByContentItem') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+DROP PROCEDURE {databaseOwner}{objectQualifier}Challenges_Challenge_GetByContentItem
+GO
+
+
+CREATE PROCEDURE {databaseOwner}[{objectQualifier}Challenges_Challenge_GetByContentItem]
+	@ContentItemId INT ,
+	@ModuleId INT
+AS 
+	SELECT 	ChallengeId,
+			ChallengeTypeId,
+			Url,
+			TargetItemId,
+			RepPoints,
+			SocialNetworks,
+			MessageToShare,
+			LockedMessage,
+			Expires,
+			Approved,
+			GroupId,
+			PortalId,
+			CI.ContentItemID ,
+			CI.Content ,
+			CI.ContentTypeID ,
+			CI.TabID ,
+			CI.ModuleID ,
+			CI.ContentKey ,
+			CI.Indexed ,
+			CI.CreatedByUserID ,
+			CI.CreatedOnDate ,
+			CI.LastModifiedByUserID ,
+			CI.LastModifiedOnDate ,
+			C.IsEditable,
+			CIMD.MetaDataValue AS [ContentTitle]
+	FROM    {databaseOwner}{objectQualifier}ContentItems CI 
+			INNER JOIN {databaseOwner}{objectQualifier}Challenges_Challenge C ON CI.ContentItemID = C.ContentItemId
+			LEFT OUTER JOIN {databaseOwner}{objectQualifier}ContentItems_MetaData CIMD ON CIMD.ContentItemID = CI.[ContentItemID]
+															  AND CIMD.MetaDataID = ( SELECT
+															  MetaDataID
+															  FROM
+															  {databaseOwner}{objectQualifier}MetaData
+															  WHERE
+															  MetaDataName = 'Title'
+															  )
+	WHERE   CI.ContentItemID = @ContentItemId
+	AND ModuleID = @ModuleId
+
+GO

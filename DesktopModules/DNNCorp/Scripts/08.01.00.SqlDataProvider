@@ -1,0 +1,145 @@
+﻿/********************************************************
+ * URL Provider
+ ********************************************************/
+IF object_id(N'{databaseOwner}{objectQualifier}ContentItem_Slug', 'U') IS NULL
+BEGIN
+	CREATE TABLE {databaseOwner}{objectQualifier}ContentItem_Slug (
+		TabId INT NOT NULL,
+		ContentItemId INT NOT NULL,
+		HttpStatus INT NOT NULL,
+		Slug NVARCHAR(255) NOT NULL,	
+	)
+
+	ALTER TABLE {databaseOwner}{objectQualifier}ContentItem_Slug ADD CONSTRAINT 
+		PK_{objectQualifier}ContentItem_Slug PRIMARY KEY CLUSTERED (TabId, Slug)
+
+	ALTER TABLE {databaseOwner}{objectQualifier}ContentItem_Slug ADD CONSTRAINT 
+		FK_{objectQualifier}ContentItem_Slug_ContentItems FOREIGN KEY (ContentItemId) 
+			REFERENCES {databaseOwner}{objectQualifier}ContentItems (ContentItemId) 
+				ON DELETE CASCADE
+
+	ALTER TABLE {databaseOwner}{objectQualifier}ContentItem_Slug ADD CONSTRAINT 
+		FK_{objectQualifier}ContentItem_Slug_Tabs FOREIGN KEY (TabId) 
+			REFERENCES {databaseOwner}{objectQualifier}Tabs (TabId) 
+				ON DELETE CASCADE
+
+END
+GO
+
+IF object_id(N'{databaseOwner}{objectQualifier}ContentItemUrlProvider_ResolveSlug', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}ContentItemUrlProvider_ResolveSlug
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}ContentItemUrlProvider_ResolveSlug (
+	@TabId INT,
+	@Slug NVARCHAR(255)
+) AS
+BEGIN
+	SELECT s.ContentItemId, s.HttpStatus, r.Slug RedirectTo
+	FROM {databaseOwner}{objectQualifier}ContentItem_Slug s WITH (NOLOCK)
+		LEFT JOIN {databaseOwner}{objectQualifier}ContentItem_Slug r 
+			ON s.TabId = r.TabId 
+				AND s.ContentItemId = r.ContentItemId 
+				AND s.HttpStatus = 301 AND r.HttpStatus = 200
+	WHERE s.TabId = @TabId 
+	  AND s.Slug = @Slug
+END
+GO
+
+IF OBJECT_ID(N'{databaseOwner}[{objectQualifier}CsvSplit]') IS NOT NULL
+	DROP FUNCTION {databaseOwner}{objectQualifier}CsvSplit
+GO
+
+CREATE FUNCTION {databaseOwner}[{objectQualifier}CsvSplit]
+	(
+		@param NVARCHAR(MAX),
+		@delimiter NCHAR(1)
+	)
+	RETURNS TABLE
+WITH SCHEMABINDING AS
+	RETURN
+	  WITH E1(N)        AS ( SELECT 1 UNION ALL SELECT 1 UNION ALL SELECT 1 UNION ALL SELECT 1
+							 UNION ALL SELECT 1 UNION ALL SELECT 1 UNION ALL SELECT 1
+							 UNION ALL SELECT 1 UNION ALL SELECT 1 UNION ALL SELECT 1),
+		   E2(N)        AS (SELECT 1 FROM E1 a, E1 b),
+		   E4(N)        AS (SELECT 1 FROM E2 a, E2 b),
+		   E42(N)       AS (SELECT 1 FROM E4 a, E2 b),
+		   cteTally(N)  AS (SELECT 0 UNION ALL SELECT TOP (DATALENGTH(ISNULL(@param,1)))
+							 ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) FROM E42),
+		   cteStart(N1) AS (SELECT t.N+1 FROM cteTally t
+							 WHERE (SUBSTRING(@param,t.N,1) = @delimiter OR t.N = 0))
+	  SELECT val = SUBSTRING(@param, s.N1, ISNULL(NULLIF(CHARINDEX(@delimiter,@param,s.N1),0)-s.N1,8000))
+		FROM cteStart s;
+GO
+
+IF object_id(N'{databaseOwner}{objectQualifier}ContentItemUrlProvider_AddSlug', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}ContentItemUrlProvider_AddSlug
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}ContentItemUrlProvider_AddSlug (
+	@TabId INT,
+	@ContentItemId INT,
+	@Slug NVARCHAR(255),
+	@Separator NVARCHAR(1)
+) AS
+BEGIN
+	DECLARE @OrigSlug NVARCHAR(255) = @Slug
+
+	DECLARE @ReserverdWordList NVARCHAR(MAX)
+
+	SELECT @ReserverdWordList = s.SettingValue
+	FROM {databaseOwner}{objectQualifier}ExtensionUrlProviders p
+		JOIN {databaseOwner}{objectQualifier}ExtensionUrlProviderSetting s ON p.ExtensionUrlProviderID = s.ExtensionUrlProviderID
+	WHERE p.ProviderName = 'Evoq Content Item Url Extension Provider'
+		AND s.SettingName = 'ReservedWordList'
+
+	DECLARE @ReservedWords AS TABLE (Word NVARCHAR(MAX))
+	INSERT INTO @ReservedWords (Word) SELECT val FROM {databaseOwner}{objectQualifier}CsvSplit(@ReserverdWordList, ',')
+		UNION SELECT 'module' UNION SELECT 'ctl' UNION SELECT 'moduleid' UNION SELECT 'tabid' UNION SELECT 'groupid' UNION SELECT 'skinSrc'
+
+	DECLARE @i INT = 1
+	WHILE EXISTS(SELECT * FROM {databaseOwner}{objectQualifier}ContentItem_Slug WITH (NOLOCK)
+		WHERE TabId = @TabId
+		  AND ContentItemId <> @ContentItemId
+		  AND Slug = @Slug)
+		OR @Slug IN (SELECT Word FROM @ReservedWords)
+	BEGIN			     
+		SET @Slug = @OrigSlug + @Separator + CONVERT(NVARCHAR(5), @i)
+		SET @i = @i + 1
+	END
+
+	UPDATE {databaseOwner}{objectQualifier}ContentItem_Slug
+	SET HttpStatus = 301
+	WHERE TabId = @TabId AND ContentItemId = @ContentItemId 
+	  AND Slug <> @Slug 
+	  AND HttpStatus = 200
+
+	UPDATE {databaseOwner}{objectQualifier}ContentItem_Slug
+	SET HttpStatus = 200
+	WHERE TabId = @TabId AND ContentItemId = @ContentItemId 
+	  AND Slug = @Slug
+
+	IF @@ROWCOUNT = 0 
+	BEGIN
+		INSERT {databaseOwner}{objectQualifier}ContentItem_Slug(TabId, ContentItemId, HttpStatus, Slug)
+		VALUES (@TabId, @ContentItemId, 200, @Slug)
+	END
+
+	SELECT @Slug
+END
+GO
+
+IF object_id(N'{databaseOwner}{objectQualifier}ContentItemUrlProvider_GetSlug', 'P') IS NOT NULL
+	DROP PROCEDURE {databaseOwner}{objectQualifier}ContentItemUrlProvider_GetSlug
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}ContentItemUrlProvider_GetSlug (
+	@ContentItemId INT
+) AS
+BEGIN
+	SELECT Slug
+	FROM {databaseOwner}{objectQualifier}ContentItem_Slug WITH (NOLOCK)
+	WHERE ContentItemId = @ContentItemId
+	  AND HttpStatus = 200
+END
+GO
