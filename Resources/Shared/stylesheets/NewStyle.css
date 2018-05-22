@@ -48,7 +48,7 @@
 }
 div.chameleon_slider.NewsOne {
     width: 100% !important;
-    height: 500px !important;
+    height: 570px !important;
 }
 .chameleon_slider.NewsOne .title_box span {
     color: #e71601;
@@ -128,6 +128,14 @@ display: none;
     text-shadow: 1px 1px 5px #737373;
 }
 }
+@media (min-width: 1024px){
+.chameleon_slider .main_panel .items_wrapper .item_container > img {
+    max-width: none;
+    max-height: none;
+    margin-bottom: 0px !important;
+    height: 570px !important;
+}
+}
 
 .chameleon_slider.NewsOne .scrollable_box .viewport .overview, .chameleon_slider.NewsOne .scrollable_box .viewport p{
     text-shadow: 1px 1px 5px #999;
@@ -149,14 +157,14 @@ background-color: transparent !important;
 
 
 .EasyDNNSkin_Ozone .eds_headerContainer .eds_fixedHeader {
-    position: fixed;
+    position: relative;
     width: 100%;
     z-index: 999;
     max-width: 1440px;
 }
 body#Body {
     max-width: 1440px;
-    margin:0 auto !important;
+    margin: 0 auto;
     position: relative;
 }
 
@@ -235,19 +243,17 @@ ol > li.edsmm_menuItem:hover > span .edsmm_itemContainer:after {
     margin-left: 0;
 }
 .liveaccdefault .ui-state-active a, .liveaccdefault .ui-state-active a:link, .liveaccdefault .ui-state-active a:visited {
-    background: #f7f7f7!important;
+    background: #f7f7f700 !important;
 }
 .liveaccdefault .ui-state-default a, .liveaccdefault .ui-state-default a:link, .liveaccdefault .ui-state-default a:visited{
 color: #2d96cd !important; 
 }
 .liveaccdefault .ui-accordion .ui-accordion-header
 {
-    background: #f1f1f100;
+    background: #f1f1f1;
     /* display: inline-block; */
     color: #fff;
-    text-shadow: 0 0 2px rgba(0,0,0,.3);
     font-family: sans-serif;
-    box-shadow: inset 0 0 2px 0 rgba(255,255,255,.4), inset 0 0 3px 0 rgba(0,0,0,.4), inset 0 0 3px 5px rgba(0,0,0,.05), 2px 2px 4px 0 rgba(0,0,0,.25);
     border-radius: 4px;
     padding: 8px 10px;
     font-size: 20px;
@@ -325,5 +331,196 @@ div#dnn_contentLeftPane.col-sm-12.eds_container {
     margin-top: 4px;
 }
 .new_bg, .new_bg section.mt-40 {
-    background-color: #f1b1b1 !important;
+    background-color: #fff !important;
+}
+/********* 28/3/18 **********/
+.eds_galleryWrapper {
+    background: transparent !important;
+}
+.eds_GravityGallery_Graviton .edsgg__itemsListContainer.edsgg__items .edsgg_thumbnailWrapper {
+    border-width: 1px;
+    border-color: transparent !important;
+    box-shadow: 0 0 0;
+}
+.eds_GravityGallery_Graviton .edsgg__itemsListContainer .edsgg_thumbnailWrapper .edsgg_thumbnailContainer a {
+    position: relative;
+}
+span.edsgg_title {
+    background: #0000008c !important;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0px;
+	top: 117px;
+}
+.eds_GravityGallery_Graviton .edsgg__itemsListContainer .edsgg_thumbnailWrapper .edsgg_thumbnailContainer .edsgg_image_thumbnail {
+    padding: 0 !important;
+    box-shadow: 0px 0px 9px #8a8a8a;
+}
+.eds_GravityGallery_Graviton h1.edsgg_mainTitle {
+    color: #2d96cd !important;
+}
+.eds_GravityGallery_Graviton .edsgg__itemsListContainer .edsgg_thumbnailWrapper {
+    padding: 0 !important;
+}
+.eds_container .DnnModule tbody#categorySortList tr.edsf_color_default td.edsf_name.edsf_textLeft {
+    width: 100%;
+    display: inline-block;
+	padding-left: 20px;
+}
+.eds_container .DnnModule tbody#categorySortList tr.edsf_color_default td.edsf_name.edsf_textLeft h3.edsf_itemTitle a {
+    font-weight: 400;
+    color: #1f7cad;
+    text-transform: uppercase;
+    font-size: 26px;
+}
+.eds_container .DnnModule tbody#categorySortList tr.edsf_color_default td.edsf_name.edsf_textLeft .edsf_itemDescription p {
+    color: #000;
+}
+tbody#categorySortList {
+    margin: 0 -15px;
+    display: block;
+}
+.eds_GravityGallery_Graviton h1.edsgg_mainTitle {
+    max-width: 978px !important;
+}
+/*************** 30/3/18 ***************/
+body#Body, .EasyDNNSkin_Ozone .eds_contentBellowBackground {
+    background: #fff;
+}
+.EasyDNNSkin_Ozone div#dnn_ContentPane.container-fluid {
+    margin-bottom: 20px;
+
+}
+.EasyDNNSkin_Ozone .eds_headerContainer.eds_headerContainer1 .eds_headerContent.DNNEmptyPane {
+    min-height: 0px !important;
+}
+.EasyDNNSkin_Ozone #dnn_contentPane3.container-fluid {
+    margin-bottom: 20px;
+}
+.livetabsdefault .ui-tabs .ui-tabs-panel .col-sm-3.menu_top a {
+    font-size: 14px;
+}
+.livetabsdefault .ui-tabs .ui-tabs-panel .col-sm-3.menu_top h3 {
+    font-size: 18px;
+}
+.vehicleAttributes.section .veh_one {
+    width: 50%;
+    float: left;
+    padding: 5px 15px;
+}
+.vehicleAttributes.section .veh_one p, .vehicleAttributes.section .veh_units p {
+    margin-bottom: 0px;
+    text-transform: uppercase;
+    line-height: 17px;
+}
+.vehicleAttributes.section .veh_one h4 small {
+    font-size: 17px;
+    margin-bottom: -21px;
+    display: grid;
+    margin-left: -9px;
+}
+.vehicleAttributes.section .veh_one h4, .vehicleAttributes.section .veh_units h4 {
+    color: #333;
+    font-size: 27px;
+    font-weight: 500;
+}
+.vehicleAttributes.section .veh_one span {
+    font-size: 12px;
+    text-transform: capitalize;
+    line-height: 14px;
+    display: block;
+    height: 31px;
+    width: 72%;
+}
+.vehicleAttributes.section .veh_one a {
+    color: #333;
+    display: block;
+    font-weight: 600;
+    font-style: italic;
+}
+.vehicleAttributes.section .veh_units {
+    float: left;
+    width: 33.33%;
+    text-align: center;
+    padding: 5px 15px;
+}
+.vehicleAttributes.section .veh_units {
+    float: left;
+    width: 33.33%;
+    text-align: center;
+    padding: 5px 15px;
+    margin-top: 20px;
+margin-bottom: 19px;
+}
+.vehicleAttributes.section .veh_units span {
+    font-size: 12px;
+    text-transform: capitalize;
+    line-height: 14px;
+    display: block;
+    margin-top: -9px;
+}
+.vehicleAttributes.section .veh_units p.last {
+    margin-top: -16px;
+}
+.vehicleAttributes.section .col-md-5.col-sm-6, .vehicleAttributes.section .col-md-4.col-sm-6 {
+    border-right: 1px solid #000;
+}
+.vehicleAttributes.section .col-md-3.col-sm-6 ul {
+    margin: 0;
+    text-align: center;
+}
+.vehicleAttributes.section .col-md-3.col-sm-6 ul li a {
+    color: #333;
+    line-height: 23px;
+text-transform: uppercase;
+}
+.vehicleAttributes.section {
+    display: inline-block;
+    width: 100%;
+    border-bottom: 1px solid #666;
+    border-top: 1px solid #666;
+    padding: 20px 0;
+}
+/*.pane.col-lg-4.col-md-4.col-sm-4.col-xs-12 p {
+    padding: 0 20px;
+}*/
+.pane.col-lg-4.col-md-4.col-sm-4.col-xs-12 p img {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0px !important;
+}
+.pane.col-lg-4.col-md-4.col-sm-4.col-xs-12 {
+    padding: 0 15px !important;
+}
+.banner_video {
+    position: relative;
+}
+.banner_video .vid_caption {
+    position: absolute;
+    top: 30px;
+    left: 30px;
+}
+.banner_video .vid_caption h3 {
+    color: #fff;
+    font-size: 42px;
+    font-weight: 400 !important;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+.banner_video video {
+    width: 100%;
+    height: auto;
+}
+h2.eds_bottomBorder {
+    display: none;
+}
+.chameleon_slider.NewsOne .main_panel {
+    border-radius: 0 !important;
+}
+.chameleon_slider.NewsOne .title_box.current_item{
+bottom:auto !important;
+}
+.container-fluid > .row {
+    margin: 0 !important;
 }

@@ -147,16 +147,13 @@
                            StringBuilder sbHTML = new StringBuilder(disc);
                            sbHTML.Replace("<>", "");
                            disc= System.Text.RegularExpressions.Regex.Replace(sbHTML.ToString(), "<[^>]*>", "");
-                           disc= System.Text.RegularExpressions.Regex.Replace(disc, "\r\n", "");
-                           // string[] lines = disc.Split(new[] { "\r\n", "\r", "\n" },StringSplitOptions.None);
-                           string[] lines = disc.Split(new[] { "." }, StringSplitOptions.None);
+                           string[] lines = disc.Split(new[] { "\r\n", "\r", "\n" },StringSplitOptions.None);
                            if (lines.Length!=0)
                            {
                              <div class="form col-sm-12">
                                 <ul>
                                   @foreach (var line in lines)
                                   {
-                                     
                                       if (line!="")
                                       {
                                           <li> @line</li>

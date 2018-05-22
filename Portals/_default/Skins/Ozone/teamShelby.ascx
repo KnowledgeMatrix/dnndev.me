@@ -123,6 +123,7 @@ display: none;
 					<% End If %>
 					<span class="eds_searchButton" style="top:0px  !important;    margin-right: 85px;">Search</span>
 					<div class="eds_userLogin pull-right" style="top:0px  !important">
+<span><a style="color:#2d96cd;margin-top:5px;" href="http://123.176.39.60" target="_Blank">Shelby Home</a></span>
 						<dnn:USER ID="USER1" runat="server" LegacyMode="false" />
 						<dnn:LOGIN ID="LOGIN1" runat="server" LegacyMode="false" />
 					</div>
@@ -142,7 +143,6 @@ display: none;
 <!-- header_StyleWizardTemplateSectionEnd -->
 		<div class="eds_headerContent" id="headerWide" runat="server"></div>
 	</div>
-   
 	<div id="ContentPane" class="eds_container container-fluid" runat="server"></div>
 	<div class="container-fluid">
 		<div class="row">

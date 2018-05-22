@@ -1,4 +1,4 @@
-<%@ Control language="c#" Inherits="CartViper.Modules.Store.WebControls.Address.DefaultAddressProvider.StoreAddress" AutoEventWireup="True" %>
+<%@ Control language="c#" CodeBehind="StoreAddress.ascx.cs" Inherits="CartViper.Modules.Store.WebControls.Address.DefaultAddressProvider.StoreAddress" AutoEventWireup="True" %>
 
 <input id="hiddenAddressId" type="hidden" runat="server" />
 <table class="StoreAccountAddress" width="100%">
