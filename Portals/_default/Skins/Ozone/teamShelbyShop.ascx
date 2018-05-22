@@ -19,7 +19,6 @@
 <%--here i am adding my own custom css --%>
 <dnn:DnnCssInclude runat="server" id="customcss" FilePath="common/css/custom.css" PathNameAlias="SkinPath" Priority="10" />
 
-
 <dnn:DnnCssInclude runat="server" id="bootstrapcss" FilePath="bootstrap/css/bootstrap.min.css" PathNameAlias="SkinPath" Priority="10" />
 <dnn:DnnCssInclude runat="server" id="OzoneBaseStyle" FilePath="common/css/base.css" PathNameAlias="SkinPath" Priority="10" />
 <dnn:DnnCssInclude runat="server" id="FontAwesome" FilePath="common/css/font-awesome.min.css" PathNameAlias="SkinPath" Priority="10" />
@@ -50,7 +49,7 @@
 
     <link href="/Resources/Shared/stylesheets/shelBy/css/Vehicle.css" rel="stylesheet">
     <link href="/Resources/Shared/stylesheets/NewStyle.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/fonts/FontAwesome.otf" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/fonts/fontawesome-webfont.ttf" rel="stylesheet">
 	
@@ -120,7 +119,7 @@ display: none;
     </script>
 </head>
 <body>
-<!-- loader_StyleWizardTemplateSection -->
+
 <!-- header_StyleWizardTemplateSection -->
 <%--<div class="EasyDNNSkin_Ozone">
     <div class="eds_headerContainer eds_headerContainer1">
@@ -193,8 +192,6 @@ display: none;
     <div class="">
              <div class="col-sm-12 eds_container" id="headerMegamenuPane" runat="server"></div>
     </div>
-  
- 
 
     <div class="col-sm-12 eds_container" id="sliderPane" runat="server"></div>
 	<div class="container-fluid">

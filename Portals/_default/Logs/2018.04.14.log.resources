@@ -1,0 +1,856 @@
+2018-04-14 00:03:58.930+05:30 [KM-SHELLBY][D:2][T:17][ERROR] DotNetNuke.Web.Api.Internal.ServicesRoutingManager - EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes threw an exception.  A route named 'EasyDNNsimpleForum-Topic-1' is already in the route collection. Route names must be unique.
+Parameter name: name
+   at System.Web.Routing.RouteCollection.Add(String name, RouteBase item)
+   at System.Web.Http.RouteCollectionExtensions.MapHttpRoute(RouteCollection routes, String name, String routeTemplate, Object defaults, Object constraints, HttpMessageHandler handler)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, Object defaults, Object constraints, String[] namespaces)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, String[] namespaces)
+   at EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes(IMapRoute mapRouteManager)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.LocateServicesAndMapRoutes()
+2018-04-14 00:05:01.773+05:30 [KM-SHELLBY][D:2][T:26][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 00:05:01.836+05:30 [KM-SHELLBY][D:2][T:26][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 00:27:43.353+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Web.Api.Internal.ServicesRoutingManager - EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes threw an exception.  A route named 'EasyDNNsimpleForum-Topic-1' is already in the route collection. Route names must be unique.
+Parameter name: name
+   at System.Web.Routing.RouteCollection.Add(String name, RouteBase item)
+   at System.Web.Http.RouteCollectionExtensions.MapHttpRoute(RouteCollection routes, String name, String routeTemplate, Object defaults, Object constraints, HttpMessageHandler handler)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, Object defaults, Object constraints, String[] namespaces)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, String[] namespaces)
+   at EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes(IMapRoute mapRouteManager)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.LocateServicesAndMapRoutes()
+2018-04-14 00:28:49.259+05:30 [KM-SHELLBY][D:2][T:25][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 00:28:49.321+05:30 [KM-SHELLBY][D:2][T:25][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 00:36:29.212+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Web.Api.Internal.ServicesRoutingManager - EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes threw an exception.  A route named 'EasyDNNsimpleForum-Topic-1' is already in the route collection. Route names must be unique.
+Parameter name: name
+   at System.Web.Routing.RouteCollection.Add(String name, RouteBase item)
+   at System.Web.Http.RouteCollectionExtensions.MapHttpRoute(RouteCollection routes, String name, String routeTemplate, Object defaults, Object constraints, HttpMessageHandler handler)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, Object defaults, Object constraints, String[] namespaces)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, String[] namespaces)
+   at EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes(IMapRoute mapRouteManager)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.LocateServicesAndMapRoutes()
+2018-04-14 00:56:07.323+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Web.Api.Internal.ServicesRoutingManager - EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes threw an exception.  A route named 'EasyDNNsimpleForum-Topic-1' is already in the route collection. Route names must be unique.
+Parameter name: name
+   at System.Web.Routing.RouteCollection.Add(String name, RouteBase item)
+   at System.Web.Http.RouteCollectionExtensions.MapHttpRoute(RouteCollection routes, String name, String routeTemplate, Object defaults, Object constraints, HttpMessageHandler handler)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, Object defaults, Object constraints, String[] namespaces)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, String[] namespaces)
+   at EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes(IMapRoute mapRouteManager)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.LocateServicesAndMapRoutes()
+2018-04-14 00:57:08.229+05:30 [KM-SHELLBY][D:2][T:25][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 00:57:08.276+05:30 [KM-SHELLBY][D:2][T:25][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 00:58:22.526+05:30 [KM-SHELLBY][D:2][T:25][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 276, Add Tabs).
+The statement has been terminated.
+2018-04-14 00:58:22.526+05:30 [KM-SHELLBY][D:2][T:25][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 276, Update Tabs).
+The statement has been terminated.
+2018-04-14 00:58:22.542+05:30 [KM-SHELLBY][D:2][T:25][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 276, Remove Tabs).
+The statement has been terminated.
+2018-04-14 00:58:22.557+05:30 [KM-SHELLBY][D:2][T:25][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 276, Manage Options).
+The statement has been terminated.
+2018-04-14 00:58:25.542+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 276, Add Tabs).
+The statement has been terminated.
+2018-04-14 00:58:25.542+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 276, Update Tabs).
+The statement has been terminated.
+2018-04-14 00:58:25.557+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 276, Remove Tabs).
+The statement has been terminated.
+2018-04-14 00:58:25.557+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 276, Manage Options).
+The statement has been terminated.
+2018-04-14 00:58:36.901+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 276, Add Tabs).
+The statement has been terminated.
+2018-04-14 00:58:36.917+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 276, Update Tabs).
+The statement has been terminated.
+2018-04-14 00:58:36.917+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 276, Remove Tabs).
+The statement has been terminated.
+2018-04-14 00:58:36.932+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 276, Manage Options).
+The statement has been terminated.
+2018-04-14 00:58:37.260+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Services.Exceptions.Exceptions - FriendlyMessage="Error: Text/HTML is currently unavailable." ctrl="ASP.desktopmodules_html_htmlmodule_ascx" exc="System.NullReferenceException: Object reference not set to an instance of an object.
+   at DotNetNuke.Entities.Modules.ModuleController.IsSharedModule(ModuleInfo module)
+   at DotNetNuke.Modules.HtmlPro.HtmlModule.GetHtmlContent()
+   at DotNetNuke.Modules.HtmlPro.HtmlModule.OnLoad(EventArgs e)"
+2018-04-14 00:58:58.463+05:30 [KM-SHELLBY][D:2][T:25][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 276, Add Tabs).
+The statement has been terminated.
+2018-04-14 00:58:58.479+05:30 [KM-SHELLBY][D:2][T:25][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 276, Update Tabs).
+The statement has been terminated.
+2018-04-14 00:58:58.495+05:30 [KM-SHELLBY][D:2][T:25][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 276, Remove Tabs).
+The statement has been terminated.
+2018-04-14 00:58:58.510+05:30 [KM-SHELLBY][D:2][T:25][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 276, Manage Options).
+The statement has been terminated.
+2018-04-14 01:12:09.324+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Web.Api.Internal.ServicesRoutingManager - EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes threw an exception.  A route named 'EasyDNNsimpleForum-Topic-1' is already in the route collection. Route names must be unique.
+Parameter name: name
+   at System.Web.Routing.RouteCollection.Add(String name, RouteBase item)
+   at System.Web.Http.RouteCollectionExtensions.MapHttpRoute(RouteCollection routes, String name, String routeTemplate, Object defaults, Object constraints, HttpMessageHandler handler)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, Object defaults, Object constraints, String[] namespaces)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, String[] namespaces)
+   at EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes(IMapRoute mapRouteManager)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.LocateServicesAndMapRoutes()
+2018-04-14 01:17:17.777+05:30 [KM-SHELLBY][D:2][T:18][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 01:17:17.839+05:30 [KM-SHELLBY][D:2][T:18][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 01:41:02.747+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Web.Api.Internal.ServicesRoutingManager - EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes threw an exception.  A route named 'EasyDNNsimpleForum-Topic-1' is already in the route collection. Route names must be unique.
+Parameter name: name
+   at System.Web.Routing.RouteCollection.Add(String name, RouteBase item)
+   at System.Web.Http.RouteCollectionExtensions.MapHttpRoute(RouteCollection routes, String name, String routeTemplate, Object defaults, Object constraints, HttpMessageHandler handler)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, Object defaults, Object constraints, String[] namespaces)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, String[] namespaces)
+   at EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes(IMapRoute mapRouteManager)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.LocateServicesAndMapRoutes()
+2018-04-14 01:42:08.637+05:30 [KM-SHELLBY][D:2][T:25][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 01:42:08.700+05:30 [KM-SHELLBY][D:2][T:25][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 01:56:10.826+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Web.Api.Internal.ServicesRoutingManager - EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes threw an exception.  A route named 'EasyDNNsimpleForum-Topic-1' is already in the route collection. Route names must be unique.
+Parameter name: name
+   at System.Web.Routing.RouteCollection.Add(String name, RouteBase item)
+   at System.Web.Http.RouteCollectionExtensions.MapHttpRoute(RouteCollection routes, String name, String routeTemplate, Object defaults, Object constraints, HttpMessageHandler handler)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, Object defaults, Object constraints, String[] namespaces)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, String[] namespaces)
+   at EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes(IMapRoute mapRouteManager)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.LocateServicesAndMapRoutes()
+2018-04-14 02:02:00.873+05:30 [KM-SHELLBY][D:2][T:42][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 276, Add Tabs).
+The statement has been terminated.
+2018-04-14 02:02:00.888+05:30 [KM-SHELLBY][D:2][T:42][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 276, Update Tabs).
+The statement has been terminated.
+2018-04-14 02:02:00.904+05:30 [KM-SHELLBY][D:2][T:42][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 276, Remove Tabs).
+The statement has been terminated.
+2018-04-14 02:02:00.904+05:30 [KM-SHELLBY][D:2][T:42][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 276, Manage Options).
+The statement has been terminated.
+2018-04-14 02:02:01.138+05:30 [KM-SHELLBY][D:2][T:42][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.Threading.ThreadAbortException: Thread was being aborted.
+   at System.Threading.Thread.AbortInternal()
+   at System.Threading.Thread.Abort(Object stateInfo)
+   at System.Web.HttpResponse.AbortCurrentThread()
+   at System.Web.HttpResponse.Redirect(String url, Boolean endResponse, Boolean permanent)
+   at Evoq.Content.Library.ContentEditor.ContentEditorManager.AutoSetUserMode()
+   at Evoq.Content.Library.ContentEditor.ContentEditorManager.OnInit(EventArgs e)
+   at System.Web.UI.Control.InitRecursive(Control namingContainer)
+   at System.Web.UI.Control.AddedControl(Control control, Int32 index)
+   at Evoq.Content.Library.UI.Skins.EventListeners.EvoqContentSkinEventListener.OnSkinInit(Object sender, SkinEventArgs e)
+2018-04-14 02:02:12.388+05:30 [KM-SHELLBY][D:2][T:43][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 02:02:12.435+05:30 [KM-SHELLBY][D:2][T:43][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 02:10:38.608+05:30 [KM-SHELLBY][D:2][T:45][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 276, Add Tabs).
+The statement has been terminated.
+2018-04-14 02:10:38.639+05:30 [KM-SHELLBY][D:2][T:45][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 276, Update Tabs).
+The statement has been terminated.
+2018-04-14 02:10:38.654+05:30 [KM-SHELLBY][D:2][T:45][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 276, Remove Tabs).
+The statement has been terminated.
+2018-04-14 02:10:38.670+05:30 [KM-SHELLBY][D:2][T:45][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 276, Manage Options).
+The statement has been terminated.
+2018-04-14 02:19:30.811+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Web.Api.Internal.ServicesRoutingManager - EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes threw an exception.  A route named 'EasyDNNsimpleForum-Topic-1' is already in the route collection. Route names must be unique.
+Parameter name: name
+   at System.Web.Routing.RouteCollection.Add(String name, RouteBase item)
+   at System.Web.Http.RouteCollectionExtensions.MapHttpRoute(RouteCollection routes, String name, String routeTemplate, Object defaults, Object constraints, HttpMessageHandler handler)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, Object defaults, Object constraints, String[] namespaces)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, String[] namespaces)
+   at EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes(IMapRoute mapRouteManager)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.LocateServicesAndMapRoutes()
+2018-04-14 02:22:17.905+05:30 [KM-SHELLBY][D:2][T:26][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 02:22:17.952+05:30 [KM-SHELLBY][D:2][T:26][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 02:40:44.562+05:30 [KM-SHELLBY][D:2][T:48][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 276, Add Tabs).
+The statement has been terminated.
+2018-04-14 02:40:44.562+05:30 [KM-SHELLBY][D:2][T:48][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 276, Update Tabs).
+The statement has been terminated.
+2018-04-14 02:40:44.578+05:30 [KM-SHELLBY][D:2][T:48][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 276, Remove Tabs).
+The statement has been terminated.
+2018-04-14 02:40:44.593+05:30 [KM-SHELLBY][D:2][T:48][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 276, Manage Options).
+The statement has been terminated.
+2018-04-14 02:42:18.953+05:30 [KM-SHELLBY][D:2][T:52][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 02:42:19.000+05:30 [KM-SHELLBY][D:2][T:52][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 02:52:25.391+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Web.Api.Internal.ServicesRoutingManager - EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes threw an exception.  A route named 'EasyDNNsimpleForum-Topic-1' is already in the route collection. Route names must be unique.
+Parameter name: name
+   at System.Web.Routing.RouteCollection.Add(String name, RouteBase item)
+   at System.Web.Http.RouteCollectionExtensions.MapHttpRoute(RouteCollection routes, String name, String routeTemplate, Object defaults, Object constraints, HttpMessageHandler handler)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, Object defaults, Object constraints, String[] namespaces)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, String[] namespaces)
+   at EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes(IMapRoute mapRouteManager)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.LocateServicesAndMapRoutes()
+2018-04-14 02:52:38.313+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 276, Add Tabs).
+The statement has been terminated.
+2018-04-14 02:52:38.328+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 276, Update Tabs).
+The statement has been terminated.
+2018-04-14 02:52:38.344+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 276, Remove Tabs).
+The statement has been terminated.
+2018-04-14 02:52:38.360+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Data.PetaPoco.PetaPocoHelper - [4] Error executing SQL: ;Exec dbo.AddPermission @0, @1, @2, @3, @4
+Violation of UNIQUE KEY constraint 'IX_Permission'. Cannot insert duplicate key in object 'dbo.Permission'. The duplicate key value is (MODULE_MANDEEPS_LIVETABS, 276, Manage Options).
+The statement has been terminated.
+2018-04-14 02:52:39.188+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.Threading.ThreadAbortException: Thread was being aborted.
+   at System.Threading.Thread.AbortInternal()
+   at System.Threading.Thread.Abort(Object stateInfo)
+   at System.Web.HttpResponse.AbortCurrentThread()
+   at System.Web.HttpResponse.Redirect(String url, Boolean endResponse, Boolean permanent)
+   at Evoq.Content.Library.ContentEditor.ContentEditorManager.AutoSetUserMode()
+   at Evoq.Content.Library.ContentEditor.ContentEditorManager.OnInit(EventArgs e)
+   at System.Web.UI.Control.InitRecursive(Control namingContainer)
+   at System.Web.UI.Control.AddedControl(Control control, Int32 index)
+   at Evoq.Content.Library.UI.Skins.EventListeners.EvoqContentSkinEventListener.OnSkinInit(Object sender, SkinEventArgs e)
+2018-04-14 04:06:41.410+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Web.Api.Internal.ServicesRoutingManager - EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes threw an exception.  A route named 'EasyDNNsimpleForum-Topic-1' is already in the route collection. Route names must be unique.
+Parameter name: name
+   at System.Web.Routing.RouteCollection.Add(String name, RouteBase item)
+   at System.Web.Http.RouteCollectionExtensions.MapHttpRoute(RouteCollection routes, String name, String routeTemplate, Object defaults, Object constraints, HttpMessageHandler handler)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, Object defaults, Object constraints, String[] namespaces)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, String[] namespaces)
+   at EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes(IMapRoute mapRouteManager)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.LocateServicesAndMapRoutes()
+2018-04-14 04:07:46.316+05:30 [KM-SHELLBY][D:2][T:25][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 04:07:46.363+05:30 [KM-SHELLBY][D:2][T:25][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 04:13:35.457+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Web.Api.Internal.ServicesRoutingManager - EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes threw an exception.  A route named 'EasyDNNsimpleForum-Topic-1' is already in the route collection. Route names must be unique.
+Parameter name: name
+   at System.Web.Routing.RouteCollection.Add(String name, RouteBase item)
+   at System.Web.Http.RouteCollectionExtensions.MapHttpRoute(RouteCollection routes, String name, String routeTemplate, Object defaults, Object constraints, HttpMessageHandler handler)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, Object defaults, Object constraints, String[] namespaces)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, String[] namespaces)
+   at EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes(IMapRoute mapRouteManager)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.LocateServicesAndMapRoutes()
+2018-04-14 05:25:26.086+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Web.Api.Internal.ServicesRoutingManager - EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes threw an exception.  A route named 'EasyDNNsimpleForum-Topic-1' is already in the route collection. Route names must be unique.
+Parameter name: name
+   at System.Web.Routing.RouteCollection.Add(String name, RouteBase item)
+   at System.Web.Http.RouteCollectionExtensions.MapHttpRoute(RouteCollection routes, String name, String routeTemplate, Object defaults, Object constraints, HttpMessageHandler handler)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, Object defaults, Object constraints, String[] namespaces)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, String[] namespaces)
+   at EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes(IMapRoute mapRouteManager)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.LocateServicesAndMapRoutes()
+2018-04-14 05:26:31.976+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 05:26:32.039+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 05:32:59.977+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Web.Api.Internal.ServicesRoutingManager - EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes threw an exception.  A route named 'EasyDNNsimpleForum-Topic-1' is already in the route collection. Route names must be unique.
+Parameter name: name
+   at System.Web.Routing.RouteCollection.Add(String name, RouteBase item)
+   at System.Web.Http.RouteCollectionExtensions.MapHttpRoute(RouteCollection routes, String name, String routeTemplate, Object defaults, Object constraints, HttpMessageHandler handler)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, Object defaults, Object constraints, String[] namespaces)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, String[] namespaces)
+   at EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes(IMapRoute mapRouteManager)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.LocateServicesAndMapRoutes()
+2018-04-14 06:55:45.727+05:30 [KM-SHELLBY][D:2][T:14][ERROR] DotNetNuke.Web.Api.Internal.ServicesRoutingManager - EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes threw an exception.  A route named 'EasyDNNsimpleForum-Topic-1' is already in the route collection. Route names must be unique.
+Parameter name: name
+   at System.Web.Routing.RouteCollection.Add(String name, RouteBase item)
+   at System.Web.Http.RouteCollectionExtensions.MapHttpRoute(RouteCollection routes, String name, String routeTemplate, Object defaults, Object constraints, HttpMessageHandler handler)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, Object defaults, Object constraints, String[] namespaces)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, String[] namespaces)
+   at EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes(IMapRoute mapRouteManager)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.LocateServicesAndMapRoutes()
+2018-04-14 06:56:44.196+05:30 [KM-SHELLBY][D:2][T:25][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 06:56:44.321+05:30 [KM-SHELLBY][D:2][T:25][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 08:29:41.869+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Web.Api.Internal.ServicesRoutingManager - EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes threw an exception.  A route named 'EasyDNNsimpleForum-Topic-1' is already in the route collection. Route names must be unique.
+Parameter name: name
+   at System.Web.Routing.RouteCollection.Add(String name, RouteBase item)
+   at System.Web.Http.RouteCollectionExtensions.MapHttpRoute(RouteCollection routes, String name, String routeTemplate, Object defaults, Object constraints, HttpMessageHandler handler)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, Object defaults, Object constraints, String[] namespaces)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, String[] namespaces)
+   at EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes(IMapRoute mapRouteManager)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.LocateServicesAndMapRoutes()
+2018-04-14 08:30:47.776+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 08:30:47.854+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 09:03:49.557+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Web.Api.Internal.ServicesRoutingManager - EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes threw an exception.  A route named 'EasyDNNsimpleForum-Topic-1' is already in the route collection. Route names must be unique.
+Parameter name: name
+   at System.Web.Routing.RouteCollection.Add(String name, RouteBase item)
+   at System.Web.Http.RouteCollectionExtensions.MapHttpRoute(RouteCollection routes, String name, String routeTemplate, Object defaults, Object constraints, HttpMessageHandler handler)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, Object defaults, Object constraints, String[] namespaces)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, String[] namespaces)
+   at EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes(IMapRoute mapRouteManager)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.LocateServicesAndMapRoutes()
+2018-04-14 09:03:55.026+05:30 [KM-SHELLBY][D:2][T:15][FATAL] DotNetNuke.Framework.PageBase - An error has occurred while loading page.
+System.Web.HttpException (0x80004005): Session state can only be used when enableSessionState is set to true, either in a configuration file or in the Page directive. Please also make sure that System.Web.SessionStateModule or a custom session state module is included in the <configuration>\<system.web>\<httpModules> section in the application configuration.
+   at System.Web.UI.Page.get_Session()
+   at Mandeeps.DNN.Modules.LiveTabs.View.Initialize()
+   at System.Web.UI.Control.InitRecursive(Control namingContainer)
+   at System.Web.UI.Control.AddedControl(Control control, Int32 index)
+   at EasyDNNSolutions.Modules.EasyDNNmegaMenu.Library.MegaMenu.Item.LoadContentControls(String side, List`1 itemContent, String html, UserControl page)
+   at EasyDNNSolutions.Modules.EasyDNNmegaMenu.Library.MegaMenu.Item.RenderMarkup(DNNNode node, Int32 level, Boolean first, Boolean last, Dictionary`2 itemsMeta, UserControl page)
+   at EasyDNNSolutions.Modules.EasyDNNmegaMenu.SkinObjects.Menu.OnLoad(EventArgs e)
+   at System.Web.UI.Control.LoadRecursive()
+   at System.Web.UI.Control.LoadRecursive()
+   at System.Web.UI.Control.LoadRecursive()
+   at System.Web.UI.Control.LoadRecursive()
+   at System.Web.UI.Control.LoadRecursive()
+   at System.Web.UI.Control.LoadRecursive()
+   at System.Web.UI.Page.ProcessRequestMain(Boolean includeStagesBeforeAsyncPoint, Boolean includeStagesAfterAsyncPoint)
+2018-04-14 09:03:55.464+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Services.Exceptions.Exceptions - DotNetNuke.Services.Exceptions.PageLoadException: Session state can only be used when enableSessionState is set to true, either in a configuration file or in the Page directive. Please also make sure that System.Web.SessionStateModule or a custom session state module is included in the <configuration>\<system.web>\<httpModules> section in the application configuration. ---> System.Web.HttpException: Session state can only be used when enableSessionState is set to true, either in a configuration file or in the Page directive. Please also make sure that System.Web.SessionStateModule or a custom session state module is included in the <configuration>\<system.web>\<httpModules> section in the application configuration.
+   at System.Web.UI.Page.get_Session()
+   at Mandeeps.DNN.Modules.LiveTabs.View.Initialize()
+   at System.Web.UI.Control.InitRecursive(Control namingContainer)
+   at System.Web.UI.Control.AddedControl(Control control, Int32 index)
+   at EasyDNNSolutions.Modules.EasyDNNmegaMenu.Library.MegaMenu.Item.LoadContentControls(String side, List`1 itemContent, String html, UserControl page)
+   at EasyDNNSolutions.Modules.EasyDNNmegaMenu.Library.MegaMenu.Item.RenderMarkup(DNNNode node, Int32 level, Boolean first, Boolean last, Dictionary`2 itemsMeta, UserControl page)
+   at EasyDNNSolutions.Modules.EasyDNNmegaMenu.SkinObjects.Menu.OnLoad(EventArgs e)
+   at System.Web.UI.Control.LoadRecursive()
+   at System.Web.UI.Control.LoadRecursive()
+   at System.Web.UI.Control.LoadRecursive()
+   at System.Web.UI.Control.LoadRecursive()
+   at System.Web.UI.Control.LoadRecursive()
+   at System.Web.UI.Control.LoadRecursive()
+   at System.Web.UI.Page.ProcessRequestMain(Boolean includeStagesBeforeAsyncPoint, Boolean includeStagesAfterAsyncPoint)
+   --- End of inner exception stack trace ---
+2018-04-14 09:04:53.432+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 09:04:53.495+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 09:14:42.683+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Web.Api.Internal.ServicesRoutingManager - EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes threw an exception.  A route named 'EasyDNNsimpleForum-Topic-1' is already in the route collection. Route names must be unique.
+Parameter name: name
+   at System.Web.Routing.RouteCollection.Add(String name, RouteBase item)
+   at System.Web.Http.RouteCollectionExtensions.MapHttpRoute(RouteCollection routes, String name, String routeTemplate, Object defaults, Object constraints, HttpMessageHandler handler)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, Object defaults, Object constraints, String[] namespaces)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, String[] namespaces)
+   at EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes(IMapRoute mapRouteManager)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.LocateServicesAndMapRoutes()
+2018-04-14 09:21:16.526+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Web.Api.Internal.ServicesRoutingManager - EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes threw an exception.  A route named 'EasyDNNsimpleForum-Topic-1' is already in the route collection. Route names must be unique.
+Parameter name: name
+   at System.Web.Routing.RouteCollection.Add(String name, RouteBase item)
+   at System.Web.Http.RouteCollectionExtensions.MapHttpRoute(RouteCollection routes, String name, String routeTemplate, Object defaults, Object constraints, HttpMessageHandler handler)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, Object defaults, Object constraints, String[] namespaces)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, String[] namespaces)
+   at EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes(IMapRoute mapRouteManager)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.LocateServicesAndMapRoutes()
+2018-04-14 09:24:57.745+05:30 [KM-SHELLBY][D:2][T:25][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 09:24:57.823+05:30 [KM-SHELLBY][D:2][T:25][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 09:50:01.214+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Web.Api.Internal.ServicesRoutingManager - EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes threw an exception.  A route named 'EasyDNNsimpleForum-Topic-1' is already in the route collection. Route names must be unique.
+Parameter name: name
+   at System.Web.Routing.RouteCollection.Add(String name, RouteBase item)
+   at System.Web.Http.RouteCollectionExtensions.MapHttpRoute(RouteCollection routes, String name, String routeTemplate, Object defaults, Object constraints, HttpMessageHandler handler)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, Object defaults, Object constraints, String[] namespaces)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, String[] namespaces)
+   at EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes(IMapRoute mapRouteManager)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.LocateServicesAndMapRoutes()
+2018-04-14 09:51:05.105+05:30 [KM-SHELLBY][D:2][T:25][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 09:51:05.183+05:30 [KM-SHELLBY][D:2][T:25][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 11:32:22.201+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Web.Api.Internal.ServicesRoutingManager - EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes threw an exception.  A route named 'EasyDNNsimpleForum-Topic-1' is already in the route collection. Route names must be unique.
+Parameter name: name
+   at System.Web.Routing.RouteCollection.Add(String name, RouteBase item)
+   at System.Web.Http.RouteCollectionExtensions.MapHttpRoute(RouteCollection routes, String name, String routeTemplate, Object defaults, Object constraints, HttpMessageHandler handler)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, Object defaults, Object constraints, String[] namespaces)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, String[] namespaces)
+   at EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes(IMapRoute mapRouteManager)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.LocateServicesAndMapRoutes()
+2018-04-14 11:33:28.279+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 11:33:28.372+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 16:12:08.846+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Web.Api.Internal.ServicesRoutingManager - EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes threw an exception.  A route named 'EasyDNNsimpleForum-Topic-1' is already in the route collection. Route names must be unique.
+Parameter name: name
+   at System.Web.Routing.RouteCollection.Add(String name, RouteBase item)
+   at System.Web.Http.RouteCollectionExtensions.MapHttpRoute(RouteCollection routes, String name, String routeTemplate, Object defaults, Object constraints, HttpMessageHandler handler)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, Object defaults, Object constraints, String[] namespaces)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, String[] namespaces)
+   at EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes(IMapRoute mapRouteManager)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.LocateServicesAndMapRoutes()
+2018-04-14 16:13:13.768+05:30 [KM-SHELLBY][D:2][T:5][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 16:13:13.862+05:30 [KM-SHELLBY][D:2][T:5][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 19:10:44.459+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Web.Api.Internal.ServicesRoutingManager - EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes threw an exception.  A route named 'EasyDNNsimpleForum-Topic-1' is already in the route collection. Route names must be unique.
+Parameter name: name
+   at System.Web.Routing.RouteCollection.Add(String name, RouteBase item)
+   at System.Web.Http.RouteCollectionExtensions.MapHttpRoute(RouteCollection routes, String name, String routeTemplate, Object defaults, Object constraints, HttpMessageHandler handler)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, Object defaults, Object constraints, String[] namespaces)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, String[] namespaces)
+   at EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes(IMapRoute mapRouteManager)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.LocateServicesAndMapRoutes()
+2018-04-14 19:11:49.365+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 19:11:49.474+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 19:55:23.131+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Web.Api.Internal.ServicesRoutingManager - EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes threw an exception.  A route named 'EasyDNNsimpleForum-Topic-1' is already in the route collection. Route names must be unique.
+Parameter name: name
+   at System.Web.Routing.RouteCollection.Add(String name, RouteBase item)
+   at System.Web.Http.RouteCollectionExtensions.MapHttpRoute(RouteCollection routes, String name, String routeTemplate, Object defaults, Object constraints, HttpMessageHandler handler)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, Object defaults, Object constraints, String[] namespaces)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, String[] namespaces)
+   at EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes(IMapRoute mapRouteManager)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.LocateServicesAndMapRoutes()
+2018-04-14 19:56:27.069+05:30 [KM-SHELLBY][D:2][T:26][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 19:56:27.163+05:30 [KM-SHELLBY][D:2][T:26][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 21:49:24.524+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Web.Api.Internal.ServicesRoutingManager - EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes threw an exception.  A route named 'EasyDNNsimpleForum-Topic-1' is already in the route collection. Route names must be unique.
+Parameter name: name
+   at System.Web.Routing.RouteCollection.Add(String name, RouteBase item)
+   at System.Web.Http.RouteCollectionExtensions.MapHttpRoute(RouteCollection routes, String name, String routeTemplate, Object defaults, Object constraints, HttpMessageHandler handler)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, Object defaults, Object constraints, String[] namespaces)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, String[] namespaces)
+   at EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes(IMapRoute mapRouteManager)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.LocateServicesAndMapRoutes()
+2018-04-14 21:50:29.461+05:30 [KM-SHELLBY][D:2][T:26][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 21:50:29.540+05:30 [KM-SHELLBY][D:2][T:26][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 23:23:29.260+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Web.Api.Internal.ServicesRoutingManager - EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes threw an exception.  A route named 'EasyDNNsimpleForum-Topic-1' is already in the route collection. Route names must be unique.
+Parameter name: name
+   at System.Web.Routing.RouteCollection.Add(String name, RouteBase item)
+   at System.Web.Http.RouteCollectionExtensions.MapHttpRoute(RouteCollection routes, String name, String routeTemplate, Object defaults, Object constraints, HttpMessageHandler handler)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, Object defaults, Object constraints, String[] namespaces)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.MapHttpRoute(String moduleFolderName, String routeName, String url, String[] namespaces)
+   at EasyDNNSolutions.WebApi.Modules.EasyDNNsimpleForum.RouteMapper.RegisterRoutes(IMapRoute mapRouteManager)
+   at DotNetNuke.Web.Api.Internal.ServicesRoutingManager.LocateServicesAndMapRoutes()
+2018-04-14 23:24:35.385+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()
+2018-04-14 23:24:35.479+05:30 [KM-SHELLBY][D:2][T:15][ERROR] DotNetNuke.Services.Exceptions.Exceptions - System.NullReferenceException: Object reference not set to an instance of an object.
+   at System.Web.HttpRequest.get_PhysicalPathInternal()
+   at System.Web.HttpRequest.get_PhysicalPath()
+   at DotNetNuke.Entities.Urls.UrlAction..ctor(HttpRequest request)
+   at DotNetNuke.Entities.Portals.PortalAliasExtensions.GetAliasByPortalIdAndSettings(IEnumerable`1 aliases, Int32 portalId, String requestedAlias, String cultureCode, FriendlyUrlSettings settings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.GetFriendlyAlias(String path, String& httpAlias, Int32 portalId, FriendlyUrlSettings settings, PortalSettings portalSettings, Boolean& cultureSpecificAlias)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrlInternal(TabInfo tab, String path, String pageName, String portalAlias, PortalSettings portalSettings)
+   at DotNetNuke.Entities.Urls.AdvancedFriendlyUrlProvider.FriendlyUrl(TabInfo tab, String path, String pageName, PortalSettings portalSettings)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, Boolean isSuperTab, PortalSettings settings, String controlKey, String language, String pageName, String[] additionalParameters)
+   at DotNetNuke.Common.Globals.NavigateURL(Int32 tabID, PortalSettings settings, String controlKey, String[] additionalParameters)
+   at RazorCart.Core.Components.Url.UrlExtension.MockPortalHttpContext(PortalInfo portal)
+   at RazorCart.Core.Components.DnnServices.RecurringScheduler.DoWork()

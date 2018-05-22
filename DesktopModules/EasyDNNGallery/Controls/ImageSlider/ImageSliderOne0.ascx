@@ -65,7 +65,7 @@
 				<asp:Repeater ID="repImageSlider" runat="server" DataSourceID="odsGetOnlyImages" EnableTheming="True">
 					<ItemTemplate>
 						<a edgpid='<%#Eval("PictureID")%>' href='<%#LinkOrLightbox(Eval("FileName"),Eval("ImageUrl"),Eval("PictureID")) %>' rel="<%#RelLink()%>" target="<%#TargetWin()%>" title='<%#GetDescription3(DataBinder.Eval(Container.DataItem, "Description"),DataBinder.Eval(Container.DataItem, "PictureID"))%>'>
-							<img id="imgImageSlider" class="img-responsive" title='<%#ImageSliderTD(Eval("Title"),Eval("Description"),Eval("PictureID")) %>' runat="server" alt='<%#GetAlt(Eval("Title"),Eval("PictureID"))%>' src='<%#GetThumbPath(DataBinder.Eval(Container.DataItem, "ViewerThumb")) %>' />
+							<img id="imgImageSlider" title='<%#ImageSliderTD(Eval("Title"),Eval("Description"),Eval("PictureID")) %>' runat="server" alt='<%#GetAlt(Eval("Title"),Eval("PictureID"))%>' src='<%#GetThumbPath(DataBinder.Eval(Container.DataItem, "ViewerThumb")) %>' />
 						</a>
 					</ItemTemplate>
 				</asp:Repeater>

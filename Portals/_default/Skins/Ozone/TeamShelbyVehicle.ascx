@@ -141,7 +141,7 @@ display: none;
 	</div>
 	<div id="ContentPane" class="eds_container container-fluid" runat="server"></div>
 	<div class="container-fluid">
-		<div class="row">
+		<div class="">
 			<div id="contentLeftPane" class="col-sm-4 eds_container" runat="server"></div>
 			<div id="contentMiddlePane" class="col-sm-4 eds_container" runat="server"></div>
 			<div id="contentRightPane" class="col-sm-4 eds_container" runat="server"></div>

@@ -1,10 +1,12 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ProfileView.ascx.cs" Inherits="DotNetNuke.Professional.Dashboard.ProfileView" %>
+<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ProfileView.ascx.cs" Inherits="DotNetNuke.Professional.Dashboard.ProfileView" %>
 <%@ Register TagPrefix="social" TagName="Report" Src="~/DesktopModules/DNNCorp/SocialLibrary/Controls/ReportUser.ascx" %>
 <%@ Register TagPrefix="social" TagName="RemoveUser" Src="~/DesktopModules/DNNCorp/SocialLibrary/Controls/RemoveUser.ascx" %>
 
 <asp:Panel runat="server" ID="ScopeWrapper" class="profileContainer status-expanded-container moduleContainer">
-    <div id="profileView">
+  
 
+    <div id="profileView">
+ 
         <div data-bind="stopBindings: true" class="remove-user-dialog" style="display: none;">
             <social:RemoveUser ID="RemoveUserCtrl" runat="server" />
         </div>
@@ -26,8 +28,9 @@
                 </div>
                 <div class="dnnLeft">
                     <a class="dnnSocialLink profile-link" data-bind="attr: { href: profileUrl }">
-                        <span data-bind="text: properties().displayName"></span>
-                    </a>
+                        <span style="color:Black;" data-bind="text: properties().displayName"></span>
+                    </a>&nbsp&nbsp
+                  <a style="margin-top: 16px;"  class="btn btn-success" target="_blank" href="http://123.176.39.57/BuildOne/design/savedbuild2017ss?Id=<%: UserInfo.UserID %>">Saved Builds</a>
                     <span class="userRemoved" data-bind="visible: isDeleted()" style="display: none;">
                         <a class="userRemovedMsg" data-bind="visible: isDeleted()"><%= LocalizeString("UserRemoved") %></a>
                     </span>
@@ -362,3 +365,12 @@
         }
     }
 </script>
+
+
+
+
+
+
+
+
+

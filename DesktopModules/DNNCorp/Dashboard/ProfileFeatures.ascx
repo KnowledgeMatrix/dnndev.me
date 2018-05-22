@@ -1,5 +1,6 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ProfileFeatures.ascx.cs" Inherits="DotNetNuke.Professional.Dashboard.ProfileFeatures" %>
+<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ProfileFeatures.ascx.cs" Inherits="DotNetNuke.Professional.Dashboard.ProfileFeatures" %>
 <asp:Panel class="dnnClear moduleContainer dashboard-features" runat="server" ID="ScopeWrapper">
+ 
     <div id="profileFeatures">
         <%-- NORMAL VIEW --%>
         <!-- ko ifnot: isMobileView -->
@@ -67,3 +68,5 @@
         }
     }
 </script>
+
+

@@ -117,7 +117,7 @@
             }
             if (vm.booking)
                 booking = vm.booking;
-            var request = dataProvider.getProduct(vm.moduleId, vm.product.ProductID, quantity, price, variants, booking);
+            var request = dataProvider.getProduct(vm.moduleId, vm.product.ProductID, quantity, 1250, variants, booking);
             request.then(function (response) {
                 if (globalFunctions.getResponseType(response.status) == 'Successful') {
                     vm.product.UnitCost = response.data.Product.UnitCost;
