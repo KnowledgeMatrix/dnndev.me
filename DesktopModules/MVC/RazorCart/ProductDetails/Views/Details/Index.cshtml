@@ -322,7 +322,7 @@
                 </div>
                 <div class="col-lg-12">
                     <ul class="nav nav-tabs">
-                        @if (!Model.Product.TabName1.IsEmpty())
+                        @*@if (!Model.Product.TabName1.IsEmpty())
                         {
                             <li class="active"><a data-toggle="tab" href="#detailTab1">@Model.Product.TabName1</a></li>
                         }
@@ -341,14 +341,14 @@
                         @if (!Model.Product.TabName5.IsEmpty())
                         {
                             <li><a data-toggle="tab" href="#detailTab5">@Model.Product.TabName5</a></li>
-                        }
+                        }*@
                         @if (Model.ShowReviews)
                         {
                             <li><a data-toggle="tab" href="#detailTabRate">@Dnn.LocalizeString("Reviews")</a></li>
                         }
                     </ul>
                     <div class="tab-content">
-                        @if (!Model.Product.TabName1.IsEmpty())
+                        @*@if (!Model.Product.TabName1.IsEmpty())
                         {
                             <div id="detailTab1" class="tab-pane fade in active">
                                 <div class="panel panel-default">
@@ -397,7 +397,7 @@
                                     </div>
                                 </div>
                             </div>
-                        }
+                        }*@
                         @if (Model.ShowReviews)
                         {
                             <div id="detailTabRate" class="tab-pane fade in">
@@ -429,7 +429,8 @@
     }
 </div>
 <script type="text/javascript">
-    $(document).ready(function(){
+    $(document).ready(function () {
+        //change cusrsor when it passes on product type div
         $('.rzcVariantGroup').css('cursor', 'pointer');
     })
 </script>
