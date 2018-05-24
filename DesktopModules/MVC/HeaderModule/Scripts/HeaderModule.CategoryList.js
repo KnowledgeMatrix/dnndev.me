@@ -67,7 +67,7 @@ app.controller("categoryCtrl", function ($scope) {
 
 
         $scope.partsList = CtegoryList;
-        $scope.parentLocation = window.location.href;
+        $scope.parentLocation = window.parent.location.origin;
     };
     
       
