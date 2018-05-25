@@ -27,3 +27,17 @@
         </div>
     </div>
 </div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        console.log('remove class');
+        window.setInterval(function () {
+            setTimeout(function () {
+                if ($(".owl-nav").hasClass('disabled'))
+                    $(".owl-nav").removeClass('disabled');
+            }, 3000);
+        }, 100);
+     
+       
+       
+    })
+</script>
